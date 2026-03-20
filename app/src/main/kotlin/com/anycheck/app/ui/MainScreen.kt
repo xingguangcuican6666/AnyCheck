@@ -72,7 +72,7 @@ import com.anycheck.app.ui.theme.RiskLow
 import kotlinx.coroutines.launch
 
 enum class ResultFilter {
-    ALL, DETECTED, MAGISK, KERNELSU, APATCH, SU
+    ALL, DETECTED, MAGISK, KERNELSU, APATCH, SU, XPOSED
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -195,6 +195,8 @@ private fun IdleScreen(onStartDetection: () -> Unit, modifier: Modifier = Modifi
             FeatureRow("Magisk detection (12 checks)")
             FeatureRow("KernelSU detection (8 checks)")
             FeatureRow("APatch & generic root (5 checks)")
+            FeatureRow("Xposed / LSPosed / EdXposed (8 checks)")
+            FeatureRow("Advanced root checks (19 checks)")
             FeatureRow("Detailed reason & solution for each")
         }
         Spacer(modifier = Modifier.height(32.dp))
@@ -325,6 +327,7 @@ private fun ResultsScreen(
             ResultFilter.KERNELSU -> summary.results.filter { it.category == DetectionCategory.KERNELSU }
             ResultFilter.APATCH -> summary.results.filter { it.category == DetectionCategory.APATCH }
             ResultFilter.SU -> summary.results.filter { it.category == DetectionCategory.SU_BINARY }
+            ResultFilter.XPOSED -> summary.results.filter { it.category == DetectionCategory.XPOSED }
         }
     }
 
@@ -360,6 +363,7 @@ private fun ResultsScreen(
                         ResultFilter.KERNELSU -> summary.results.count { it.category == DetectionCategory.KERNELSU }
                         ResultFilter.APATCH -> summary.results.count { it.category == DetectionCategory.APATCH }
                         ResultFilter.SU -> summary.results.count { it.category == DetectionCategory.SU_BINARY }
+                        ResultFilter.XPOSED -> summary.results.count { it.category == DetectionCategory.XPOSED }
                     }
                     FilterChip(
                         selected = activeFilter == filter,
@@ -373,6 +377,7 @@ private fun ResultsScreen(
                                     ResultFilter.KERNELSU -> "KernelSU ($count)"
                                     ResultFilter.APATCH -> "APatch ($count)"
                                     ResultFilter.SU -> "SU Binary ($count)"
+                                    ResultFilter.XPOSED -> "Xposed ($count)"
                                 }
                             )
                         }

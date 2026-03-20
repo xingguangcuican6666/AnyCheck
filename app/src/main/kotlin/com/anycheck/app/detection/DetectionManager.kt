@@ -17,6 +17,8 @@ class DetectionManager(private val context: Context) {
         val magiskDetector = MagiskDetector(context)
         val kernelSUDetector = KernelSUDetector(context)
         val genericDetector = GenericRootDetector(context)
+        val xposedDetector = XposedDetector(context)
+        val advancedDetector = AdvancedRootDetector(context)
 
         val magiskChecks = magiskDetector.runAllChecks()
         onProgress(magiskChecks.size, 0, "Magisk checks complete")
@@ -27,12 +29,18 @@ class DetectionManager(private val context: Context) {
         allResults.addAll(ksuChecks)
 
         val genericChecks = genericDetector.runAllChecks()
-        onProgress(
-            magiskChecks.size + ksuChecks.size + genericChecks.size,
-            magiskChecks.size + ksuChecks.size,
-            "Generic checks complete"
-        )
+        val genericEnd = magiskChecks.size + ksuChecks.size + genericChecks.size
+        onProgress(genericEnd, magiskChecks.size + ksuChecks.size, "Generic checks complete")
         allResults.addAll(genericChecks)
+
+        val xposedChecks = xposedDetector.runAllChecks()
+        val xposedEnd = genericEnd + xposedChecks.size
+        onProgress(xposedEnd, genericEnd, "Xposed checks complete")
+        allResults.addAll(xposedChecks)
+
+        val advancedChecks = advancedDetector.runAllChecks()
+        onProgress(xposedEnd + advancedChecks.size, xposedEnd, "Advanced checks complete")
+        allResults.addAll(advancedChecks)
 
         // Sort by: detected first, then by risk level, then by category
         val sorted = allResults.sortedWith(

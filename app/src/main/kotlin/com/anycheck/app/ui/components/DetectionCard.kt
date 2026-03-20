@@ -284,6 +284,11 @@ fun CategoryBadge(category: DetectionCategory, modifier: Modifier = Modifier) {
         DetectionCategory.APATCH -> "APatch" to Color(0xFF6A1B9A)
         DetectionCategory.SU_BINARY -> "SU Binary" to Color(0xFFE65100)
         DetectionCategory.ROOT_MANAGEMENT -> "Root" to Color(0xFF37474F)
+        DetectionCategory.XPOSED -> "Xposed" to Color(0xFFC62828)
+        DetectionCategory.SYSTEM_INTEGRITY -> "System" to Color(0xFF0277BD)
+        DetectionCategory.ADB_DEBUG -> "ADB/Debug" to Color(0xFF558B2F)
+        DetectionCategory.FRIDA -> "Frida" to Color(0xFF6D4C41)
+        DetectionCategory.ENVIRONMENT -> "Environment" to Color(0xFF00838F)
     }
     Surface(
         shape = RoundedCornerShape(4.dp),

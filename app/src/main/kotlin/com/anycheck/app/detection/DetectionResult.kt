@@ -34,7 +34,12 @@ enum class DetectionCategory {
     KERNELSU,
     APATCH,
     SU_BINARY,
-    ROOT_MANAGEMENT
+    ROOT_MANAGEMENT,
+    XPOSED,
+    SYSTEM_INTEGRITY,
+    ADB_DEBUG,
+    FRIDA,
+    ENVIRONMENT
 }
 
 /**
