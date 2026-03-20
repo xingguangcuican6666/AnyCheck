@@ -25,7 +25,12 @@ class MagiskDetector(private val context: Context) {
         checkZygiskLibrary(),
         checkMagiskHideProps(),
         checkMagiskProcesses(),
-        checkMagiskManagerHidden()
+        checkMagiskManagerHidden(),
+        checkMagiskDevFiles(),
+        checkZygiskActiveInMaps(),
+        checkMagiskStubApp(),
+        checkMagiskSELinuxContext(),
+        checkMagiskApexOverlay()
     )
 
     /** Check 1: Known Magisk-specific files */
@@ -599,6 +604,312 @@ class MagiskDetector(private val context: Context) {
                 riskLevel = RiskLevel.MEDIUM,
                 description = "No hidden Magisk Manager detected.",
                 detailedReason = "No apps with Magisk Manager characteristics were found under non-standard package names.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    /** Check 13: Magisk-owned files / sockets in /dev */
+    private fun checkMagiskDevFiles(): DetectionResult {
+        // Magisk (all versions) creates various named files/dirs under /dev to hide itself
+        // from the regular filesystem. These are detectable by direct path existence checks.
+        val devPaths = listOf(
+            "/dev/magisk",
+            "/dev/magisk_mirror",
+            "/dev/magisk_block",
+            "/dev/socket/magisk_ptrace",
+            "/dev/socket/magiskd",
+            "/dev/socket/magisk_loader",
+            "/dev/.magisk",
+            "/dev/.magisk.unblock",
+            "/dev/.su",
+            "/dev/socket/su"
+        )
+        val found = devPaths.filter { File(it).exists() }
+        return if (found.isNotEmpty()) {
+            DetectionResult(
+                id = "magisk_dev_files",
+                name = "Magisk /dev Files Detected",
+                category = DetectionCategory.MAGISK,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "Magisk-specific files or sockets found in /dev.",
+                detailedReason = "Found: ${found.joinToString(", ")}. " +
+                    "Magisk uses the /dev filesystem (tmpfs) to create control sockets and " +
+                    "mirror points that it can access from any SELinux context. " +
+                    "These files only exist on devices with active Magisk.",
+                solution = "Uninstall Magisk to remove these /dev artifacts.",
+                technicalDetail = "Paths: ${found.joinToString("; ")}"
+            )
+        } else {
+            DetectionResult(
+                id = "magisk_dev_files",
+                name = "Magisk /dev Files",
+                category = DetectionCategory.MAGISK,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "No Magisk /dev files or sockets found.",
+                detailedReason = "No Magisk-specific files were found under /dev.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    /** Check 14: Zygisk native library loaded into this process (/proc/self/maps filename check) */
+    private fun checkZygiskActiveInMaps(): DetectionResult {
+        // Zygisk injects its native library into every app process. The library filename
+        // (not the full path) will contain "zygisk" when Magisk+Zygisk is active.
+        val zygiskLibPatterns = listOf(
+            "libzygisk.so",
+            "libzygisk_", // versioned variants
+            "zygisk_lsposed.so",
+            "zygisk_companion.so"
+        )
+        return try {
+            val maps = File("/proc/self/maps").readText()
+            val found = mutableListOf<String>()
+            maps.lines().forEach { line ->
+                if (!line.contains(".so")) return@forEach
+                val path = line.trim().split("\\s+".toRegex()).lastOrNull()?.trim() ?: return@forEach
+                val filename = path.substringAfterLast("/").lowercase()
+                zygiskLibPatterns.forEach { pat ->
+                    if (filename.contains(pat) && !found.contains(path.take(80))) {
+                        found.add(path.take(80))
+                    }
+                }
+            }
+            if (found.isNotEmpty()) {
+                DetectionResult(
+                    id = "zygisk_active_maps",
+                    name = "Zygisk Library Injected",
+                    category = DetectionCategory.MAGISK,
+                    status = DetectionStatus.DETECTED,
+                    riskLevel = RiskLevel.CRITICAL,
+                    description = "Zygisk native library is loaded in this process.",
+                    detailedReason = "Zygisk library found in /proc/self/maps: ${found.joinToString(", ")}. " +
+                        "Zygisk (Zygote + Magisk) injects its native library into every app " +
+                        "process by hooking the Zygote process before forks. " +
+                        "This confirms Zygisk is actively running.",
+                    solution = "Disable Zygisk in Magisk settings or uninstall Magisk.",
+                    technicalDetail = "Injected libs: ${found.joinToString("; ")}"
+                )
+            } else {
+                DetectionResult(
+                    id = "zygisk_active_maps",
+                    name = "Zygisk Library",
+                    category = DetectionCategory.MAGISK,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.CRITICAL,
+                    description = "No Zygisk library found in process memory maps.",
+                    detailedReason = "No Zygisk native library was found in /proc/self/maps.",
+                    solution = "No action required."
+                )
+            }
+        } catch (e: Exception) {
+            DetectionResult(
+                id = "zygisk_active_maps",
+                name = "Zygisk Library",
+                category = DetectionCategory.MAGISK,
+                status = DetectionStatus.ERROR,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "Could not read /proc/self/maps.",
+                detailedReason = "Error: ${e.message}",
+                solution = "Ensure /proc/self/maps is accessible."
+            )
+        }
+    }
+
+    /** Check 15: Magisk stub APK — Magisk can masquerade as a random app but retains specific metadata */
+    private fun checkMagiskStubApp(): DetectionResult {
+        // When Magisk Manager is hidden, it's repackaged as a stub APK.
+        // The stub always declares a specific set of permissions and an activity name pattern.
+        // We detect it by scanning installed packages for Magisk-characteristic permissions/activities.
+        val magiskPermissions = setOf(
+            "android.permission.WRITE_EXTERNAL_STORAGE",
+            "android.permission.REQUEST_INSTALL_PACKAGES",
+            "android.permission.READ_EXTERNAL_STORAGE"
+        )
+        val knownMagiskPermission = "android.permission.CHANGE_CONFIGURATION"
+        val suspiciousPackages = mutableListOf<String>()
+
+        try {
+            val pm = context.packageManager
+            val flag = PackageManager.GET_PERMISSIONS
+            pm.getInstalledPackages(flag).forEach { pkg ->
+                val pkgName = pkg.packageName
+                // Skip known legitimate apps and Magisk's own known package names
+                if (pkgName.startsWith("com.android") || pkgName.startsWith("android") ||
+                    pkgName == "com.topjohnwu.magisk" || pkgName == context.packageName
+                ) return@forEach
+
+                // A stub Magisk app requests a very specific and unusual combination of permissions
+                val declaredPerms = pkg.requestedPermissions?.toSet() ?: return@forEach
+                if (magiskPermissions.all { it in declaredPerms } &&
+                    knownMagiskPermission in declaredPerms
+                ) {
+                    // Also check if it has a provider with a Magisk-like authority pattern
+                    try {
+                        val pkgInfo = pm.getPackageInfo(pkgName, PackageManager.GET_PROVIDERS)
+                        val hasMagiskProvider = pkgInfo.providers?.any { p ->
+                            p.authority?.contains("magisk", ignoreCase = true) == true ||
+                                p.name?.contains("magisk", ignoreCase = true) == true
+                        } ?: false
+                        if (hasMagiskProvider) suspiciousPackages.add(pkgName)
+                    } catch (_: Exception) {}
+                }
+            }
+        } catch (_: Exception) {}
+
+        return if (suspiciousPackages.isNotEmpty()) {
+            DetectionResult(
+                id = "magisk_stub_app",
+                name = "Magisk Stub App Detected",
+                category = DetectionCategory.MAGISK,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = "App with Magisk stub APK characteristics found.",
+                detailedReason = "Package(s) with Magisk stub metadata: ${suspiciousPackages.joinToString(", ")}. " +
+                    "Magisk's hide feature repackages itself as an innocent-looking app. " +
+                    "The stub retains Magisk's content provider authority and specific permission set.",
+                solution = "Open the stub app and uninstall Magisk through it.",
+                technicalDetail = "Suspect packages: ${suspiciousPackages.joinToString("; ")}"
+            )
+        } else {
+            DetectionResult(
+                id = "magisk_stub_app",
+                name = "Magisk Stub App",
+                category = DetectionCategory.MAGISK,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = "No Magisk stub app detected.",
+                detailedReason = "No installed packages match the Magisk stub APK signature.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    /** Check 16: Magisk SELinux context — Magisk sets a custom selinux context for its processes */
+    private fun checkMagiskSELinuxContext(): DetectionResult {
+        return try {
+            // /proc/self/attr/current contains our own SELinux context
+            val selfContext = File("/proc/self/attr/current").readText().trim()
+            // /proc/self/attr/sockcreate is used for sockets
+            val sockContext = runCatching { File("/proc/self/attr/sockcreate").readText().trim() }.getOrDefault("")
+
+            val magiskContexts = listOf("magisk", "su", "superuser", "rootd")
+            val foundContexts = mutableListOf<String>()
+            if (magiskContexts.any { selfContext.contains(it, ignoreCase = true) }) {
+                foundContexts.add("current=$selfContext")
+            }
+            if (sockContext.isNotEmpty() && magiskContexts.any { sockContext.contains(it, ignoreCase = true) }) {
+                foundContexts.add("sockcreate=$sockContext")
+            }
+
+            // Also scan other processes' SELinux contexts for magisk
+            val procDir = File("/proc")
+            procDir.listFiles()?.forEach { pidDir ->
+                if (!pidDir.isDirectory || !pidDir.name.all { it.isDigit() }) return@forEach
+                try {
+                    val ctx = File(pidDir, "attr/current").readText().trim()
+                    if (magiskContexts.any { ctx.contains(it, ignoreCase = true) }) {
+                        val name = runCatching {
+                            File(pidDir, "comm").readText().trim()
+                        }.getOrDefault(pidDir.name)
+                        if (!foundContexts.any { it.contains(name) }) {
+                            foundContexts.add("pid ${pidDir.name}($name)=$ctx")
+                        }
+                    }
+                } catch (_: Exception) {}
+            }
+
+            if (foundContexts.isNotEmpty()) {
+                DetectionResult(
+                    id = "magisk_selinux",
+                    name = "Magisk SELinux Context Detected",
+                    category = DetectionCategory.MAGISK,
+                    status = DetectionStatus.DETECTED,
+                    riskLevel = RiskLevel.HIGH,
+                    description = "Magisk-related SELinux context found.",
+                    detailedReason = "Found: ${foundContexts.take(3).joinToString(", ")}. " +
+                        "Magisk injects custom SELinux policy rules and some versions run " +
+                        "under their own SELinux context (u:r:magisk:s0). " +
+                        "A non-standard SELinux context for a root-related process confirms Magisk activity.",
+                    solution = "Remove Magisk to restore standard SELinux policy.",
+                    technicalDetail = foundContexts.take(5).joinToString("; ")
+                )
+            } else {
+                DetectionResult(
+                    id = "magisk_selinux",
+                    name = "Magisk SELinux Context",
+                    category = DetectionCategory.MAGISK,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.HIGH,
+                    description = "No Magisk SELinux contexts detected.",
+                    detailedReason = "No Magisk-related SELinux contexts found in /proc/*/attr/current.",
+                    solution = "No action required."
+                )
+            }
+        } catch (e: Exception) {
+            DetectionResult(
+                id = "magisk_selinux",
+                name = "Magisk SELinux Context",
+                category = DetectionCategory.MAGISK,
+                status = DetectionStatus.ERROR,
+                riskLevel = RiskLevel.HIGH,
+                description = "Could not read SELinux contexts.",
+                detailedReason = "Error: ${e.message}",
+                solution = "Ensure /proc/self/attr/current is accessible."
+            )
+        }
+    }
+
+    /** Check 17: Magisk APEX overlay — Magisk can overlay files inside /apex partitions */
+    private fun checkMagiskApexOverlay(): DetectionResult {
+        val apexMagiskPaths = listOf(
+            "/apex/.magisk",
+            "/apex/magisk"
+        )
+        // Also look for 'orig' directories inside APEX mounts — these are created by Magisk
+        // when it bind-mounts over APEX libraries
+        val apexOrigPatterns = mutableListOf<String>()
+        try {
+            val apexDir = File("/apex")
+            if (apexDir.exists() && apexDir.isDirectory) {
+                apexDir.listFiles()?.forEach { apexChild ->
+                    val origDir = File(apexChild, "orig")
+                    if (origDir.exists()) apexOrigPatterns.add(origDir.path)
+                }
+            }
+        } catch (_: Exception) {}
+
+        val foundDirect = apexMagiskPaths.filter { File(it).exists() }
+        val allFound = foundDirect + apexOrigPatterns
+
+        return if (allFound.isNotEmpty()) {
+            DetectionResult(
+                id = "magisk_apex",
+                name = "Magisk APEX Overlay Detected",
+                category = DetectionCategory.MAGISK,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = "Magisk overlay inside /apex detected.",
+                detailedReason = "Found: ${allFound.take(5).joinToString(", ")}. " +
+                    "Magisk (v24+) can inject modules into APEX (Android Pony EXpress) " +
+                    "partition libraries by bind-mounting over them. " +
+                    "The 'orig' directory is created as a backup of the original APEX content. " +
+                    "These artefacts are only present when Magisk modules are active.",
+                solution = "Disable APEX-targeting modules in Magisk Manager or uninstall Magisk.",
+                technicalDetail = "Paths: ${allFound.take(10).joinToString("; ")}"
+            )
+        } else {
+            DetectionResult(
+                id = "magisk_apex",
+                name = "Magisk APEX Overlay",
+                category = DetectionCategory.MAGISK,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = "No Magisk APEX overlay detected.",
+                detailedReason = "No Magisk-specific files were found inside /apex.",
                 solution = "No action required."
             )
         }

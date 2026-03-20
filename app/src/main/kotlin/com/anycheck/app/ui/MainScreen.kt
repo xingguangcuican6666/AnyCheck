@@ -192,10 +192,10 @@ private fun IdleScreen(onStartDetection: () -> Unit, modifier: Modifier = Modifi
                 .padding(horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            FeatureRow("Magisk detection (12 checks)")
+            FeatureRow("Magisk detection (17 checks)")
             FeatureRow("KernelSU detection (8 checks)")
             FeatureRow("APatch & generic root (5 checks)")
-            FeatureRow("Xposed / LSPosed / EdXposed (8 checks)")
+            FeatureRow("Xposed / LSPosed hook detection (13 checks)")
             FeatureRow("Advanced root checks (19 checks)")
             FeatureRow("Extra: mounts, capabilities, bypass modules (15 checks)")
         }
