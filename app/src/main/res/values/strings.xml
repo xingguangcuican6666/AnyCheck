@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">AnyCheck</string>
+    <string name="app_subtitle">Root Detection Analyzer</string>
+
+    <!-- Home Screen -->
+    <string name="start_detection">Start Detection</string>
+    <string name="re_detect">Re-detect</string>
+    <string name="detecting">Detecting…</string>
+    <string name="detection_complete">Detection Complete</string>
+    <string name="detection_summary">Summary</string>
+    <string name="total_checks">Total Checks</string>
+    <string name="issues_found">Issues Found</string>
+    <string name="safe_items">Safe Items</string>
+    <string name="not_run">Not Run</string>
+
+    <!-- Detail -->
+    <string name="detail_reason">Reason</string>
+    <string name="detail_solution">Solution</string>
+    <string name="detail_risk_level">Risk Level</string>
+    <string name="detail_category">Category</string>
+    <string name="collapse">Collapse</string>
+    <string name="expand">Expand</string>
+
+    <!-- Status -->
+    <string name="status_detected">Detected</string>
+    <string name="status_not_detected">Not Detected</string>
+    <string name="status_error">Error</string>
+    <string name="status_checking">Checking</string>
+
+    <!-- Risk Levels -->
+    <string name="risk_critical">Critical</string>
+    <string name="risk_high">High</string>
+    <string name="risk_medium">Medium</string>
+    <string name="risk_low">Low</string>
+    <string name="risk_info">Info</string>
+
+    <!-- Categories -->
+    <string name="cat_magisk">Magisk</string>
+    <string name="cat_kernelsu">KernelSU</string>
+    <string name="cat_apatch">APatch</string>
+    <string name="cat_su_binary">SU Binary</string>
+    <string name="cat_root_management">Root Management</string>
+
+    <!-- Filter -->
+    <string name="filter_all">All</string>
+    <string name="filter_detected">Detected Only</string>
+    <string name="filter_magisk">Magisk</string>
+    <string name="filter_kernelsu">KernelSU</string>
+
+    <!-- Misc -->
+    <string name="app_description">AnyCheck detects root management frameworks (Magisk, KernelSU, APatch) using multiple detection vectors.</string>
+    <string name="disclaimer">For security research purposes only.</string>
+    <string name="copy_results">Copy Results</string>
+    <string name="results_copied">Results copied to clipboard</string>
+    <string name="about">About</string>
+    <string name="version">Version</string>
+</resources>
