@@ -158,33 +158,28 @@ class LunaDetector(private val context: Context) {
             manufacturer in listOf("xiaomi", "redmi")
         if (isXiaomi && found.isEmpty()) found.add("Build.BRAND=${Build.BRAND}")
 
-        return if (found.isNotEmpty()) {
-            DetectionResult(
-                id = "luna_xiaomi_miui",
-                name = "Xiaomi/MIUI Device",
-                category = DetectionCategory.ENVIRONMENT,
-                status = DetectionStatus.DETECTED,
-                riskLevel = RiskLevel.INFO,
-                description = "Device is running MIUI/HyperOS or is a Xiaomi/Redmi device.",
-                detailedReason = "Luna-method (checkxiaomi): Device identified as Xiaomi/MIUI. " +
-                    "Found: ${found.joinToString(", ")}. " +
-                    "MIUI devices have a custom root management path (MIUI root / HyperOS root) " +
-                    "that differs from standard Android root frameworks.",
-                solution = "Apply Xiaomi/MIUI-specific root detection rules where appropriate.",
-                technicalDetail = "Xiaomi: ${found.joinToString("; ")}"
-            )
-        } else {
-            DetectionResult(
-                id = "luna_xiaomi_miui",
-                name = "Xiaomi/MIUI Device",
-                category = DetectionCategory.ENVIRONMENT,
-                status = DetectionStatus.NOT_DETECTED,
-                riskLevel = RiskLevel.INFO,
-                description = "Device is not a Xiaomi/MIUI device.",
-                detailedReason = "Luna-method (checkxiaomi): No MIUI system properties detected.",
-                solution = "No action required."
-            )
-        }
+        // Being a Xiaomi/MIUI device is device-context information only.
+        // It is NOT a root indicator, so we always report NOT_DETECTED regardless
+        // of whether the device is Xiaomi, to avoid false positives ("turning red").
+        return DetectionResult(
+            id = "luna_xiaomi_miui",
+            name = "Xiaomi/MIUI Device",
+            category = DetectionCategory.ENVIRONMENT,
+            status = DetectionStatus.NOT_DETECTED,
+            riskLevel = RiskLevel.INFO,
+            description = if (found.isNotEmpty())
+                "Device is running MIUI/HyperOS or is a Xiaomi/Redmi device (informational only)."
+            else
+                "Device is not a Xiaomi/MIUI device.",
+            detailedReason = if (found.isNotEmpty())
+                "Luna-method (checkxiaomi): Device identified as Xiaomi/MIUI — " +
+                    "found: ${found.joinToString(", ")}. " +
+                    "This is purely informational; device brand is not a root indicator."
+            else
+                "Luna-method (checkxiaomi): No MIUI system properties detected.",
+            solution = "No action required.",
+            technicalDetail = if (found.isNotEmpty()) "Xiaomi props: ${found.joinToString("; ")}" else ""
+        )
     }
 
     // -------------------------------------------------------------------------
