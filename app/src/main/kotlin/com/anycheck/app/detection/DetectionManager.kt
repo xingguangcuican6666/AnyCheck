@@ -22,6 +22,7 @@ class DetectionManager(private val context: Context) {
         val extraDetector = ExtraRootDetector(context)
         val lunaDetector = LunaDetector(context)
         val revenyDetector = RevenyInspiredDetector(context)
+        val rootBeerFreshDetector = RootBeerFreshDetector(context)
 
         val magiskChecks = magiskDetector.runAllChecks()
         onProgress(magiskChecks.size, 0, "Magisk checks complete")
@@ -57,8 +58,13 @@ class DetectionManager(private val context: Context) {
         allResults.addAll(lunaChecks)
 
         val revenyChecks = revenyDetector.runAllChecks()
-        onProgress(lunaEnd + revenyChecks.size, lunaEnd, "Reveny-inspired checks complete")
+        val revenyEnd = lunaEnd + revenyChecks.size
+        onProgress(revenyEnd, lunaEnd, "Reveny-inspired checks complete")
         allResults.addAll(revenyChecks)
+
+        val rootBeerFreshChecks = rootBeerFreshDetector.runAllChecks()
+        onProgress(revenyEnd + rootBeerFreshChecks.size, revenyEnd, "RootBeerFresh checks complete")
+        allResults.addAll(rootBeerFreshChecks)
 
         // Sort by: detected first, then by risk level, then by category
         val sorted = allResults.sortedWith(
