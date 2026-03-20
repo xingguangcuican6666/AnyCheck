@@ -30,7 +30,10 @@ class XposedDetector(private val context: Context) {
         checkClassLoaderChain(),
         checkInMemoryDexClassLoader(),
         checkLSPosedDataDirs(),
-        checkZygiskEnvAndProps()
+        checkZygiskEnvAndProps(),
+        checkLSPosedFullStackTrace(),
+        checkSMAPSInlineHooks(),
+        checkZygiskModuleInjectionInMaps()
     )
 
     /** Check 1: Xposed / LSPosed / EdXposed manager package names */
@@ -1102,6 +1105,182 @@ class XposedDetector(private val context: Context) {
                 riskLevel = RiskLevel.HIGH,
                 description = "No Zygisk environment variables or properties found.",
                 detailedReason = "ZYGISK_ENABLED is not set; no Zygisk system properties detected.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    /**
+     * Check 20: Extended LSPosed/lspd stack trace scan.
+     * Complements check 6 by specifically looking for lsposed, lspd, and edxposed
+     * class names in the exception stack trace — patterns that check 6 does not cover.
+     */
+    private fun checkLSPosedFullStackTrace(): DetectionResult {
+        val found = mutableListOf<String>()
+        val lsposedPatterns = listOf(
+            "lsposed", "lspd", "edxposed", "edxp", "handleloadpackage",
+            "xc_methodhook", "xposedbridge"
+        )
+        try {
+            throw Exception("lspd_stack_probe")
+        } catch (e: Exception) {
+            e.stackTrace.forEach { frame ->
+                val cls = frame.className.lowercase()
+                val match = lsposedPatterns.firstOrNull { cls.contains(it) }
+                if (match != null) {
+                    val entry = "${frame.className}.${frame.methodName}"
+                    if (!found.contains(entry)) found.add(entry)
+                }
+            }
+        }
+        // Also enumerate all threads and probe their stack traces
+        try {
+            Thread.getAllStackTraces().forEach { (_, frames) ->
+                frames.forEach { frame ->
+                    val cls = frame.className.lowercase()
+                    val match = lsposedPatterns.firstOrNull { cls.contains(it) }
+                    if (match != null) {
+                        val entry = "${frame.className}.${frame.methodName}"
+                        if (!found.contains(entry)) found.add(entry)
+                    }
+                }
+            }
+        } catch (_: Exception) {}
+        return if (found.isNotEmpty()) {
+            DetectionResult(
+                id = "lsposed_stack_full",
+                name = "LSPosed/lspd Frames in Stack Trace",
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "LSPosed/lspd class names detected in exception stack trace.",
+                detailedReason = "Found frames: ${found.take(5).joinToString(", ")}. " +
+                    "When LSPosed is injected and a module is scoped to this app, " +
+                    "lspd internal classes appear in the call stack, confirming active hooking.",
+                solution = "Remove LSPosed or disable all modules scoped to this app.",
+                technicalDetail = found.take(10).joinToString("; ")
+            )
+        } else {
+            DetectionResult(
+                id = "lsposed_stack_full",
+                name = "LSPosed/lspd Stack Trace",
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "No LSPosed/lspd class names found in stack trace.",
+                detailedReason = "No lsposed/lspd/edxposed class names appeared in the exception stack trace.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    /**
+     * Check 21: SMAPS Private_Dirty inline-hook detection.
+     * When a hook framework (LSPosed/Frida/Zygisk module) patches code in a read-only (.text)
+     * segment of a shared library, the kernel Copy-on-Write mechanism marks those pages as
+     * Private_Dirty. On a clean device every r-xp code segment of libc/libart has
+     * Private_Dirty == 0. A non-zero value is a reliable indicator of an inline hook.
+     */
+    private fun checkSMAPSInlineHooks(): DetectionResult {
+        val suspiciousLibs = mutableListOf<String>()
+        val criticalLibs = setOf("libart.so", "libc.so", "libandroid_runtime.so", "libbinder.so")
+        try {
+            var currentLib: String? = null
+            var inCodeSegment = false
+            File("/proc/self/smaps").forEachLine { line ->
+                val trimmed = line.trim()
+                // New mapping header: starts with hex address range
+                if (trimmed.matches(Regex("^[0-9a-f]+-[0-9a-f]+.*"))) {
+                    val parts = trimmed.split("\\s+".toRegex())
+                    val perms = parts.getOrNull(1) ?: ""
+                    val path = parts.lastOrNull()?.takeIf { it.startsWith("/") } ?: ""
+                    val filename = path.substringAfterLast("/")
+                    inCodeSegment = perms == "r-xp" && criticalLibs.contains(filename)
+                    currentLib = if (inCodeSegment) filename else null
+                } else if (inCodeSegment && trimmed.startsWith("Private_Dirty:")) {
+                    val kb = trimmed.substringAfter("Private_Dirty:").trim()
+                        .substringBefore(" ").trim().toLongOrNull() ?: 0L
+                    if (kb > 0L) {
+                        val entry = "$currentLib (Private_Dirty=${kb}kB)"
+                        if (!suspiciousLibs.contains(entry)) suspiciousLibs.add(entry)
+                    }
+                }
+            }
+        } catch (_: Exception) {}
+        return if (suspiciousLibs.isNotEmpty()) {
+            DetectionResult(
+                id = "smaps_inline_hooks",
+                name = "Inline Hook Detected via SMAPS",
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "Critical library code segments have dirty (modified) pages.",
+                detailedReason = "Affected libraries: ${suspiciousLibs.joinToString(", ")}. " +
+                    "A non-zero Private_Dirty value in an r-xp (read-execute) code segment " +
+                    "means the normally read-only code was patched in memory, triggering " +
+                    "Linux Copy-on-Write. This is the fingerprint of inline hooking by " +
+                    "LSPosed (via LSPlant), Frida, or a Zygisk module.",
+                solution = "Remove LSPosed, Frida gadget, or any Zygisk hooking modules.",
+                technicalDetail = "Dirty code segments: ${suspiciousLibs.joinToString("; ")}"
+            )
+        } else {
+            DetectionResult(
+                id = "smaps_inline_hooks",
+                name = "SMAPS Inline Hook Check",
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "No inline hook signatures found in SMAPS.",
+                detailedReason = "All critical library code segments have Private_Dirty = 0.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    /**
+     * Check 22: Generic Zygisk module injection in /proc/self/maps.
+     * When a Zygisk module (any module, not just LSPosed) is loaded into this process,
+     * its native library appears in the process memory map under a path matching
+     * /data/adb/modules/<name>/zygisk/. Detecting this path confirms Zygisk injection
+     * is active for this app regardless of which module is responsible.
+     */
+    private fun checkZygiskModuleInjectionInMaps(): DetectionResult {
+        val injectedModules = mutableListOf<String>()
+        try {
+            File("/proc/self/maps").forEachLine { line ->
+                val path = line.trim().split("\\s+".toRegex()).lastOrNull() ?: return@forEachLine
+                // Match /data/adb/modules/<module_name>/zygisk/
+                if (path.contains("/data/adb/modules/") && path.contains("/zygisk/")) {
+                    val entry = path.take(120)
+                    if (!injectedModules.contains(entry)) injectedModules.add(entry)
+                }
+            }
+        } catch (_: Exception) {}
+        return if (injectedModules.isNotEmpty()) {
+            DetectionResult(
+                id = "zygisk_module_injection",
+                name = "Zygisk Module Injected into Process",
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "A Zygisk module library is mapped into this process.",
+                detailedReason = "Found Zygisk module path(s) in /proc/self/maps: " +
+                    "${injectedModules.take(5).joinToString(", ")}. " +
+                    "Zygisk loads each enabled module's native library directly into the app process " +
+                    "from /data/adb/modules/<name>/zygisk/. " +
+                    "Seeing this path confirms that Zygisk is active and has injected a module here.",
+                solution = "Disable Zygisk in Magisk settings or remove injecting modules.",
+                technicalDetail = "Mapped paths: ${injectedModules.take(10).joinToString("; ")}"
+            )
+        } else {
+            DetectionResult(
+                id = "zygisk_module_injection",
+                name = "Zygisk Module Injection",
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "No Zygisk module libraries found in process memory map.",
+                detailedReason = "No /data/adb/modules/*/zygisk/ paths found in /proc/self/maps.",
                 solution = "No action required."
             )
         }
