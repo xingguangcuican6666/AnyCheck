@@ -491,7 +491,7 @@ class ExtraRootDetector(private val context: Context) {
         val isTestKeys = buildTags.contains("test-keys", ignoreCase = true)
         return if (isTestKeys) {
             DetectionResult(
-                id = "test_keys",
+                id = "extra_test_keys",
                 name = "Test-Keys Build Detected",
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.DETECTED,
@@ -507,7 +507,7 @@ class ExtraRootDetector(private val context: Context) {
             )
         } else {
             DetectionResult(
-                id = "test_keys",
+                id = "extra_test_keys",
                 name = "Build Signing Keys",
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.NOT_DETECTED,
@@ -699,7 +699,7 @@ class ExtraRootDetector(private val context: Context) {
         val found = busyboxPaths.filter { File(it).exists() }
         return if (found.isNotEmpty()) {
             DetectionResult(
-                id = "busybox",
+                id = "extra_busybox",
                 name = "BusyBox Installed",
                 category = DetectionCategory.SU_BINARY,
                 status = DetectionStatus.DETECTED,
@@ -714,7 +714,7 @@ class ExtraRootDetector(private val context: Context) {
             )
         } else {
             DetectionResult(
-                id = "busybox",
+                id = "extra_busybox",
                 name = "BusyBox",
                 category = DetectionCategory.SU_BINARY,
                 status = DetectionStatus.NOT_DETECTED,

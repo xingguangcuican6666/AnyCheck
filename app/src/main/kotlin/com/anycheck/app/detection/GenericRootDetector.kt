@@ -180,7 +180,7 @@ class GenericRootDetector(private val context: Context) {
         val isDebug = buildTags.contains("debug")
         return if (isTestKeys) {
             DetectionResult(
-                id = "test_keys",
+                id = "generic_test_keys",
                 name = "Test-Keys Build Detected",
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.DETECTED,
@@ -194,7 +194,7 @@ class GenericRootDetector(private val context: Context) {
             )
         } else if (isDebug) {
             DetectionResult(
-                id = "test_keys",
+                id = "generic_test_keys",
                 name = "Debug Build Detected",
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.DETECTED,
@@ -208,7 +208,7 @@ class GenericRootDetector(private val context: Context) {
             )
         } else {
             DetectionResult(
-                id = "test_keys",
+                id = "generic_test_keys",
                 name = "Build Signature",
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.NOT_DETECTED,
@@ -234,7 +234,7 @@ class GenericRootDetector(private val context: Context) {
         val found = busyboxPaths.filter { File(it).exists() }
         return if (found.isNotEmpty()) {
             DetectionResult(
-                id = "busybox",
+                id = "generic_busybox",
                 name = "Busybox Found",
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.DETECTED,
@@ -248,7 +248,7 @@ class GenericRootDetector(private val context: Context) {
             )
         } else {
             DetectionResult(
-                id = "busybox",
+                id = "generic_busybox",
                 name = "Busybox",
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.NOT_DETECTED,
