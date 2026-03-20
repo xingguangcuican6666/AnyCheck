@@ -20,6 +20,7 @@ class DetectionManager(private val context: Context) {
         val xposedDetector = XposedDetector(context)
         val advancedDetector = AdvancedRootDetector(context)
         val extraDetector = ExtraRootDetector(context)
+        val lunaDetector = LunaDetector(context)
 
         val magiskChecks = magiskDetector.runAllChecks()
         onProgress(magiskChecks.size, 0, "Magisk checks complete")
@@ -45,8 +46,13 @@ class DetectionManager(private val context: Context) {
         allResults.addAll(advancedChecks)
 
         val extraChecks = extraDetector.runAllChecks()
-        onProgress(advancedEnd + extraChecks.size, advancedEnd, "Extra checks complete")
+        val extraEnd = advancedEnd + extraChecks.size
+        onProgress(extraEnd, advancedEnd, "Extra checks complete")
         allResults.addAll(extraChecks)
+
+        val lunaChecks = lunaDetector.runAllChecks()
+        onProgress(extraEnd + lunaChecks.size, extraEnd, "Luna checks complete")
+        allResults.addAll(lunaChecks)
 
         // Sort by: detected first, then by risk level, then by category
         val sorted = allResults.sortedWith(
