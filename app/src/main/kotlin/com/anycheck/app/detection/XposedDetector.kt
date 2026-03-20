@@ -832,7 +832,7 @@ class XposedDetector(private val context: Context) {
                     parentField.isAccessible = true
                     loader = parentField.get(loader) as? ClassLoader
                 } catch (_: Exception) {
-                    loader = loader.parent
+                    loader = loader?.parent
                 }
                 depth++
             }

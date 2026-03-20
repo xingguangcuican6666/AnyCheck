@@ -1034,7 +1034,7 @@ class MagiskDetector(private val context: Context) {
     /**
      * Check 20: ZygiskSU / Zygisk Next daemon processes.
      * Zygisk Next (formerly ZygiskSU) runs companion daemon processes with characteristic names.
-     * These can be detected by scanning /proc/*/cmdline for their process names.
+     * These can be detected by scanning /proc/[pid]/cmdline for their process names.
      */
     private fun checkZygiskSUDaemon(): DetectionResult {
         val daemonPatterns = listOf(
