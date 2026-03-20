@@ -24,7 +24,13 @@ class XposedDetector(private val context: Context) {
         checkLSPosedDexInMaps(),
         checkLSPosedConfigFiles(),
         checkHookedMethodDetection(),
-        checkLSPosedModuleScope()
+        checkLSPosedModuleScope(),
+        checkLSPosedSpecificClasses(),
+        checkXposedBridgeVersionProp(),
+        checkClassLoaderChain(),
+        checkInMemoryDexClassLoader(),
+        checkLSPosedDataDirs(),
+        checkZygiskEnvAndProps()
     )
 
     /** Check 1: Xposed / LSPosed / EdXposed manager package names */
@@ -660,6 +666,442 @@ class XposedDetector(private val context: Context) {
                 riskLevel = RiskLevel.CRITICAL,
                 description = "No LSPosed module appears to be scoped to this app.",
                 detailedReason = "This app's package name was not found in any readable LSPosed scope config.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    /**
+     * Check 14: Load LSPosed-specific internal classes.
+     * LSPosed injects its startup classes into every hooked process.
+     * If these classes are loadable, LSPosed is definitively active in this process.
+     */
+    private fun checkLSPosedSpecificClasses(): DetectionResult {
+        val lsposedClasses = listOf(
+            "org.lsposed.lspd.core.Startup",
+            "org.lsposed.lspd.nativebridge.NativeAPI",
+            "org.lsposed.lspd.nativebridge.ModuleLogger",
+            "io.github.lsposed.lspd.core.Startup",
+            "io.github.lsposed.lspd.service.ILSPosedService",
+            "org.lsposed.lspd.service.ILSPosedService",
+            "com.solohsu.android.edxp.manager.service.IEdXpService"
+        )
+        val found = mutableListOf<String>()
+        lsposedClasses.forEach { className ->
+            try {
+                Class.forName(className)
+                found.add(className)
+            } catch (_: ClassNotFoundException) {}
+            catch (_: Exception) {}
+        }
+
+        return if (found.isNotEmpty()) {
+            DetectionResult(
+                id = "lsposed_classes",
+                name = "LSPosed Internal Classes Detected",
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "LSPosed internal classes are loaded in this process.",
+                detailedReason = "Successfully loaded: ${found.joinToString(", ")}. " +
+                    "These are LSPosed's private implementation classes (lspd core). " +
+                    "They are only present in the classpath when LSPosed has injected into this process. " +
+                    "This is the most reliable Java-layer indicator of active LSPosed hooking.",
+                solution = "Uninstall LSPosed or disable module scoping for this application.",
+                technicalDetail = "Classes: ${found.joinToString("; ")}"
+            )
+        } else {
+            DetectionResult(
+                id = "lsposed_classes",
+                name = "LSPosed Internal Classes",
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "No LSPosed internal classes found in classpath.",
+                detailedReason = "None of the known LSPosed lspd implementation classes could be loaded.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    /**
+     * Check 15: XposedBridge version system property and related Xposed bridge fields.
+     * When the Xposed/LSPosed framework is active, it sets several system properties and
+     * also exposes specific fields on the XposedBridge class (disableHooks, hookCount).
+     */
+    private fun checkXposedBridgeVersionProp(): DetectionResult {
+        val xposedSystemProps = listOf(
+            "xposed.bridge.version",
+            "de.robv.android.xposed.version",
+            "org.lsposed.version"
+        )
+        val found = mutableListOf<String>()
+
+        // Check via System.getProperty
+        xposedSystemProps.forEach { key ->
+            try {
+                val v = System.getProperty(key)
+                if (!v.isNullOrEmpty()) found.add("$key=$v")
+            } catch (_: Exception) {}
+        }
+
+        // Check via SystemProperties reflection (reads build.prop-layer props)
+        xposedSystemProps.forEach { key ->
+            try {
+                val sp = Class.forName("android.os.SystemProperties")
+                val v = sp.getMethod("get", String::class.java, String::class.java)
+                    .invoke(null, key, "") as String
+                if (v.isNotEmpty() && !found.any { it.startsWith(key) }) {
+                    found.add("$key=$v (sp)")
+                }
+            } catch (_: Exception) {}
+        }
+
+        // Check XposedBridge.disableHooks and getXposedVersion() if class is accessible
+        try {
+            val bridgeClass = Class.forName("de.robv.android.xposed.XposedBridge")
+            try {
+                bridgeClass.getField("disableHooks")
+                found.add("XposedBridge.disableHooks field accessible")
+            } catch (_: NoSuchFieldException) {}
+            try {
+                val versionMethod = bridgeClass.getMethod("getXposedVersion")
+                val version = versionMethod.invoke(null)
+                found.add("XposedBridge.getXposedVersion()=$version")
+            } catch (_: Exception) {}
+        } catch (_: ClassNotFoundException) {}
+        catch (_: Exception) {}
+
+        return if (found.isNotEmpty()) {
+            DetectionResult(
+                id = "xposed_bridge_version",
+                name = "XposedBridge Version Properties Detected",
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "Xposed framework version properties or bridge fields found.",
+                detailedReason = "Found: ${found.joinToString(", ")}. " +
+                    "The Xposed framework sets 'xposed.bridge.version' as a system property " +
+                    "and exposes static fields on XposedBridge. " +
+                    "These are definitive indicators that LSPosed (or another Xposed fork) is active.",
+                solution = "Uninstall LSPosed/Xposed to remove these properties.",
+                technicalDetail = found.joinToString("; ")
+            )
+        } else {
+            DetectionResult(
+                id = "xposed_bridge_version",
+                name = "XposedBridge Version Properties",
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "No XposedBridge version properties found.",
+                detailedReason = "No Xposed version system properties or bridge fields detected.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    /**
+     * Check 16: ClassLoader chain analysis.
+     * LSPosed injects additional ClassLoaders into the app's ClassLoader hierarchy.
+     * Walking the parent chain and inspecting class names can reveal lsposed/lspd loaders.
+     */
+    private fun checkClassLoaderChain(): DetectionResult {
+        val suspiciousLoaders = mutableListOf<String>()
+        val hookKeywords = listOf("lsposed", "lspd", "edxposed", "edxp", "xposed", "riru", "zygisk")
+
+        try {
+            var loader: ClassLoader? = context.classLoader
+            var depth = 0
+            while (loader != null && depth < 20) {
+                val loaderName = loader.javaClass.name.lowercase()
+                val loaderStr = loader.toString().lowercase()
+                hookKeywords.forEach { kw ->
+                    if ((loaderName.contains(kw) || loaderStr.contains(kw)) &&
+                        !suspiciousLoaders.any { it.contains(kw) }
+                    ) {
+                        suspiciousLoaders.add("${loader.javaClass.name}[d=$depth]")
+                    }
+                }
+                // Also check parent class name via reflection
+                try {
+                    val parentField = loader.javaClass.getDeclaredField("parent")
+                    parentField.isAccessible = true
+                    loader = parentField.get(loader) as? ClassLoader
+                } catch (_: Exception) {
+                    loader = loader.parent
+                }
+                depth++
+            }
+        } catch (_: Exception) {}
+
+        // Also inspect Thread's contextClassLoader
+        try {
+            val ctxLoader = Thread.currentThread().contextClassLoader
+            val name = ctxLoader?.javaClass?.name?.lowercase() ?: ""
+            if (hookKeywords.any { name.contains(it) } && !suspiciousLoaders.any { it.contains(name) }) {
+                suspiciousLoaders.add("contextClassLoader=${ctxLoader?.javaClass?.name}")
+            }
+        } catch (_: Exception) {}
+
+        return if (suspiciousLoaders.isNotEmpty()) {
+            DetectionResult(
+                id = "classloader_chain",
+                name = "LSPosed ClassLoader in Chain",
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "LSPosed/Xposed ClassLoader found in the ClassLoader hierarchy.",
+                detailedReason = "Found: ${suspiciousLoaders.joinToString(", ")}. " +
+                    "LSPosed wraps the app's ClassLoader with its own loader to inject Xposed modules. " +
+                    "A ClassLoader with 'lsposed', 'lspd', or 'edxposed' in its class name is a direct " +
+                    "indicator of LSPosed injection into this process.",
+                solution = "Remove LSPosed or disable modules for this app.",
+                technicalDetail = suspiciousLoaders.joinToString("; ")
+            )
+        } else {
+            DetectionResult(
+                id = "classloader_chain",
+                name = "ClassLoader Chain",
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "No LSPosed/Xposed ClassLoader found in the ClassLoader hierarchy.",
+                detailedReason = "The ClassLoader parent chain contains no known hook framework class names.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    /**
+     * Check 17: In-memory DEX ClassLoader detection.
+     * LSPosed loads Xposed module DEX files directly into memory using InMemoryDexClassLoader.
+     * By inspecting the app's ClassLoader dexElements via reflection, we can detect
+     * anonymous/in-memory DEX entries that have no file path — a strong LSPosed signature.
+     */
+    private fun checkInMemoryDexClassLoader(): DetectionResult {
+        val suspiciousEntries = mutableListOf<String>()
+
+        try {
+            var loader: ClassLoader? = context.classLoader
+            var depth = 0
+            while (loader != null && depth < 15) {
+                val loaderClass = loader.javaClass
+                val loaderSuperClass = loaderClass.superclass
+
+                // Check if this is an InMemoryDexClassLoader by class name
+                val loaderName = loaderClass.name
+                if (loaderName.contains("InMemoryDexClassLoader")) {
+                    suspiciousEntries.add("InMemoryDexClassLoader at depth $depth")
+                }
+
+                // Deep reflection into BaseDexClassLoader.pathList.dexElements
+                val isBaseDex = loaderName.contains("BaseDexClassLoader") ||
+                    (loaderSuperClass?.name?.contains("BaseDexClassLoader") == true)
+                if (isBaseDex || loaderName.contains("DexClassLoader") ||
+                    loaderName.contains("PathClassLoader")
+                ) {
+                    try {
+                        // Walk up class hierarchy to find pathList field
+                        var searchClass: Class<*>? = loaderClass
+                        var pathListField: java.lang.reflect.Field? = null
+                        while (searchClass != null && pathListField == null) {
+                            try {
+                                pathListField = searchClass.getDeclaredField("pathList")
+                            } catch (_: NoSuchFieldException) {}
+                            searchClass = searchClass.superclass
+                        }
+                        pathListField?.let { plf ->
+                            plf.isAccessible = true
+                            val pathList = plf.get(loader) ?: return@let
+                            val dexElementsField = pathList.javaClass.getDeclaredField("dexElements")
+                            dexElementsField.isAccessible = true
+                            val dexElements = dexElementsField.get(pathList) as? Array<*>
+                            dexElements?.forEachIndexed { idx, element ->
+                                try {
+                                    val dexFileField = element!!.javaClass.getDeclaredField("dexFile")
+                                    dexFileField.isAccessible = true
+                                    val dexFile = dexFileField.get(element) ?: return@forEachIndexed
+                                    val dexStr = dexFile.toString()
+                                    // In-memory DEX has "InMemoryDexFile" or empty/null path
+                                    if (dexStr.contains("InMemoryDexFile") ||
+                                        dexStr.contains("cookie=")
+                                    ) {
+                                        // Try to get actual file name
+                                        val fileName = runCatching {
+                                            dexFile.javaClass.getDeclaredMethod("getName")
+                                                .also { it.isAccessible = true }
+                                                .invoke(dexFile) as? String
+                                        }.getOrNull()
+                                        if (fileName == null || !fileName.startsWith("/")) {
+                                            suspiciousEntries.add(
+                                                "InMemoryDex[d=$depth,e=$idx]=${dexStr.take(60)}"
+                                            )
+                                        }
+                                    }
+                                } catch (_: Exception) {}
+                            }
+                        }
+                    } catch (_: Exception) {}
+                }
+
+                loader = try { loader.parent } catch (_: Exception) { null }
+                depth++
+            }
+        } catch (_: Exception) {}
+
+        return if (suspiciousEntries.isNotEmpty()) {
+            DetectionResult(
+                id = "in_memory_dex",
+                name = "In-Memory DEX ClassLoader Detected",
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "Anonymous/in-memory DEX modules detected in ClassLoader.",
+                detailedReason = "Found: ${suspiciousEntries.take(5).joinToString(", ")}. " +
+                    "LSPosed loads Xposed module APK/DEX files directly into memory using " +
+                    "InMemoryDexClassLoader. In-memory DEX elements have no file path — " +
+                    "unlike normal app ClassLoaders which reference files on disk. " +
+                    "This is one of the most reliable Java-layer indicators of active LSPosed module injection.",
+                solution = "Disable all LSPosed modules for this app via LSPosed Manager.",
+                technicalDetail = suspiciousEntries.take(8).joinToString("; ")
+            )
+        } else {
+            DetectionResult(
+                id = "in_memory_dex",
+                name = "In-Memory DEX ClassLoader",
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "No in-memory DEX entries found in ClassLoader hierarchy.",
+                detailedReason = "All DEX entries in the ClassLoader hierarchy reference real files on disk.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    /**
+     * Check 18: LSPosed application data directories.
+     * Even if LSPosed Manager is hidden from PackageManager via Magisk DenyList,
+     * its data directory under /data/user/0/ or /data/data/ may still exist.
+     */
+    private fun checkLSPosedDataDirs(): DetectionResult {
+        val dataDirPatterns = listOf(
+            "/data/user/0/org.lsposed.manager",
+            "/data/user/0/io.github.lsposed.manager",
+            "/data/user/0/com.lsposed.manager",
+            "/data/data/org.lsposed.manager",
+            "/data/data/io.github.lsposed.manager",
+            "/data/data/com.lsposed.manager",
+            "/data/user/0/org.meowcat.edxposed.manager",
+            "/data/data/org.meowcat.edxposed.manager",
+            "/data/user/0/com.solohsu.android.edxp.manager",
+            "/data/data/de.robv.android.xposed.installer"
+        )
+        val found = dataDirPatterns.filter { File(it).exists() }
+
+        return if (found.isNotEmpty()) {
+            DetectionResult(
+                id = "lsposed_data_dirs",
+                name = "LSPosed Data Directory Exists",
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = "LSPosed/Xposed manager app data directory found.",
+                detailedReason = "Found: ${found.joinToString(", ")}. " +
+                    "Even when Magisk DenyList hides the LSPosed Manager APK from PackageManager, " +
+                    "the app's data directory under /data/user/0/ often persists. " +
+                    "Its existence proves LSPosed was or is installed on this device.",
+                solution = "Uninstall LSPosed Manager via the app itself or via adb.",
+                technicalDetail = "Dirs: ${found.joinToString("; ")}"
+            )
+        } else {
+            DetectionResult(
+                id = "lsposed_data_dirs",
+                name = "LSPosed Data Directories",
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = "No LSPosed/Xposed manager data directories found.",
+                detailedReason = "No known LSPosed/Xposed data directories were found in /data/user/0/ or /data/data/.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    /**
+     * Check 19: Zygisk environment variable and system properties.
+     * Zygisk (built into Magisk) and Zygisk Next set specific environment variables and
+     * system properties that can be read from within an app process.
+     * - ZYGISK_ENABLED env var (set by older Magisk/Zygisk)
+     * - ro.zygisk.denylists (Zygisk Next / ZygiskSU feature)
+     * - persist.sys.zygisk.enable
+     */
+    private fun checkZygiskEnvAndProps(): DetectionResult {
+        val found = mutableListOf<String>()
+
+        // Environment variables
+        try {
+            val zygiskEnabled = System.getenv("ZYGISK_ENABLED")
+            if (!zygiskEnabled.isNullOrEmpty() && zygiskEnabled != "0") {
+                found.add("ZYGISK_ENABLED=$zygiskEnabled")
+            }
+        } catch (_: Exception) {}
+
+        // System properties via reflection (more reliable than getprop)
+        val zygiskProps = listOf(
+            "ro.zygisk.denylists",
+            "persist.sys.zygisk.enable",
+            "persist.zygisk.enabled",
+            "ro.zygisk.enable",
+            "magisk.process",
+            "ro.boot.vbmeta.device_state"  // Often set to "unlocked" on Magisk devices
+        )
+        zygiskProps.forEach { key ->
+            try {
+                val sp = Class.forName("android.os.SystemProperties")
+                val v = sp.getMethod("get", String::class.java, String::class.java)
+                    .invoke(null, key, "") as String
+                if (v.isNotEmpty() && !listOf("0", "false", "locked").contains(v)) {
+                    found.add("$key=$v")
+                }
+            } catch (_: Exception) {}
+        }
+
+        // Also check via getprop for zygisk props
+        listOf("ro.zygisk.denylists", "persist.sys.zygisk.enable").forEach { key ->
+            try {
+                val v = getSystemProperty(key)
+                if (v.isNotEmpty() && !found.any { it.startsWith(key) }) {
+                    found.add("$key=$v (getprop)")
+                }
+            } catch (_: Exception) {}
+        }
+
+        return if (found.isNotEmpty()) {
+            DetectionResult(
+                id = "zygisk_env",
+                name = "Zygisk Environment/Properties Detected",
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = "Zygisk-specific environment variables or system properties found.",
+                detailedReason = "Found: ${found.joinToString(", ")}. " +
+                    "ZYGISK_ENABLED is set by Magisk when Zygisk is active. " +
+                    "ro.zygisk.denylists is specific to Zygisk Next (standalone Zygisk). " +
+                    "These variables/properties are not present on stock devices and confirm Zygisk is running.",
+                solution = "Disable Zygisk in Magisk settings or uninstall Magisk/Zygisk Next.",
+                technicalDetail = found.joinToString("; ")
+            )
+        } else {
+            DetectionResult(
+                id = "zygisk_env",
+                name = "Zygisk Environment/Properties",
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = "No Zygisk environment variables or properties found.",
+                detailedReason = "ZYGISK_ENABLED is not set; no Zygisk system properties detected.",
                 solution = "No action required."
             )
         }

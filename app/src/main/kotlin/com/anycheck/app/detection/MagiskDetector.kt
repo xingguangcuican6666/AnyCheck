@@ -30,7 +30,12 @@ class MagiskDetector(private val context: Context) {
         checkZygiskActiveInMaps(),
         checkMagiskStubApp(),
         checkMagiskSELinuxContext(),
-        checkMagiskApexOverlay()
+        checkMagiskApexOverlay(),
+        checkMagiskFileDescriptors(),
+        checkNativeBridgeInjection(),
+        checkZygiskSUDaemon(),
+        checkMagiskTimingLatency(),
+        checkBroaderMapsPatterns()
     )
 
     /** Check 1: Known Magisk-specific files */
@@ -910,6 +915,322 @@ class MagiskDetector(private val context: Context) {
                 riskLevel = RiskLevel.HIGH,
                 description = "No Magisk APEX overlay detected.",
                 detailedReason = "No Magisk-specific files were found inside /apex.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    /**
+     * Check 18: Magisk file descriptors in /proc/self/fd.
+     * Magisk keeps open file descriptors to its internal files (mirrors, sockets, binaries).
+     * Reading the symlink targets for each fd reveals paths that should not be open in a
+     * normal process — magisk/libmagisk/sbin paths are clear indicators.
+     */
+    private fun checkMagiskFileDescriptors(): DetectionResult {
+        val suspiciousFds = mutableListOf<String>()
+        try {
+            val fdDir = File("/proc/self/fd")
+            val fds = fdDir.listFiles() ?: emptyArray()
+            for (fd in fds) {
+                try {
+                    val link = fd.canonicalPath
+                    if (link.contains("magisk", ignoreCase = true) ||
+                        link.contains("libmagisk", ignoreCase = true) ||
+                        link.contains("/dev/magisk", ignoreCase = true) ||
+                        link.contains("/sbin/.magisk", ignoreCase = true)
+                    ) {
+                        suspiciousFds.add(link.take(60))
+                    }
+                } catch (_: Exception) {}
+            }
+        } catch (_: Exception) {}
+
+        return if (suspiciousFds.isNotEmpty()) {
+            DetectionResult(
+                id = "magisk_fd",
+                name = "Magisk File Descriptors Detected",
+                category = DetectionCategory.MAGISK,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "This process has open file descriptors pointing to Magisk paths.",
+                detailedReason = "Found in /proc/self/fd: ${suspiciousFds.take(5).joinToString(", ")}. " +
+                    "Magisk keeps open FDs to its mirror mount points and socket files. " +
+                    "The presence of these FDs in an app process confirms Magisk has touched this process.",
+                solution = "Remove Magisk to clear these file descriptor references.",
+                technicalDetail = "FD targets: ${suspiciousFds.take(8).joinToString("; ")}"
+            )
+        } else {
+            DetectionResult(
+                id = "magisk_fd",
+                name = "Magisk File Descriptors",
+                category = DetectionCategory.MAGISK,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "No Magisk-related file descriptors found in /proc/self/fd.",
+                detailedReason = "No open file descriptors point to Magisk paths.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    /**
+     * Check 19: Native bridge injection (ro.dalvik.vm.native.bridge).
+     * Riru (Magisk module) injects itself by replacing the native bridge library.
+     * This property normally contains "0" or is absent on stock devices.
+     * A non-standard value (especially libriru*.so or libzygisk_loader.so) indicates Riru/Zygisk.
+     */
+    private fun checkNativeBridgeInjection(): DetectionResult {
+        val suspiciousBridges = listOf(
+            "libriru", "libzygisk_loader", "libnb", "libhoudini64",
+            "libhoudini", "libriruloader"
+        )
+        val bridgeValue = getSystemProperty("ro.dalvik.vm.native.bridge").trim()
+        val emptyOrStock = bridgeValue.isEmpty() || bridgeValue == "0"
+        val isSuspicious = !emptyOrStock &&
+            suspiciousBridges.any { bridgeValue.contains(it, ignoreCase = true) }
+
+        // Also check via SystemProperties reflection (more reliable)
+        val reflectedValue = runCatching {
+            val sp = Class.forName("android.os.SystemProperties")
+            sp.getMethod("get", String::class.java, String::class.java)
+                .invoke(null, "ro.dalvik.vm.native.bridge", "") as String
+        }.getOrDefault(bridgeValue)
+        val isSuspiciousReflected = reflectedValue.isNotEmpty() &&
+            reflectedValue != "0" &&
+            suspiciousBridges.any { reflectedValue.contains(it, ignoreCase = true) }
+
+        val detected = isSuspicious || isSuspiciousReflected
+        val actualValue = if (reflectedValue.isNotEmpty()) reflectedValue else bridgeValue
+
+        return if (detected) {
+            DetectionResult(
+                id = "native_bridge",
+                name = "Native Bridge Injection Detected",
+                category = DetectionCategory.MAGISK,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "Riru/Zygisk native bridge injection detected.",
+                detailedReason = "ro.dalvik.vm.native.bridge = '$actualValue'. " +
+                    "Riru (a predecessor of Zygisk) hijacks the ART native bridge mechanism " +
+                    "by replacing this property with its own loader library. " +
+                    "A suspicious value here is a strong indicator of Riru/Zygisk-based injection.",
+                solution = "Remove the Riru or Zygisk Magisk module to restore the normal native bridge.",
+                technicalDetail = "ro.dalvik.vm.native.bridge=$actualValue"
+            )
+        } else {
+            DetectionResult(
+                id = "native_bridge",
+                name = "Native Bridge",
+                category = DetectionCategory.MAGISK,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "No suspicious native bridge injection found.",
+                detailedReason = "ro.dalvik.vm.native.bridge is '$actualValue' — stock value.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    /**
+     * Check 20: ZygiskSU / Zygisk Next daemon processes.
+     * Zygisk Next (formerly ZygiskSU) runs companion daemon processes with characteristic names.
+     * These can be detected by scanning /proc/*/cmdline for their process names.
+     */
+    private fun checkZygiskSUDaemon(): DetectionResult {
+        val daemonPatterns = listOf(
+            "zn-daemon",            // ZygiskSU main daemon
+            "zn-nsdaemon",          // ZygiskSU namespace daemon
+            "zn-zygisk-companion",  // ZygiskSU Zygisk companion
+            "zygisk_gadget",        // Frida gadget via Zygisk
+            "rezygisk",             // ReZygisk
+            "zygisk-ptrace",        // Zygisk ptrace helper
+            "magiskd",              // Magisk daemon
+            "magisk_loader"         // Magisk loader process
+        )
+        val foundDaemons = mutableListOf<String>()
+
+        try {
+            File("/proc").listFiles()?.forEach { pidDir ->
+                if (!pidDir.isDirectory || !pidDir.name.all { it.isDigit() }) return@forEach
+                try {
+                    val cmdline = File(pidDir, "cmdline").readText()
+                        .replace('\u0000', ' ').trim()
+                    daemonPatterns.forEach { pattern ->
+                        if (cmdline.contains(pattern, ignoreCase = true) &&
+                            !foundDaemons.contains(pattern)
+                        ) {
+                            foundDaemons.add(pattern)
+                        }
+                    }
+                } catch (_: Exception) {}
+            }
+        } catch (_: Exception) {}
+
+        return if (foundDaemons.isNotEmpty()) {
+            DetectionResult(
+                id = "zygisk_su_daemon",
+                name = "Zygisk Companion Daemon Detected",
+                category = DetectionCategory.MAGISK,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "Zygisk/Magisk daemon processes are running.",
+                detailedReason = "Found daemon process(es): ${foundDaemons.joinToString(", ")}. " +
+                    "Zygisk Next (a standalone Zygisk implementation) runs privileged daemon processes " +
+                    "named zn-daemon, zn-nsdaemon, and zn-zygisk-companion. " +
+                    "Magisk itself runs as 'magiskd'. These are definitive indicators of active root injection.",
+                solution = "Uninstall Magisk or the Zygisk Next module to remove these daemon processes.",
+                technicalDetail = "Daemons: ${foundDaemons.joinToString("; ")}"
+            )
+        } else {
+            DetectionResult(
+                id = "zygisk_su_daemon",
+                name = "Zygisk/Magisk Daemon Processes",
+                category = DetectionCategory.MAGISK,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "No Zygisk/Magisk daemon processes found.",
+                detailedReason = "No Zygisk Next or Magisk daemon process names were found in /proc/*/cmdline.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    /**
+     * Check 21: Timing-based detection.
+     * Magisk hooks the `access(2)` and `stat(2)` syscalls (via DenyList) to hide files.
+     * Hooked calls take significantly longer than direct syscalls.
+     * We measure latency of File.exists() on a known Magisk path and compare with a baseline.
+     */
+    private fun checkMagiskTimingLatency(): DetectionResult {
+        return try {
+            val magiskPath = "/data/adb/magisk"
+            val baselinePath = "/data/adb/nonexistent_baseline_9283"
+            val iterations = 5
+
+            // Warm up JIT
+            repeat(2) {
+                File(magiskPath).exists()
+                File(baselinePath).exists()
+            }
+
+            // Measure baseline (nonexistent path, no hook)
+            val baselineStart = System.nanoTime()
+            repeat(iterations) { File(baselinePath).exists() }
+            val baselineNs = (System.nanoTime() - baselineStart) / iterations
+
+            // Measure Magisk path
+            val magiskStart = System.nanoTime()
+            repeat(iterations) { File(magiskPath).exists() }
+            val magiskNs = (System.nanoTime() - magiskStart) / iterations
+
+            // If Magisk DenyList hooks stat(), the Magisk path access is much slower
+            // Threshold: >4× slower than baseline AND >3ms absolute
+            val ratio = if (baselineNs > 0) magiskNs.toDouble() / baselineNs else 0.0
+            val absoluteMs = magiskNs / 1_000_000.0
+            val detected = ratio > 4.0 && absoluteMs > 3.0
+
+            if (detected) {
+                DetectionResult(
+                    id = "magisk_timing",
+                    name = "Magisk Hook Latency Anomaly",
+                    category = DetectionCategory.MAGISK,
+                    status = DetectionStatus.DETECTED,
+                    riskLevel = RiskLevel.MEDIUM,
+                    description = "Suspicious file access latency suggests Magisk DenyList hooks.",
+                    detailedReason = "File.exists('$magiskPath') took ${String.format("%.2f", absoluteMs)}ms " +
+                        "(${String.format("%.1f", ratio)}× slower than baseline). " +
+                        "Magisk's DenyList patches intercept filesystem calls to hide Magisk files. " +
+                        "This interception adds measurable latency compared to accessing non-hooked paths.",
+                    solution = "Disable Magisk DenyList or uninstall Magisk.",
+                    technicalDetail = "magisk=${magiskNs}ns baseline=${baselineNs}ns ratio=${String.format("%.2f", ratio)}"
+                )
+            } else {
+                DetectionResult(
+                    id = "magisk_timing",
+                    name = "File Access Timing",
+                    category = DetectionCategory.MAGISK,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.MEDIUM,
+                    description = "No suspicious timing anomaly for Magisk file access.",
+                    detailedReason = "File.exists() latency is within normal range " +
+                        "(ratio=${String.format("%.1f", ratio)}×, ${String.format("%.2f", absoluteMs)}ms). " +
+                        "No Magisk DenyList hook latency detected.",
+                    solution = "No action required."
+                )
+            }
+        } catch (e: Exception) {
+            DetectionResult(
+                id = "magisk_timing",
+                name = "File Access Timing",
+                category = DetectionCategory.MAGISK,
+                status = DetectionStatus.ERROR,
+                riskLevel = RiskLevel.MEDIUM,
+                description = "Timing check failed.",
+                detailedReason = "Error: ${e.message}",
+                solution = "No action required."
+            )
+        }
+    }
+
+    /**
+     * Check 22: Broader /proc/self/maps scan for root-framework libraries.
+     * While checkZygiskActiveInMaps looks for Zygisk-specific filenames,
+     * this check casts a wider net: libsu.so, libriru*, libmagisk*, libxposed*, libwhale, libdobby,
+     * libsandhook, libpine, etc. These are native hook engines used by multiple frameworks.
+     */
+    private fun checkBroaderMapsPatterns(): DetectionResult {
+        val suspiciousLibPatterns = listOf(
+            "libsu.so",           // libsu (Magisk's root access library)
+            "libriru",            // Riru framework library
+            "libmagisk",          // Magisk native library
+            "libwhale",           // Whale hook framework (used by Xposed forks)
+            "libdobby",           // Dobby inline hook framework
+            "libsandhook",        // SandHook ART hook engine
+            "libpine",            // Pine ART hook framework
+            "libepic",            // Epic ART hook framework
+            "dreamland",          // Dreamland Xposed fork
+            "libhook",            // Generic hook library
+            "zygote-loader"       // Zygote loader variant
+        )
+        val found = mutableListOf<String>()
+        try {
+            val maps = File("/proc/self/maps").readText()
+            maps.lines().forEach { line ->
+                val path = line.trim().split("\\s+".toRegex()).lastOrNull()?.trim() ?: return@forEach
+                if (path.isEmpty() || path.startsWith("[") || !path.contains("/")) return@forEach
+                val filename = path.substringAfterLast("/").lowercase()
+                suspiciousLibPatterns.forEach { pat ->
+                    if (filename.contains(pat) && !found.any { it.contains(pat) }) {
+                        found.add("$pat → ${path.take(70)}")
+                    }
+                }
+            }
+        } catch (_: Exception) {}
+
+        return if (found.isNotEmpty()) {
+            DetectionResult(
+                id = "broad_maps",
+                name = "Root/Hook Libraries in Process Memory",
+                category = DetectionCategory.MAGISK,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "Root or hook framework native libraries are loaded in this process.",
+                detailedReason = "Found in /proc/self/maps: ${found.take(5).joinToString(", ")}. " +
+                    "These are native libraries belonging to Magisk (libsu), Riru, and inline hook engines " +
+                    "(Dobby, SandHook, Pine, Whale) used by Xposed-compatible frameworks. " +
+                    "Their presence confirms active injection into this process.",
+                solution = "Remove the relevant root framework or module to prevent library injection.",
+                technicalDetail = found.take(10).joinToString("; ")
+            )
+        } else {
+            DetectionResult(
+                id = "broad_maps",
+                name = "Root/Hook Libraries",
+                category = DetectionCategory.MAGISK,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "No root/hook framework native libraries found in process memory.",
+                detailedReason = "No known root/hook library names were found in /proc/self/maps.",
                 solution = "No action required."
             )
         }
