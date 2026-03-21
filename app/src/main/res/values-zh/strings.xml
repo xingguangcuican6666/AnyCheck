@@ -391,4 +391,194 @@
     <string name="chk_su_extended_paths_reason">发现以下与 su 相关的路径：%1$s。su 二进制文件的存在是设备已被 Root 的强指标。</string>
     <string name="chk_su_extended_paths_reason_nd">已扫描 %1$d 个已知 su 二进制文件路径并检查了 PATH。未发现此设备上可访问的 su 二进制文件。</string>
     <string name="chk_su_extended_paths_solution">移除所有 Root 框架（Magisk、KernelSU、APatch、SuperSU）并恢复原厂引导镜像。</string>
+
+    <!-- MagiskDetector checks -->
+    <string name="chk_magisk_files_name">已检测到 Magisk 文件</string>
+    <string name="chk_magisk_files_name_nd">Magisk 文件</string>
+    <string name="chk_magisk_files_desc">在文件系统中发现了 Magisk 特有的文件或目录。</string>
+    <string name="chk_magisk_files_desc_nd">未检测到 Magisk 特有文件。</string>
+    <string name="chk_magisk_files_reason">发现了以下 Magisk 特有文件：%1$s。这些文件由 Magisk 在安装和运行期间创建。其存在强烈表明该设备已安装 Magisk。</string>
+    <string name="chk_magisk_files_reason_nd">已知的 Magisk 文件路径均不可访问或不存在。</string>
+    <string name="chk_magisk_files_solution">要移除 Magisk：打开 Magisk Manager → 卸载 → 完全卸载。或通过 fastboot 刷入原厂 boot.img：`fastboot flash boot stock_boot.img`。</string>
+
+    <string name="chk_magisk_dirs_name">已检测到 Magisk 目录</string>
+    <string name="chk_magisk_dirs_name_nd">Magisk 目录</string>
+    <string name="chk_magisk_dirs_desc">发现了 Magisk 工作目录。</string>
+    <string name="chk_magisk_dirs_desc_nd">未发现 Magisk 工作目录。</string>
+    <string name="chk_magisk_dirs_reason">目录 %1$s 存在。Magisk 使用 /data/adb/magisk 作为其主工作目录，使用 /data/adb/modules 存储已安装的模块。这些目录在 Magisk 安装期间创建。</string>
+    <string name="chk_magisk_dirs_reason_nd">未找到 Magisk 工作目录。</string>
+    <string name="chk_magisk_dirs_solution">通过 Magisk Manager 卸载 Magisk 或重新刷入原厂 boot 镜像。</string>
+
+    <string name="chk_magisk_db_name">已发现 Magisk 数据库</string>
+    <string name="chk_magisk_db_name_nd">Magisk 数据库</string>
+    <string name="chk_magisk_db_desc">已检测到 Magisk SQLite 数据库。</string>
+    <string name="chk_magisk_db_desc_nd">未发现 Magisk 数据库。</string>
+    <string name="chk_magisk_db_reason">Magisk 数据库（magisk.db）存储策略规则、模块配置和超级用户授权记录。发现于：%1$s。</string>
+    <string name="chk_magisk_db_reason_nd">在已知位置未发现 Magisk SQLite 数据库。</string>
+    <string name="chk_magisk_db_solution">完全卸载 Magisk 后数据库将被删除。</string>
+
+    <string name="chk_magisk_packages_name">已检测到 Magisk 应用</string>
+    <string name="chk_magisk_packages_name_nd">Magisk 应用软件包</string>
+    <string name="chk_magisk_packages_desc">已安装 Magisk Manager 或相关应用。</string>
+    <string name="chk_magisk_packages_desc_nd">未发现 Magisk Manager 软件包。</string>
+    <string name="chk_magisk_packages_reason">发现以下与 Magisk 相关的软件包：%1$s。这些应用是 Magisk 的主要管理界面，其存在确认 Magisk 已安装。</string>
+    <string name="chk_magisk_packages_reason_nd">未发现已知的 Magisk Manager 软件包名称。</string>
+    <string name="chk_magisk_packages_solution">先通过 Magisk Manager 卸载（以正确移除 root），然后再卸载 Magisk Manager 应用本身。</string>
+
+    <string name="chk_magisk_su_name">已发现 Magisk SU 二进制文件</string>
+    <string name="chk_magisk_su_name_nd">Magisk SU 二进制文件</string>
+    <string name="chk_magisk_su_desc">已检测到 Magisk su 或核心二进制文件。</string>
+    <string name="chk_magisk_su_desc_nd">未发现 Magisk su 或核心二进制文件。</string>
+    <string name="chk_magisk_su_reason">Magisk 安装其 su 二进制文件和核心组件以管理 root 访问权限。发现：%1$s。这些二进制文件处理 root 权限请求和策略执行。</string>
+    <string name="chk_magisk_su_reason_nd">在已知路径未找到 Magisk 核心二进制文件。</string>
+    <string name="chk_magisk_su_solution">通过 Magisk Manager → 卸载 卸载 Magisk 后，这些二进制文件将被删除。</string>
+
+    <string name="chk_magisk_unix_socket_name">已检测到 Magisk Unix 套接字</string>
+    <string name="chk_magisk_unix_socket_name_nd">Magisk Unix 套接字</string>
+    <string name="chk_magisk_unix_socket_desc">在 /proc/net/unix 中发现了 Magisk 守护进程套接字。</string>
+    <string name="chk_magisk_unix_socket_desc_nd">未发现 Magisk 守护进程套接字。</string>
+    <string name="chk_magisk_unix_socket_reason">Magisk 运行一个监听 Unix 套接字的后台守护进程。套接字名称 '%1$s' 在 /proc/net/unix 中被发现，表明 Magisk 守护进程当前正在运行。</string>
+    <string name="chk_magisk_unix_socket_reason_nd">在 /proc/net/unix 中未找到与 Magisk 相关的套接字名称。</string>
+    <string name="chk_magisk_unix_socket_reason_error">无法读取 /proc/net/unix：%1$s</string>
+    <string name="chk_magisk_unix_socket_solution">卸载 Magisk 并重启设备后，套接字将消失。</string>
+
+    <string name="chk_magisk_mounts_name">已检测到 Magisk 挂载点</string>
+    <string name="chk_magisk_mounts_name_nd">Magisk 挂载点</string>
+    <string name="chk_magisk_mounts_desc">在 /proc/mounts 中发现了与 Magisk 相关的挂载点。</string>
+    <string name="chk_magisk_mounts_desc_nd">未发现 Magisk 挂载点。</string>
+    <string name="chk_magisk_mounts_reason">Magisk 使用绑定挂载将修改后的文件覆盖到系统上，而无需实际修改底层分区。发现的关键字：%1$s。</string>
+    <string name="chk_magisk_mounts_reason_nd">在 /proc/mounts 中未发现 Magisk 特有的挂载条目。</string>
+    <string name="chk_magisk_mounts_reason_error">无法读取 /proc/mounts：%1$s</string>
+    <string name="chk_magisk_mounts_solution">挂载点由 Magisk 守护进程管理，卸载后将被删除。</string>
+
+    <string name="chk_magisk_props_name">可疑系统属性</string>
+    <string name="chk_magisk_props_name_nd">Magisk 系统属性</string>
+    <string name="chk_magisk_props_desc">发现了可疑或与 Magisk 相关的系统属性。</string>
+    <string name="chk_magisk_props_desc_nd">未发现可疑的 Magisk 相关系统属性。</string>
+    <string name="chk_magisk_props_reason">以下属性表明存在 root 访问权限或 Magisk：%1$s。ro.debuggable=1 和 ro.secure=0 是 root/可调试版本的典型特征。ro.magisk.version 由 Magisk 直接设置。</string>
+    <string name="chk_magisk_props_reason_nd">系统属性似乎处于原厂配置状态。</string>
+    <string name="chk_magisk_props_solution">这些属性由 Magisk 或设备 root 过程设置。恢复原厂 boot 镜像以重置这些属性。</string>
+
+    <string name="chk_zygisk_lib_name">已检测到 Zygisk 库</string>
+    <string name="chk_zygisk_lib_name_nd">Zygisk 库</string>
+    <string name="chk_zygisk_lib_desc">发现了 Zygisk（Zygote 中的 Magisk）库文件。</string>
+    <string name="chk_zygisk_lib_desc_nd">未发现 Zygisk 库文件。</string>
+    <string name="chk_zygisk_lib_reason">Zygisk 是 Magisk 在 Zygote 进程中运行的功能，能够向每个应用注入代码。发现：%1$s。这允许绕过许多检测方法并启用强大的模块功能。</string>
+    <string name="chk_zygisk_lib_reason_nd">未找到 Zygisk 库文件。Zygisk 可能已禁用或 Magisk 未安装。</string>
+    <string name="chk_zygisk_lib_solution">在 Magisk 设置中禁用 Zygisk 或完全卸载 Magisk。</string>
+
+    <string name="chk_magisk_hide_name">MagiskHide / 已修改指纹</string>
+    <string name="chk_magisk_hide_name_nd">MagiskHide / 指纹</string>
+    <string name="chk_magisk_hide_desc">检测到 MagiskHide 痕迹或已修改的构建指纹。</string>
+    <string name="chk_magisk_hide_desc_nd">未检测到 MagiskHide 痕迹或指纹修改。</string>
+    <string name="chk_magisk_hide_reason">证据：%1$s。MagiskHide（或其继任者 DenyList）试图对特定应用隐藏 Magisk。已修改的构建指纹可能表明存在 SafetyNet 绕过尝试。</string>
+    <string name="chk_magisk_hide_reason_nd">未发现 MagiskHide 文件，构建指纹似乎未被修改。</string>
+    <string name="chk_magisk_hide_solution">在 Magisk 设置中禁用 MagiskHide/DenyList。使用原厂未修改的构建指纹。谨慎使用 Play Integrity 修复模块。</string>
+
+    <string name="chk_magisk_processes_name">Magisk 进程正在运行</string>
+    <string name="chk_magisk_processes_name_nd">Magisk 进程</string>
+    <string name="chk_magisk_processes_desc">与 Magisk 相关的进程当前正在运行。</string>
+    <string name="chk_magisk_processes_desc_nd">未发现正在运行的 Magisk 进程。</string>
+    <string name="chk_magisk_processes_desc_error">未发现 Magisk 进程。</string>
+    <string name="chk_magisk_processes_reason">发现以下 Magisk 进程正在运行：%1$s。magiskd 是管理 root 请求的 Magisk 守护进程。这些进程确认 Magisk 在设备上处于活动状态。</string>
+    <string name="chk_magisk_processes_reason_nd">在 /proc 中未找到与 Magisk 相关的进程名称。</string>
+    <string name="chk_magisk_processes_reason_error">进程枚举无法完成：%1$s</string>
+    <string name="chk_magisk_processes_solution">卸载 Magisk 并重启设备后，进程将停止。</string>
+
+    <string name="chk_magisk_hidden_manager_name">已检测到隐藏的 Magisk Manager</string>
+    <string name="chk_magisk_hidden_manager_name_nd">隐藏的 Magisk Manager</string>
+    <string name="chk_magisk_hidden_manager_desc">发现了伪装成 Magisk Manager 的应用。</string>
+    <string name="chk_magisk_hidden_manager_desc_nd">未检测到隐藏的 Magisk Manager。</string>
+    <string name="chk_magisk_hidden_manager_desc_error">无法扫描隐藏的 Magisk Manager。</string>
+    <string name="chk_magisk_hidden_manager_reason">Magisk Manager 可以隐藏在随机软件包名称下以逃避检测。发现潜在的隐藏管理器：%1$s。</string>
+    <string name="chk_magisk_hidden_manager_reason_nd">未在非标准软件包名称下发现具有 Magisk Manager 特征的应用。</string>
+    <string name="chk_magisk_hidden_manager_reason_error">软件包扫描无法完成：%1$s</string>
+    <string name="chk_magisk_hidden_manager_solution">打开该应用并通过它卸载 Magisk，或使用 adb 删除该软件包。</string>
+
+    <string name="chk_magisk_dev_files_name">已检测到 Magisk /dev 文件</string>
+    <string name="chk_magisk_dev_files_name_nd">Magisk /dev 文件</string>
+    <string name="chk_magisk_dev_files_desc">在 /dev 中发现了 Magisk 特有的文件或套接字。</string>
+    <string name="chk_magisk_dev_files_desc_nd">未发现 Magisk /dev 文件或套接字。</string>
+    <string name="chk_magisk_dev_files_reason">发现：%1$s。Magisk 使用 /dev 文件系统（tmpfs）创建控制套接字和镜像点，以便从任何 SELinux 上下文访问。这些文件仅在安装了活动 Magisk 的设备上存在。</string>
+    <string name="chk_magisk_dev_files_reason_nd">在 /dev 下未发现 Magisk 特有文件。</string>
+    <string name="chk_magisk_dev_files_solution">卸载 Magisk 以移除这些 /dev 文件。</string>
+
+    <string name="chk_zygisk_active_maps_name">Zygisk 库已注入</string>
+    <string name="chk_zygisk_active_maps_name_nd">Zygisk 库</string>
+    <string name="chk_zygisk_active_maps_desc">Zygisk 原生库已加载到此进程中。</string>
+    <string name="chk_zygisk_active_maps_desc_nd">在进程内存映射中未发现 Zygisk 库。</string>
+    <string name="chk_zygisk_active_maps_desc_error">在进程内存中未发现 Zygisk 库。</string>
+    <string name="chk_zygisk_active_maps_reason">在 /proc/self/maps 中发现 Zygisk 库：%1$s。Zygisk（Zygote + Magisk）通过在 fork 之前钩挂 Zygote 进程，将其原生库注入到每个应用进程中。这确认 Zygisk 正在活动运行。</string>
+    <string name="chk_zygisk_active_maps_reason_nd">在 /proc/self/maps 中未发现 Zygisk 原生库。</string>
+    <string name="chk_zygisk_active_maps_reason_error">无法读取 /proc/self/maps：%1$s</string>
+    <string name="chk_zygisk_active_maps_solution">在 Magisk 设置中禁用 Zygisk 或卸载 Magisk。</string>
+
+    <string name="chk_magisk_stub_app_name">已检测到 Magisk Stub 应用</string>
+    <string name="chk_magisk_stub_app_name_nd">Magisk Stub 应用</string>
+    <string name="chk_magisk_stub_app_desc">发现具有 Magisk stub APK 特征的应用。</string>
+    <string name="chk_magisk_stub_app_desc_nd">未检测到 Magisk stub 应用。</string>
+    <string name="chk_magisk_stub_app_reason">具有 Magisk stub 元数据的软件包：%1$s。Magisk 的隐藏功能将自身重新打包为看似无害的应用。stub 保留了 Magisk 的内容提供程序授权和特定权限集。</string>
+    <string name="chk_magisk_stub_app_reason_nd">没有已安装的软件包与 Magisk stub APK 签名匹配。</string>
+    <string name="chk_magisk_stub_app_solution">打开 stub 应用并通过它卸载 Magisk。</string>
+
+    <string name="chk_magisk_selinux_name">已检测到 Magisk SELinux 上下文</string>
+    <string name="chk_magisk_selinux_name_nd">Magisk SELinux 上下文</string>
+    <string name="chk_magisk_selinux_desc">发现了与 Magisk 相关的 SELinux 上下文。</string>
+    <string name="chk_magisk_selinux_desc_nd">未检测到 Magisk SELinux 上下文。</string>
+    <string name="chk_magisk_selinux_desc_error">未发现 Magisk SELinux 上下文。</string>
+    <string name="chk_magisk_selinux_reason">发现：%1$s。Magisk 注入自定义 SELinux 策略规则，某些版本在其自身的 SELinux 上下文（u:r:magisk:s0）下运行。与 root 相关进程的非标准 SELinux 上下文确认了 Magisk 活动。</string>
+    <string name="chk_magisk_selinux_reason_nd">在 /proc/*/attr/current 中未发现与 Magisk 相关的 SELinux 上下文。</string>
+    <string name="chk_magisk_selinux_reason_error">无法读取 /proc/self/attr/current：%1$s</string>
+    <string name="chk_magisk_selinux_solution">移除 Magisk 以恢复标准 SELinux 策略。</string>
+
+    <string name="chk_magisk_apex_name">已检测到 Magisk APEX 覆盖</string>
+    <string name="chk_magisk_apex_name_nd">Magisk APEX 覆盖</string>
+    <string name="chk_magisk_apex_desc">在 /apex 内检测到 Magisk 覆盖。</string>
+    <string name="chk_magisk_apex_desc_nd">未检测到 Magisk APEX 覆盖。</string>
+    <string name="chk_magisk_apex_reason">发现：%1$s。Magisk（v24+）可以通过绑定挂载将模块注入 APEX（Android Pony EXpress）分区库。'orig' 目录作为原始 APEX 内容的备份创建。这些文件仅在 Magisk 模块处于活动状态时存在。</string>
+    <string name="chk_magisk_apex_reason_nd">在 /apex 内未发现 Magisk 特有文件。</string>
+    <string name="chk_magisk_apex_solution">在 Magisk Manager 中禁用针对 APEX 的模块或卸载 Magisk。</string>
+
+    <string name="chk_magisk_fd_name">已检测到 Magisk 文件描述符</string>
+    <string name="chk_magisk_fd_name_nd">Magisk 文件描述符</string>
+    <string name="chk_magisk_fd_desc">此进程有指向 Magisk 路径的打开文件描述符。</string>
+    <string name="chk_magisk_fd_desc_nd">在 /proc/self/fd 中未发现与 Magisk 相关的文件描述符。</string>
+    <string name="chk_magisk_fd_reason">在 /proc/self/fd 中发现：%1$s。Magisk 保持对其镜像挂载点和套接字文件的打开文件描述符。这些文件描述符在应用进程中的存在确认 Magisk 已接触此进程。</string>
+    <string name="chk_magisk_fd_reason_nd">没有打开的文件描述符指向 Magisk 路径。</string>
+    <string name="chk_magisk_fd_solution">移除 Magisk 以清除这些文件描述符引用。</string>
+
+    <string name="chk_native_bridge_name">已检测到原生桥接注入</string>
+    <string name="chk_native_bridge_name_nd">原生桥接</string>
+    <string name="chk_native_bridge_desc">已检测到 Riru/Zygisk 原生桥接注入。</string>
+    <string name="chk_native_bridge_desc_nd">未发现可疑的原生桥接注入。</string>
+    <string name="chk_native_bridge_reason">ro.dalvik.vm.native.bridge = '%1$s'。Riru（Zygisk 的前身）通过将此属性替换为其自身的加载器库来劫持 ART 原生桥接机制。此处的可疑值是 Riru/Zygisk 注入的强烈指标。</string>
+    <string name="chk_native_bridge_reason_nd">ro.dalvik.vm.native.bridge 为 '%1$s'——原厂值。</string>
+    <string name="chk_native_bridge_solution">移除 Riru 或 Zygisk Magisk 模块以恢复正常的原生桥接。</string>
+
+    <string name="chk_zygisk_su_daemon_name">已检测到 Zygisk 伴随守护进程</string>
+    <string name="chk_zygisk_su_daemon_name_nd">Zygisk/Magisk 守护进程</string>
+    <string name="chk_zygisk_su_daemon_desc">Zygisk/Magisk 守护进程正在运行。</string>
+    <string name="chk_zygisk_su_daemon_desc_nd">未发现 Zygisk/Magisk 守护进程。</string>
+    <string name="chk_zygisk_su_daemon_reason">发现守护进程：%1$s。Zygisk Next（独立的 Zygisk 实现）运行名为 zn-daemon、zn-nsdaemon 和 zn-zygisk-companion 的特权守护进程。Magisk 本身以 'magiskd' 运行。这些是活动 root 注入的确定性指标。</string>
+    <string name="chk_zygisk_su_daemon_reason_nd">在 /proc/*/cmdline 中未发现 Zygisk Next 或 Magisk 守护进程名称。</string>
+    <string name="chk_zygisk_su_daemon_solution">卸载 Magisk 或 Zygisk Next 模块以移除这些守护进程。</string>
+
+    <string name="chk_magisk_timing_name">Magisk 钩子延迟异常</string>
+    <string name="chk_magisk_timing_name_nd">文件访问时序</string>
+    <string name="chk_magisk_timing_desc">可疑的文件访问延迟表明存在 Magisk DenyList 钩子。</string>
+    <string name="chk_magisk_timing_desc_nd">未检测到 Magisk 文件访问的可疑时序异常。</string>
+    <string name="chk_magisk_timing_desc_error">时序检查结果不确定。</string>
+    <string name="chk_magisk_timing_reason">File.exists('%1$s') 耗时 %2$sms（比基准慢 %3$s 倍）。Magisk 的 DenyList 补丁拦截文件系统调用以隐藏 Magisk 文件。与访问未钩挂路径相比，这种拦截增加了可测量的延迟。</string>
+    <string name="chk_magisk_timing_reason_nd">File.exists() 延迟在正常范围内（比率=%1$s×，%2$sms）。未检测到 Magisk DenyList 钩子延迟。</string>
+    <string name="chk_magisk_timing_reason_error">无法完成时序检查：%1$s</string>
+    <string name="chk_magisk_timing_solution">禁用 Magisk DenyList 或卸载 Magisk。</string>
+
+    <string name="chk_broad_maps_name">进程内存中存在 Root/钩子库</string>
+    <string name="chk_broad_maps_name_nd">Root/钩子库</string>
+    <string name="chk_broad_maps_desc">Root 或钩子框架原生库已加载到此进程中。</string>
+    <string name="chk_broad_maps_desc_nd">在进程内存中未发现 root/钩子框架原生库。</string>
+    <string name="chk_broad_maps_reason">在 /proc/self/maps 中发现：%1$s。这些是属于 Magisk（libsu）、Riru 和 Xposed 兼容框架使用的内联钩子引擎（Dobby、SandHook、Pine、Whale）的原生库。其存在确认了对此进程的活动注入。</string>
+    <string name="chk_broad_maps_reason_nd">在 /proc/self/maps 中未发现已知的 root/钩子库名称。</string>
+    <string name="chk_broad_maps_solution">移除相关的 root 框架或模块以防止库注入。</string>
+
 </resources>

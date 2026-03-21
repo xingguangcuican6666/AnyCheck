@@ -390,4 +390,194 @@
     <string name="chk_su_extended_paths_reason">The following su-related paths were found: %1$s. Presence of a su binary is a strong indicator that the device is rooted.</string>
     <string name="chk_su_extended_paths_reason_nd">Scanned %1$d known su binary paths and checked PATH. No su binary was found accessible on this device.</string>
     <string name="chk_su_extended_paths_solution">Remove all root frameworks (Magisk, KernelSU, APatch, SuperSU) and restore the stock boot image.</string>
+
+    <!-- MagiskDetector checks -->
+    <string name="chk_magisk_files_name">Magisk Files Detected</string>
+    <string name="chk_magisk_files_name_nd">Magisk Files</string>
+    <string name="chk_magisk_files_desc">Magisk-specific files or directories found on the filesystem.</string>
+    <string name="chk_magisk_files_desc_nd">No Magisk-specific files detected.</string>
+    <string name="chk_magisk_files_reason">The following Magisk-specific files were found: %1$s. These files are created by Magisk during installation and runtime. Their presence strongly indicates that Magisk is installed on this device.</string>
+    <string name="chk_magisk_files_reason_nd">None of the known Magisk file paths were accessible or present.</string>
+    <string name="chk_magisk_files_solution">To remove Magisk: Open Magisk Manager → Uninstall → Complete Uninstall. Or flash the stock boot.img via fastboot: `fastboot flash boot stock_boot.img`.</string>
+
+    <string name="chk_magisk_dirs_name">Magisk Directories Detected</string>
+    <string name="chk_magisk_dirs_name_nd">Magisk Directories</string>
+    <string name="chk_magisk_dirs_desc">Magisk working directories found.</string>
+    <string name="chk_magisk_dirs_desc_nd">No Magisk working directories found.</string>
+    <string name="chk_magisk_dirs_reason">Directories %1$s exist. Magisk uses /data/adb/magisk as its primary working directory and /data/adb/modules to store installed modules. These are created during Magisk installation.</string>
+    <string name="chk_magisk_dirs_reason_nd">Magisk working directories were not found.</string>
+    <string name="chk_magisk_dirs_solution">Uninstall Magisk via Magisk Manager or reflash stock boot image.</string>
+
+    <string name="chk_magisk_db_name">Magisk Database Found</string>
+    <string name="chk_magisk_db_name_nd">Magisk Database</string>
+    <string name="chk_magisk_db_desc">Magisk SQLite database detected.</string>
+    <string name="chk_magisk_db_desc_nd">Magisk database not found.</string>
+    <string name="chk_magisk_db_reason">The Magisk database (magisk.db) stores policy rules, module configurations, and superuser grant records. Found at: %1$s.</string>
+    <string name="chk_magisk_db_reason_nd">No Magisk SQLite database was found at known locations.</string>
+    <string name="chk_magisk_db_solution">The database will be removed when Magisk is fully uninstalled.</string>
+
+    <string name="chk_magisk_packages_name">Magisk App Detected</string>
+    <string name="chk_magisk_packages_name_nd">Magisk App Packages</string>
+    <string name="chk_magisk_packages_desc">Magisk Manager or related apps installed.</string>
+    <string name="chk_magisk_packages_desc_nd">No Magisk Manager packages found.</string>
+    <string name="chk_magisk_packages_reason">The following Magisk-related packages were found: %1$s. These apps are the primary management interface for Magisk. Their presence confirms Magisk installation.</string>
+    <string name="chk_magisk_packages_reason_nd">No known Magisk Manager package names were found installed.</string>
+    <string name="chk_magisk_packages_solution">Uninstall via Magisk Manager first (to properly remove root), then uninstall the Magisk Manager app itself.</string>
+
+    <string name="chk_magisk_su_name">Magisk SU Binary Found</string>
+    <string name="chk_magisk_su_name_nd">Magisk SU Binary</string>
+    <string name="chk_magisk_su_desc">Magisk su or core binaries detected.</string>
+    <string name="chk_magisk_su_desc_nd">No Magisk su or core binaries found.</string>
+    <string name="chk_magisk_su_reason">Magisk installs its su binary and core components to manage root access. Found: %1$s. These binaries handle root permission requests and policy enforcement.</string>
+    <string name="chk_magisk_su_reason_nd">Magisk core binaries were not found at known paths.</string>
+    <string name="chk_magisk_su_solution">These binaries are removed when Magisk is uninstalled via Magisk Manager → Uninstall.</string>
+
+    <string name="chk_magisk_unix_socket_name">Magisk Unix Socket Detected</string>
+    <string name="chk_magisk_unix_socket_name_nd">Magisk Unix Socket</string>
+    <string name="chk_magisk_unix_socket_desc">Magisk daemon socket found in /proc/net/unix.</string>
+    <string name="chk_magisk_unix_socket_desc_nd">No Magisk daemon socket found.</string>
+    <string name="chk_magisk_unix_socket_reason">Magisk runs a background daemon that listens on a Unix socket. The socket name '%1$s' was found in /proc/net/unix, indicating the Magisk daemon is currently running.</string>
+    <string name="chk_magisk_unix_socket_reason_nd">No Magisk-related socket names were found in /proc/net/unix.</string>
+    <string name="chk_magisk_unix_socket_reason_error">Could not read /proc/net/unix: %1$s</string>
+    <string name="chk_magisk_unix_socket_solution">The socket disappears when Magisk is uninstalled and the device is rebooted.</string>
+
+    <string name="chk_magisk_mounts_name">Magisk Mount Points Detected</string>
+    <string name="chk_magisk_mounts_name_nd">Magisk Mount Points</string>
+    <string name="chk_magisk_mounts_desc">Magisk-related mount points found in /proc/mounts.</string>
+    <string name="chk_magisk_mounts_desc_nd">No Magisk mount points found.</string>
+    <string name="chk_magisk_mounts_reason">Magisk uses bind mounts to overlay modified files onto the system without actually modifying the underlying partition. Keywords found: %1$s.</string>
+    <string name="chk_magisk_mounts_reason_nd">No Magisk-specific mount entries found in /proc/mounts.</string>
+    <string name="chk_magisk_mounts_reason_error">Could not read /proc/mounts: %1$s</string>
+    <string name="chk_magisk_mounts_solution">Mount points are managed by Magisk daemon. They are removed upon uninstallation.</string>
+
+    <string name="chk_magisk_props_name">Suspicious System Props</string>
+    <string name="chk_magisk_props_name_nd">Magisk System Properties</string>
+    <string name="chk_magisk_props_desc">Suspicious or Magisk-related system properties found.</string>
+    <string name="chk_magisk_props_desc_nd">No suspicious Magisk-related system properties found.</string>
+    <string name="chk_magisk_props_reason">The following properties suggest root access or Magisk presence: %1$s. ro.debuggable=1 and ro.secure=0 are typical on rooted/debuggable builds. ro.magisk.version is set by Magisk directly.</string>
+    <string name="chk_magisk_props_reason_nd">System properties appear to be in their stock configuration.</string>
+    <string name="chk_magisk_props_solution">These properties are set by Magisk or during device rooting. Restore the stock boot image to reset these properties.</string>
+
+    <string name="chk_zygisk_lib_name">Zygisk Library Detected</string>
+    <string name="chk_zygisk_lib_name_nd">Zygisk Library</string>
+    <string name="chk_zygisk_lib_desc">Zygisk (Magisk in Zygote) library files found.</string>
+    <string name="chk_zygisk_lib_desc_nd">No Zygisk library files found.</string>
+    <string name="chk_zygisk_lib_reason">Zygisk is Magisk's feature that runs in the Zygote process, enabling code injection into every app. Found: %1$s. This allows bypassing many detection methods and enables powerful module functionality.</string>
+    <string name="chk_zygisk_lib_reason_nd">Zygisk library files were not found. Either Zygisk is disabled or Magisk is not installed.</string>
+    <string name="chk_zygisk_lib_solution">Disable Zygisk in Magisk settings or fully uninstall Magisk.</string>
+
+    <string name="chk_magisk_hide_name">MagiskHide / Modified Fingerprint</string>
+    <string name="chk_magisk_hide_name_nd">MagiskHide / Fingerprint</string>
+    <string name="chk_magisk_hide_desc">MagiskHide artifacts or modified build fingerprint detected.</string>
+    <string name="chk_magisk_hide_desc_nd">No MagiskHide artifacts or fingerprint modifications detected.</string>
+    <string name="chk_magisk_hide_reason">Evidence: %1$s. MagiskHide (or its successor DenyList) attempts to hide Magisk from specific apps. A modified build fingerprint may indicate SafetyNet bypass attempts.</string>
+    <string name="chk_magisk_hide_reason_nd">No MagiskHide files found and build fingerprint appears unmodified.</string>
+    <string name="chk_magisk_hide_solution">Disable MagiskHide/DenyList in Magisk settings. Use a stock, unmodified build fingerprint. Consider using a Play Integrity fix module carefully.</string>
+
+    <string name="chk_magisk_processes_name">Magisk Processes Running</string>
+    <string name="chk_magisk_processes_name_nd">Magisk Processes</string>
+    <string name="chk_magisk_processes_desc">Magisk-related processes are currently running.</string>
+    <string name="chk_magisk_processes_desc_nd">No Magisk processes found running.</string>
+    <string name="chk_magisk_processes_desc_error">No Magisk processes found.</string>
+    <string name="chk_magisk_processes_reason">The following Magisk processes were found running: %1$s. magiskd is the Magisk daemon that manages root requests. These processes confirm Magisk is active on the device.</string>
+    <string name="chk_magisk_processes_reason_nd">No Magisk-related process names were found in /proc.</string>
+    <string name="chk_magisk_processes_reason_error">Process enumeration could not be completed: %1$s</string>
+    <string name="chk_magisk_processes_solution">Processes will stop after Magisk is uninstalled and device rebooted.</string>
+
+    <string name="chk_magisk_hidden_manager_name">Hidden Magisk Manager Detected</string>
+    <string name="chk_magisk_hidden_manager_name_nd">Hidden Magisk Manager</string>
+    <string name="chk_magisk_hidden_manager_desc">An app disguised as Magisk Manager was found.</string>
+    <string name="chk_magisk_hidden_manager_desc_nd">No hidden Magisk Manager detected.</string>
+    <string name="chk_magisk_hidden_manager_desc_error">Could not scan for hidden Magisk Manager.</string>
+    <string name="chk_magisk_hidden_manager_reason">Magisk Manager can be hidden under a random package name to evade detection. Found potential hidden manager: %1$s.</string>
+    <string name="chk_magisk_hidden_manager_reason_nd">No apps with Magisk Manager characteristics were found under non-standard package names.</string>
+    <string name="chk_magisk_hidden_manager_reason_error">Package scan could not be completed: %1$s</string>
+    <string name="chk_magisk_hidden_manager_solution">Open the app and uninstall Magisk, or use adb to remove the package.</string>
+
+    <string name="chk_magisk_dev_files_name">Magisk /dev Files Detected</string>
+    <string name="chk_magisk_dev_files_name_nd">Magisk /dev Files</string>
+    <string name="chk_magisk_dev_files_desc">Magisk-specific files or sockets found in /dev.</string>
+    <string name="chk_magisk_dev_files_desc_nd">No Magisk /dev files or sockets found.</string>
+    <string name="chk_magisk_dev_files_reason">Found: %1$s. Magisk uses the /dev filesystem (tmpfs) to create control sockets and mirror points that it can access from any SELinux context. These files only exist on devices with active Magisk.</string>
+    <string name="chk_magisk_dev_files_reason_nd">No Magisk-specific files were found under /dev.</string>
+    <string name="chk_magisk_dev_files_solution">Uninstall Magisk to remove these /dev artifacts.</string>
+
+    <string name="chk_zygisk_active_maps_name">Zygisk Library Injected</string>
+    <string name="chk_zygisk_active_maps_name_nd">Zygisk Library</string>
+    <string name="chk_zygisk_active_maps_desc">Zygisk native library is loaded in this process.</string>
+    <string name="chk_zygisk_active_maps_desc_nd">No Zygisk library found in process memory maps.</string>
+    <string name="chk_zygisk_active_maps_desc_error">No Zygisk library found in process memory.</string>
+    <string name="chk_zygisk_active_maps_reason">Zygisk library found in /proc/self/maps: %1$s. Zygisk (Zygote + Magisk) injects its native library into every app process by hooking the Zygote process before forks. This confirms Zygisk is actively running.</string>
+    <string name="chk_zygisk_active_maps_reason_nd">No Zygisk native library was found in /proc/self/maps.</string>
+    <string name="chk_zygisk_active_maps_reason_error">Could not read /proc/self/maps: %1$s</string>
+    <string name="chk_zygisk_active_maps_solution">Disable Zygisk in Magisk settings or uninstall Magisk.</string>
+
+    <string name="chk_magisk_stub_app_name">Magisk Stub App Detected</string>
+    <string name="chk_magisk_stub_app_name_nd">Magisk Stub App</string>
+    <string name="chk_magisk_stub_app_desc">App with Magisk stub APK characteristics found.</string>
+    <string name="chk_magisk_stub_app_desc_nd">No Magisk stub app detected.</string>
+    <string name="chk_magisk_stub_app_reason">Package(s) with Magisk stub metadata: %1$s. Magisk's hide feature repackages itself as an innocent-looking app. The stub retains Magisk's content provider authority and specific permission set.</string>
+    <string name="chk_magisk_stub_app_reason_nd">No installed packages match the Magisk stub APK signature.</string>
+    <string name="chk_magisk_stub_app_solution">Open the stub app and uninstall Magisk through it.</string>
+
+    <string name="chk_magisk_selinux_name">Magisk SELinux Context Detected</string>
+    <string name="chk_magisk_selinux_name_nd">Magisk SELinux Context</string>
+    <string name="chk_magisk_selinux_desc">Magisk-related SELinux context found.</string>
+    <string name="chk_magisk_selinux_desc_nd">No Magisk SELinux contexts detected.</string>
+    <string name="chk_magisk_selinux_desc_error">No Magisk SELinux context found.</string>
+    <string name="chk_magisk_selinux_reason">Found: %1$s. Magisk injects custom SELinux policy rules and some versions run under their own SELinux context (u:r:magisk:s0). A non-standard SELinux context for a root-related process confirms Magisk activity.</string>
+    <string name="chk_magisk_selinux_reason_nd">No Magisk-related SELinux contexts found in /proc/*/attr/current.</string>
+    <string name="chk_magisk_selinux_reason_error">Could not read /proc/self/attr/current: %1$s</string>
+    <string name="chk_magisk_selinux_solution">Remove Magisk to restore standard SELinux policy.</string>
+
+    <string name="chk_magisk_apex_name">Magisk APEX Overlay Detected</string>
+    <string name="chk_magisk_apex_name_nd">Magisk APEX Overlay</string>
+    <string name="chk_magisk_apex_desc">Magisk overlay inside /apex detected.</string>
+    <string name="chk_magisk_apex_desc_nd">No Magisk APEX overlay detected.</string>
+    <string name="chk_magisk_apex_reason">Found: %1$s. Magisk (v24+) can inject modules into APEX (Android Pony EXpress) partition libraries by bind-mounting over them. The 'orig' directory is created as a backup of the original APEX content. These artefacts are only present when Magisk modules are active.</string>
+    <string name="chk_magisk_apex_reason_nd">No Magisk-specific files were found inside /apex.</string>
+    <string name="chk_magisk_apex_solution">Disable APEX-targeting modules in Magisk Manager or uninstall Magisk.</string>
+
+    <string name="chk_magisk_fd_name">Magisk File Descriptors Detected</string>
+    <string name="chk_magisk_fd_name_nd">Magisk File Descriptors</string>
+    <string name="chk_magisk_fd_desc">This process has open file descriptors pointing to Magisk paths.</string>
+    <string name="chk_magisk_fd_desc_nd">No Magisk-related file descriptors found in /proc/self/fd.</string>
+    <string name="chk_magisk_fd_reason">Found in /proc/self/fd: %1$s. Magisk keeps open FDs to its mirror mount points and socket files. The presence of these FDs in an app process confirms Magisk has touched this process.</string>
+    <string name="chk_magisk_fd_reason_nd">No open file descriptors point to Magisk paths.</string>
+    <string name="chk_magisk_fd_solution">Remove Magisk to clear these file descriptor references.</string>
+
+    <string name="chk_native_bridge_name">Native Bridge Injection Detected</string>
+    <string name="chk_native_bridge_name_nd">Native Bridge</string>
+    <string name="chk_native_bridge_desc">Riru/Zygisk native bridge injection detected.</string>
+    <string name="chk_native_bridge_desc_nd">No suspicious native bridge injection found.</string>
+    <string name="chk_native_bridge_reason">ro.dalvik.vm.native.bridge = '%1$s'. Riru (a predecessor of Zygisk) hijacks the ART native bridge mechanism by replacing this property with its own loader library. A suspicious value here is a strong indicator of Riru/Zygisk-based injection.</string>
+    <string name="chk_native_bridge_reason_nd">ro.dalvik.vm.native.bridge is '%1$s' — stock value.</string>
+    <string name="chk_native_bridge_solution">Remove the Riru or Zygisk Magisk module to restore the normal native bridge.</string>
+
+    <string name="chk_zygisk_su_daemon_name">Zygisk Companion Daemon Detected</string>
+    <string name="chk_zygisk_su_daemon_name_nd">Zygisk/Magisk Daemon Processes</string>
+    <string name="chk_zygisk_su_daemon_desc">Zygisk/Magisk daemon processes are running.</string>
+    <string name="chk_zygisk_su_daemon_desc_nd">No Zygisk/Magisk daemon processes found.</string>
+    <string name="chk_zygisk_su_daemon_reason">Found daemon process(es): %1$s. Zygisk Next (a standalone Zygisk implementation) runs privileged daemon processes named zn-daemon, zn-nsdaemon, and zn-zygisk-companion. Magisk itself runs as 'magiskd'. These are definitive indicators of active root injection.</string>
+    <string name="chk_zygisk_su_daemon_reason_nd">No Zygisk Next or Magisk daemon process names were found in /proc/*/cmdline.</string>
+    <string name="chk_zygisk_su_daemon_solution">Uninstall Magisk or the Zygisk Next module to remove these daemon processes.</string>
+
+    <string name="chk_magisk_timing_name">Magisk Hook Latency Anomaly</string>
+    <string name="chk_magisk_timing_name_nd">File Access Timing</string>
+    <string name="chk_magisk_timing_desc">Suspicious file access latency suggests Magisk DenyList hooks.</string>
+    <string name="chk_magisk_timing_desc_nd">No suspicious timing anomaly for Magisk file access.</string>
+    <string name="chk_magisk_timing_desc_error">Timing check inconclusive.</string>
+    <string name="chk_magisk_timing_reason">File.exists('%1$s') took %2$sms (%3$s× slower than baseline). Magisk's DenyList patches intercept filesystem calls to hide Magisk files. This interception adds measurable latency compared to accessing non-hooked paths.</string>
+    <string name="chk_magisk_timing_reason_nd">File.exists() latency is within normal range (ratio=%1$s×, %2$sms). No Magisk DenyList hook latency detected.</string>
+    <string name="chk_magisk_timing_reason_error">Could not complete timing check: %1$s</string>
+    <string name="chk_magisk_timing_solution">Disable Magisk DenyList or uninstall Magisk.</string>
+
+    <string name="chk_broad_maps_name">Root/Hook Libraries in Process Memory</string>
+    <string name="chk_broad_maps_name_nd">Root/Hook Libraries</string>
+    <string name="chk_broad_maps_desc">Root or hook framework native libraries are loaded in this process.</string>
+    <string name="chk_broad_maps_desc_nd">No root/hook framework native libraries found in process memory.</string>
+    <string name="chk_broad_maps_reason">Found in /proc/self/maps: %1$s. These are native libraries belonging to Magisk (libsu), Riru, and inline hook engines (Dobby, SandHook, Pine, Whale) used by Xposed-compatible frameworks. Their presence confirms active injection into this process.</string>
+    <string name="chk_broad_maps_reason_nd">No known root/hook library names were found in /proc/self/maps.</string>
+    <string name="chk_broad_maps_solution">Remove the relevant root framework or module to prevent library injection.</string>
+
 </resources>
