@@ -227,4 +227,168 @@
     <string name="chk_ksu_props_reason">发现以下 KernelSU 属性：%1$s。这些属性由 KernelSU 设置并确认其存在。</string>
     <string name="chk_ksu_props_reason_nd">未检测到 KernelSU 特定系统属性。</string>
     <string name="chk_ksu_props_solution">卸载 KernelSU 时将移除这些属性。</string>
+
+    <!-- apatch -->
+    <string name="chk_apatch_name">检测到 APatch</string>
+    <string name="chk_apatch_name_nd">APatch</string>
+    <string name="chk_apatch_desc">检测到 APatch Root 框架。</string>
+    <string name="chk_apatch_desc_nd">未检测到 APatch。</string>
+    <string name="chk_apatch_reason">APatch 是类似于 KernelSU 的基于内核的 Root 解决方案。发现证据：%1$s。APatch 通过修补内核引导镜像启用 Root 访问。</string>
+    <string name="chk_apatch_reason_nd">未发现 APatch 文件或软件包。</string>
+    <string name="chk_apatch_solution">使用 APatch Manager 卸载，然后刷入原厂引导镜像。</string>
+
+    <!-- su_binary -->
+    <string name="chk_su_binary_name">检测到 su 二进制文件</string>
+    <string name="chk_su_binary_name_nd">su 二进制文件</string>
+    <string name="chk_su_binary_desc">在系统位置发现 su 二进制文件。</string>
+    <string name="chk_su_binary_desc_nd">在常见系统路径未发现 su 二进制文件。</string>
+    <string name="chk_su_binary_reason">发现 su（超级用户）二进制文件位于：%1$s。su 二进制文件允许应用请求提升的 Root 权限。其在系统路径中的存在表明设备已被 Root。</string>
+    <string name="chk_su_binary_reason_nd">未在标准系统路径发现 su 二进制文件。</string>
+    <string name="chk_su_binary_solution">通过启动到恢复模式并删除 su 二进制文件，或通过刷入原厂系统镜像恢复。</string>
+
+    <!-- root_apps -->
+    <string name="chk_root_apps_name">发现 Root 管理应用</string>
+    <string name="chk_root_apps_name_nd">Root 管理应用</string>
+    <string name="chk_root_apps_desc">检测到 Root 管理或漏洞利用应用。</string>
+    <string name="chk_root_apps_desc_nd">未发现 Root 管理应用。</string>
+    <string name="chk_root_apps_reason">发现：%1$s。这些应用提供 Root 访问管理、漏洞利用功能或表明设备已被 Root 的相关功能。</string>
+    <string name="chk_root_apps_reason_nd">未发现已知的 Root 管理或漏洞利用应用包。</string>
+    <string name="chk_root_apps_solution">通过 设置 → 应用 或使用 adb uninstall 卸载这些应用。</string>
+
+    <!-- generic_test_keys -->
+    <string name="chk_generic_test_keys_name">检测到测试密钥构建</string>
+    <string name="chk_generic_test_keys_name_debug">检测到调试构建</string>
+    <string name="chk_generic_test_keys_name_nd">构建签名</string>
+    <string name="chk_generic_test_keys_desc">设备正在运行测试密钥签名的构建。</string>
+    <string name="chk_generic_test_keys_desc_debug">设备正在运行调试构建。</string>
+    <string name="chk_generic_test_keys_desc_nd">构建似乎使用官方发布密钥。</string>
+    <string name="chk_generic_test_keys_reason">构建标签：\'%1$s\'，指纹：\'%2$s\'。测试密钥构建使用非官方密钥签名，表明是定制或已 Root 的 ROM。官方 Google 签名的构建使用 \'release-keys\'。</string>
+    <string name="chk_generic_test_keys_reason_debug">构建标签：\'%1$s\'。调试构建启用了额外的调试功能，可能放宽了安全限制。</string>
+    <string name="chk_generic_test_keys_reason_nd">构建标签 \'%1$s\' 表明使用官方发布密钥签名。</string>
+    <string name="chk_generic_test_keys_solution">通过 fastboot 或 OTA 刷入使用 release-keys 签名的官方 OEM ROM。</string>
+    <string name="chk_generic_test_keys_solution_debug">使用发布/生产构建以获得更好的安全性。</string>
+
+    <!-- generic_busybox -->
+    <string name="chk_generic_busybox_name">发现 Busybox</string>
+    <string name="chk_generic_busybox_name_nd">Busybox</string>
+    <string name="chk_generic_busybox_desc">检测到 Busybox 二进制文件。</string>
+    <string name="chk_generic_busybox_desc_nd">未发现 Busybox 二进制文件。</string>
+    <string name="chk_generic_busybox_reason">发现 Busybox 位于：%1$s。Busybox 提供 Android 上通常不存在的 Unix 实用程序。虽然本身不是 Root，但通常与 Root 框架一起安装。</string>
+    <string name="chk_generic_busybox_reason_nd">未在常见安装路径发现 Busybox。</string>
+    <string name="chk_generic_busybox_solution">卸载关联的 Root 框架时将移除 Busybox。</string>
+
+    <!-- rootbeerfresh_dangerous_apps -->
+    <string name="chk_rootbeerfresh_dangerous_apps_name">检测到危险/盗版应用</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_name_nd">危险/盗版应用</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_desc">发现潜在危险、盗版或游戏作弊应用。</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_desc_nd">未检测到危险或盗版应用。</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_reason">发现 %1$d 个应用：%2$s。这些包包括黑市商店、应用内购绕过工具、游戏作弊和类间谍软件应用。它们的存在表明系统受损或故意违反安全策略。</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_reason_nd">未发现已知的危险/盗版/作弊包。</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_solution">立即通过 设置 → 应用 或 adb uninstall 卸载这些应用。</string>
+
+    <!-- rootbeerfresh_root_cloaking -->
+    <string name="chk_rootbeerfresh_root_cloaking_name">检测到扩展 Root 隐藏应用</string>
+    <string name="chk_rootbeerfresh_root_cloaking_name_nd">扩展 Root 隐藏应用</string>
+    <string name="chk_rootbeerfresh_root_cloaking_desc">检测到额外的 Root 隐藏或代码注入框架应用。</string>
+    <string name="chk_rootbeerfresh_root_cloaking_desc_nd">未检测到额外的 Root 隐藏应用。</string>
+    <string name="chk_rootbeerfresh_root_cloaking_reason">发现：%1$s。Cydia Substrate 是一个运行时代码注入框架，经常用于隐藏 Root。HideMyRoot 和 HideRoot 变体从应用中隐藏 Root 指标。</string>
+    <string name="chk_rootbeerfresh_root_cloaking_reason_nd">未发现 Cydia Substrate 和 HideMyRoot/HideRoot 变体。</string>
+    <string name="chk_rootbeerfresh_root_cloaking_solution">通过 设置 → 应用 卸载 Root 隐藏应用。</string>
+
+    <!-- rootbeerfresh_path_su -->
+    <string name="chk_rootbeerfresh_path_su_name">检测到通过 PATH 枚举的 su 二进制文件</string>
+    <string name="chk_rootbeerfresh_path_su_name_nd">通过 PATH 枚举的 su 二进制文件</string>
+    <string name="chk_rootbeerfresh_path_su_desc">通过动态 PATH 枚举发现 su 二进制文件。</string>
+    <string name="chk_rootbeerfresh_path_su_desc_nd">通过 PATH 枚举未发现 su 二进制文件。</string>
+    <string name="chk_rootbeerfresh_path_su_reason">发现 su 二进制文件位于：%1$s。此检查动态读取 PATH 环境变量（如 rootbeerFresh）以及已知静态路径，捕获放置在非标准目录但仍在可执行搜索路径上的 su 二进制文件。</string>
+    <string name="chk_rootbeerfresh_path_su_reason_nd">未在任何静态或 PATH 派生目录中发现 su。</string>
+    <string name="chk_rootbeerfresh_path_su_solution">移除 su 二进制文件并恢复原厂系统镜像。</string>
+
+    <!-- rootbeerfresh_rw_paths -->
+    <string name="chk_rootbeerfresh_rw_paths_name">系统路径以读写模式挂载</string>
+    <string name="chk_rootbeerfresh_rw_paths_name_nd">系统路径挂载检查</string>
+    <string name="chk_rootbeerfresh_rw_paths_desc">关键系统路径以读写模式挂载：%1$s。</string>
+    <string name="chk_rootbeerfresh_rw_paths_desc_nd">没有关键系统路径以读写模式挂载。</string>
+    <string name="chk_rootbeerfresh_rw_paths_desc_error">无法运行 mount 命令。</string>
+    <string name="chk_rootbeerfresh_rw_paths_reason">以下应为只读的路径以读写模式挂载：%1$s。这是通过使用 SDK 版本感知字段偏移量（rootbeerFresh 技术）解析 \`mount\` 命令输出检测的。以读写模式挂载的 /system 表明系统分区已被修改。</string>
+    <string name="chk_rootbeerfresh_rw_paths_reason_nd">mount 命令输出显示所有敏感路径均为只读。</string>
+    <string name="chk_rootbeerfresh_rw_paths_reason_error">mount 命令未返回输出。</string>
+    <string name="chk_rootbeerfresh_rw_paths_solution">将系统分区重新挂载为只读：\`adb shell mount -o remount,ro /system\`。</string>
+    <string name="chk_rootbeerfresh_rw_paths_solution_error">确保 /proc 可访问。</string>
+
+    <!-- avb_boot_state -->
+    <string name="chk_avb_boot_state_name_nd">AVB 启动状态</string>
+    <string name="chk_avb_boot_state_name_yellow">AVB 启动状态：YELLOW</string>
+    <string name="chk_avb_boot_state_name_orange">AVB 启动状态：ORANGE（已解锁）</string>
+    <string name="chk_avb_boot_state_name_red">AVB 启动状态：RED（完整性失败）</string>
+    <string name="chk_avb_boot_state_name_unknown">AVB 启动状态：未知</string>
+    <string name="chk_avb_boot_state_desc_green">已验证启动状态为 GREEN。</string>
+    <string name="chk_avb_boot_state_desc_yellow">已验证启动状态为 YELLOW（定制 ROM / 自签名）。</string>
+    <string name="chk_avb_boot_state_desc_orange">已验证启动状态为 ORANGE -- bootloader 已解锁。</string>
+    <string name="chk_avb_boot_state_desc_red">已验证启动状态为 RED -- 引导镜像验证失败。</string>
+    <string name="chk_avb_boot_state_desc_unknown">意外的已验证启动状态：%1$s。</string>
+    <string name="chk_avb_boot_state_desc_nd">AVB 状态属性不可用。</string>
+    <string name="chk_avb_boot_state_desc_error">无法确定 AVB 启动状态。</string>
+    <string name="chk_avb_boot_state_reason_green">ro.boot.verifiedbootstate=%1$s。设备从已验证、未修改的系统分区启动。这是最强的启动完整性保证。</string>
+    <string name="chk_avb_boot_state_reason_yellow">ro.boot.verifiedbootstate=%1$s。bootloader 针对用户安装的密钥而非制造商密钥验证引导镜像。这表明是定制 ROM 或用户注册的 AVB 密钥。设备可能正在运行非官方固件。</string>
+    <string name="chk_avb_boot_state_reason_orange">ro.boot.verifiedbootstate=%1$s。bootloader 已解锁且未强制执行签名。设备可以启动任意未签名镜像。这是设备已被 Root 或修改的强指标。</string>
+    <string name="chk_avb_boot_state_reason_red">ro.boot.verifiedbootstate=%1$s。设备未能验证引导镜像的完整性。这可能表明 bootloader 已修改或系统分区已损坏。</string>
+    <string name="chk_avb_boot_state_reason_unknown">ro.boot.verifiedbootstate=%1$s 不是标准值。预期：green、yellow、orange 或 red。</string>
+    <string name="chk_avb_boot_state_reason_nd">ro.boot.verifiedbootstate 为空或不可访问。这在不支持 AVB 2.0 的旧设备（Android 8 之前）上是正常的。</string>
+    <string name="chk_avb_boot_state_reason_error">读取 AVB 属性时出现异常：%1$s</string>
+    <string name="chk_avb_boot_state_solution_yellow">刷入官方 OEM 固件以恢复 GREEN 已验证启动状态。</string>
+    <string name="chk_avb_boot_state_solution_orange">恢复原厂固件后通过 \'fastboot flashing lock\' 重新锁定 bootloader。</string>
+    <string name="chk_avb_boot_state_solution_red">通过 fastboot 或 OTA 恢复出厂固件。</string>
+    <string name="chk_avb_boot_state_solution_unknown">检查设备固件完整性。</string>
+
+    <!-- tee_hardware_backed -->
+    <string name="chk_tee_hardware_backed_name">TEE 密钥生成：仅软件</string>
+    <string name="chk_tee_hardware_backed_name_nd">TEE 密钥生成</string>
+    <string name="chk_tee_hardware_backed_desc">AES 密钥在软件中生成 -- 无硬件 TEE 支持。</string>
+    <string name="chk_tee_hardware_backed_desc_nd">AES 密钥在安全硬件（%1$s）内生成。</string>
+    <string name="chk_tee_hardware_backed_desc_error">无法完成 TEE 密钥生成检查。</string>
+    <string name="chk_tee_hardware_backed_reason">通过 AndroidKeyStore 生成了探测 AES 密钥，但 KeyInfo 报告它是在软件仿真层中创建的。这强烈表明设备是模拟器，或 TEE 已被绕过（例如通过 Keymaster/KeyMint shim 模块）。敏感的加密材料不受安全硬件保护。</string>
+    <string name="chk_tee_hardware_backed_reason_nd">通过 AndroidKeyStore 生成了探测 AES 密钥，KeyInfo 确认它驻留在 %1$s 中。此检查无法被 Magisk 属性隐藏欺骗，因为它通过基于 Binder 的 Keymaster/KeyMint HAL 实际使用 TEE 子系统。</string>
+    <string name="chk_tee_hardware_backed_reason_error">探测密钥生成期间出现异常：%1$s</string>
+    <string name="chk_tee_hardware_backed_solution">使用具有硬件 TEE 的真实设备进行安全密钥操作。</string>
+
+    <!-- keystore_attestation -->
+    <string name="chk_keystore_attestation_name">硬件支持的 RSA 密钥：仅软件</string>
+    <string name="chk_keystore_attestation_name_nd">硬件支持的 RSA 密钥</string>
+    <string name="chk_keystore_attestation_desc">RSA 密钥对位于软件密钥库，而非安全硬件。</string>
+    <string name="chk_keystore_attestation_desc_nd">RSA-2048 密钥对驻留在安全硬件（TEE/StrongBox）中。</string>
+    <string name="chk_keystore_attestation_desc_error">无法完成密钥库证明检查。</string>
+    <string name="chk_keystore_attestation_reason">AndroidKeyStore RSA 密钥在软件仿真层而非硬件 TEE 中生成。这可能表明是模拟器、启用了 Magisk 隐藏的已 Root 设备，或不具有硬件支持密钥库的设备。</string>
+    <string name="chk_keystore_attestation_reason_nd">通过 AndroidKeyStore 生成的 RSA-2048 密钥驻留在可信执行环境或 StrongBox HSM 内。私钥材料永不离开安全硬件。</string>
+    <string name="chk_keystore_attestation_reason_error">RSA 密钥生成/检查期间出现异常：%1$s</string>
+    <string name="chk_keystore_attestation_solution">使用具有硬件支持密钥存储的设备进行敏感操作。</string>
+
+    <!-- suspicious_root_daemons -->
+    <string name="chk_suspicious_root_daemons_name">Root 守护进程正在运行</string>
+    <string name="chk_suspicious_root_daemons_name_nd">Root 守护进程</string>
+    <string name="chk_suspicious_root_daemons_desc">在进程列表中检测到活动的 Root 框架守护进程。</string>
+    <string name="chk_suspicious_root_daemons_desc_nd">在进程列表中未发现已知的 Root 框架守护进程。</string>
+    <string name="chk_suspicious_root_daemons_desc_error">无法扫描进程列表。</string>
+    <string name="chk_suspicious_root_daemons_reason">以下 Root 相关进程正在运行：%1$s。lspd 是 LSPosed/Xposed 框架守护进程。ksud 是 KernelSU 守护进程。magiskd 是 Magisk 守护进程。zygiskd 是 Zygisk 配套守护进程。即使文件工件被隐藏，这些也确认了活动的 Root 框架。</string>
+    <string name="chk_suspicious_root_daemons_reason_nd">已扫描 /proc 中的 lspd、ksud、magiskd、zygiskd、riru、apd 和其他已知 Root 框架守护进程。未发现任何进程。</string>
+    <string name="chk_suspicious_root_daemons_reason_error">读取 /proc 时出现异常：%1$s</string>
+    <string name="chk_suspicious_root_daemons_solution">卸载 Root 框架并重启以停止这些守护进程。</string>
+
+    <!-- prop_tampering -->
+    <string name="chk_prop_tampering_name">系统属性篡改</string>
+    <string name="chk_prop_tampering_name_nd">系统属性篡改</string>
+    <string name="chk_prop_tampering_desc">系统属性显示修改迹象。</string>
+    <string name="chk_prop_tampering_desc_nd">未检测到系统属性篡改。</string>
+    <string name="chk_prop_tampering_reason">检测到以下属性不一致：%1$s。Magisk resetprop 可以在启动后修改任何系统属性，但在应用启动时烘焙到应用 JVM 中的 Android 框架常量无法追溯更改 -- 不匹配证明篡改。</string>
+    <string name="chk_prop_tampering_reason_nd">Build.TAGS 与实时 ro.build.tags、安全补丁交叉检查、指纹与设备名称以及 Magisk 属性检查全部通过。系统属性与原厂构建一致。</string>
+    <string name="chk_prop_tampering_solution">恢复原厂引导镜像以将系统属性重置为出厂值。</string>
+
+    <!-- su_extended_paths -->
+    <string name="chk_su_extended_paths_name">su 二进制文件（扩展扫描）</string>
+    <string name="chk_su_extended_paths_name_nd">su 二进制文件（扩展扫描）</string>
+    <string name="chk_su_extended_paths_desc">发现 su 二进制文件或 Root 管理文件。</string>
+    <string name="chk_su_extended_paths_desc_nd">未发现 su 二进制文件或 Root 管理文件。</string>
+    <string name="chk_su_extended_paths_reason">发现以下与 su 相关的路径：%1$s。su 二进制文件的存在是设备已被 Root 的强指标。</string>
+    <string name="chk_su_extended_paths_reason_nd">已扫描 %1$d 个已知 su 二进制文件路径并检查了 PATH。未发现此设备上可访问的 su 二进制文件。</string>
+    <string name="chk_su_extended_paths_solution">移除所有 Root 框架（Magisk、KernelSU、APatch、SuperSU）并恢复原厂引导镜像。</string>
 </resources>

@@ -5,6 +5,7 @@ import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyInfo
 import android.security.keystore.KeyProperties
+import com.anycheck.app.R
 import java.io.File
 import java.security.KeyStore
 import javax.crypto.KeyGenerator
@@ -44,89 +45,77 @@ class SystemIntegrityDetector(private val context: Context) {
                 verifiedBootState.equals("green", ignoreCase = true) -> {
                     DetectionResult(
                         id = "avb_boot_state",
-                        name = "AVB Boot State",
+                        name = context.getString(R.string.chk_avb_boot_state_name_nd),
                         category = DetectionCategory.SYSTEM_INTEGRITY,
                         status = DetectionStatus.NOT_DETECTED,
                         riskLevel = RiskLevel.CRITICAL,
-                        description = "Verified Boot state is GREEN.",
-                        detailedReason = "ro.boot.verifiedbootstate=$verifiedBootState. " +
-                            "The device booted from verified, unmodified system partitions. " +
-                            "This is the strongest boot integrity assurance.",
-                        solution = "No action required."
+                        description = context.getString(R.string.chk_avb_boot_state_desc_green),
+                        detailedReason = context.getString(R.string.chk_avb_boot_state_reason_green, verifiedBootState),
+                        solution = context.getString(R.string.chk_no_action_needed)
                     )
                 }
                 verifiedBootState.equals("yellow", ignoreCase = true) -> {
                     DetectionResult(
                         id = "avb_boot_state",
-                        name = "AVB Boot State: YELLOW",
+                        name = context.getString(R.string.chk_avb_boot_state_name_yellow),
                         category = DetectionCategory.SYSTEM_INTEGRITY,
                         status = DetectionStatus.DETECTED,
                         riskLevel = RiskLevel.HIGH,
-                        description = "Verified Boot state is YELLOW (custom ROM / self-signed).",
-                        detailedReason = "ro.boot.verifiedbootstate=$verifiedBootState. " +
-                            "The bootloader verified the boot image against a user-installed key " +
-                            "rather than a manufacturer key. This indicates a custom ROM or " +
-                            "user-enrolled AVB key. The device may be running unofficial firmware.",
-                        solution = "Flash official OEM firmware to restore GREEN verified boot state.",
+                        description = context.getString(R.string.chk_avb_boot_state_desc_yellow),
+                        detailedReason = context.getString(R.string.chk_avb_boot_state_reason_yellow, verifiedBootState),
+                        solution = context.getString(R.string.chk_avb_boot_state_solution_yellow),
                         technicalDetail = "verifiedbootstate=$verifiedBootState veritymode=$verityMode"
                     )
                 }
                 verifiedBootState.equals("orange", ignoreCase = true) -> {
                     DetectionResult(
                         id = "avb_boot_state",
-                        name = "AVB Boot State: ORANGE (Unlocked)",
+                        name = context.getString(R.string.chk_avb_boot_state_name_orange),
                         category = DetectionCategory.SYSTEM_INTEGRITY,
                         status = DetectionStatus.DETECTED,
                         riskLevel = RiskLevel.CRITICAL,
-                        description = "Verified Boot state is ORANGE -- bootloader is UNLOCKED.",
-                        detailedReason = "ro.boot.verifiedbootstate=$verifiedBootState. " +
-                            "The bootloader is unlocked and no signature is enforced. " +
-                            "The device can boot arbitrary unsigned images. " +
-                            "This is a strong indicator of a rooted or modified device.",
-                        solution = "Re-lock the bootloader via 'fastboot flashing lock' after restoring stock firmware.",
+                        description = context.getString(R.string.chk_avb_boot_state_desc_orange),
+                        detailedReason = context.getString(R.string.chk_avb_boot_state_reason_orange, verifiedBootState),
+                        solution = context.getString(R.string.chk_avb_boot_state_solution_orange),
                         technicalDetail = "verifiedbootstate=$verifiedBootState flash.locked=$bootState"
                     )
                 }
                 verifiedBootState.equals("red", ignoreCase = true) -> {
                     DetectionResult(
                         id = "avb_boot_state",
-                        name = "AVB Boot State: RED (Integrity Failure)",
+                        name = context.getString(R.string.chk_avb_boot_state_name_red),
                         category = DetectionCategory.SYSTEM_INTEGRITY,
                         status = DetectionStatus.DETECTED,
                         riskLevel = RiskLevel.CRITICAL,
-                        description = "Verified Boot state is RED -- boot image verification FAILED.",
-                        detailedReason = "ro.boot.verifiedbootstate=$verifiedBootState. " +
-                            "The device failed to verify the integrity of the boot image. " +
-                            "This may indicate a modified bootloader or corrupted system partition.",
-                        solution = "Restore factory firmware via fastboot or OTA.",
+                        description = context.getString(R.string.chk_avb_boot_state_desc_red),
+                        detailedReason = context.getString(R.string.chk_avb_boot_state_reason_red, verifiedBootState),
+                        solution = context.getString(R.string.chk_avb_boot_state_solution_red),
                         technicalDetail = "verifiedbootstate=$verifiedBootState"
                     )
                 }
                 verifiedBootState.isNotEmpty() -> {
                     DetectionResult(
                         id = "avb_boot_state",
-                        name = "AVB Boot State: Unknown",
+                        name = context.getString(R.string.chk_avb_boot_state_name_unknown),
                         category = DetectionCategory.SYSTEM_INTEGRITY,
                         status = DetectionStatus.DETECTED,
                         riskLevel = RiskLevel.HIGH,
-                        description = "Unexpected Verified Boot state: $verifiedBootState.",
-                        detailedReason = "ro.boot.verifiedbootstate=$verifiedBootState is not a standard value. " +
-                            "Expected: green, yellow, orange, or red.",
-                        solution = "Check device firmware integrity.",
+                        description = context.getString(R.string.chk_avb_boot_state_desc_unknown, verifiedBootState),
+                        detailedReason = context.getString(R.string.chk_avb_boot_state_reason_unknown, verifiedBootState),
+                        solution = context.getString(R.string.chk_avb_boot_state_solution_unknown),
                         technicalDetail = "verifiedbootstate=$verifiedBootState"
                     )
                 }
                 else -> {
                     DetectionResult(
                         id = "avb_boot_state",
-                        name = "AVB Boot State",
+                        name = context.getString(R.string.chk_avb_boot_state_name_nd),
                         category = DetectionCategory.SYSTEM_INTEGRITY,
                         status = DetectionStatus.NOT_DETECTED,
                         riskLevel = RiskLevel.HIGH,
-                        description = "AVB state property not available.",
-                        detailedReason = "ro.boot.verifiedbootstate is empty or inaccessible. " +
-                            "This is normal on older devices (pre-Android 8) that do not support AVB 2.0.",
-                        solution = "No action required.",
+                        description = context.getString(R.string.chk_avb_boot_state_desc_nd),
+                        detailedReason = context.getString(R.string.chk_avb_boot_state_reason_nd),
+                        solution = context.getString(R.string.chk_no_action_needed),
                         technicalDetail = "verifiedbootstate=(empty) veritymode=$verityMode"
                     )
                 }
@@ -134,13 +123,13 @@ class SystemIntegrityDetector(private val context: Context) {
         } catch (e: Exception) {
             DetectionResult(
                 id = "avb_boot_state",
-                name = "AVB Boot State",
+                name = context.getString(R.string.chk_avb_boot_state_name_nd),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Could not determine AVB boot state.",
-                detailedReason = "Exception reading AVB properties: ${e.message}",
-                solution = "No action required."
+                description = context.getString(R.string.chk_avb_boot_state_desc_error),
+                detailedReason = context.getString(R.string.chk_avb_boot_state_reason_error, e.message ?: ""),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -199,45 +188,38 @@ class SystemIntegrityDetector(private val context: Context) {
             if (isHardwareBacked) {
                 DetectionResult(
                     id = "tee_hardware_backed",
-                    name = "TEE Key Generation",
+                    name = context.getString(R.string.chk_tee_hardware_backed_name_nd),
                     category = DetectionCategory.SYSTEM_INTEGRITY,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
-                    description = "AES key was generated inside secure hardware ($securityLevelStr).",
-                    detailedReason = "A probe AES key was generated via AndroidKeyStore and " +
-                        "KeyInfo confirms it resides in $securityLevelStr. " +
-                        "This check cannot be spoofed by Magisk property hiding because it " +
-                        "exercises the actual TEE subsystem via the Binder-based Keymaster/KeyMint HAL.",
-                    solution = "No action required.",
+                    description = context.getString(R.string.chk_tee_hardware_backed_desc_nd, securityLevelStr),
+                    detailedReason = context.getString(R.string.chk_tee_hardware_backed_reason_nd, securityLevelStr),
+                    solution = context.getString(R.string.chk_no_action_needed),
                     technicalDetail = "security_level=$securityLevelStr sdk=${Build.VERSION.SDK_INT}"
                 )
             } else {
                 DetectionResult(
                     id = "tee_hardware_backed",
-                    name = "TEE Key Generation: Software Only",
+                    name = context.getString(R.string.chk_tee_hardware_backed_name),
                     category = DetectionCategory.SYSTEM_INTEGRITY,
                     status = DetectionStatus.DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
-                    description = "AES key was generated in software -- no hardware TEE backing.",
-                    detailedReason = "A probe AES key was generated via AndroidKeyStore but " +
-                        "KeyInfo reports it was created in the software emulation layer. " +
-                        "This strongly suggests the device is an emulator, or the TEE has " +
-                        "been bypassed (e.g. by a Keymaster/KeyMint shim module). " +
-                        "Sensitive cryptographic material is NOT protected by secure hardware.",
-                    solution = "Use a real device with a hardware TEE for secure key operations.",
+                    description = context.getString(R.string.chk_tee_hardware_backed_desc),
+                    detailedReason = context.getString(R.string.chk_tee_hardware_backed_reason),
+                    solution = context.getString(R.string.chk_tee_hardware_backed_solution),
                     technicalDetail = "security_level=software sdk=${Build.VERSION.SDK_INT}"
                 )
             }
         } catch (e: Exception) {
             DetectionResult(
                 id = "tee_hardware_backed",
-                name = "TEE Key Generation",
+                name = context.getString(R.string.chk_tee_hardware_backed_name_nd),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "TEE key generation check could not be completed.",
-                detailedReason = "Exception during probe key generation: ${e.message}",
-                solution = "No action required."
+                description = context.getString(R.string.chk_tee_hardware_backed_desc_error),
+                detailedReason = context.getString(R.string.chk_tee_hardware_backed_reason_error, e.message ?: ""),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -285,43 +267,38 @@ class SystemIntegrityDetector(private val context: Context) {
             if (isHardwareBacked) {
                 DetectionResult(
                     id = "keystore_attestation",
-                    name = "Hardware-Backed RSA Key",
+                    name = context.getString(R.string.chk_keystore_attestation_name_nd),
                     category = DetectionCategory.SYSTEM_INTEGRITY,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
-                    description = "RSA-2048 key pair resides in secure hardware (TEE/StrongBox).",
-                    detailedReason = "RSA-2048 key generated via AndroidKeyStore resides inside " +
-                        "the Trusted Execution Environment or StrongBox HSM. " +
-                        "Private key material never leaves secure hardware.",
-                    solution = "No action required.",
+                    description = context.getString(R.string.chk_keystore_attestation_desc_nd),
+                    detailedReason = context.getString(R.string.chk_keystore_attestation_reason_nd),
+                    solution = context.getString(R.string.chk_no_action_needed),
                     technicalDetail = "hardware_backed=true sdk=${Build.VERSION.SDK_INT}"
                 )
             } else {
                 DetectionResult(
                     id = "keystore_attestation",
-                    name = "Hardware-Backed RSA Key: Software Only",
+                    name = context.getString(R.string.chk_keystore_attestation_name),
                     category = DetectionCategory.SYSTEM_INTEGRITY,
                     status = DetectionStatus.DETECTED,
                     riskLevel = RiskLevel.HIGH,
-                    description = "RSA key pair is in software keystore, not secure hardware.",
-                    detailedReason = "The AndroidKeyStore RSA key was generated in the software " +
-                        "emulation layer rather than in a hardware TEE. This may indicate " +
-                        "an emulator, a rooted device with Magisk hiding active, or a device " +
-                        "that does not have a hardware-backed keystore.",
-                    solution = "Use a device with hardware-backed key storage for sensitive operations.",
+                    description = context.getString(R.string.chk_keystore_attestation_desc),
+                    detailedReason = context.getString(R.string.chk_keystore_attestation_reason),
+                    solution = context.getString(R.string.chk_keystore_attestation_solution),
                     technicalDetail = "hardware_backed=false sdk=${Build.VERSION.SDK_INT}"
                 )
             }
         } catch (e: Exception) {
             DetectionResult(
                 id = "keystore_attestation",
-                name = "Hardware-Backed RSA Key",
+                name = context.getString(R.string.chk_keystore_attestation_name_nd),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Keystore attestation check could not be completed.",
-                detailedReason = "Exception during RSA key generation/inspection: ${e.message}",
-                solution = "No action required."
+                description = context.getString(R.string.chk_keystore_attestation_desc_error),
+                detailedReason = context.getString(R.string.chk_keystore_attestation_reason_error, e.message ?: ""),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -381,44 +358,37 @@ class SystemIntegrityDetector(private val context: Context) {
             if (foundProcesses.isNotEmpty()) {
                 DetectionResult(
                     id = "suspicious_root_daemons",
-                    name = "Root Daemon Processes Running",
+                    name = context.getString(R.string.chk_suspicious_root_daemons_name),
                     category = DetectionCategory.SYSTEM_INTEGRITY,
                     status = DetectionStatus.DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
-                    description = "Active root framework daemon(s) detected in process list.",
-                    detailedReason = "The following root-related processes are running: " +
-                        "${foundProcesses.joinToString(", ")}. " +
-                        "lspd is the LSPosed/Xposed framework daemon. " +
-                        "ksud is the KernelSU daemon. " +
-                        "magiskd is the Magisk daemon. " +
-                        "zygiskd is the Zygisk companion daemon. " +
-                        "These confirm an active root framework even if file artifacts are hidden.",
-                    solution = "Uninstall the root framework and reboot to stop these daemons.",
+                    description = context.getString(R.string.chk_suspicious_root_daemons_desc),
+                    detailedReason = context.getString(R.string.chk_suspicious_root_daemons_reason, foundProcesses.joinToString(", ")),
+                    solution = context.getString(R.string.chk_suspicious_root_daemons_solution),
                     technicalDetail = "Processes: ${foundProcesses.joinToString("; ")}"
                 )
             } else {
                 DetectionResult(
                     id = "suspicious_root_daemons",
-                    name = "Root Daemon Processes",
+                    name = context.getString(R.string.chk_suspicious_root_daemons_name_nd),
                     category = DetectionCategory.SYSTEM_INTEGRITY,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
-                    description = "No known root framework daemons found in process list.",
-                    detailedReason = "Scanned /proc for lspd, ksud, magiskd, zygiskd, riru, apd, " +
-                        "and other known root framework daemons. None were found.",
-                    solution = "No action required."
+                    description = context.getString(R.string.chk_suspicious_root_daemons_desc_nd),
+                    detailedReason = context.getString(R.string.chk_suspicious_root_daemons_reason_nd),
+                    solution = context.getString(R.string.chk_no_action_needed)
                 )
             }
         } catch (e: Exception) {
             DetectionResult(
                 id = "suspicious_root_daemons",
-                name = "Root Daemon Processes",
+                name = context.getString(R.string.chk_suspicious_root_daemons_name_nd),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Could not scan process list.",
-                detailedReason = "Exception reading /proc: ${e.message}",
-                solution = "No action required."
+                description = context.getString(R.string.chk_suspicious_root_daemons_desc_error),
+                detailedReason = context.getString(R.string.chk_suspicious_root_daemons_reason_error, e.message ?: ""),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -504,31 +474,25 @@ class SystemIntegrityDetector(private val context: Context) {
         return if (issues.isNotEmpty()) {
             DetectionResult(
                 id = "prop_tampering",
-                name = "System Property Tampering",
+                name = context.getString(R.string.chk_prop_tampering_name),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "System properties show signs of modification.",
-                detailedReason = "The following property inconsistencies were detected: " +
-                    issues.joinToString("; ") + ". " +
-                    "Magisk resetprop can modify any system property after boot, " +
-                    "but Android framework constants baked into the app JVM at launch " +
-                    "cannot be changed retroactively -- a mismatch proves tampering.",
-                solution = "Restore stock boot image to reset system properties to factory values.",
+                description = context.getString(R.string.chk_prop_tampering_desc),
+                detailedReason = context.getString(R.string.chk_prop_tampering_reason, issues.joinToString("; ")),
+                solution = context.getString(R.string.chk_prop_tampering_solution),
                 technicalDetail = "Issues: ${issues.joinToString(" | ")}"
             )
         } else {
             DetectionResult(
                 id = "prop_tampering",
-                name = "System Property Tampering",
+                name = context.getString(R.string.chk_prop_tampering_name_nd),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No system property tampering detected.",
-                detailedReason = "Build.TAGS vs live ro.build.tags, security patch cross-check, " +
-                    "fingerprint vs device name, and Magisk prop checks all passed. " +
-                    "System properties are consistent with the stock build.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_prop_tampering_desc_nd),
+                detailedReason = context.getString(R.string.chk_prop_tampering_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -592,29 +556,25 @@ class SystemIntegrityDetector(private val context: Context) {
         return if (foundPaths.isNotEmpty()) {
             DetectionResult(
                 id = "su_extended_paths",
-                name = "Su Binary (Extended Scan)",
+                name = context.getString(R.string.chk_su_extended_paths_name),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Su binary or root management files found.",
-                detailedReason = "The following su-related paths were found: " +
-                    "${foundPaths.joinToString(", ")}. " +
-                    "Presence of a su binary is a strong indicator that the device is rooted.",
-                solution = "Remove all root frameworks (Magisk, KernelSU, APatch, SuperSU) " +
-                    "and restore the stock boot image.",
+                description = context.getString(R.string.chk_su_extended_paths_desc),
+                detailedReason = context.getString(R.string.chk_su_extended_paths_reason, foundPaths.joinToString(", ")),
+                solution = context.getString(R.string.chk_su_extended_paths_solution),
                 technicalDetail = "Found: ${foundPaths.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "su_extended_paths",
-                name = "Su Binary (Extended Scan)",
+                name = context.getString(R.string.chk_su_extended_paths_name_nd),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No su binary or root management files found.",
-                detailedReason = "Scanned ${suPaths.size} known su binary paths and checked PATH. " +
-                    "No su binary was found accessible on this device.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_su_extended_paths_desc_nd),
+                detailedReason = context.getString(R.string.chk_su_extended_paths_reason_nd, suPaths.size),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }

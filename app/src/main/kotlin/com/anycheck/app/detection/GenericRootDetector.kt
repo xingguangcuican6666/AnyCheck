@@ -2,6 +2,7 @@ package com.anycheck.app.detection
 
 import android.content.Context
 import android.content.pm.PackageManager
+import com.anycheck.app.R
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
@@ -42,27 +43,25 @@ class GenericRootDetector(private val context: Context) {
             if (foundPackages.isNotEmpty()) indicators.add("Packages: ${foundPackages.joinToString(", ")}")
             DetectionResult(
                 id = "apatch",
-                name = "APatch Detected",
+                name = context.getString(R.string.chk_apatch_name),
                 category = DetectionCategory.APATCH,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "APatch root framework detected.",
-                detailedReason = "APatch is a kernel-based root solution similar to KernelSU. " +
-                    "Evidence found: ${indicators.joinToString("; ")}. " +
-                    "APatch patches the kernel boot image to enable root access.",
-                solution = "Use APatch Manager to uninstall, then flash a stock boot image.",
+                description = context.getString(R.string.chk_apatch_desc),
+                detailedReason = context.getString(R.string.chk_apatch_reason, indicators.joinToString("; ")),
+                solution = context.getString(R.string.chk_apatch_solution),
                 technicalDetail = indicators.joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "apatch",
-                name = "APatch",
+                name = context.getString(R.string.chk_apatch_name_nd),
                 category = DetectionCategory.APATCH,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "APatch not detected.",
-                detailedReason = "No APatch files or packages were found.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_apatch_desc_nd),
+                detailedReason = context.getString(R.string.chk_apatch_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -94,28 +93,25 @@ class GenericRootDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "su_binary",
-                name = "SU Binary Detected",
+                name = context.getString(R.string.chk_su_binary_name),
                 category = DetectionCategory.SU_BINARY,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "su binary found at system locations.",
-                detailedReason = "The su (superuser) binary was found at: ${found.joinToString(", ")}. " +
-                    "The su binary allows apps to request elevated root privileges. " +
-                    "Its presence in system paths indicates the device has been rooted.",
-                solution = "Remove the su binary by booting into recovery and deleting it, " +
-                    "or restore via stock system image flash.",
+                description = context.getString(R.string.chk_su_binary_desc),
+                detailedReason = context.getString(R.string.chk_su_binary_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_su_binary_solution),
                 technicalDetail = "Paths: ${found.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "su_binary",
-                name = "SU Binary",
+                name = context.getString(R.string.chk_su_binary_name_nd),
                 category = DetectionCategory.SU_BINARY,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No su binary found at common system paths.",
-                detailedReason = "The su binary was not found at standard system paths.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_su_binary_desc_nd),
+                detailedReason = context.getString(R.string.chk_su_binary_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -146,27 +142,25 @@ class GenericRootDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "root_apps",
-                name = "Root Management Apps Found",
+                name = context.getString(R.string.chk_root_apps_name),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Root management or exploit apps detected.",
-                detailedReason = "Found: ${found.joinToString(", ")}. " +
-                    "These apps provide root access management, exploit capabilities, " +
-                    "or root-related functionality that indicates a rooted device.",
-                solution = "Uninstall these apps via Settings → Apps or using adb uninstall.",
+                description = context.getString(R.string.chk_root_apps_desc),
+                detailedReason = context.getString(R.string.chk_root_apps_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_root_apps_solution),
                 technicalDetail = "Packages: ${found.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "root_apps",
-                name = "Root Management Apps",
+                name = context.getString(R.string.chk_root_apps_name_nd),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No root management apps found.",
-                detailedReason = "No known root management or exploit app packages were found.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_root_apps_desc_nd),
+                detailedReason = context.getString(R.string.chk_root_apps_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -181,41 +175,37 @@ class GenericRootDetector(private val context: Context) {
         return if (isTestKeys) {
             DetectionResult(
                 id = "generic_test_keys",
-                name = "Test-Keys Build Detected",
+                name = context.getString(R.string.chk_generic_test_keys_name),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Device is running a test-keys signed build.",
-                detailedReason = "Build tags: '$buildTags', Fingerprint: '${fingerprint.take(60)}'. " +
-                    "Test-keys builds are signed with unofficial keys, indicating a custom or rooted ROM. " +
-                    "Official Google-signed builds use 'release-keys'.",
-                solution = "Flash an official OEM ROM signed with release-keys via fastboot or OTA.",
+                description = context.getString(R.string.chk_generic_test_keys_desc),
+                detailedReason = context.getString(R.string.chk_generic_test_keys_reason, buildTags, fingerprint.take(60)),
+                solution = context.getString(R.string.chk_generic_test_keys_solution),
                 technicalDetail = "Tags: $buildTags, Fingerprint: $fingerprint"
             )
         } else if (isDebug) {
             DetectionResult(
                 id = "generic_test_keys",
-                name = "Debug Build Detected",
+                name = context.getString(R.string.chk_generic_test_keys_name_debug),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "Device is running a debug build.",
-                detailedReason = "Build tags: '$buildTags'. " +
-                    "Debug builds have additional debugging capabilities enabled " +
-                    "and may have relaxed security restrictions.",
-                solution = "Use a release/production build for better security.",
+                description = context.getString(R.string.chk_generic_test_keys_desc_debug),
+                detailedReason = context.getString(R.string.chk_generic_test_keys_reason_debug, buildTags),
+                solution = context.getString(R.string.chk_generic_test_keys_solution_debug),
                 technicalDetail = "Tags: $buildTags"
             )
         } else {
             DetectionResult(
                 id = "generic_test_keys",
-                name = "Build Signature",
+                name = context.getString(R.string.chk_generic_test_keys_name_nd),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Build appears to use official release keys.",
-                detailedReason = "Build tags '$buildTags' indicate official release key signing.",
-                solution = "No action required.",
+                description = context.getString(R.string.chk_generic_test_keys_desc_nd),
+                detailedReason = context.getString(R.string.chk_generic_test_keys_reason_nd, buildTags),
+                solution = context.getString(R.string.chk_no_action_needed),
                 technicalDetail = "Tags: $buildTags"
             )
         }
@@ -235,27 +225,25 @@ class GenericRootDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "generic_busybox",
-                name = "Busybox Found",
+                name = context.getString(R.string.chk_generic_busybox_name),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "Busybox binary detected.",
-                detailedReason = "Busybox was found at: ${found.joinToString(", ")}. " +
-                    "Busybox provides Unix utilities typically not found on Android. " +
-                    "While not root itself, it is commonly installed alongside root frameworks.",
-                solution = "Busybox is removed when the associated root framework is uninstalled.",
+                description = context.getString(R.string.chk_generic_busybox_desc),
+                detailedReason = context.getString(R.string.chk_generic_busybox_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_generic_busybox_solution),
                 technicalDetail = "Paths: ${found.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "generic_busybox",
-                name = "Busybox",
+                name = context.getString(R.string.chk_generic_busybox_name_nd),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "No Busybox binary found.",
-                detailedReason = "Busybox was not found at common installation paths.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_generic_busybox_desc_nd),
+                detailedReason = context.getString(R.string.chk_generic_busybox_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }

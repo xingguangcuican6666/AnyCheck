@@ -3,6 +3,7 @@ package com.anycheck.app.detection
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import com.anycheck.app.R
 import java.io.File
 import java.io.InputStream
 import java.util.NoSuchElementException
@@ -61,28 +62,25 @@ class RootBeerFreshDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "rootbeerfresh_dangerous_apps",
-                name = "Dangerous / Piracy Apps Detected",
+                name = context.getString(R.string.chk_rootbeerfresh_dangerous_apps_name),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Potentially dangerous, piracy, or game-cheat apps found.",
-                detailedReason = "Found ${found.size} app(s): ${found.values.joinToString(", ")}. " +
-                    "These packages include black-market stores, in-app purchase bypass tools, " +
-                    "game cheats, and spyware-like apps. Their presence indicates system compromise " +
-                    "or intentional security policy violations.",
-                solution = "Uninstall these apps immediately via Settings → Apps or adb uninstall.",
+                description = context.getString(R.string.chk_rootbeerfresh_dangerous_apps_desc),
+                detailedReason = context.getString(R.string.chk_rootbeerfresh_dangerous_apps_reason, found.size, found.values.joinToString(", ")),
+                solution = context.getString(R.string.chk_rootbeerfresh_dangerous_apps_solution),
                 technicalDetail = "Packages: ${found.keys.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "rootbeerfresh_dangerous_apps",
-                name = "Dangerous / Piracy Apps",
+                name = context.getString(R.string.chk_rootbeerfresh_dangerous_apps_name_nd),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No dangerous or piracy apps detected.",
-                detailedReason = "None of the known dangerous/piracy/cheat packages were found.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_rootbeerfresh_dangerous_apps_desc_nd),
+                detailedReason = context.getString(R.string.chk_rootbeerfresh_dangerous_apps_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -100,27 +98,25 @@ class RootBeerFreshDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "rootbeerfresh_root_cloaking",
-                name = "Extended Root-Cloaking Apps Detected",
+                name = context.getString(R.string.chk_rootbeerfresh_root_cloaking_name),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Additional root-hiding or code-injection framework apps detected.",
-                detailedReason = "Found: ${found.values.joinToString(", ")}. " +
-                    "Cydia Substrate is a runtime code injection framework frequently used to " +
-                    "hide root. HideMyRoot and HideRoot variants conceal root indicators from apps.",
-                solution = "Uninstall root-cloaking apps via Settings → Apps.",
+                description = context.getString(R.string.chk_rootbeerfresh_root_cloaking_desc),
+                detailedReason = context.getString(R.string.chk_rootbeerfresh_root_cloaking_reason, found.values.joinToString(", ")),
+                solution = context.getString(R.string.chk_rootbeerfresh_root_cloaking_solution),
                 technicalDetail = "Packages: ${found.keys.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "rootbeerfresh_root_cloaking",
-                name = "Extended Root-Cloaking Apps",
+                name = context.getString(R.string.chk_rootbeerfresh_root_cloaking_name_nd),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No additional root-cloaking apps detected.",
-                detailedReason = "Cydia Substrate and HideMyRoot/HideRoot variants were not found.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_rootbeerfresh_root_cloaking_desc_nd),
+                detailedReason = context.getString(R.string.chk_rootbeerfresh_root_cloaking_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -163,28 +159,25 @@ class RootBeerFreshDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "rootbeerfresh_path_su",
-                name = "SU Binary via PATH Enumeration Detected",
+                name = context.getString(R.string.chk_rootbeerfresh_path_su_name),
                 category = DetectionCategory.SU_BINARY,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "su binary found via dynamic PATH enumeration.",
-                detailedReason = "su binary found at: ${found.joinToString(", ")}. " +
-                    "This check dynamically reads the PATH environment variable (like rootbeerFresh) " +
-                    "in addition to well-known static paths, catching su binaries placed in " +
-                    "non-standard directories that are still on the executable search path.",
-                solution = "Remove the su binary and restore a stock system image.",
+                description = context.getString(R.string.chk_rootbeerfresh_path_su_desc),
+                detailedReason = context.getString(R.string.chk_rootbeerfresh_path_su_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_rootbeerfresh_path_su_solution),
                 technicalDetail = "Paths: ${found.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "rootbeerfresh_path_su",
-                name = "SU Binary via PATH Enumeration",
+                name = context.getString(R.string.chk_rootbeerfresh_path_su_name_nd),
                 category = DetectionCategory.SU_BINARY,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No su binary found via PATH enumeration.",
-                detailedReason = "su was not found in any static or PATH-derived directory.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_rootbeerfresh_path_su_desc_nd),
+                detailedReason = context.getString(R.string.chk_rootbeerfresh_path_su_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -205,13 +198,13 @@ class RootBeerFreshDetector(private val context: Context) {
 
         val lines = runMountCommand() ?: return DetectionResult(
             id = "rootbeerfresh_rw_paths",
-            name = "RW System Paths (mount command)",
+            name = context.getString(R.string.chk_rootbeerfresh_rw_paths_name_nd),
             category = DetectionCategory.SYSTEM_INTEGRITY,
             status = DetectionStatus.NOT_DETECTED,
             riskLevel = RiskLevel.HIGH,
-            description = "Could not run mount command.",
-            detailedReason = "The mount command returned no output.",
-            solution = "Ensure /proc is accessible."
+            description = context.getString(R.string.chk_rootbeerfresh_rw_paths_desc_error),
+            detailedReason = context.getString(R.string.chk_rootbeerfresh_rw_paths_reason_error),
+            solution = context.getString(R.string.chk_rootbeerfresh_rw_paths_solution_error)
         )
 
         val sdkVersion = Build.VERSION.SDK_INT
@@ -244,29 +237,25 @@ class RootBeerFreshDetector(private val context: Context) {
         return if (rwPaths.isNotEmpty()) {
             DetectionResult(
                 id = "rootbeerfresh_rw_paths",
-                name = "System Paths Mounted Read-Write",
+                name = context.getString(R.string.chk_rootbeerfresh_rw_paths_name),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Critical system paths mounted rw: ${rwPaths.joinToString(", ")}.",
-                detailedReason = "The following paths that should be read-only are mounted " +
-                    "read-write: ${rwPaths.joinToString(", ")}. " +
-                    "This is detected by parsing the `mount` command output with " +
-                    "SDK-version-aware field offsets (rootbeerFresh technique). " +
-                    "A rw-mounted /system indicates the system partition has been modified.",
-                solution = "Remount system partition as read-only: `adb shell mount -o remount,ro /system`.",
+                description = context.getString(R.string.chk_rootbeerfresh_rw_paths_desc, rwPaths.joinToString(", ")),
+                detailedReason = context.getString(R.string.chk_rootbeerfresh_rw_paths_reason, rwPaths.joinToString(", ")),
+                solution = context.getString(R.string.chk_rootbeerfresh_rw_paths_solution),
                 technicalDetail = "RW mounts: ${rwPaths.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "rootbeerfresh_rw_paths",
-                name = "System Paths Mount Check",
+                name = context.getString(R.string.chk_rootbeerfresh_rw_paths_name_nd),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No critical system paths mounted read-write.",
-                detailedReason = "mount command output shows all sensitive paths are read-only.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_rootbeerfresh_rw_paths_desc_nd),
+                detailedReason = context.getString(R.string.chk_rootbeerfresh_rw_paths_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }

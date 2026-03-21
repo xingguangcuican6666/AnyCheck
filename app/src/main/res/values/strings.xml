@@ -226,4 +226,168 @@
     <string name="chk_ksu_props_reason">The following KernelSU properties were found: %1$s. These properties are set by KernelSU and confirm its presence.</string>
     <string name="chk_ksu_props_reason_nd">No KernelSU-specific system properties were detected.</string>
     <string name="chk_ksu_props_solution">These properties are removed when KernelSU is uninstalled.</string>
+
+    <!-- apatch -->
+    <string name="chk_apatch_name">APatch Detected</string>
+    <string name="chk_apatch_name_nd">APatch</string>
+    <string name="chk_apatch_desc">APatch root framework detected.</string>
+    <string name="chk_apatch_desc_nd">APatch not detected.</string>
+    <string name="chk_apatch_reason">APatch is a kernel-based root solution similar to KernelSU. Evidence found: %1$s. APatch patches the kernel boot image to enable root access.</string>
+    <string name="chk_apatch_reason_nd">No APatch files or packages were found.</string>
+    <string name="chk_apatch_solution">Use APatch Manager to uninstall, then flash a stock boot image.</string>
+
+    <!-- su_binary -->
+    <string name="chk_su_binary_name">SU Binary Detected</string>
+    <string name="chk_su_binary_name_nd">SU Binary</string>
+    <string name="chk_su_binary_desc">su binary found at system locations.</string>
+    <string name="chk_su_binary_desc_nd">No su binary found at common system paths.</string>
+    <string name="chk_su_binary_reason">The su (superuser) binary was found at: %1$s. The su binary allows apps to request elevated root privileges. Its presence in system paths indicates the device has been rooted.</string>
+    <string name="chk_su_binary_reason_nd">The su binary was not found at standard system paths.</string>
+    <string name="chk_su_binary_solution">Remove the su binary by booting into recovery and deleting it, or restore via stock system image flash.</string>
+
+    <!-- root_apps -->
+    <string name="chk_root_apps_name">Root Management Apps Found</string>
+    <string name="chk_root_apps_name_nd">Root Management Apps</string>
+    <string name="chk_root_apps_desc">Root management or exploit apps detected.</string>
+    <string name="chk_root_apps_desc_nd">No root management apps found.</string>
+    <string name="chk_root_apps_reason">Found: %1$s. These apps provide root access management, exploit capabilities, or root-related functionality that indicates a rooted device.</string>
+    <string name="chk_root_apps_reason_nd">No known root management or exploit app packages were found.</string>
+    <string name="chk_root_apps_solution">Uninstall these apps via Settings → Apps or using adb uninstall.</string>
+
+    <!-- generic_test_keys -->
+    <string name="chk_generic_test_keys_name">Test-Keys Build Detected</string>
+    <string name="chk_generic_test_keys_name_debug">Debug Build Detected</string>
+    <string name="chk_generic_test_keys_name_nd">Build Signature</string>
+    <string name="chk_generic_test_keys_desc">Device is running a test-keys signed build.</string>
+    <string name="chk_generic_test_keys_desc_debug">Device is running a debug build.</string>
+    <string name="chk_generic_test_keys_desc_nd">Build appears to use official release keys.</string>
+    <string name="chk_generic_test_keys_reason">Build tags: \'%1$s\', Fingerprint: \'%2$s\'. Test-keys builds are signed with unofficial keys, indicating a custom or rooted ROM. Official Google-signed builds use \'release-keys\'.</string>
+    <string name="chk_generic_test_keys_reason_debug">Build tags: \'%1$s\'. Debug builds have additional debugging capabilities enabled and may have relaxed security restrictions.</string>
+    <string name="chk_generic_test_keys_reason_nd">Build tags \'%1$s\' indicate official release key signing.</string>
+    <string name="chk_generic_test_keys_solution">Flash an official OEM ROM signed with release-keys via fastboot or OTA.</string>
+    <string name="chk_generic_test_keys_solution_debug">Use a release/production build for better security.</string>
+
+    <!-- generic_busybox -->
+    <string name="chk_generic_busybox_name">Busybox Found</string>
+    <string name="chk_generic_busybox_name_nd">Busybox</string>
+    <string name="chk_generic_busybox_desc">Busybox binary detected.</string>
+    <string name="chk_generic_busybox_desc_nd">No Busybox binary found.</string>
+    <string name="chk_generic_busybox_reason">Busybox was found at: %1$s. Busybox provides Unix utilities typically not found on Android. While not root itself, it is commonly installed alongside root frameworks.</string>
+    <string name="chk_generic_busybox_reason_nd">Busybox was not found at common installation paths.</string>
+    <string name="chk_generic_busybox_solution">Busybox is removed when the associated root framework is uninstalled.</string>
+
+    <!-- rootbeerfresh_dangerous_apps -->
+    <string name="chk_rootbeerfresh_dangerous_apps_name">Dangerous / Piracy Apps Detected</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_name_nd">Dangerous / Piracy Apps</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_desc">Potentially dangerous, piracy, or game-cheat apps found.</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_desc_nd">No dangerous or piracy apps detected.</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_reason">Found %1$d app(s): %2$s. These packages include black-market stores, in-app purchase bypass tools, game cheats, and spyware-like apps. Their presence indicates system compromise or intentional security policy violations.</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_reason_nd">None of the known dangerous/piracy/cheat packages were found.</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_solution">Uninstall these apps immediately via Settings → Apps or adb uninstall.</string>
+
+    <!-- rootbeerfresh_root_cloaking -->
+    <string name="chk_rootbeerfresh_root_cloaking_name">Extended Root-Cloaking Apps Detected</string>
+    <string name="chk_rootbeerfresh_root_cloaking_name_nd">Extended Root-Cloaking Apps</string>
+    <string name="chk_rootbeerfresh_root_cloaking_desc">Additional root-hiding or code-injection framework apps detected.</string>
+    <string name="chk_rootbeerfresh_root_cloaking_desc_nd">No additional root-cloaking apps detected.</string>
+    <string name="chk_rootbeerfresh_root_cloaking_reason">Found: %1$s. Cydia Substrate is a runtime code injection framework frequently used to hide root. HideMyRoot and HideRoot variants conceal root indicators from apps.</string>
+    <string name="chk_rootbeerfresh_root_cloaking_reason_nd">Cydia Substrate and HideMyRoot/HideRoot variants were not found.</string>
+    <string name="chk_rootbeerfresh_root_cloaking_solution">Uninstall root-cloaking apps via Settings → Apps.</string>
+
+    <!-- rootbeerfresh_path_su -->
+    <string name="chk_rootbeerfresh_path_su_name">SU Binary via PATH Enumeration Detected</string>
+    <string name="chk_rootbeerfresh_path_su_name_nd">SU Binary via PATH Enumeration</string>
+    <string name="chk_rootbeerfresh_path_su_desc">su binary found via dynamic PATH enumeration.</string>
+    <string name="chk_rootbeerfresh_path_su_desc_nd">No su binary found via PATH enumeration.</string>
+    <string name="chk_rootbeerfresh_path_su_reason">su binary found at: %1$s. This check dynamically reads the PATH environment variable (like rootbeerFresh) in addition to well-known static paths, catching su binaries placed in non-standard directories that are still on the executable search path.</string>
+    <string name="chk_rootbeerfresh_path_su_reason_nd">su was not found in any static or PATH-derived directory.</string>
+    <string name="chk_rootbeerfresh_path_su_solution">Remove the su binary and restore a stock system image.</string>
+
+    <!-- rootbeerfresh_rw_paths -->
+    <string name="chk_rootbeerfresh_rw_paths_name">System Paths Mounted Read-Write</string>
+    <string name="chk_rootbeerfresh_rw_paths_name_nd">System Paths Mount Check</string>
+    <string name="chk_rootbeerfresh_rw_paths_desc">Critical system paths mounted rw: %1$s.</string>
+    <string name="chk_rootbeerfresh_rw_paths_desc_nd">No critical system paths mounted read-write.</string>
+    <string name="chk_rootbeerfresh_rw_paths_desc_error">Could not run mount command.</string>
+    <string name="chk_rootbeerfresh_rw_paths_reason">The following paths that should be read-only are mounted read-write: %1$s. This is detected by parsing the \`mount\` command output with SDK-version-aware field offsets (rootbeerFresh technique). A rw-mounted /system indicates the system partition has been modified.</string>
+    <string name="chk_rootbeerfresh_rw_paths_reason_nd">mount command output shows all sensitive paths are read-only.</string>
+    <string name="chk_rootbeerfresh_rw_paths_reason_error">The mount command returned no output.</string>
+    <string name="chk_rootbeerfresh_rw_paths_solution">Remount system partition as read-only: \`adb shell mount -o remount,ro /system\`.</string>
+    <string name="chk_rootbeerfresh_rw_paths_solution_error">Ensure /proc is accessible.</string>
+
+    <!-- avb_boot_state -->
+    <string name="chk_avb_boot_state_name_nd">AVB Boot State</string>
+    <string name="chk_avb_boot_state_name_yellow">AVB Boot State: YELLOW</string>
+    <string name="chk_avb_boot_state_name_orange">AVB Boot State: ORANGE (Unlocked)</string>
+    <string name="chk_avb_boot_state_name_red">AVB Boot State: RED (Integrity Failure)</string>
+    <string name="chk_avb_boot_state_name_unknown">AVB Boot State: Unknown</string>
+    <string name="chk_avb_boot_state_desc_green">Verified Boot state is GREEN.</string>
+    <string name="chk_avb_boot_state_desc_yellow">Verified Boot state is YELLOW (custom ROM / self-signed).</string>
+    <string name="chk_avb_boot_state_desc_orange">Verified Boot state is ORANGE -- bootloader is UNLOCKED.</string>
+    <string name="chk_avb_boot_state_desc_red">Verified Boot state is RED -- boot image verification FAILED.</string>
+    <string name="chk_avb_boot_state_desc_unknown">Unexpected Verified Boot state: %1$s.</string>
+    <string name="chk_avb_boot_state_desc_nd">AVB state property not available.</string>
+    <string name="chk_avb_boot_state_desc_error">Could not determine AVB boot state.</string>
+    <string name="chk_avb_boot_state_reason_green">ro.boot.verifiedbootstate=%1$s. The device booted from verified, unmodified system partitions. This is the strongest boot integrity assurance.</string>
+    <string name="chk_avb_boot_state_reason_yellow">ro.boot.verifiedbootstate=%1$s. The bootloader verified the boot image against a user-installed key rather than a manufacturer key. This indicates a custom ROM or user-enrolled AVB key. The device may be running unofficial firmware.</string>
+    <string name="chk_avb_boot_state_reason_orange">ro.boot.verifiedbootstate=%1$s. The bootloader is unlocked and no signature is enforced. The device can boot arbitrary unsigned images. This is a strong indicator of a rooted or modified device.</string>
+    <string name="chk_avb_boot_state_reason_red">ro.boot.verifiedbootstate=%1$s. The device failed to verify the integrity of the boot image. This may indicate a modified bootloader or corrupted system partition.</string>
+    <string name="chk_avb_boot_state_reason_unknown">ro.boot.verifiedbootstate=%1$s is not a standard value. Expected: green, yellow, orange, or red.</string>
+    <string name="chk_avb_boot_state_reason_nd">ro.boot.verifiedbootstate is empty or inaccessible. This is normal on older devices (pre-Android 8) that do not support AVB 2.0.</string>
+    <string name="chk_avb_boot_state_reason_error">Exception reading AVB properties: %1$s</string>
+    <string name="chk_avb_boot_state_solution_yellow">Flash official OEM firmware to restore GREEN verified boot state.</string>
+    <string name="chk_avb_boot_state_solution_orange">Re-lock the bootloader via \'fastboot flashing lock\' after restoring stock firmware.</string>
+    <string name="chk_avb_boot_state_solution_red">Restore factory firmware via fastboot or OTA.</string>
+    <string name="chk_avb_boot_state_solution_unknown">Check device firmware integrity.</string>
+
+    <!-- tee_hardware_backed -->
+    <string name="chk_tee_hardware_backed_name">TEE Key Generation: Software Only</string>
+    <string name="chk_tee_hardware_backed_name_nd">TEE Key Generation</string>
+    <string name="chk_tee_hardware_backed_desc">AES key was generated in software -- no hardware TEE backing.</string>
+    <string name="chk_tee_hardware_backed_desc_nd">AES key was generated inside secure hardware (%1$s).</string>
+    <string name="chk_tee_hardware_backed_desc_error">TEE key generation check could not be completed.</string>
+    <string name="chk_tee_hardware_backed_reason">A probe AES key was generated via AndroidKeyStore but KeyInfo reports it was created in the software emulation layer. This strongly suggests the device is an emulator, or the TEE has been bypassed (e.g. by a Keymaster/KeyMint shim module). Sensitive cryptographic material is NOT protected by secure hardware.</string>
+    <string name="chk_tee_hardware_backed_reason_nd">A probe AES key was generated via AndroidKeyStore and KeyInfo confirms it resides in %1$s. This check cannot be spoofed by Magisk property hiding because it exercises the actual TEE subsystem via the Binder-based Keymaster/KeyMint HAL.</string>
+    <string name="chk_tee_hardware_backed_reason_error">Exception during probe key generation: %1$s</string>
+    <string name="chk_tee_hardware_backed_solution">Use a real device with a hardware TEE for secure key operations.</string>
+
+    <!-- keystore_attestation -->
+    <string name="chk_keystore_attestation_name">Hardware-Backed RSA Key: Software Only</string>
+    <string name="chk_keystore_attestation_name_nd">Hardware-Backed RSA Key</string>
+    <string name="chk_keystore_attestation_desc">RSA key pair is in software keystore, not secure hardware.</string>
+    <string name="chk_keystore_attestation_desc_nd">RSA-2048 key pair resides in secure hardware (TEE/StrongBox).</string>
+    <string name="chk_keystore_attestation_desc_error">Keystore attestation check could not be completed.</string>
+    <string name="chk_keystore_attestation_reason">The AndroidKeyStore RSA key was generated in the software emulation layer rather than in a hardware TEE. This may indicate an emulator, a rooted device with Magisk hiding active, or a device that does not have a hardware-backed keystore.</string>
+    <string name="chk_keystore_attestation_reason_nd">RSA-2048 key generated via AndroidKeyStore resides inside the Trusted Execution Environment or StrongBox HSM. Private key material never leaves secure hardware.</string>
+    <string name="chk_keystore_attestation_reason_error">Exception during RSA key generation/inspection: %1$s</string>
+    <string name="chk_keystore_attestation_solution">Use a device with hardware-backed key storage for sensitive operations.</string>
+
+    <!-- suspicious_root_daemons -->
+    <string name="chk_suspicious_root_daemons_name">Root Daemon Processes Running</string>
+    <string name="chk_suspicious_root_daemons_name_nd">Root Daemon Processes</string>
+    <string name="chk_suspicious_root_daemons_desc">Active root framework daemon(s) detected in process list.</string>
+    <string name="chk_suspicious_root_daemons_desc_nd">No known root framework daemons found in process list.</string>
+    <string name="chk_suspicious_root_daemons_desc_error">Could not scan process list.</string>
+    <string name="chk_suspicious_root_daemons_reason">The following root-related processes are running: %1$s. lspd is the LSPosed/Xposed framework daemon. ksud is the KernelSU daemon. magiskd is the Magisk daemon. zygiskd is the Zygisk companion daemon. These confirm an active root framework even if file artifacts are hidden.</string>
+    <string name="chk_suspicious_root_daemons_reason_nd">Scanned /proc for lspd, ksud, magiskd, zygiskd, riru, apd, and other known root framework daemons. None were found.</string>
+    <string name="chk_suspicious_root_daemons_reason_error">Exception reading /proc: %1$s</string>
+    <string name="chk_suspicious_root_daemons_solution">Uninstall the root framework and reboot to stop these daemons.</string>
+
+    <!-- prop_tampering -->
+    <string name="chk_prop_tampering_name">System Property Tampering</string>
+    <string name="chk_prop_tampering_name_nd">System Property Tampering</string>
+    <string name="chk_prop_tampering_desc">System properties show signs of modification.</string>
+    <string name="chk_prop_tampering_desc_nd">No system property tampering detected.</string>
+    <string name="chk_prop_tampering_reason">The following property inconsistencies were detected: %1$s. Magisk resetprop can modify any system property after boot, but Android framework constants baked into the app JVM at launch cannot be changed retroactively -- a mismatch proves tampering.</string>
+    <string name="chk_prop_tampering_reason_nd">Build.TAGS vs live ro.build.tags, security patch cross-check, fingerprint vs device name, and Magisk prop checks all passed. System properties are consistent with the stock build.</string>
+    <string name="chk_prop_tampering_solution">Restore stock boot image to reset system properties to factory values.</string>
+
+    <!-- su_extended_paths -->
+    <string name="chk_su_extended_paths_name">Su Binary (Extended Scan)</string>
+    <string name="chk_su_extended_paths_name_nd">Su Binary (Extended Scan)</string>
+    <string name="chk_su_extended_paths_desc">Su binary or root management files found.</string>
+    <string name="chk_su_extended_paths_desc_nd">No su binary or root management files found.</string>
+    <string name="chk_su_extended_paths_reason">The following su-related paths were found: %1$s. Presence of a su binary is a strong indicator that the device is rooted.</string>
+    <string name="chk_su_extended_paths_reason_nd">Scanned %1$d known su binary paths and checked PATH. No su binary was found accessible on this device.</string>
+    <string name="chk_su_extended_paths_solution">Remove all root frameworks (Magisk, KernelSU, APatch, SuperSU) and restore the stock boot image.</string>
 </resources>
