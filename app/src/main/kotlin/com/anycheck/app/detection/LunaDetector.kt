@@ -1,7 +1,9 @@
 package com.anycheck.app.detection
 
+import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context
 import android.content.pm.PackageManager
+import android.view.accessibility.AccessibilityManager
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
@@ -11,16 +13,28 @@ import java.io.InputStreamReader
  *
  * Implements detection methods reverse-engineered from the Luna safety checker
  * (luna.safe.luna / JNI methods in libluna.so), covering:
- *  - findlsp        → LSPosed API system property check
- *  - findksu        → KernelSU daemon service property check
- *  - checkappnum    → Magisk daemon service property check
- *  - psdir          → PATH-directory su/root binary scan
- *  - rustmagisk     → APatch process scan via /proc
- *  - fhma           → suspicious system-file size check (stat)
- *  - checksuskernel → kernel-level stat anomaly via /proc/net/unix + SELinux context
- *  - magiskmounts   → /proc/mounts Magisk bind-mount / overlayfs detection
- *  - zygoteinject   → Zygote injection via SELinux context inspection
- *  - tmpfsmount     → tmpfs SELinux context anomaly on /mnt/obb and /mnt/asec
+ *  - findlsp          → LSPosed API system property check
+ *  - findksu          → KernelSU daemon service property check
+ *  - checkappnum      → Magisk daemon service property check
+ *  - psdir            → PATH-directory su/root binary scan
+ *  - rustmagisk       → APatch process scan via /proc
+ *  - fhma             → suspicious system-file size check (stat)
+ *  - checksuskernel   → kernel-level stat anomaly via /proc/net/unix + SELinux context
+ *  - magiskmounts     → /proc/mounts Magisk bind-mount / overlayfs detection
+ *  - zygoteinject     → Zygote injection via SELinux context inspection
+ *  - tmpfsmount       → tmpfs SELinux context anomaly on /mnt/obb and /mnt/asec
+ *  - procscan         → /proc cmdline scan for dex2oat/APatch/lsposed/shamiko + mountinfo overlay
+ *  - roots            → root binary and /data/adb file existence
+ *  - kernels/tests    → /proc/version custom-kernel string + boot cmdline
+ *  - findauth         → /data/local/tmp/attestation file presence
+ *  - getEvilModules   → root native library files in system dirs and process maps
+ *  - getapps          → installed root-manager and hook-framework package scan
+ *  - findapply        → accessibility service scan for Auto.js automation tools
+ *  - findbootbl       → bootloader unlock status via ro.boot.verifiedbootstate
+ *  - checknum         → persist.sys.vold_app_data_isolation property check
+ *  - scanlib          → PackageManager nativeLibraryDir scan for root .so files
+ *  - wNxM8s/K0ajGz    → HideMyAppList / TaiChi root-hiding app presence
+ *  - magiskmac        → /sys/class/net MAC address spoofing anomaly
  */
 class LunaDetector(private val context: Context) {
 
@@ -34,7 +48,20 @@ class LunaDetector(private val context: Context) {
         checkKernelStatAnomaly(),
         checkMagiskProcMounts(),
         checkZygoteInjection(),
-        checkTmpfsMountAnomaly()
+        checkTmpfsMountAnomaly(),
+        // New: methods from new.md
+        checkProcScan(),
+        checkRootFiles(),
+        checkKernelVersion(),
+        checkAttestationFile(),
+        checkEvilModules(),
+        checkInstalledRootApps(),
+        checkAccessibilityServices(),
+        checkBootloaderUnlocked(),
+        checkVoldIsolationProperty(),
+        checkNativeLibraryScan(),
+        checkSensitivePackagesPresence(),
+        checkMacAddressAnomaly()
     )
 
     // -------------------------------------------------------------------------
@@ -608,6 +635,632 @@ class LunaDetector(private val context: Context) {
                 description = "No suspicious tmpfs mount anomalies detected.",
                 detailedReason = "Native-Test-method (tmpfsmount): /mnt/obb and /mnt/asec mount entries " +
                     "appear normal.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Luna: procscan
+    // Scans /proc/<pid>/cmdline for root framework processes (APatch, lsposed,
+    // _magisk, shamiko, zygiskd) and /proc/self/mountinfo for overlayfs entries.
+    // -------------------------------------------------------------------------
+    private fun checkProcScan(): DetectionResult {
+        val suspiciousProcs = listOf("APatch", "lsposed", "_magisk", "shamiko", "zygiskd", "magiskd")
+        val foundProcs = mutableListOf<String>()
+        val foundOverlay = mutableListOf<String>()
+
+        try {
+            val procDir = File("/proc")
+            val pidDirs = procDir.listFiles { f ->
+                f.isDirectory && f.name.all { it.isDigit() }
+            } ?: emptyArray()
+            for (pidDir in pidDirs) {
+                val cmdlineFile = File(pidDir, "cmdline")
+                if (!cmdlineFile.canRead()) continue
+                val cmdline = cmdlineFile.readBytes()
+                    .map { b -> if (b == 0.toByte()) ' ' else b.toInt().toChar() }
+                    .joinToString("").trim()
+                if (cmdline.isEmpty()) continue
+                for (pattern in suspiciousProcs) {
+                    if (cmdline.contains(pattern, ignoreCase = true) &&
+                        foundProcs.none { it.contains(pattern, ignoreCase = true) }
+                    ) {
+                        foundProcs.add("$pattern(pid=${pidDir.name})")
+                    }
+                }
+            }
+        } catch (_: Exception) {}
+
+        try {
+            val mountInfo = File("/proc/self/mountinfo")
+            if (mountInfo.canRead()) {
+                for (line in mountInfo.readLines()) {
+                    if (line.contains("overlay", ignoreCase = true) ||
+                        line.contains("lowerdir=", ignoreCase = true)
+                    ) {
+                        val mountPoint = line.split(" ").getOrElse(4) { "?" }
+                        if (!foundOverlay.contains(mountPoint)) foundOverlay.add(mountPoint)
+                    }
+                }
+            }
+        } catch (_: Exception) {}
+
+        val all = foundProcs + foundOverlay.map { "overlay@$it" }
+        return if (all.isNotEmpty()) {
+            DetectionResult(
+                id = "luna_procscan",
+                name = "Suspicious Processes / Overlay Mounts",
+                category = DetectionCategory.MAGISK,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = "Root framework processes or overlayfs mounts found.",
+                detailedReason = "Luna-method (procscan): /proc/<pid>/cmdline and /proc/self/mountinfo " +
+                    "revealed: ${all.joinToString(", ")}.",
+                solution = "Uninstall root frameworks and reboot.",
+                technicalDetail = all.joinToString("; ")
+            )
+        } else {
+            DetectionResult(
+                id = "luna_procscan",
+                name = "Process / Overlay Scan",
+                category = DetectionCategory.MAGISK,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = "No suspicious root processes or overlay mounts found.",
+                detailedReason = "Luna-method (procscan): No known root process names in /proc and no " +
+                    "unexpected overlayfs entries in mountinfo.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Luna: roots
+    // Checks existence of root binary files and /data/adb root framework dirs.
+    // -------------------------------------------------------------------------
+    private fun checkRootFiles(): DetectionResult {
+        val rootPaths = listOf(
+            "/system/bin/su", "/system/xbin/su", "/system/xbin/busybox",
+            "/data/local/su", "/data/local/bin/su", "/data/local/xbin/su",
+            "/sbin/su", "/su/bin/su", "/su/bin/busybox", "/system/su",
+            "/system/bin/.ext/.su", "/system/usr/we-need-root/su-backup",
+            "/data/adb/magisk", "/data/adb/ksu", "/data/adb/apatch",
+            "/data/adb/su", "/data/adb/magisk.img", "/magisk/.core/bin/su"
+        )
+        val found = rootPaths.filter { File(it).exists() }
+
+        return if (found.isNotEmpty()) {
+            DetectionResult(
+                id = "luna_root_files",
+                name = "Root Binary / Framework Files Detected",
+                category = DetectionCategory.SU_BINARY,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "Root-related files found on the filesystem.",
+                detailedReason = "Luna-method (roots): Root files found: ${found.joinToString(", ")}.",
+                solution = "Remove root tools to eliminate these files.",
+                technicalDetail = found.joinToString("; ")
+            )
+        } else {
+            DetectionResult(
+                id = "luna_root_files",
+                name = "Root Binary / Framework Files",
+                category = DetectionCategory.SU_BINARY,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "No root files found in standard locations.",
+                detailedReason = "Luna-method (roots): No root-related files found in common paths.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Luna: kernels / kerneltests
+    // Reads /proc/version for custom-kernel strings (kali, KernelSU, topjohnwu…)
+    // and /proc/cmdline for unlocked-boot parameters.
+    // -------------------------------------------------------------------------
+    private fun checkKernelVersion(): DetectionResult {
+        val suspiciousStrings = listOf(
+            "kali", "parrot", "nethunter", "katzh", "magisk", "kernelsu", "ksu", "topjohnwu"
+        )
+        val found = mutableListOf<String>()
+
+        try {
+            val version = File("/proc/version")
+            if (version.canRead()) {
+                val text = version.readText().trim()
+                for (s in suspiciousStrings) {
+                    if (text.contains(s, ignoreCase = true)) found.add("'$s' in /proc/version")
+                }
+            }
+        } catch (_: Exception) {}
+
+        try {
+            val cmdline = File("/proc/cmdline")
+            if (cmdline.canRead()) {
+                val content = cmdline.readText().trim()
+                if (content.contains("androidboot.verifiedbootstate=orange") ||
+                    content.contains("androidboot.flash.locked=0") ||
+                    content.contains("skip_initramfs")
+                ) {
+                    found.add("boot cmdline: unlocked/custom boot (${content.take(120)})")
+                }
+            }
+        } catch (_: Exception) {}
+
+        return if (found.isNotEmpty()) {
+            DetectionResult(
+                id = "luna_kernel_version",
+                name = "Custom / Rooted Kernel Detected",
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = "Kernel version or boot parameters indicate a custom/modified kernel.",
+                detailedReason = "Luna-method (kernels): ${found.joinToString("; ")}. " +
+                    "A custom kernel (e.g. KernelSU-patched) is required for kernel-level rooting.",
+                solution = "Restore the stock kernel via Fastboot or supported recovery.",
+                technicalDetail = found.joinToString("; ")
+            )
+        } else {
+            DetectionResult(
+                id = "luna_kernel_version",
+                name = "Kernel Version Check",
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = "Kernel version appears standard.",
+                detailedReason = "Luna-method (kernels): /proc/version contains no custom-kernel indicators.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Luna: findauth
+    // access("/data/local/tmp/attestation") → exists means root is present.
+    // Root tools create this file as an authorization/attestation marker.
+    // -------------------------------------------------------------------------
+    private fun checkAttestationFile(): DetectionResult {
+        val path = "/data/local/tmp/attestation"
+        val exists = File(path).exists()
+
+        return if (exists) {
+            DetectionResult(
+                id = "luna_attestation_file",
+                name = "Root Attestation File Detected",
+                category = DetectionCategory.ROOT_MANAGEMENT,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = "Root attestation test file found at $path.",
+                detailedReason = "Luna-method (findauth): access($path) succeeded. " +
+                    "Root tools create this file as an authorization/attestation marker.",
+                solution = "Remove the file with root: `rm $path`.",
+                technicalDetail = "File exists: $path"
+            )
+        } else {
+            DetectionResult(
+                id = "luna_attestation_file",
+                name = "Root Attestation File",
+                category = DetectionCategory.ROOT_MANAGEMENT,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = "No root attestation file found.",
+                detailedReason = "Luna-method (findauth): $path does not exist.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Luna: getEvilModules
+    // Scans /system/lib*, /vendor/lib*, /data/adb for known root native library
+    // files (libmagiskinit.so, libzygisk.so, liblspd.so…).
+    // Also checks /proc/self/maps for in-process loaded root libraries.
+    // -------------------------------------------------------------------------
+    private fun checkEvilModules(): DetectionResult {
+        val evilLibs = setOf(
+            "libmagiskinit.so", "libzygisk.so", "liblspd.so", "libxposed_art.so",
+            "libriru.so", "librirud.so", "libksu.so", "libapatch.so",
+            "libzygisk_ptrace.so", "libzygisk_loader.so", "libshamiko.so"
+        )
+        val searchDirs = listOf(
+            "/system/lib", "/system/lib64", "/system/lib/modules",
+            "/vendor/lib", "/vendor/lib64", "/data/adb"
+        )
+        val found = mutableListOf<String>()
+
+        for (dir in searchDirs) {
+            val d = File(dir)
+            if (!d.isDirectory) continue
+            try {
+                val files = d.listFiles() ?: continue
+                for (f in files) {
+                    if (evilLibs.contains(f.name.lowercase()) && !found.contains("$dir/${f.name}")) {
+                        found.add("$dir/${f.name}")
+                    }
+                }
+            } catch (_: Exception) {}
+        }
+
+        try {
+            val maps = File("/proc/self/maps")
+            if (maps.canRead()) {
+                val content = maps.readText()
+                for (lib in evilLibs) {
+                    if (content.contains(lib, ignoreCase = true) && found.none { it.contains(lib) }) {
+                        found.add("loaded in process: $lib")
+                    }
+                }
+            }
+        } catch (_: Exception) {}
+
+        return if (found.isNotEmpty()) {
+            DetectionResult(
+                id = "luna_evil_modules",
+                name = "Root Native Modules Detected",
+                category = DetectionCategory.ROOT_MANAGEMENT,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "Known root framework native libraries detected.",
+                detailedReason = "Luna-method (getEvilModules): Found: ${found.joinToString(", ")}. " +
+                    "libmagiskinit.so / libzygisk.so / liblspd.so are core root-framework components.",
+                solution = "Uninstall the associated root framework.",
+                technicalDetail = found.joinToString("; ")
+            )
+        } else {
+            DetectionResult(
+                id = "luna_evil_modules",
+                name = "Root Native Modules",
+                category = DetectionCategory.ROOT_MANAGEMENT,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "No known root native module files detected.",
+                detailedReason = "Luna-method (getEvilModules): No known root native libraries found.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Luna: getapps / getDeviceIdentifiers
+    // Checks PackageManager for known root manager and hook-framework packages.
+    // -------------------------------------------------------------------------
+    private fun checkInstalledRootApps(): DetectionResult {
+        val rootPackages = listOf(
+            "com.topjohnwu.magisk",
+            "me.weishu.kernelsu",
+            "me.bmax.apatch",
+            "eu.chainfire.supersu",
+            "com.noshufou.android.su",
+            "com.noshufou.android.su.elite",
+            "com.koushikdutta.superuser",
+            "com.yellowes.su",
+            "com.kingroot.kinguser",
+            "com.kingo.root",
+            "de.robv.android.xposed.installer",
+            "io.github.lsposed.manager",
+            "org.meowcat.edxposed.manager",
+            "me.weishu.exp",
+            "com.saurik.substrate",
+            "com.zachspong.temprootremovejb",
+            "com.amphoras.hidemyroot",
+            "com.amphoras.hidemyrootadfree",
+            "com.devadvance.rootcloak",
+            "com.devadvance.rootcloakplus"
+        )
+        val found = rootPackages.filter { packageExists(it) }
+
+        return if (found.isNotEmpty()) {
+            DetectionResult(
+                id = "luna_root_apps",
+                name = "Root Management Apps Detected",
+                category = DetectionCategory.ROOT_MANAGEMENT,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "Known root manager or hook framework apps are installed.",
+                detailedReason = "Luna-method (getapps): Installed root packages: ${found.joinToString(", ")}.",
+                solution = "Uninstall these applications to remove root indicators.",
+                technicalDetail = found.joinToString("; ")
+            )
+        } else {
+            DetectionResult(
+                id = "luna_root_apps",
+                name = "Root Management Apps",
+                category = DetectionCategory.ROOT_MANAGEMENT,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "No known root management apps detected.",
+                detailedReason = "Luna-method (getapps): No known root manager or hook framework packages installed.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Luna: findapply
+    // Checks enabled accessibility services for known automation/scripting tools
+    // (Auto.js, AutoX.js…) commonly used with root for automated cheating.
+    // -------------------------------------------------------------------------
+    private fun checkAccessibilityServices(): DetectionResult {
+        val suspiciousPatterns = listOf(
+            "youhu.laixijs", "autojs", "autox", "autoxjs",
+            "com.stardust", "org.autojs", "com.zhuhailong.autojs",
+            "scene", "mt.manager"
+        )
+        val found = mutableListOf<String>()
+
+        try {
+            val am = context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+            val services = am.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
+            for (svc in services) {
+                val id = svc.id.lowercase()
+                for (pattern in suspiciousPatterns) {
+                    if (id.contains(pattern.lowercase())) {
+                        found.add(svc.id)
+                        break
+                    }
+                }
+            }
+        } catch (_: Exception) {}
+
+        return if (found.isNotEmpty()) {
+            DetectionResult(
+                id = "luna_accessibility_svc",
+                name = "Automation Tool in Accessibility Services",
+                category = DetectionCategory.ENVIRONMENT,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.MEDIUM,
+                description = "Known root-automation tools are active as accessibility services.",
+                detailedReason = "Luna-method (findapply): Found suspicious accessibility services: " +
+                    "${found.joinToString(", ")}. " +
+                    "Auto.js and similar tools use accessibility APIs for root-based automation.",
+                solution = "Disable the listed accessibility services in Settings.",
+                technicalDetail = found.joinToString("; ")
+            )
+        } else {
+            DetectionResult(
+                id = "luna_accessibility_svc",
+                name = "Accessibility Service Check",
+                category = DetectionCategory.ENVIRONMENT,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.MEDIUM,
+                description = "No suspicious accessibility services detected.",
+                detailedReason = "Luna-method (findapply): No known automation tools found in enabled accessibility services.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Luna: findbootbl / checkbootbl / bootloaders
+    // Checks ro.boot.verifiedbootstate, ro.boot.flash.locked, and
+    // ro.boot.vbmeta.device_state to detect an unlocked bootloader.
+    // -------------------------------------------------------------------------
+    private fun checkBootloaderUnlocked(): DetectionResult {
+        val indicators = mutableListOf<String>()
+
+        val verifiedBootState = getSystemProperty("ro.boot.verifiedbootstate")
+        if (verifiedBootState.isNotEmpty() && verifiedBootState != "green") {
+            indicators.add("ro.boot.verifiedbootstate=$verifiedBootState (expected: green)")
+        }
+        val flashLocked = getSystemProperty("ro.boot.flash.locked")
+        if (flashLocked == "0") {
+            indicators.add("ro.boot.flash.locked=0 (unlocked)")
+        }
+        val vbmetaState = getSystemProperty("ro.boot.vbmeta.device_state")
+        if (vbmetaState == "unlocked") {
+            indicators.add("ro.boot.vbmeta.device_state=unlocked")
+        }
+
+        return if (indicators.isNotEmpty()) {
+            DetectionResult(
+                id = "luna_bootloader",
+                name = "Bootloader Unlocked",
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "System properties indicate an unlocked bootloader.",
+                detailedReason = "Luna-method (findbootbl): ${indicators.joinToString("; ")}. " +
+                    "An unlocked bootloader is a prerequisite for flashing root frameworks.",
+                solution = "Re-lock the bootloader via the manufacturer's official procedure.",
+                technicalDetail = indicators.joinToString("; ")
+            )
+        } else {
+            DetectionResult(
+                id = "luna_bootloader",
+                name = "Bootloader Status",
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "Bootloader appears to be locked.",
+                detailedReason = "Luna-method (findbootbl): Boot properties indicate a locked, verified bootloader.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Luna: checknum
+    // __system_property_get("persist.sys.vold_app_data_isolation") → "0" means
+    // vold data isolation has been disabled by a root tool.
+    // -------------------------------------------------------------------------
+    private fun checkVoldIsolationProperty(): DetectionResult {
+        val prop = getSystemProperty("persist.sys.vold_app_data_isolation")
+        val disabled = prop == "0"
+
+        return if (disabled) {
+            DetectionResult(
+                id = "luna_vold_isolation",
+                name = "Vold Data Isolation Disabled",
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.MEDIUM,
+                description = "persist.sys.vold_app_data_isolation is set to 0 (disabled).",
+                detailedReason = "Luna-method (checknum): persist.sys.vold_app_data_isolation=0. " +
+                    "Root tools disable vold app data isolation to gain cross-app storage access.",
+                solution = "Re-enable storage data isolation; uninstall root tools that modify this property.",
+                technicalDetail = "persist.sys.vold_app_data_isolation=$prop"
+            )
+        } else {
+            DetectionResult(
+                id = "luna_vold_isolation",
+                name = "Vold Data Isolation",
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.MEDIUM,
+                description = "Vold data isolation property is not disabled.",
+                detailedReason = "Luna-method (checknum): persist.sys.vold_app_data_isolation=" +
+                    prop.ifEmpty { "(not set)" } + ". Not disabled by root tools.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Luna: scanlib
+    // Uses PackageManager to iterate all installed apps, obtains nativeLibraryDir
+    // for each, and scans the directory for known root-framework .so files.
+    // -------------------------------------------------------------------------
+    private fun checkNativeLibraryScan(): DetectionResult {
+        val evilLibs = setOf(
+            "libmagiskinit.so", "libzygisk.so", "liblspd.so", "libxposed_art.so",
+            "libriru.so", "librirud.so", "libksu.so", "libapatch.so",
+            "libzygisk_ptrace.so", "libzygisk_loader.so", "libshamiko.so"
+        )
+        val found = mutableListOf<String>()
+
+        try {
+            val apps = context.packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
+            for (app in apps) {
+                val nativeDir = app.nativeLibraryDir ?: continue
+                val dir = File(nativeDir)
+                if (!dir.isDirectory) continue
+                val files = dir.list() ?: continue
+                for (file in files) {
+                    if (evilLibs.contains(file.lowercase())) {
+                        found.add("${app.packageName}: $file")
+                    }
+                }
+            }
+        } catch (_: Exception) {}
+
+        return if (found.isNotEmpty()) {
+            DetectionResult(
+                id = "luna_scanlib",
+                name = "Root Native Libraries in App Dirs",
+                category = DetectionCategory.ROOT_MANAGEMENT,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "Root framework native libraries found in installed app native-library directories.",
+                detailedReason = "Luna-method (scanlib): Found suspicious modules: ${found.joinToString(", ")}.",
+                solution = "Uninstall the associated app / root framework.",
+                technicalDetail = found.joinToString("; ")
+            )
+        } else {
+            DetectionResult(
+                id = "luna_scanlib",
+                name = "Native Library Scan",
+                category = DetectionCategory.ROOT_MANAGEMENT,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = "No root native libraries found in any installed app directory.",
+                detailedReason = "Luna-method (scanlib): No known root .so files found in nativeLibraryDir of any app.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Luna: wNxM8s / K0ajGz / KKajGz
+    // Checks for HideMyAppList, TaiChi, and similar root-concealment apps that
+    // hide root-manager packages from package-name-based detection.
+    // -------------------------------------------------------------------------
+    private fun checkSensitivePackagesPresence(): DetectionResult {
+        val sensitivePackages = listOf(
+            "com.tsng.hidemyapplist",
+            "com.tsng.hidemyapplist2",
+            "me.weishu.exp",               // TaiChi / 太极
+            "io.virtualsoftware.taichi",
+            "com.coderstory.toolkit",       // Scene / 场景
+            "org.lsposed.manager",
+            "com.zhenxi.hunter"
+        )
+        val found = sensitivePackages.filter { packageExists(it) }
+
+        return if (found.isNotEmpty()) {
+            DetectionResult(
+                id = "luna_sensitive_pkgs",
+                name = "Root-Hiding / Bypass Apps Detected",
+                category = DetectionCategory.ROOT_MANAGEMENT,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = "Apps designed to hide root presence or bypass detection are installed.",
+                detailedReason = "Luna-method (wNxM8s/K0ajGz): Found packages: ${found.joinToString(", ")}. " +
+                    "HideMyAppList and TaiChi conceal root-manager packages from app-level detection.",
+                solution = "Uninstall these apps.",
+                technicalDetail = found.joinToString("; ")
+            )
+        } else {
+            DetectionResult(
+                id = "luna_sensitive_pkgs",
+                name = "Root-Hiding / Bypass Apps",
+                category = DetectionCategory.ROOT_MANAGEMENT,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = "No root-hiding apps detected.",
+                detailedReason = "Luna-method (wNxM8s/K0ajGz): No known root-hiding packages installed.",
+                solution = "No action required."
+            )
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Luna: magiskmac
+    // Reads /sys/class/net/<iface>/address to detect a zero MAC address
+    // (00:00:00:00:00:00) which indicates Magisk or root modules are suppressing
+    // or spoofing the hardware MAC to bypass device fingerprinting.
+    // -------------------------------------------------------------------------
+    private fun checkMacAddressAnomaly(): DetectionResult {
+        val suspicious = mutableListOf<String>()
+
+        try {
+            val netDir = File("/sys/class/net")
+            val ifaces = netDir.listFiles() ?: emptyArray()
+            for (iface in ifaces) {
+                if (iface.name == "lo") continue
+                val addressFile = File(iface, "address")
+                if (!addressFile.canRead()) continue
+                val mac = addressFile.readText().trim()
+                if (mac == "00:00:00:00:00:00") {
+                    suspicious.add("${iface.name}: zero MAC — possible root spoofing")
+                }
+            }
+        } catch (_: Exception) {}
+
+        return if (suspicious.isNotEmpty()) {
+            DetectionResult(
+                id = "luna_mac_anomaly",
+                name = "MAC Address Anomaly (Zero MAC)",
+                category = DetectionCategory.NETWORK,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.MEDIUM,
+                description = "Network interface has a zero MAC address, indicating possible root spoofing.",
+                detailedReason = "Luna-method (magiskmac): ${suspicious.joinToString("; ")}. " +
+                    "Magisk or root modules may suppress the MAC address to bypass device fingerprinting.",
+                solution = "Investigate whether a Magisk module is suppressing MAC addresses.",
+                technicalDetail = suspicious.joinToString("; ")
+            )
+        } else {
+            DetectionResult(
+                id = "luna_mac_anomaly",
+                name = "MAC Address Check",
+                category = DetectionCategory.NETWORK,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.MEDIUM,
+                description = "No zero MAC address anomalies detected.",
+                detailedReason = "Luna-method (magiskmac): All readable network interfaces have non-zero MAC addresses.",
                 solution = "No action required."
             )
         }
