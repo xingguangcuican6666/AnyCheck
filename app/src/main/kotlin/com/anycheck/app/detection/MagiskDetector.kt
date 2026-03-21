@@ -548,39 +548,38 @@ class MagiskDetector(private val context: Context) {
         } catch (e: Exception) {
             return DetectionResult(
                 id = "magisk_hidden_manager",
-                name = "Hidden Magisk Manager",
+                name = context.getString(R.string.chk_magisk_hidden_manager_name_nd),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "Could not scan for hidden Magisk Manager.",
-                detailedReason = "Package scan could not be completed: ${e.message}",
-                solution = "No action required."
+                description = context.getString(R.string.chk_magisk_hidden_manager_desc_error),
+                detailedReason = context.getString(R.string.chk_magisk_hidden_manager_reason_error, e.message ?: ""),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
 
         return if (hiddenIndicators.isNotEmpty()) {
             DetectionResult(
                 id = "magisk_hidden_manager",
-                name = "Hidden Magisk Manager Detected",
+                name = context.getString(R.string.chk_magisk_hidden_manager_name),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "An app disguised as Magisk Manager was found.",
-                detailedReason = "Magisk Manager can be hidden under a random package name to evade detection. " +
-                    "Found potential hidden manager: ${hiddenIndicators.joinToString(", ")}.",
-                solution = "Open the app and uninstall Magisk, or use adb to remove the package.",
+                description = context.getString(R.string.chk_magisk_hidden_manager_desc),
+                detailedReason = context.getString(R.string.chk_magisk_hidden_manager_reason, hiddenIndicators.joinToString(", ")),
+                solution = context.getString(R.string.chk_magisk_hidden_manager_solution),
                 technicalDetail = "Indicators: ${hiddenIndicators.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "magisk_hidden_manager",
-                name = "Hidden Magisk Manager",
+                name = context.getString(R.string.chk_magisk_hidden_manager_name_nd),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "No hidden Magisk Manager detected.",
-                detailedReason = "No apps with Magisk Manager characteristics were found under non-standard package names.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_magisk_hidden_manager_desc_nd),
+                detailedReason = context.getString(R.string.chk_magisk_hidden_manager_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -605,28 +604,25 @@ class MagiskDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "magisk_dev_files",
-                name = "Magisk /dev Files Detected",
+                name = context.getString(R.string.chk_magisk_dev_files_name),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Magisk-specific files or sockets found in /dev.",
-                detailedReason = "Found: ${found.joinToString(", ")}. " +
-                    "Magisk uses the /dev filesystem (tmpfs) to create control sockets and " +
-                    "mirror points that it can access from any SELinux context. " +
-                    "These files only exist on devices with active Magisk.",
-                solution = "Uninstall Magisk to remove these /dev artifacts.",
+                description = context.getString(R.string.chk_magisk_dev_files_desc),
+                detailedReason = context.getString(R.string.chk_magisk_dev_files_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_magisk_dev_files_solution),
                 technicalDetail = "Paths: ${found.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "magisk_dev_files",
-                name = "Magisk /dev Files",
+                name = context.getString(R.string.chk_magisk_dev_files_name_nd),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No Magisk /dev files or sockets found.",
-                detailedReason = "No Magisk-specific files were found under /dev.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_magisk_dev_files_desc_nd),
+                detailedReason = context.getString(R.string.chk_magisk_dev_files_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -657,40 +653,37 @@ class MagiskDetector(private val context: Context) {
             if (found.isNotEmpty()) {
                 DetectionResult(
                     id = "zygisk_active_maps",
-                    name = "Zygisk Library Injected",
+                    name = context.getString(R.string.chk_zygisk_active_maps_name),
                     category = DetectionCategory.MAGISK,
                     status = DetectionStatus.DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
-                    description = "Zygisk native library is loaded in this process.",
-                    detailedReason = "Zygisk library found in /proc/self/maps: ${found.joinToString(", ")}. " +
-                        "Zygisk (Zygote + Magisk) injects its native library into every app " +
-                        "process by hooking the Zygote process before forks. " +
-                        "This confirms Zygisk is actively running.",
-                    solution = "Disable Zygisk in Magisk settings or uninstall Magisk.",
+                    description = context.getString(R.string.chk_zygisk_active_maps_desc),
+                    detailedReason = context.getString(R.string.chk_zygisk_active_maps_reason, found.joinToString(", ")),
+                    solution = context.getString(R.string.chk_zygisk_active_maps_solution),
                     technicalDetail = "Injected libs: ${found.joinToString("; ")}"
                 )
             } else {
                 DetectionResult(
                     id = "zygisk_active_maps",
-                    name = "Zygisk Library",
+                    name = context.getString(R.string.chk_zygisk_active_maps_name_nd),
                     category = DetectionCategory.MAGISK,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
-                    description = "No Zygisk library found in process memory maps.",
-                    detailedReason = "No Zygisk native library was found in /proc/self/maps.",
-                    solution = "No action required."
+                    description = context.getString(R.string.chk_zygisk_active_maps_desc_nd),
+                    detailedReason = context.getString(R.string.chk_zygisk_active_maps_reason_nd),
+                    solution = context.getString(R.string.chk_no_action_needed)
                 )
             }
         } catch (e: Exception) {
             DetectionResult(
                 id = "zygisk_active_maps",
-                name = "Zygisk Library",
+                name = context.getString(R.string.chk_zygisk_active_maps_name_nd),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No Zygisk library found in process memory.",
-                detailedReason = "Could not read /proc/self/maps: ${e.message}",
-                solution = "No action required."
+                description = context.getString(R.string.chk_zygisk_active_maps_desc_error),
+                detailedReason = context.getString(R.string.chk_zygisk_active_maps_reason_error, e.message ?: ""),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -739,27 +732,25 @@ class MagiskDetector(private val context: Context) {
         return if (suspiciousPackages.isNotEmpty()) {
             DetectionResult(
                 id = "magisk_stub_app",
-                name = "Magisk Stub App Detected",
+                name = context.getString(R.string.chk_magisk_stub_app_name),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "App with Magisk stub APK characteristics found.",
-                detailedReason = "Package(s) with Magisk stub metadata: ${suspiciousPackages.joinToString(", ")}. " +
-                    "Magisk's hide feature repackages itself as an innocent-looking app. " +
-                    "The stub retains Magisk's content provider authority and specific permission set.",
-                solution = "Open the stub app and uninstall Magisk through it.",
+                description = context.getString(R.string.chk_magisk_stub_app_desc),
+                detailedReason = context.getString(R.string.chk_magisk_stub_app_reason, suspiciousPackages.joinToString(", ")),
+                solution = context.getString(R.string.chk_magisk_stub_app_solution),
                 technicalDetail = "Suspect packages: ${suspiciousPackages.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "magisk_stub_app",
-                name = "Magisk Stub App",
+                name = context.getString(R.string.chk_magisk_stub_app_name_nd),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No Magisk stub app detected.",
-                detailedReason = "No installed packages match the Magisk stub APK signature.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_magisk_stub_app_desc_nd),
+                detailedReason = context.getString(R.string.chk_magisk_stub_app_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -801,40 +792,37 @@ class MagiskDetector(private val context: Context) {
             if (foundContexts.isNotEmpty()) {
                 DetectionResult(
                     id = "magisk_selinux",
-                    name = "Magisk SELinux Context Detected",
+                    name = context.getString(R.string.chk_magisk_selinux_name),
                     category = DetectionCategory.MAGISK,
                     status = DetectionStatus.DETECTED,
                     riskLevel = RiskLevel.HIGH,
-                    description = "Magisk-related SELinux context found.",
-                    detailedReason = "Found: ${foundContexts.take(3).joinToString(", ")}. " +
-                        "Magisk injects custom SELinux policy rules and some versions run " +
-                        "under their own SELinux context (u:r:magisk:s0). " +
-                        "A non-standard SELinux context for a root-related process confirms Magisk activity.",
-                    solution = "Remove Magisk to restore standard SELinux policy.",
+                    description = context.getString(R.string.chk_magisk_selinux_desc),
+                    detailedReason = context.getString(R.string.chk_magisk_selinux_reason, foundContexts.take(3).joinToString(", ")),
+                    solution = context.getString(R.string.chk_magisk_selinux_solution),
                     technicalDetail = foundContexts.take(5).joinToString("; ")
                 )
             } else {
                 DetectionResult(
                     id = "magisk_selinux",
-                    name = "Magisk SELinux Context",
+                    name = context.getString(R.string.chk_magisk_selinux_name_nd),
                     category = DetectionCategory.MAGISK,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.HIGH,
-                    description = "No Magisk SELinux contexts detected.",
-                    detailedReason = "No Magisk-related SELinux contexts found in /proc/*/attr/current.",
-                    solution = "No action required."
+                    description = context.getString(R.string.chk_magisk_selinux_desc_nd),
+                    detailedReason = context.getString(R.string.chk_magisk_selinux_reason_nd),
+                    solution = context.getString(R.string.chk_no_action_needed)
                 )
             }
         } catch (e: Exception) {
             DetectionResult(
                 id = "magisk_selinux",
-                name = "Magisk SELinux Context",
+                name = context.getString(R.string.chk_magisk_selinux_name_nd),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No Magisk SELinux context found.",
-                detailedReason = "Could not read /proc/self/attr/current: ${e.message}",
-                solution = "No action required."
+                description = context.getString(R.string.chk_magisk_selinux_desc_error),
+                detailedReason = context.getString(R.string.chk_magisk_selinux_reason_error, e.message ?: ""),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -864,29 +852,25 @@ class MagiskDetector(private val context: Context) {
         return if (allFound.isNotEmpty()) {
             DetectionResult(
                 id = "magisk_apex",
-                name = "Magisk APEX Overlay Detected",
+                name = context.getString(R.string.chk_magisk_apex_name),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Magisk overlay inside /apex detected.",
-                detailedReason = "Found: ${allFound.take(5).joinToString(", ")}. " +
-                    "Magisk (v24+) can inject modules into APEX (Android Pony EXpress) " +
-                    "partition libraries by bind-mounting over them. " +
-                    "The 'orig' directory is created as a backup of the original APEX content. " +
-                    "These artefacts are only present when Magisk modules are active.",
-                solution = "Disable APEX-targeting modules in Magisk Manager or uninstall Magisk.",
+                description = context.getString(R.string.chk_magisk_apex_desc),
+                detailedReason = context.getString(R.string.chk_magisk_apex_reason, allFound.take(5).joinToString(", ")),
+                solution = context.getString(R.string.chk_magisk_apex_solution),
                 technicalDetail = "Paths: ${allFound.take(10).joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "magisk_apex",
-                name = "Magisk APEX Overlay",
+                name = context.getString(R.string.chk_magisk_apex_name_nd),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No Magisk APEX overlay detected.",
-                detailedReason = "No Magisk-specific files were found inside /apex.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_magisk_apex_desc_nd),
+                detailedReason = context.getString(R.string.chk_magisk_apex_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -919,27 +903,25 @@ class MagiskDetector(private val context: Context) {
         return if (suspiciousFds.isNotEmpty()) {
             DetectionResult(
                 id = "magisk_fd",
-                name = "Magisk File Descriptors Detected",
+                name = context.getString(R.string.chk_magisk_fd_name),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "This process has open file descriptors pointing to Magisk paths.",
-                detailedReason = "Found in /proc/self/fd: ${suspiciousFds.take(5).joinToString(", ")}. " +
-                    "Magisk keeps open FDs to its mirror mount points and socket files. " +
-                    "The presence of these FDs in an app process confirms Magisk has touched this process.",
-                solution = "Remove Magisk to clear these file descriptor references.",
+                description = context.getString(R.string.chk_magisk_fd_desc),
+                detailedReason = context.getString(R.string.chk_magisk_fd_reason, suspiciousFds.take(5).joinToString(", ")),
+                solution = context.getString(R.string.chk_magisk_fd_solution),
                 technicalDetail = "FD targets: ${suspiciousFds.take(8).joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "magisk_fd",
-                name = "Magisk File Descriptors",
+                name = context.getString(R.string.chk_magisk_fd_name_nd),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No Magisk-related file descriptors found in /proc/self/fd.",
-                detailedReason = "No open file descriptors point to Magisk paths.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_magisk_fd_desc_nd),
+                detailedReason = context.getString(R.string.chk_magisk_fd_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -976,28 +958,25 @@ class MagiskDetector(private val context: Context) {
         return if (detected) {
             DetectionResult(
                 id = "native_bridge",
-                name = "Native Bridge Injection Detected",
+                name = context.getString(R.string.chk_native_bridge_name),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Riru/Zygisk native bridge injection detected.",
-                detailedReason = "ro.dalvik.vm.native.bridge = '$actualValue'. " +
-                    "Riru (a predecessor of Zygisk) hijacks the ART native bridge mechanism " +
-                    "by replacing this property with its own loader library. " +
-                    "A suspicious value here is a strong indicator of Riru/Zygisk-based injection.",
-                solution = "Remove the Riru or Zygisk Magisk module to restore the normal native bridge.",
+                description = context.getString(R.string.chk_native_bridge_desc),
+                detailedReason = context.getString(R.string.chk_native_bridge_reason, actualValue),
+                solution = context.getString(R.string.chk_native_bridge_solution),
                 technicalDetail = "ro.dalvik.vm.native.bridge=$actualValue"
             )
         } else {
             DetectionResult(
                 id = "native_bridge",
-                name = "Native Bridge",
+                name = context.getString(R.string.chk_native_bridge_name_nd),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No suspicious native bridge injection found.",
-                detailedReason = "ro.dalvik.vm.native.bridge is '$actualValue' — stock value.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_native_bridge_desc_nd),
+                detailedReason = context.getString(R.string.chk_native_bridge_reason_nd, actualValue),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -1040,28 +1019,25 @@ class MagiskDetector(private val context: Context) {
         return if (foundDaemons.isNotEmpty()) {
             DetectionResult(
                 id = "zygisk_su_daemon",
-                name = "Zygisk Companion Daemon Detected",
+                name = context.getString(R.string.chk_zygisk_su_daemon_name),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Zygisk/Magisk daemon processes are running.",
-                detailedReason = "Found daemon process(es): ${foundDaemons.joinToString(", ")}. " +
-                    "Zygisk Next (a standalone Zygisk implementation) runs privileged daemon processes " +
-                    "named zn-daemon, zn-nsdaemon, and zn-zygisk-companion. " +
-                    "Magisk itself runs as 'magiskd'. These are definitive indicators of active root injection.",
-                solution = "Uninstall Magisk or the Zygisk Next module to remove these daemon processes.",
+                description = context.getString(R.string.chk_zygisk_su_daemon_desc),
+                detailedReason = context.getString(R.string.chk_zygisk_su_daemon_reason, foundDaemons.joinToString(", ")),
+                solution = context.getString(R.string.chk_zygisk_su_daemon_solution),
                 technicalDetail = "Daemons: ${foundDaemons.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "zygisk_su_daemon",
-                name = "Zygisk/Magisk Daemon Processes",
+                name = context.getString(R.string.chk_zygisk_su_daemon_name_nd),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No Zygisk/Magisk daemon processes found.",
-                detailedReason = "No Zygisk Next or Magisk daemon process names were found in /proc/*/cmdline.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_zygisk_su_daemon_desc_nd),
+                detailedReason = context.getString(R.string.chk_zygisk_su_daemon_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -1103,42 +1079,46 @@ class MagiskDetector(private val context: Context) {
             if (detected) {
                 DetectionResult(
                     id = "magisk_timing",
-                    name = "Magisk Hook Latency Anomaly",
+                    name = context.getString(R.string.chk_magisk_timing_name),
                     category = DetectionCategory.MAGISK,
                     status = DetectionStatus.DETECTED,
                     riskLevel = RiskLevel.MEDIUM,
-                    description = "Suspicious file access latency suggests Magisk DenyList hooks.",
-                    detailedReason = "File.exists('$magiskPath') took ${String.format("%.2f", absoluteMs)}ms " +
-                        "(${String.format("%.1f", ratio)}× slower than baseline). " +
-                        "Magisk's DenyList patches intercept filesystem calls to hide Magisk files. " +
-                        "This interception adds measurable latency compared to accessing non-hooked paths.",
-                    solution = "Disable Magisk DenyList or uninstall Magisk.",
+                    description = context.getString(R.string.chk_magisk_timing_desc),
+                    detailedReason = context.getString(
+                        R.string.chk_magisk_timing_reason,
+                        magiskPath,
+                        String.format("%.2f", absoluteMs),
+                        String.format("%.1f", ratio)
+                    ),
+                    solution = context.getString(R.string.chk_magisk_timing_solution),
                     technicalDetail = "magisk=${magiskNs}ns baseline=${baselineNs}ns ratio=${String.format("%.2f", ratio)}"
                 )
             } else {
                 DetectionResult(
                     id = "magisk_timing",
-                    name = "File Access Timing",
+                    name = context.getString(R.string.chk_magisk_timing_name_nd),
                     category = DetectionCategory.MAGISK,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.MEDIUM,
-                    description = "No suspicious timing anomaly for Magisk file access.",
-                    detailedReason = "File.exists() latency is within normal range " +
-                        "(ratio=${String.format("%.1f", ratio)}×, ${String.format("%.2f", absoluteMs)}ms). " +
-                        "No Magisk DenyList hook latency detected.",
-                    solution = "No action required."
+                    description = context.getString(R.string.chk_magisk_timing_desc_nd),
+                    detailedReason = context.getString(
+                        R.string.chk_magisk_timing_reason_nd,
+                        String.format("%.1f", ratio),
+                        String.format("%.2f", absoluteMs)
+                    ),
+                    solution = context.getString(R.string.chk_no_action_needed)
                 )
             }
         } catch (e: Exception) {
             DetectionResult(
                 id = "magisk_timing",
-                name = "File Access Timing",
+                name = context.getString(R.string.chk_magisk_timing_name_nd),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "Timing check inconclusive.",
-                detailedReason = "Could not complete timing check: ${e.message}",
-                solution = "No action required."
+                description = context.getString(R.string.chk_magisk_timing_desc_error),
+                detailedReason = context.getString(R.string.chk_magisk_timing_reason_error, e.message ?: ""),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -1181,28 +1161,25 @@ class MagiskDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "broad_maps",
-                name = "Root/Hook Libraries in Process Memory",
+                name = context.getString(R.string.chk_broad_maps_name),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Root or hook framework native libraries are loaded in this process.",
-                detailedReason = "Found in /proc/self/maps: ${found.take(5).joinToString(", ")}. " +
-                    "These are native libraries belonging to Magisk (libsu), Riru, and inline hook engines " +
-                    "(Dobby, SandHook, Pine, Whale) used by Xposed-compatible frameworks. " +
-                    "Their presence confirms active injection into this process.",
-                solution = "Remove the relevant root framework or module to prevent library injection.",
+                description = context.getString(R.string.chk_broad_maps_desc),
+                detailedReason = context.getString(R.string.chk_broad_maps_reason, found.take(5).joinToString(", ")),
+                solution = context.getString(R.string.chk_broad_maps_solution),
                 technicalDetail = found.take(10).joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "broad_maps",
-                name = "Root/Hook Libraries",
+                name = context.getString(R.string.chk_broad_maps_name_nd),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No root/hook framework native libraries found in process memory.",
-                detailedReason = "No known root/hook library names were found in /proc/self/maps.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_broad_maps_desc_nd),
+                detailedReason = context.getString(R.string.chk_broad_maps_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
