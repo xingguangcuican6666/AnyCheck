@@ -62,5 +62,16 @@ data class DetectionSummary(
     },
     val hasSuBinary: Boolean = results.any {
         it.category == DetectionCategory.SU_BINARY && it.status == DetectionStatus.DETECTED
-    }
+    },
+    /** True when at least one DETECTED result has risk level HIGH or CRITICAL. */
+    val hasHighRiskDetection: Boolean = results.any {
+        it.status == DetectionStatus.DETECTED &&
+            (it.riskLevel == RiskLevel.CRITICAL || it.riskLevel == RiskLevel.HIGH)
+    },
+    /** True when there are detections but none of them are HIGH or CRITICAL risk. */
+    val hasMediumOnlyDetection: Boolean = results.any { it.status == DetectionStatus.DETECTED } &&
+        results.none {
+            it.status == DetectionStatus.DETECTED &&
+                (it.riskLevel == RiskLevel.CRITICAL || it.riskLevel == RiskLevel.HIGH)
+        }
 )

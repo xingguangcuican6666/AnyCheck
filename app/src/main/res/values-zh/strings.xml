@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AnyCheck</string>
+    <string name="app_subtitle">Root 检测分析工具</string>
+
+    <!-- 主界面 -->
+    <string name="start_detection">开始检测</string>
+    <string name="re_detect">重新检测</string>
+    <string name="detecting">检测中…</string>
+    <string name="detection_complete">检测完成</string>
+    <string name="detection_summary">摘要</string>
+    <string name="total_checks">总检查项</string>
+    <string name="issues_found">发现问题</string>
+    <string name="safe_items">安全项</string>
+    <string name="not_run">未运行</string>
+
+    <!-- 详情 -->
+    <string name="detail_reason">原因</string>
+    <string name="detail_solution">解决方案</string>
+    <string name="detail_risk_level">风险等级</string>
+    <string name="detail_category">类别</string>
+    <string name="collapse">收起</string>
+    <string name="expand">展开</string>
+
+    <!-- 状态 -->
+    <string name="status_detected">已检测</string>
+    <string name="status_not_detected">未检测</string>
+    <string name="status_error">错误</string>
+    <string name="status_checking">检测中</string>
+
+    <!-- 风险等级 -->
+    <string name="risk_critical">严重</string>
+    <string name="risk_high">高</string>
+    <string name="risk_medium">中</string>
+    <string name="risk_low">低</string>
+    <string name="risk_info">信息</string>
+
+    <!-- 类别 -->
+    <string name="cat_magisk">Magisk</string>
+    <string name="cat_kernelsu">KernelSU</string>
+    <string name="cat_apatch">APatch</string>
+    <string name="cat_su_binary">SU 二进制</string>
+    <string name="cat_root_management">Root 管理</string>
+
+    <!-- 过滤器 -->
+    <string name="filter_all">全部</string>
+    <string name="filter_detected">仅显示已检测</string>
+    <string name="filter_magisk">Magisk</string>
+    <string name="filter_kernelsu">KernelSU</string>
+
+    <!-- 其他 -->
+    <string name="app_description">AnyCheck 使用多种检测向量检测 Root 管理框架（Magisk、KernelSU、APatch）。</string>
+    <string name="disclaimer">仅供安全研究目的使用。</string>
+    <string name="copy_results">复制结果</string>
+    <string name="results_copied">结果已复制到剪贴板</string>
+    <string name="about">关于</string>
+    <string name="version">版本</string>
+</resources>

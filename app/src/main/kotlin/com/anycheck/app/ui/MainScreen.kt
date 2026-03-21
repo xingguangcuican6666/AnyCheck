@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Security
@@ -72,6 +73,10 @@ import com.anycheck.app.ui.theme.RiskCritical
 import com.anycheck.app.ui.theme.RiskCriticalDark
 import com.anycheck.app.ui.theme.RiskLow
 import com.anycheck.app.ui.theme.RiskLowDark
+import com.anycheck.app.ui.theme.RiskMedium
+import com.anycheck.app.ui.theme.RiskMediumContainer
+import com.anycheck.app.ui.theme.RiskMediumContainerDark
+import com.anycheck.app.ui.theme.RiskMediumDark
 import kotlinx.coroutines.launch
 
 enum class ResultFilter {
@@ -84,6 +89,7 @@ fun MainScreen(
     uiState: DetectionUiState,
     onStartDetection: () -> Unit,
     onReset: () -> Unit,
+    onShowAbout: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -123,6 +129,9 @@ fun MainScreen(
                         IconButton(onClick = onReset) {
                             Icon(Icons.Default.Refresh, contentDescription = "Reset")
                         }
+                    }
+                    IconButton(onClick = onShowAbout) {
+                        Icon(Icons.Default.Info, contentDescription = "关于 / About")
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -418,18 +427,43 @@ private fun ResultsScreen(
 @Composable
 private fun SummaryCard(summary: DetectionSummary, modifier: Modifier = Modifier) {
     val overallSafe = summary.detectedCount == 0
+    val possiblyRooted = !overallSafe && summary.hasMediumOnlyDetection
     val isDark = isSystemInDarkTheme()
     val riskCriticalColor = if (isDark) RiskCriticalDark else RiskCritical
+    val riskMediumColor = if (isDark) RiskMediumDark else RiskMedium
+    val riskMediumContainerColor = if (isDark) RiskMediumContainerDark else RiskMediumContainer
     val riskLowColor = if (isDark) RiskLowDark else RiskLow
+
+    val containerColor = when {
+        overallSafe -> MaterialTheme.colorScheme.primaryContainer
+        possiblyRooted -> riskMediumContainerColor
+        else -> MaterialTheme.colorScheme.errorContainer
+    }
+    val onContainerColor = when {
+        overallSafe -> MaterialTheme.colorScheme.onPrimaryContainer
+        possiblyRooted -> riskMediumColor
+        else -> MaterialTheme.colorScheme.onErrorContainer
+    }
+    val titleText = when {
+        overallSafe -> "设备看起来干净 / Device Appears Clean"
+        possiblyRooted -> "可能存在 Root / Root May Possibly Exist"
+        else -> "检测到 Root 框架 / Root Framework Detected"
+    }
+    val iconVector = when {
+        overallSafe -> Icons.Default.ShieldMoon
+        possiblyRooted -> Icons.Default.Warning
+        else -> Icons.Default.Warning
+    }
+    val iconTint = when {
+        overallSafe -> MaterialTheme.colorScheme.primary
+        possiblyRooted -> riskMediumColor
+        else -> MaterialTheme.colorScheme.error
+    }
+
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (overallSafe)
-                MaterialTheme.colorScheme.primaryContainer
-            else
-                MaterialTheme.colorScheme.errorContainer
-        )
+        colors = CardDefaults.cardColors(containerColor = containerColor)
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
             Row(
@@ -437,24 +471,22 @@ private fun SummaryCard(summary: DetectionSummary, modifier: Modifier = Modifier
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Icon(
-                    imageVector = if (overallSafe) Icons.Default.ShieldMoon else Icons.Default.Warning,
+                    imageVector = iconVector,
                     contentDescription = null,
-                    tint = if (overallSafe) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                    tint = iconTint,
                     modifier = Modifier.size(32.dp)
                 )
                 Column {
                     Text(
-                        text = if (overallSafe) "Device Appears Clean" else "Root Framework Detected",
+                        text = titleText,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = if (overallSafe) MaterialTheme.colorScheme.onPrimaryContainer
-                        else MaterialTheme.colorScheme.onErrorContainer
+                        color = onContainerColor
                     )
                     Text(
-                        text = "Detection complete · ${summary.results.size} checks run",
+                        text = "检测完成 · 共运行 ${summary.results.size} 项检查",
                         style = MaterialTheme.typography.bodySmall,
-                        color = if (overallSafe) MaterialTheme.colorScheme.onPrimaryContainer.copy(0.7f)
-                        else MaterialTheme.colorScheme.onErrorContainer.copy(0.7f)
+                        color = onContainerColor.copy(0.7f)
                     )
                 }
             }
@@ -467,17 +499,17 @@ private fun SummaryCard(summary: DetectionSummary, modifier: Modifier = Modifier
             ) {
                 SummaryStatItem(
                     count = summary.detectedCount,
-                    label = "Detected",
+                    label = "已检测",
                     color = if (summary.detectedCount > 0) riskCriticalColor else MaterialTheme.colorScheme.outline
                 )
                 SummaryStatItem(
                     count = summary.safeCount,
-                    label = "Safe",
+                    label = "安全",
                     color = riskLowColor
                 )
                 SummaryStatItem(
                     count = summary.errorCount,
-                    label = "Errors",
+                    label = "错误",
                     color = MaterialTheme.colorScheme.outline
                 )
             }

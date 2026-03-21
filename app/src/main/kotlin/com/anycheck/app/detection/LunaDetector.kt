@@ -700,7 +700,7 @@ class LunaDetector(private val context: Context) {
                 name = "Suspicious Processes / Root Overlay Mounts",
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.DETECTED,
-                riskLevel = RiskLevel.HIGH,
+                riskLevel = RiskLevel.MEDIUM,
                 description = "Root framework processes or root-linked overlayfs mounts found.",
                 detailedReason = "Luna-method (procscan): /proc/<pid>/cmdline and /proc/self/mountinfo " +
                     "revealed: ${all.joinToString(", ")}. " +
