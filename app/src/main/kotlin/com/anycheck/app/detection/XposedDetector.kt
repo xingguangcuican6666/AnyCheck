@@ -1208,29 +1208,25 @@ class XposedDetector(private val context: Context) {
         return if (injectedModules.isNotEmpty()) {
             DetectionResult(
                 id = "zygisk_module_injection",
-                name = "Zygisk Module Injected into Process",
+                name = context.getString(R.string.chk_zygisk_module_inject_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "A Zygisk module library is mapped into this process.",
-                detailedReason = "Found Zygisk module path(s) in /proc/self/maps: " +
-                    "${injectedModules.take(5).joinToString(", ")}. " +
-                    "Zygisk loads each enabled module's native library directly into the app process " +
-                    "from /data/adb/modules/<name>/zygisk/. " +
-                    "Seeing this path confirms that Zygisk is active and has injected a module here.",
-                solution = "Disable Zygisk in Magisk settings or remove injecting modules.",
+                description = context.getString(R.string.chk_zygisk_module_inject_desc),
+                detailedReason = context.getString(R.string.chk_zygisk_module_inject_reason, injectedModules.take(5).joinToString(", ")),
+                solution = context.getString(R.string.chk_zygisk_module_inject_solution),
                 technicalDetail = "Mapped paths: ${injectedModules.take(10).joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "zygisk_module_injection",
-                name = "Zygisk Module Injection",
+                name = context.getString(R.string.chk_zygisk_module_inject_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No Zygisk module libraries found in process memory map.",
-                detailedReason = "No /data/adb/modules/*/zygisk/ paths found in /proc/self/maps.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_zygisk_module_inject_desc_nd),
+                detailedReason = context.getString(R.string.chk_zygisk_module_inject_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -1267,28 +1263,25 @@ class XposedDetector(private val context: Context) {
         return if (foundPids.isNotEmpty()) {
             DetectionResult(
                 id = "lspd_process",
-                name = "LSPosed Daemon Process Detected",
+                name = context.getString(R.string.chk_lspd_process_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "The LSPosed daemon (lspd) is running on this device.",
-                detailedReason = "A process named 'lspd' was found in /proc. " +
-                    "lspd is the background daemon of the LSPosed framework that manages " +
-                    "hook modules and injects code into app processes via Zygote. " +
-                    "Found: ${foundPids.joinToString("; ")}.",
-                solution = "Uninstall LSPosed via its manager app and reboot to stop the daemon.",
+                description = context.getString(R.string.chk_lspd_process_desc),
+                detailedReason = context.getString(R.string.chk_lspd_process_reason, foundPids.joinToString("; ")),
+                solution = context.getString(R.string.chk_lspd_process_solution),
                 technicalDetail = foundPids.joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "lspd_process",
-                name = "LSPosed Daemon Process",
+                name = context.getString(R.string.chk_lspd_process_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No LSPosed daemon (lspd) process found.",
-                detailedReason = "No process named 'lspd' was found in /proc.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_lspd_process_desc_nd),
+                detailedReason = context.getString(R.string.chk_lspd_process_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }

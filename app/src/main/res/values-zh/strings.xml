@@ -581,4 +581,192 @@
     <string name="chk_broad_maps_reason_nd">在 /proc/self/maps 中未发现已知的 root/钩子库名称。</string>
     <string name="chk_broad_maps_solution">移除相关的 root 框架或模块以防止库注入。</string>
 
+    <!-- XposedDetector strings -->
+    <string name="chk_xposed_packages_name">已检测到 Xposed/LSPosed 管理器</string>
+    <string name="chk_xposed_packages_name_nd">Xposed 管理器软件包</string>
+    <string name="chk_xposed_packages_desc">已安装 Xposed 框架管理应用。</string>
+    <string name="chk_xposed_packages_desc_nd">未发现 Xposed/LSPosed 管理器软件包。</string>
+    <string name="chk_xposed_packages_reason">发现：%1$s。这些应用管理 Xposed/LSPosed/EdXposed 框架。Xposed 框架可在运行时钩挂任何 Android 应用或系统服务。</string>
+    <string name="chk_xposed_packages_reason_nd">未安装已知的 Xposed 框架管理器软件包。</string>
+    <string name="chk_xposed_packages_solution">通过框架管理器卸载。刷入原厂 boot 镜像以彻底移除 Zygote 中的钩子。</string>
+
+    <string name="chk_xposed_files_name">已发现 Xposed 框架文件</string>
+    <string name="chk_xposed_files_name_nd">Xposed 框架文件</string>
+    <string name="chk_xposed_files_desc">检测到原版 Xposed 框架文件。</string>
+    <string name="chk_xposed_files_desc_nd">未发现原版 Xposed 框架文件。</string>
+    <string name="chk_xposed_files_reason">发现：%1$s。XposedBridge.jar 是 Xposed 核心钩挂库。app_process_xposed 是在 Zygote 启动时引导 Xposed 的修改版 app_process 二进制文件。</string>
+    <string name="chk_xposed_files_reason_nd">在此设备上未发现已知的 Xposed 文件路径。</string>
+    <string name="chk_xposed_files_solution">使用 Xposed Installer 卸载，或手动恢复原厂 app_process 二进制文件。</string>
+
+    <string name="chk_lsposed_files_name">已发现 LSPosed 模块文件</string>
+    <string name="chk_lsposed_files_name_nd">LSPosed 文件</string>
+    <string name="chk_lsposed_files_desc">检测到 LSPosed 框架文件。</string>
+    <string name="chk_lsposed_files_desc_nd">未发现 LSPosed 文件。</string>
+    <string name="chk_lsposed_files_reason">发现：%1$s。LSPosed 是适用于 Android 8+ 的现代 Xposed 实现。它作为 Zygisk 或 Riru 模块运行，支持按应用设置 Xposed 模块作用域。</string>
+    <string name="chk_lsposed_files_reason_nd">未发现 LSPosed 特有文件路径。</string>
+    <string name="chk_lsposed_files_solution">通过 LSPosed 管理器 \u2192 卸载，或删除 Magisk/KernelSU 模块。</string>
+
+    <string name="chk_edxposed_files_name">已发现 EdXposed 文件</string>
+    <string name="chk_edxposed_files_name_nd">EdXposed 文件</string>
+    <string name="chk_edxposed_files_desc">检测到 EdXposed 框架文件。</string>
+    <string name="chk_edxposed_files_desc_nd">未发现 EdXposed 文件。</string>
+    <string name="chk_edxposed_files_reason">发现：%1$s。EdXposed 是适用于 Android 8\u201311 的 Xposed 实现，作为 Riru 模块运行，提供与旧版 Xposed 模块兼容的系统级代码钩挂。</string>
+    <string name="chk_edxposed_files_reason_nd">未发现 EdXposed 特有文件路径。</string>
+    <string name="chk_edxposed_files_solution">通过 EdXposed 管理器卸载，或删除 Riru/Magisk 模块。</string>
+
+    <string name="chk_xposed_bridge_class_name">XposedBridge 类已加载</string>
+    <string name="chk_xposed_bridge_class_name_nd">XposedBridge 类</string>
+    <string name="chk_xposed_bridge_class_desc">XposedBridge 类存在于类路径中。</string>
+    <string name="chk_xposed_bridge_class_desc_nd">类路径中未发现 XposedBridge 类。</string>
+    <string name="chk_xposed_bridge_class_reason">类 \'de.robv.android.xposed.XposedBridge\' 已成功加载。此类是 Xposed 框架的核心，仅在 Xposed（或兼容分支如 LSPosed/EdXposed）在此进程中处于活动状态时存在。</string>
+    <string name="chk_xposed_bridge_class_reason_nd">XposedBridge 类无法加载——Xposed 在此进程中未激活。</string>
+    <string name="chk_xposed_bridge_class_reason_error">类检查未找到 XposedBridge：%1$s</string>
+    <string name="chk_xposed_bridge_class_solution">卸载 Xposed/LSPosed/EdXposed 框架。</string>
+
+    <string name="chk_xposed_stack_name">堆栈跟踪中存在 Xposed 钩子</string>
+    <string name="chk_xposed_stack_name_nd">堆栈跟踪中的 Xposed</string>
+    <string name="chk_xposed_stack_desc">在异常调用栈中检测到 Xposed 框架。</string>
+    <string name="chk_xposed_stack_desc_nd">异常堆栈跟踪中无 Xposed 框架条目。</string>
+    <string name="chk_xposed_stack_reason">在异常堆栈跟踪中发现 Xposed/LSPlant 框架条目。这确认 Xposed 正在此进程中活跃钩挂方法调用。</string>
+    <string name="chk_xposed_stack_reason_nd">异常堆栈跟踪中未显示 Xposed 框架方法。</string>
+    <string name="chk_xposed_stack_solution">卸载 Xposed/LSPosed 框架。</string>
+
+    <string name="chk_xposed_props_name">已发现 Xposed 系统属性</string>
+    <string name="chk_xposed_props_name_nd">Xposed 系统属性</string>
+    <string name="chk_xposed_props_desc">发现 Xposed 特有系统属性。</string>
+    <string name="chk_xposed_props_desc_nd">未发现 Xposed 系统属性。</string>
+    <string name="chk_xposed_props_reason">发现：%1$s。这些属性由 Xposed 框架或其安装程序设置。</string>
+    <string name="chk_xposed_props_reason_nd">未检测到 Xposed 特有系统属性。</string>
+    <string name="chk_xposed_props_solution">正确卸载 Xposed 后这些属性将被移除。</string>
+
+    <string name="chk_virtual_frameworks_name">已检测到虚拟应用框架</string>
+    <string name="chk_virtual_frameworks_name_nd">虚拟应用框架</string>
+    <string name="chk_virtual_frameworks_desc">检测到虚拟应用/多账户框架。</string>
+    <string name="chk_virtual_frameworks_desc_nd">未检测到虚拟应用框架。</string>
+    <string name="chk_virtual_frameworks_reason">发现：%1$s。VirtualApp、平行空间等虚拟框架创建虚拟化 Android 环境，可在沙盒克隆中运行应用，可能通过在修改后的容器内运行应用来绕过检测。</string>
+    <string name="chk_virtual_frameworks_reason_nd">未发现已知虚拟框架软件包。</string>
+    <string name="chk_virtual_frameworks_solution">通过「设置」\u2192「应用」卸载虚拟框架应用。</string>
+
+    <string name="chk_lsposed_socket_name">已检测到 LSPosed 守护进程套接字</string>
+    <string name="chk_lsposed_socket_name_nd">LSPosed 守护进程套接字</string>
+    <string name="chk_lsposed_socket_desc">LSPosed 守护进程 Unix 套接字处于活动状态。</string>
+    <string name="chk_lsposed_socket_desc_nd">未发现 LSPosed 守护进程套接字。</string>
+    <string name="chk_lsposed_socket_reason">在 /proc/net/unix 中发现套接字：%1$s。LSPosed（lspd）使用 Unix 域套接字在守护进程和管理器应用之间进行 IPC。此套接字的存在确认 lspd 当前正在运行。</string>
+    <string name="chk_lsposed_socket_reason_nd">在 /proc/net/unix 中未发现 lspd 套接字名称。</string>
+    <string name="chk_lsposed_socket_reason_error">无法读取 /proc/net/unix：%1$s</string>
+    <string name="chk_lsposed_socket_solution">通过 LSPosed 管理器应用移除 LSPosed，或删除 Magisk/KSU 模块。</string>
+
+    <string name="chk_lsposed_dex_maps_name">进程内存中存在 LSPosed 文件</string>
+    <string name="chk_lsposed_dex_maps_name_nd">进程中的 LSPosed 文件</string>
+    <string name="chk_lsposed_dex_maps_desc">LSPosed/LSPlant 文件已加载到此进程中。</string>
+    <string name="chk_lsposed_dex_maps_desc_nd">进程内存中未发现 LSPosed/LSPlant 文件。</string>
+    <string name="chk_lsposed_dex_maps_reason">在 /proc/self/maps 中发现：%1$s。LSPosed 将其钩子引擎（LSPlant）和模块 DEX 文件注入每个有作用域的应用进程。这些映射路径是活动 LSPosed 注入的确定性指标。</string>
+    <string name="chk_lsposed_dex_maps_reason_nd">在 /proc/self/maps 中未发现 LSPosed 相关文件。</string>
+    <string name="chk_lsposed_dex_maps_reason_error">无法读取 /proc/self/maps：%1$s</string>
+    <string name="chk_lsposed_dex_maps_solution">移除 LSPosed 或为此应用禁用模块作用域。</string>
+
+    <string name="chk_lsposed_config_name">已发现 LSPosed 配置文件</string>
+    <string name="chk_lsposed_config_name_nd">LSPosed 配置文件</string>
+    <string name="chk_lsposed_config_desc">检测到 LSPosed 配置或模块文件。</string>
+    <string name="chk_lsposed_config_desc_nd">未发现 LSPosed 配置文件。</string>
+    <string name="chk_lsposed_config_reason">发现：%1$s。LSPosed 将其守护进程配置和模块作用域列表存储在 /data/misc/lspd/ 中。这些文件的存在确认 LSPosed 已安装或曾被安装。</string>
+    <string name="chk_lsposed_config_reason_nd">磁盘上未发现 LSPosed 配置路径。</string>
+    <string name="chk_lsposed_config_solution">通过管理器应用卸载 LSPosed，或删除 Magisk/KSU 模块目录。</string>
+
+    <string name="chk_hooked_methods_name">已检测到已钩挂的 Java 方法</string>
+    <string name="chk_hooked_methods_name_nd">Java 方法钩子</string>
+    <string name="chk_hooked_methods_desc">Java 方法被 LSPosed/LSPlant 钩挂。</string>
+    <string name="chk_hooked_methods_desc_nd">通过反射未检测到 Java 方法钩子。</string>
+    <string name="chk_hooked_methods_reason">检测到已钩挂方法：%1$s。LSPosed 使用 LSPlant 库作为其 ART 钩子引擎。被钩挂的方法的 ArtMethod 实现指针被替换，这可以通过反射检测到。</string>
+    <string name="chk_hooked_methods_reason_nd">在反射或堆栈跟踪中未发现 LSPlant/XposedBridge 钩子指标。</string>
+    <string name="chk_hooked_methods_solution">移除 LSPosed 或禁用钩挂这些方法的模块。</string>
+
+    <string name="chk_lsposed_scope_name">LSPosed 模块正在针对此应用</string>
+    <string name="chk_lsposed_scope_name_nd">LSPosed 模块作用域</string>
+    <string name="chk_lsposed_scope_desc">某个 LSPosed 模块的作用域包含此应用。</string>
+    <string name="chk_lsposed_scope_desc_nd">没有 LSPosed 模块的作用域包含此应用。</string>
+    <string name="chk_lsposed_scope_reason">在 LSPosed 作用域文件中发现 \'%1$s\'：%2$s。LSPosed 记录每个模块应注入哪些应用。在作用域配置中看到此应用的包名确认有活动模块正在针对它。</string>
+    <string name="chk_lsposed_scope_reason_nd">在任何可读的 LSPosed 作用域配置中未发现此应用的包名。</string>
+    <string name="chk_lsposed_scope_solution">打开 LSPosed 管理器，禁用所有作用域包含此应用的模块。</string>
+
+    <string name="chk_lsposed_classes_name">已检测到 LSPosed 内部类</string>
+    <string name="chk_lsposed_classes_name_nd">LSPosed 内部类</string>
+    <string name="chk_lsposed_classes_desc">LSPosed 内部类已加载到此进程中。</string>
+    <string name="chk_lsposed_classes_desc_nd">类路径中未发现 LSPosed 内部类。</string>
+    <string name="chk_lsposed_classes_reason">已成功加载：%1$s。这些是 LSPosed 的私有实现类（lspd 核心）。它们仅在 LSPosed 注入此进程时才存在于类路径中。这是活动 LSPosed 钩挂最可靠的 Java 层指标。</string>
+    <string name="chk_lsposed_classes_reason_nd">无法加载任何已知的 LSPosed lspd 实现类。</string>
+    <string name="chk_lsposed_classes_solution">卸载 LSPosed 或为此应用禁用模块作用域。</string>
+
+    <string name="chk_xposed_bridge_version_name">已检测到 XposedBridge 版本属性</string>
+    <string name="chk_xposed_bridge_version_name_nd">XposedBridge 版本属性</string>
+    <string name="chk_xposed_bridge_version_desc">发现 Xposed 框架版本属性或桥接字段。</string>
+    <string name="chk_xposed_bridge_version_desc_nd">未发现 XposedBridge 版本属性。</string>
+    <string name="chk_xposed_bridge_version_reason">发现：%1$s。Xposed 框架将 \'xposed.bridge.version\' 设置为系统属性，并在 XposedBridge 上公开静态字段。这些是 LSPosed（或其他 Xposed 分支）处于活动状态的确定性指标。</string>
+    <string name="chk_xposed_bridge_version_reason_nd">未检测到 Xposed 版本系统属性或桥接字段。</string>
+    <string name="chk_xposed_bridge_version_solution">卸载 LSPosed/Xposed 以移除这些属性。</string>
+
+    <string name="chk_classloader_chain_name">ClassLoader 链中存在 LSPosed ClassLoader</string>
+    <string name="chk_classloader_chain_name_nd">ClassLoader 链</string>
+    <string name="chk_classloader_chain_desc">在 ClassLoader 层次结构中发现 LSPosed/Xposed ClassLoader。</string>
+    <string name="chk_classloader_chain_desc_nd">在 ClassLoader 层次结构中未发现 LSPosed/Xposed ClassLoader。</string>
+    <string name="chk_classloader_chain_reason">发现：%1$s。LSPosed 用自己的加载器包装应用的 ClassLoader 以注入 Xposed 模块。类名中包含 \'lsposed\'、\'lspd\' 或 \'edxposed\' 的 ClassLoader 是活动注入的直接指标。</string>
+    <string name="chk_classloader_chain_reason_nd">ClassLoader 父链中不含已知钩子框架类名。</string>
+    <string name="chk_classloader_chain_solution">移除 LSPosed 或为此应用禁用模块。</string>
+
+    <string name="chk_in_memory_dex_name">已检测到内存中 DEX ClassLoader</string>
+    <string name="chk_in_memory_dex_name_nd">内存中 DEX ClassLoader</string>
+    <string name="chk_in_memory_dex_desc">在 ClassLoader 中检测到匿名/内存中 DEX 模块。</string>
+    <string name="chk_in_memory_dex_desc_nd">在 ClassLoader 层次结构中未发现内存中 DEX 条目。</string>
+    <string name="chk_in_memory_dex_reason">发现：%1$s。LSPosed 使用 InMemoryDexClassLoader 将 Xposed 模块 APK/DEX 文件直接加载到内存中。内存中 DEX 元素没有文件路径——这是活动 LSPosed 模块注入最可靠的 Java 层指标之一。</string>
+    <string name="chk_in_memory_dex_reason_nd">ClassLoader 层次结构中的所有 DEX 条目均引用磁盘上的真实文件。</string>
+    <string name="chk_in_memory_dex_solution">通过 LSPosed 管理器禁用此应用的所有 LSPosed 模块。</string>
+
+    <string name="chk_lsposed_data_dirs_name">LSPosed 数据目录存在</string>
+    <string name="chk_lsposed_data_dirs_name_nd">LSPosed 数据目录</string>
+    <string name="chk_lsposed_data_dirs_desc">发现 LSPosed/Xposed 管理器应用数据目录。</string>
+    <string name="chk_lsposed_data_dirs_desc_nd">未发现 LSPosed/Xposed 管理器数据目录。</string>
+    <string name="chk_lsposed_data_dirs_reason">发现：%1$s。即使 Magisk DenyList 对 PackageManager 隐藏了 LSPosed 管理器 APK，其应用数据目录仍保留在磁盘上。其存在证明 LSPosed 曾被或正在此设备上安装。</string>
+    <string name="chk_lsposed_data_dirs_reason_nd">在 /data/user/0/ 或 /data/data/ 中未发现已知的 LSPosed/Xposed 数据目录。</string>
+    <string name="chk_lsposed_data_dirs_solution">通过应用本身或 adb 卸载 LSPosed 管理器。</string>
+
+    <string name="chk_zygisk_env_name">已检测到 Zygisk 环境/属性</string>
+    <string name="chk_zygisk_env_name_nd">Zygisk 环境/属性</string>
+    <string name="chk_zygisk_env_desc">发现 Zygisk 特有环境变量或系统属性。</string>
+    <string name="chk_zygisk_env_desc_nd">未发现 Zygisk 环境变量或属性。</string>
+    <string name="chk_zygisk_env_reason">发现：%1$s。ZYGISK_ENABLED 由 Magisk 在 Zygisk 活动时设置。这些变量/属性在原厂设备上不存在，确认 Zygisk 正在运行。</string>
+    <string name="chk_zygisk_env_reason_nd">ZYGISK_ENABLED 未设置；未检测到 Zygisk 系统属性。</string>
+    <string name="chk_zygisk_env_solution">在 Magisk 设置中禁用 Zygisk，或卸载 Magisk/Zygisk Next。</string>
+
+    <string name="chk_lsposed_stack_full_name">堆栈跟踪中存在 LSPosed/lspd 帧</string>
+    <string name="chk_lsposed_stack_full_name_nd">LSPosed/lspd 堆栈跟踪</string>
+    <string name="chk_lsposed_stack_full_desc">在异常堆栈跟踪中检测到 LSPosed/lspd 类名。</string>
+    <string name="chk_lsposed_stack_full_desc_nd">堆栈跟踪中未发现 LSPosed/lspd 类名。</string>
+    <string name="chk_lsposed_stack_full_reason">发现帧：%1$s。当 LSPosed 被注入且某个模块的作用域包含此应用时，lspd 类名会出现在调用栈中。</string>
+    <string name="chk_lsposed_stack_full_reason_nd">异常堆栈跟踪中未出现 lsposed/lspd/edxposed 类名。</string>
+    <string name="chk_lsposed_stack_full_solution">移除 LSPosed 或禁用所有作用域包含此应用的模块。</string>
+
+    <string name="chk_smaps_hooks_name">通过 SMAPS 检测到内联钩子</string>
+    <string name="chk_smaps_hooks_name_nd">SMAPS 内联钩子检查</string>
+    <string name="chk_smaps_hooks_desc">关键库代码段存在脏（已修改）页面。</string>
+    <string name="chk_smaps_hooks_desc_nd">SMAPS 中未发现内联钩子特征。</string>
+    <string name="chk_smaps_hooks_reason">受影响的库：%1$s。r-xp（读-执行）代码段中非零的 Private_Dirty 值表明代码页因 Linux 写时复制而被复制。这是 LSPosed（通过 LSPlant）、Frida 或 Zygisk 模块进行内联钩挂的特征。</string>
+    <string name="chk_smaps_hooks_reason_nd">所有关键库代码段的 Private_Dirty = 0。</string>
+    <string name="chk_smaps_hooks_solution">移除 LSPosed、Frida gadget 或任何 Zygisk 钩挂模块。</string>
+
+    <string name="chk_zygisk_module_inject_name">已将 Zygisk 模块注入进程</string>
+    <string name="chk_zygisk_module_inject_name_nd">Zygisk 模块注入</string>
+    <string name="chk_zygisk_module_inject_desc">Zygisk 模块库已映射到此进程中。</string>
+    <string name="chk_zygisk_module_inject_desc_nd">进程内存映射中未发现 Zygisk 模块库。</string>
+    <string name="chk_zygisk_module_inject_reason">在 /proc/self/maps 中发现 Zygisk 模块路径：%1$s。Zygisk 从 /data/adb/modules/&lt;名称&gt;/zygisk/ 将每个已启用模块的原生库直接加载到应用进程中。看到此路径确认 Zygisk 处于活动状态并已在此处注入模块。</string>
+    <string name="chk_zygisk_module_inject_reason_nd">在 /proc/self/maps 中未发现 /data/adb/modules/*/zygisk/ 路径。</string>
+    <string name="chk_zygisk_module_inject_solution">在 Magisk 设置中禁用 Zygisk，或移除注入模块。</string>
+
+    <string name="chk_lspd_process_name">已检测到 LSPosed 守护进程</string>
+    <string name="chk_lspd_process_name_nd">LSPosed 守护进程</string>
+    <string name="chk_lspd_process_desc">LSPosed 守护进程（lspd）正在此设备上运行。</string>
+    <string name="chk_lspd_process_desc_nd">未发现 LSPosed 守护进程（lspd）。</string>
+    <string name="chk_lspd_process_reason">在 /proc 中发现名为 \'lspd\' 的进程。lspd 是 LSPosed 框架的后台守护进程，通过 Zygote 管理钩子模块并向应用进程注入代码。发现：%1$s。</string>
+    <string name="chk_lspd_process_reason_nd">在 /proc 中未发现名为 \'lspd\' 的进程。</string>
+    <string name="chk_lspd_process_solution">通过其管理器应用卸载 LSPosed 并重启以停止守护进程。</string>
+
 </resources>

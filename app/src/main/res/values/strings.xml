@@ -580,4 +580,192 @@
     <string name="chk_broad_maps_reason_nd">No known root/hook library names were found in /proc/self/maps.</string>
     <string name="chk_broad_maps_solution">Remove the relevant root framework or module to prevent library injection.</string>
 
+    <!-- XposedDetector strings -->
+    <string name="chk_xposed_packages_name">Xposed/LSPosed Manager Detected</string>
+    <string name="chk_xposed_packages_name_nd">Xposed Manager Packages</string>
+    <string name="chk_xposed_packages_desc">Xposed framework management app installed.</string>
+    <string name="chk_xposed_packages_desc_nd">No Xposed/LSPosed manager packages found.</string>
+    <string name="chk_xposed_packages_reason">Found: %1$s. These apps manage Xposed/LSPosed/EdXposed frameworks. Xposed frameworks hook into any Android app or system service at runtime.</string>
+    <string name="chk_xposed_packages_reason_nd">No known Xposed framework manager packages are installed.</string>
+    <string name="chk_xposed_packages_solution">Uninstall via the framework manager. Flash a stock boot image to fully remove hooks from Zygote.</string>
+
+    <string name="chk_xposed_files_name">Xposed Framework Files Found</string>
+    <string name="chk_xposed_files_name_nd">Xposed Framework Files</string>
+    <string name="chk_xposed_files_desc">Original Xposed framework files detected.</string>
+    <string name="chk_xposed_files_desc_nd">No original Xposed framework files found.</string>
+    <string name="chk_xposed_files_reason">Found: %1$s. XposedBridge.jar is the core Xposed hooking library. app_process_xposed is the modified app_process binary used to bootstrap Xposed at Zygote startup.</string>
+    <string name="chk_xposed_files_reason_nd">No known Xposed file paths were found on this device.</string>
+    <string name="chk_xposed_files_solution">Use Xposed Installer to uninstall, or manually restore the stock app_process binary.</string>
+
+    <string name="chk_lsposed_files_name">LSPosed Module Files Found</string>
+    <string name="chk_lsposed_files_name_nd">LSPosed Files</string>
+    <string name="chk_lsposed_files_desc">LSPosed framework files detected.</string>
+    <string name="chk_lsposed_files_desc_nd">No LSPosed files found.</string>
+    <string name="chk_lsposed_files_reason">Found: %1$s. LSPosed is the modern Xposed implementation for Android 8+. It runs as a Zygisk or Riru module and enables per-app Xposed module scoping.</string>
+    <string name="chk_lsposed_files_reason_nd">No LSPosed-specific file paths were found.</string>
+    <string name="chk_lsposed_files_solution">Remove via LSPosed Manager \u2192 Uninstall, or remove the Magisk/KernelSU module.</string>
+
+    <string name="chk_edxposed_files_name">EdXposed Files Found</string>
+    <string name="chk_edxposed_files_name_nd">EdXposed Files</string>
+    <string name="chk_edxposed_files_desc">EdXposed framework files detected.</string>
+    <string name="chk_edxposed_files_desc_nd">No EdXposed files found.</string>
+    <string name="chk_edxposed_files_reason">Found: %1$s. EdXposed is an Xposed implementation for Android 8\u201311 running as a Riru module. It enables system-wide code hooks compatible with legacy Xposed modules.</string>
+    <string name="chk_edxposed_files_reason_nd">No EdXposed-specific file paths were found.</string>
+    <string name="chk_edxposed_files_solution">Remove via EdXposed Manager or delete the Riru/Magisk module.</string>
+
+    <string name="chk_xposed_bridge_class_name">XposedBridge Class Loaded</string>
+    <string name="chk_xposed_bridge_class_name_nd">XposedBridge Class</string>
+    <string name="chk_xposed_bridge_class_desc">XposedBridge class is present in the classpath.</string>
+    <string name="chk_xposed_bridge_class_desc_nd">XposedBridge class not found in classpath.</string>
+    <string name="chk_xposed_bridge_class_reason">The class \'de.robv.android.xposed.XposedBridge\' was successfully loaded. This class is the core of the Xposed framework and is only present when Xposed (or a compatible fork like LSPosed/EdXposed) is active in this process.</string>
+    <string name="chk_xposed_bridge_class_reason_nd">XposedBridge class could not be loaded \u2014 Xposed is not active in this process.</string>
+    <string name="chk_xposed_bridge_class_reason_error">Class check did not locate XposedBridge: %1$s</string>
+    <string name="chk_xposed_bridge_class_solution">Uninstall the Xposed/LSPosed/EdXposed framework.</string>
+
+    <string name="chk_xposed_stack_name">Xposed Hooks in Stack Trace</string>
+    <string name="chk_xposed_stack_name_nd">Xposed in Stack Trace</string>
+    <string name="chk_xposed_stack_desc">Xposed framework detected in exception call stack.</string>
+    <string name="chk_xposed_stack_desc_nd">No Xposed framework entries in exception stack trace.</string>
+    <string name="chk_xposed_stack_reason">Xposed/LSPlant framework entries were found in the exception stack trace. This confirms that Xposed is actively hooking method calls in this process.</string>
+    <string name="chk_xposed_stack_reason_nd">Exception stack trace shows no Xposed framework methods.</string>
+    <string name="chk_xposed_stack_solution">Uninstall Xposed/LSPosed framework.</string>
+
+    <string name="chk_xposed_props_name">Xposed System Properties Found</string>
+    <string name="chk_xposed_props_name_nd">Xposed System Properties</string>
+    <string name="chk_xposed_props_desc">Xposed-specific system properties found.</string>
+    <string name="chk_xposed_props_desc_nd">No Xposed system properties found.</string>
+    <string name="chk_xposed_props_reason">Found: %1$s. These properties are set by the Xposed framework or its installer.</string>
+    <string name="chk_xposed_props_reason_nd">No Xposed-specific system properties were detected.</string>
+    <string name="chk_xposed_props_solution">Properties are removed when Xposed is properly uninstalled.</string>
+
+    <string name="chk_virtual_frameworks_name">Virtual App Framework Detected</string>
+    <string name="chk_virtual_frameworks_name_nd">Virtual App Frameworks</string>
+    <string name="chk_virtual_frameworks_desc">Virtual app / multi-account framework detected.</string>
+    <string name="chk_virtual_frameworks_desc_nd">No virtual app frameworks detected.</string>
+    <string name="chk_virtual_frameworks_reason">Found: %1$s. Virtual frameworks like VirtualApp and Parallel Space create virtualized Android environments. They can run apps in sandboxed clones and may bypass detection by running apps inside a modified container.</string>
+    <string name="chk_virtual_frameworks_reason_nd">No known virtual framework packages were found.</string>
+    <string name="chk_virtual_frameworks_solution">Uninstall virtual framework apps via Settings \u2192 Apps.</string>
+
+    <string name="chk_lsposed_socket_name">LSPosed Daemon Socket Detected</string>
+    <string name="chk_lsposed_socket_name_nd">LSPosed Daemon Socket</string>
+    <string name="chk_lsposed_socket_desc">LSPosed daemon Unix socket is active.</string>
+    <string name="chk_lsposed_socket_desc_nd">No LSPosed daemon socket found.</string>
+    <string name="chk_lsposed_socket_reason">Found socket(s) in /proc/net/unix: %1$s. LSPosed (lspd) uses a Unix domain socket for IPC between its daemon and the manager app. The presence of this socket confirms lspd is currently running.</string>
+    <string name="chk_lsposed_socket_reason_nd">No lspd socket names found in /proc/net/unix.</string>
+    <string name="chk_lsposed_socket_reason_error">Could not read /proc/net/unix: %1$s</string>
+    <string name="chk_lsposed_socket_solution">Remove LSPosed via the LSPosed Manager app or delete the Magisk/KSU module.</string>
+
+    <string name="chk_lsposed_dex_maps_name">LSPosed Files in Process Memory</string>
+    <string name="chk_lsposed_dex_maps_name_nd">LSPosed Files in Process</string>
+    <string name="chk_lsposed_dex_maps_desc">LSPosed/LSPlant files are loaded into this process.</string>
+    <string name="chk_lsposed_dex_maps_desc_nd">No LSPosed/LSPlant files found in process memory.</string>
+    <string name="chk_lsposed_dex_maps_reason">Found in /proc/self/maps: %1$s. LSPosed injects its hook engine (LSPlant) and module DEX files into every scoped app process. These mapped paths are a definitive indicator of active LSPosed injection.</string>
+    <string name="chk_lsposed_dex_maps_reason_nd">No LSPosed-related files were found in /proc/self/maps.</string>
+    <string name="chk_lsposed_dex_maps_reason_error">Could not read /proc/self/maps: %1$s</string>
+    <string name="chk_lsposed_dex_maps_solution">Remove LSPosed or disable module scoping for this app.</string>
+
+    <string name="chk_lsposed_config_name">LSPosed Configuration Files Found</string>
+    <string name="chk_lsposed_config_name_nd">LSPosed Configuration Files</string>
+    <string name="chk_lsposed_config_desc">LSPosed configuration or module files detected.</string>
+    <string name="chk_lsposed_config_desc_nd">No LSPosed configuration files found.</string>
+    <string name="chk_lsposed_config_reason">Found: %1$s. LSPosed stores its daemon configuration and module scope lists in /data/misc/lspd/. The presence of these files confirms LSPosed is or was installed.</string>
+    <string name="chk_lsposed_config_reason_nd">No LSPosed config paths were found on disk.</string>
+    <string name="chk_lsposed_config_solution">Uninstall LSPosed via the manager app or remove the Magisk/KSU module directory.</string>
+
+    <string name="chk_hooked_methods_name">Hooked Java Methods Detected</string>
+    <string name="chk_hooked_methods_name_nd">Java Method Hooks</string>
+    <string name="chk_hooked_methods_desc">Java methods are hooked by LSPosed/LSPlant.</string>
+    <string name="chk_hooked_methods_desc_nd">No Java method hooks detected via reflection.</string>
+    <string name="chk_hooked_methods_reason">Hooked methods detected: %1$s. LSPosed uses the LSPlant library as its ART hook engine. Hooked methods have their ArtMethod implementation pointer replaced, which is detectable via reflection.</string>
+    <string name="chk_hooked_methods_reason_nd">No LSPlant/XposedBridge hook indicators found in reflection or stack traces.</string>
+    <string name="chk_hooked_methods_solution">Remove LSPosed or disable modules that hook these methods.</string>
+
+    <string name="chk_lsposed_scope_name">LSPosed Module Targeting This App</string>
+    <string name="chk_lsposed_scope_name_nd">LSPosed Module Scope</string>
+    <string name="chk_lsposed_scope_desc">An LSPosed module is scoped to hook this application.</string>
+    <string name="chk_lsposed_scope_desc_nd">No LSPosed module appears to be scoped to this app.</string>
+    <string name="chk_lsposed_scope_reason">Found \'%1$s\' in LSPosed scope file(s): %2$s. LSPosed records which apps each module should be injected into. Seeing this app\'s package name in the scope config confirms an active module is targeting it.</string>
+    <string name="chk_lsposed_scope_reason_nd">This app\'s package name was not found in any readable LSPosed scope config.</string>
+    <string name="chk_lsposed_scope_solution">Open LSPosed Manager and disable all modules scoped to this app.</string>
+
+    <string name="chk_lsposed_classes_name">LSPosed Internal Classes Detected</string>
+    <string name="chk_lsposed_classes_name_nd">LSPosed Internal Classes</string>
+    <string name="chk_lsposed_classes_desc">LSPosed internal classes are loaded in this process.</string>
+    <string name="chk_lsposed_classes_desc_nd">No LSPosed internal classes found in classpath.</string>
+    <string name="chk_lsposed_classes_reason">Successfully loaded: %1$s. These are LSPosed\'s private implementation classes (lspd core). They are only present in the classpath when LSPosed has injected into this process. This is the most reliable Java-layer indicator of active LSPosed hooking.</string>
+    <string name="chk_lsposed_classes_reason_nd">None of the known LSPosed lspd implementation classes could be loaded.</string>
+    <string name="chk_lsposed_classes_solution">Uninstall LSPosed or disable module scoping for this application.</string>
+
+    <string name="chk_xposed_bridge_version_name">XposedBridge Version Properties Detected</string>
+    <string name="chk_xposed_bridge_version_name_nd">XposedBridge Version Properties</string>
+    <string name="chk_xposed_bridge_version_desc">Xposed framework version properties or bridge fields found.</string>
+    <string name="chk_xposed_bridge_version_desc_nd">No XposedBridge version properties found.</string>
+    <string name="chk_xposed_bridge_version_reason">Found: %1$s. The Xposed framework sets \'xposed.bridge.version\' as a system property and exposes static fields on XposedBridge. These are definitive indicators that LSPosed (or another Xposed fork) is active.</string>
+    <string name="chk_xposed_bridge_version_reason_nd">No Xposed version system properties or bridge fields detected.</string>
+    <string name="chk_xposed_bridge_version_solution">Uninstall LSPosed/Xposed to remove these properties.</string>
+
+    <string name="chk_classloader_chain_name">LSPosed ClassLoader in Chain</string>
+    <string name="chk_classloader_chain_name_nd">ClassLoader Chain</string>
+    <string name="chk_classloader_chain_desc">LSPosed/Xposed ClassLoader found in the ClassLoader hierarchy.</string>
+    <string name="chk_classloader_chain_desc_nd">No LSPosed/Xposed ClassLoader found in the ClassLoader hierarchy.</string>
+    <string name="chk_classloader_chain_reason">Found: %1$s. LSPosed wraps the app\'s ClassLoader with its own loader to inject Xposed modules. A ClassLoader with \'lsposed\', \'lspd\', or \'edxposed\' in its class name is a direct indicator of active injection.</string>
+    <string name="chk_classloader_chain_reason_nd">The ClassLoader parent chain contains no known hook framework class names.</string>
+    <string name="chk_classloader_chain_solution">Remove LSPosed or disable modules for this app.</string>
+
+    <string name="chk_in_memory_dex_name">In-Memory DEX ClassLoader Detected</string>
+    <string name="chk_in_memory_dex_name_nd">In-Memory DEX ClassLoader</string>
+    <string name="chk_in_memory_dex_desc">Anonymous/in-memory DEX modules detected in ClassLoader.</string>
+    <string name="chk_in_memory_dex_desc_nd">No in-memory DEX entries found in ClassLoader hierarchy.</string>
+    <string name="chk_in_memory_dex_reason">Found: %1$s. LSPosed loads Xposed module APK/DEX files directly into memory using InMemoryDexClassLoader. In-memory DEX elements have no file path \u2014 this is one of the most reliable Java-layer indicators of active LSPosed module injection.</string>
+    <string name="chk_in_memory_dex_reason_nd">All DEX entries in the ClassLoader hierarchy reference real files on disk.</string>
+    <string name="chk_in_memory_dex_solution">Disable all LSPosed modules for this app via LSPosed Manager.</string>
+
+    <string name="chk_lsposed_data_dirs_name">LSPosed Data Directory Exists</string>
+    <string name="chk_lsposed_data_dirs_name_nd">LSPosed Data Directories</string>
+    <string name="chk_lsposed_data_dirs_desc">LSPosed/Xposed manager app data directory found.</string>
+    <string name="chk_lsposed_data_dirs_desc_nd">No LSPosed/Xposed manager data directories found.</string>
+    <string name="chk_lsposed_data_dirs_reason">Found: %1$s. Even when Magisk DenyList hides the LSPosed Manager APK from PackageManager, its app data directory remains on disk. Its existence proves LSPosed was or is installed on this device.</string>
+    <string name="chk_lsposed_data_dirs_reason_nd">No known LSPosed/Xposed data directories were found in /data/user/0/ or /data/data/.</string>
+    <string name="chk_lsposed_data_dirs_solution">Uninstall LSPosed Manager via the app itself or via adb.</string>
+
+    <string name="chk_zygisk_env_name">Zygisk Environment/Properties Detected</string>
+    <string name="chk_zygisk_env_name_nd">Zygisk Environment/Properties</string>
+    <string name="chk_zygisk_env_desc">Zygisk-specific environment variables or system properties found.</string>
+    <string name="chk_zygisk_env_desc_nd">No Zygisk environment variables or properties found.</string>
+    <string name="chk_zygisk_env_reason">Found: %1$s. ZYGISK_ENABLED is set by Magisk when Zygisk is active. These variables/properties are not present on stock devices and confirm Zygisk is running.</string>
+    <string name="chk_zygisk_env_reason_nd">ZYGISK_ENABLED is not set; no Zygisk system properties detected.</string>
+    <string name="chk_zygisk_env_solution">Disable Zygisk in Magisk settings or uninstall Magisk/Zygisk Next.</string>
+
+    <string name="chk_lsposed_stack_full_name">LSPosed/lspd Frames in Stack Trace</string>
+    <string name="chk_lsposed_stack_full_name_nd">LSPosed/lspd Stack Trace</string>
+    <string name="chk_lsposed_stack_full_desc">LSPosed/lspd class names detected in exception stack trace.</string>
+    <string name="chk_lsposed_stack_full_desc_nd">No LSPosed/lspd class names found in stack trace.</string>
+    <string name="chk_lsposed_stack_full_reason">Found frames: %1$s. When LSPosed is injected and a module is scoped to this app, lspd class names appear in the call stack.</string>
+    <string name="chk_lsposed_stack_full_reason_nd">No lsposed/lspd/edxposed class names appeared in the exception stack trace.</string>
+    <string name="chk_lsposed_stack_full_solution">Remove LSPosed or disable all modules scoped to this app.</string>
+
+    <string name="chk_smaps_hooks_name">Inline Hook Detected via SMAPS</string>
+    <string name="chk_smaps_hooks_name_nd">SMAPS Inline Hook Check</string>
+    <string name="chk_smaps_hooks_desc">Critical library code segments have dirty (modified) pages.</string>
+    <string name="chk_smaps_hooks_desc_nd">No inline hook signatures found in SMAPS.</string>
+    <string name="chk_smaps_hooks_reason">Affected libraries: %1$s. A non-zero Private_Dirty value in an r-xp (read-execute) code segment means that code pages were copied due to Linux Copy-on-Write. This is the fingerprint of inline hooking by LSPosed (via LSPlant), Frida, or a Zygisk module.</string>
+    <string name="chk_smaps_hooks_reason_nd">All critical library code segments have Private_Dirty = 0.</string>
+    <string name="chk_smaps_hooks_solution">Remove LSPosed, Frida gadget, or any Zygisk hooking modules.</string>
+
+    <string name="chk_zygisk_module_inject_name">Zygisk Module Injected into Process</string>
+    <string name="chk_zygisk_module_inject_name_nd">Zygisk Module Injection</string>
+    <string name="chk_zygisk_module_inject_desc">A Zygisk module library is mapped into this process.</string>
+    <string name="chk_zygisk_module_inject_desc_nd">No Zygisk module libraries found in process memory map.</string>
+    <string name="chk_zygisk_module_inject_reason">Found Zygisk module path(s) in /proc/self/maps: %1$s. Zygisk loads each enabled module\'s native library directly into the app process from /data/adb/modules/&lt;name&gt;/zygisk/. Seeing this path confirms that Zygisk is active and has injected a module here.</string>
+    <string name="chk_zygisk_module_inject_reason_nd">No /data/adb/modules/*/zygisk/ paths found in /proc/self/maps.</string>
+    <string name="chk_zygisk_module_inject_solution">Disable Zygisk in Magisk settings or remove injecting modules.</string>
+
+    <string name="chk_lspd_process_name">LSPosed Daemon Process Detected</string>
+    <string name="chk_lspd_process_name_nd">LSPosed Daemon Process</string>
+    <string name="chk_lspd_process_desc">The LSPosed daemon (lspd) is running on this device.</string>
+    <string name="chk_lspd_process_desc_nd">No LSPosed daemon (lspd) process found.</string>
+    <string name="chk_lspd_process_reason">A process named \'lspd\' was found in /proc. lspd is the background daemon of the LSPosed framework that manages hook modules and injects code into app processes via Zygote. Found: %1$s.</string>
+    <string name="chk_lspd_process_reason_nd">No process named \'lspd\' was found in /proc.</string>
+    <string name="chk_lspd_process_solution">Uninstall LSPosed via its manager app and reboot to stop the daemon.</string>
+
 </resources>
