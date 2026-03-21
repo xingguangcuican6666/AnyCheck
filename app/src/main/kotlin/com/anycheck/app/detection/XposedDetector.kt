@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
+import com.anycheck.app.R
 
 /**
  * Detects Xposed Framework, LSPosed, EdXposed, and related hooking / virtual frameworks.
@@ -54,27 +55,25 @@ class XposedDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "xposed_packages",
-                name = "Xposed/LSPosed Manager Detected",
+                name = context.getString(R.string.chk_xposed_packages_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Xposed framework management app installed.",
-                detailedReason = "Found: ${found.joinToString(", ")}. " +
-                    "These apps manage Xposed/LSPosed/EdXposed frameworks. " +
-                    "Xposed frameworks hook into any Android app or system service at runtime.",
-                solution = "Uninstall via the framework manager. Flash a stock boot image to fully remove hooks from Zygote.",
+                description = context.getString(R.string.chk_xposed_packages_desc),
+                detailedReason = context.getString(R.string.chk_xposed_packages_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_xposed_packages_solution),
                 technicalDetail = "Packages: ${found.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "xposed_packages",
-                name = "Xposed Manager Packages",
+                name = context.getString(R.string.chk_xposed_packages_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No Xposed/LSPosed manager packages found.",
-                detailedReason = "No known Xposed framework manager packages are installed.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_xposed_packages_desc_nd),
+                detailedReason = context.getString(R.string.chk_xposed_packages_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -94,27 +93,25 @@ class XposedDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "xposed_files",
-                name = "Xposed Framework Files Found",
+                name = context.getString(R.string.chk_xposed_files_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Original Xposed framework files detected.",
-                detailedReason = "Found: ${found.joinToString(", ")}. " +
-                    "XposedBridge.jar is the core Xposed hooking library. " +
-                    "app_process_xposed is the modified app_process binary used to bootstrap Xposed at Zygote startup.",
-                solution = "Use Xposed Installer to uninstall, or manually restore the stock app_process binary.",
+                description = context.getString(R.string.chk_xposed_files_desc),
+                detailedReason = context.getString(R.string.chk_xposed_files_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_xposed_files_solution),
                 technicalDetail = "Files: ${found.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "xposed_files",
-                name = "Xposed Framework Files",
+                name = context.getString(R.string.chk_xposed_files_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No original Xposed framework files found.",
-                detailedReason = "No known Xposed file paths were found on this device.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_xposed_files_desc_nd),
+                detailedReason = context.getString(R.string.chk_xposed_files_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -133,27 +130,25 @@ class XposedDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "lsposed_files",
-                name = "LSPosed Module Files Found",
+                name = context.getString(R.string.chk_lsposed_files_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "LSPosed framework files detected.",
-                detailedReason = "Found: ${found.joinToString(", ")}. " +
-                    "LSPosed is the modern Xposed implementation for Android 8+. " +
-                    "It runs as a Zygisk or Riru module and enables per-app Xposed module scoping.",
-                solution = "Remove via LSPosed Manager → Uninstall, or remove the Magisk/KernelSU module.",
+                description = context.getString(R.string.chk_lsposed_files_desc),
+                detailedReason = context.getString(R.string.chk_lsposed_files_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_lsposed_files_solution),
                 technicalDetail = "Files: ${found.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "lsposed_files",
-                name = "LSPosed Files",
+                name = context.getString(R.string.chk_lsposed_files_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No LSPosed files found.",
-                detailedReason = "No LSPosed-specific file paths were found.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_lsposed_files_desc_nd),
+                detailedReason = context.getString(R.string.chk_lsposed_files_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -170,27 +165,25 @@ class XposedDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "edxposed_files",
-                name = "EdXposed Files Found",
+                name = context.getString(R.string.chk_edxposed_files_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "EdXposed framework files detected.",
-                detailedReason = "Found: ${found.joinToString(", ")}. " +
-                    "EdXposed is an Xposed implementation for Android 8–11 running as a Riru module. " +
-                    "It enables system-wide code hooks compatible with legacy Xposed modules.",
-                solution = "Remove via EdXposed Manager or delete the Riru/Magisk module.",
+                description = context.getString(R.string.chk_edxposed_files_desc),
+                detailedReason = context.getString(R.string.chk_edxposed_files_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_edxposed_files_solution),
                 technicalDetail = "Files: ${found.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "edxposed_files",
-                name = "EdXposed Files",
+                name = context.getString(R.string.chk_edxposed_files_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No EdXposed files found.",
-                detailedReason = "No EdXposed-specific file paths were found.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_edxposed_files_desc_nd),
+                detailedReason = context.getString(R.string.chk_edxposed_files_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -201,38 +194,36 @@ class XposedDetector(private val context: Context) {
             Class.forName("de.robv.android.xposed.XposedBridge")
             DetectionResult(
                 id = "xposed_bridge_class",
-                name = "XposedBridge Class Loaded",
+                name = context.getString(R.string.chk_xposed_bridge_class_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "XposedBridge class is present in the classpath.",
-                detailedReason = "The class 'de.robv.android.xposed.XposedBridge' was successfully loaded. " +
-                    "This class is the core of the Xposed framework and is only present when " +
-                    "Xposed (or a compatible fork like LSPosed/EdXposed) is active in this process.",
-                solution = "Uninstall the Xposed/LSPosed/EdXposed framework.",
+                description = context.getString(R.string.chk_xposed_bridge_class_desc),
+                detailedReason = context.getString(R.string.chk_xposed_bridge_class_reason),
+                solution = context.getString(R.string.chk_xposed_bridge_class_solution),
                 technicalDetail = "Class de.robv.android.xposed.XposedBridge loaded successfully"
             )
         } catch (_: ClassNotFoundException) {
             DetectionResult(
                 id = "xposed_bridge_class",
-                name = "XposedBridge Class",
+                name = context.getString(R.string.chk_xposed_bridge_class_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "XposedBridge class not found in classpath.",
-                detailedReason = "de.robv.android.xposed.XposedBridge could not be loaded. Xposed is not active.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_xposed_bridge_class_desc_nd),
+                detailedReason = context.getString(R.string.chk_xposed_bridge_class_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         } catch (e: Exception) {
             DetectionResult(
                 id = "xposed_bridge_class",
-                name = "XposedBridge Class",
+                name = context.getString(R.string.chk_xposed_bridge_class_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "XposedBridge class not found.",
-                detailedReason = "Class check did not locate XposedBridge: ${e.message}",
-                solution = "No action required."
+                description = context.getString(R.string.chk_xposed_bridge_class_desc_nd),
+                detailedReason = context.getString(R.string.chk_xposed_bridge_class_reason_error, e.message ?: ""),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -250,26 +241,25 @@ class XposedDetector(private val context: Context) {
             if (xposedInStack) {
                 DetectionResult(
                     id = "xposed_stack",
-                    name = "Xposed Hooks in Stack Trace",
+                    name = context.getString(R.string.chk_xposed_stack_name),
                     category = DetectionCategory.XPOSED,
                     status = DetectionStatus.DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
-                    description = "Xposed framework detected in exception call stack.",
-                    detailedReason = "Xposed/LSPlant framework entries were found in the exception stack trace. " +
-                        "This confirms that Xposed is actively hooking method calls in this process.",
-                    solution = "Uninstall Xposed/LSPosed framework.",
+                    description = context.getString(R.string.chk_xposed_stack_desc),
+                    detailedReason = context.getString(R.string.chk_xposed_stack_reason),
+                    solution = context.getString(R.string.chk_xposed_stack_solution),
                     technicalDetail = "Stack trace contains XposedBridge or LSPlant entries"
                 )
             } else {
                 DetectionResult(
                     id = "xposed_stack",
-                    name = "Xposed in Stack Trace",
+                    name = context.getString(R.string.chk_xposed_stack_name_nd),
                     category = DetectionCategory.XPOSED,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
-                    description = "No Xposed framework entries in exception stack trace.",
-                    detailedReason = "Exception stack trace shows no Xposed framework methods.",
-                    solution = "No action required."
+                    description = context.getString(R.string.chk_xposed_stack_desc_nd),
+                    detailedReason = context.getString(R.string.chk_xposed_stack_reason_nd),
+                    solution = context.getString(R.string.chk_no_action_needed)
                 )
             }
         }
@@ -290,26 +280,25 @@ class XposedDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "xposed_props",
-                name = "Xposed System Properties",
+                name = context.getString(R.string.chk_xposed_props_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Xposed-specific system properties found.",
-                detailedReason = "Found: ${found.joinToString(", ")}. " +
-                    "These properties are set by the Xposed framework or its installer.",
-                solution = "Properties are removed when Xposed is properly uninstalled.",
+                description = context.getString(R.string.chk_xposed_props_desc),
+                detailedReason = context.getString(R.string.chk_xposed_props_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_xposed_props_solution),
                 technicalDetail = "Props: ${found.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "xposed_props",
-                name = "Xposed System Properties",
+                name = context.getString(R.string.chk_xposed_props_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No Xposed system properties found.",
-                detailedReason = "No Xposed-specific system properties were detected.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_xposed_props_desc_nd),
+                detailedReason = context.getString(R.string.chk_xposed_props_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -333,27 +322,25 @@ class XposedDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "virtual_frameworks",
-                name = "Virtual App Framework Detected",
+                name = context.getString(R.string.chk_virtual_frameworks_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Virtual app / multi-account framework detected.",
-                detailedReason = "Found: ${found.joinToString(", ")}. " +
-                    "Virtual frameworks like VirtualApp and Parallel Space create virtualized Android environments. " +
-                    "They can run apps in sandboxed clones and may bypass detection by running apps inside a modified container.",
-                solution = "Uninstall virtual framework apps via Settings → Apps.",
+                description = context.getString(R.string.chk_virtual_frameworks_desc),
+                detailedReason = context.getString(R.string.chk_virtual_frameworks_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_virtual_frameworks_solution),
                 technicalDetail = "Packages: ${found.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "virtual_frameworks",
-                name = "Virtual App Frameworks",
+                name = context.getString(R.string.chk_virtual_frameworks_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No virtual app frameworks detected.",
-                detailedReason = "No known virtual framework packages were found.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_virtual_frameworks_desc_nd),
+                detailedReason = context.getString(R.string.chk_virtual_frameworks_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -374,40 +361,37 @@ class XposedDetector(private val context: Context) {
             if (found.isNotEmpty()) {
                 DetectionResult(
                     id = "lsposed_socket",
-                    name = "LSPosed Daemon Socket Detected",
+                    name = context.getString(R.string.chk_lsposed_socket_name),
                     category = DetectionCategory.XPOSED,
                     status = DetectionStatus.DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
-                    description = "LSPosed daemon Unix socket is active.",
-                    detailedReason = "Found socket(s) in /proc/net/unix: ${found.joinToString(", ")}. " +
-                        "LSPosed (lspd) uses a Unix domain socket for IPC between its " +
-                        "daemon process and the manager app. " +
-                        "The presence of this socket confirms lspd is currently running.",
-                    solution = "Remove LSPosed via the LSPosed Manager app or delete the Magisk/KSU module.",
+                    description = context.getString(R.string.chk_lsposed_socket_desc),
+                    detailedReason = context.getString(R.string.chk_lsposed_socket_reason, found.joinToString(", ")),
+                    solution = context.getString(R.string.chk_lsposed_socket_solution),
                     technicalDetail = "Sockets: ${found.joinToString("; ")}"
                 )
             } else {
                 DetectionResult(
                     id = "lsposed_socket",
-                    name = "LSPosed Daemon Socket",
+                    name = context.getString(R.string.chk_lsposed_socket_name_nd),
                     category = DetectionCategory.XPOSED,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
-                    description = "No LSPosed daemon socket found.",
-                    detailedReason = "No lspd socket names found in /proc/net/unix.",
-                    solution = "No action required."
+                    description = context.getString(R.string.chk_lsposed_socket_desc_nd),
+                    detailedReason = context.getString(R.string.chk_lsposed_socket_reason_nd),
+                    solution = context.getString(R.string.chk_no_action_needed)
                 )
             }
         } catch (e: Exception) {
             DetectionResult(
                 id = "lsposed_socket",
-                name = "LSPosed Daemon Socket",
+                name = context.getString(R.string.chk_lsposed_socket_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No LSPosed daemon socket found.",
-                detailedReason = "Could not read /proc/net/unix: ${e.message}",
-                solution = "No action required."
+                description = context.getString(R.string.chk_lsposed_socket_desc_nd),
+                detailedReason = context.getString(R.string.chk_lsposed_socket_reason_error, e.message ?: ""),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -441,40 +425,37 @@ class XposedDetector(private val context: Context) {
             if (found.isNotEmpty()) {
                 DetectionResult(
                     id = "lsposed_dex_maps",
-                    name = "LSPosed Files in Process Memory",
+                    name = context.getString(R.string.chk_lsposed_dex_maps_name),
                     category = DetectionCategory.XPOSED,
                     status = DetectionStatus.DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
-                    description = "LSPosed/LSPlant files are loaded into this process.",
-                    detailedReason = "Found in /proc/self/maps: ${found.joinToString(", ")}. " +
-                        "LSPosed injects its hook engine (LSPlant) and module DEX files " +
-                        "directly into the app's process. The presence of these mapped files " +
-                        "confirms that LSPosed is actively hooking this app.",
-                    solution = "Remove LSPosed or disable module scoping for this app.",
+                    description = context.getString(R.string.chk_lsposed_dex_maps_desc),
+                    detailedReason = context.getString(R.string.chk_lsposed_dex_maps_reason, found.joinToString(", ")),
+                    solution = context.getString(R.string.chk_lsposed_dex_maps_solution),
                     technicalDetail = "Files: ${found.joinToString("; ")}"
                 )
             } else {
                 DetectionResult(
                     id = "lsposed_dex_maps",
-                    name = "LSPosed Files in Process",
+                    name = context.getString(R.string.chk_lsposed_dex_maps_name_nd),
                     category = DetectionCategory.XPOSED,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
-                    description = "No LSPosed/LSPlant files found in process memory.",
-                    detailedReason = "No LSPosed-related files were found in /proc/self/maps.",
-                    solution = "No action required."
+                    description = context.getString(R.string.chk_lsposed_dex_maps_desc_nd),
+                    detailedReason = context.getString(R.string.chk_lsposed_dex_maps_reason_nd),
+                    solution = context.getString(R.string.chk_no_action_needed)
                 )
             }
         } catch (e: Exception) {
             DetectionResult(
                 id = "lsposed_dex_maps",
-                name = "LSPosed Files in Process",
+                name = context.getString(R.string.chk_lsposed_dex_maps_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No LSPosed/LSPlant files found in process memory.",
-                detailedReason = "Could not read /proc/self/maps: ${e.message}",
-                solution = "No action required."
+                description = context.getString(R.string.chk_lsposed_dex_maps_desc_nd),
+                detailedReason = context.getString(R.string.chk_lsposed_dex_maps_reason_error, e.message ?: ""),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -498,27 +479,25 @@ class XposedDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "lsposed_config",
-                name = "LSPosed Configuration Files Found",
+                name = context.getString(R.string.chk_lsposed_config_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "LSPosed configuration or module files detected.",
-                detailedReason = "Found: ${found.joinToString(", ")}. " +
-                    "LSPosed stores its daemon configuration and module scope lists in /data/misc/lspd/. " +
-                    "The presence of these files confirms LSPosed is or was installed.",
-                solution = "Uninstall LSPosed via the manager app or remove the Magisk/KSU module directory.",
+                description = context.getString(R.string.chk_lsposed_config_desc),
+                detailedReason = context.getString(R.string.chk_lsposed_config_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_lsposed_config_solution),
                 technicalDetail = "Paths: ${found.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "lsposed_config",
-                name = "LSPosed Configuration Files",
+                name = context.getString(R.string.chk_lsposed_config_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No LSPosed configuration files found.",
-                detailedReason = "No LSPosed config paths were found on disk.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_lsposed_config_desc_nd),
+                detailedReason = context.getString(R.string.chk_lsposed_config_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -581,28 +560,25 @@ class XposedDetector(private val context: Context) {
         return if (hookedMethods.isNotEmpty()) {
             DetectionResult(
                 id = "hooked_methods",
-                name = "Hooked Java Methods Detected",
+                name = context.getString(R.string.chk_hooked_methods_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Java methods are hooked by LSPosed/LSPlant.",
-                detailedReason = "Hooked methods detected: ${hookedMethods.take(5).joinToString(", ")}. " +
-                    "LSPosed uses the LSPlant library as its ART hook engine. " +
-                    "Hooked methods have their ArtMethod implementation pointer replaced, " +
-                    "causing the declaring class seen via reflection to change.",
-                solution = "Remove LSPosed or disable modules that hook these methods.",
+                description = context.getString(R.string.chk_hooked_methods_desc),
+                detailedReason = context.getString(R.string.chk_hooked_methods_reason, hookedMethods.take(5).joinToString(", ")),
+                solution = context.getString(R.string.chk_hooked_methods_solution),
                 technicalDetail = hookedMethods.take(10).joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "hooked_methods",
-                name = "Java Method Hooks",
+                name = context.getString(R.string.chk_hooked_methods_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No Java method hooks detected via reflection.",
-                detailedReason = "No LSPlant/XposedBridge hook indicators found in reflection or stack traces.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_hooked_methods_desc_nd),
+                detailedReason = context.getString(R.string.chk_hooked_methods_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -649,28 +625,25 @@ class XposedDetector(private val context: Context) {
         return if (matchingFiles.isNotEmpty()) {
             DetectionResult(
                 id = "lsposed_module_scope",
-                name = "LSPosed Module Targeting This App",
+                name = context.getString(R.string.chk_lsposed_scope_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "An LSPosed module is scoped to hook this application.",
-                detailedReason = "Found '$ourPackage' in LSPosed scope file(s): ${matchingFiles.joinToString(", ")}. " +
-                    "LSPosed records which apps each module should be injected into. " +
-                    "Seeing this app's package name in the scope config confirms " +
-                    "that at least one Xposed module is actively targeting this app.",
-                solution = "Open LSPosed Manager and disable all modules scoped to this app.",
+                description = context.getString(R.string.chk_lsposed_scope_desc),
+                detailedReason = context.getString(R.string.chk_lsposed_scope_reason, ourPackage, matchingFiles.joinToString(", ")),
+                solution = context.getString(R.string.chk_lsposed_scope_solution),
                 technicalDetail = "Scope files: ${matchingFiles.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "lsposed_module_scope",
-                name = "LSPosed Module Scope",
+                name = context.getString(R.string.chk_lsposed_scope_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No LSPosed module appears to be scoped to this app.",
-                detailedReason = "This app's package name was not found in any readable LSPosed scope config.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_lsposed_scope_desc_nd),
+                detailedReason = context.getString(R.string.chk_lsposed_scope_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -702,28 +675,25 @@ class XposedDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "lsposed_classes",
-                name = "LSPosed Internal Classes Detected",
+                name = context.getString(R.string.chk_lsposed_classes_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "LSPosed internal classes are loaded in this process.",
-                detailedReason = "Successfully loaded: ${found.joinToString(", ")}. " +
-                    "These are LSPosed's private implementation classes (lspd core). " +
-                    "They are only present in the classpath when LSPosed has injected into this process. " +
-                    "This is the most reliable Java-layer indicator of active LSPosed hooking.",
-                solution = "Uninstall LSPosed or disable module scoping for this application.",
+                description = context.getString(R.string.chk_lsposed_classes_desc),
+                detailedReason = context.getString(R.string.chk_lsposed_classes_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_lsposed_classes_solution),
                 technicalDetail = "Classes: ${found.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "lsposed_classes",
-                name = "LSPosed Internal Classes",
+                name = context.getString(R.string.chk_lsposed_classes_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No LSPosed internal classes found in classpath.",
-                detailedReason = "None of the known LSPosed lspd implementation classes could be loaded.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_lsposed_classes_desc_nd),
+                detailedReason = context.getString(R.string.chk_lsposed_classes_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -779,28 +749,25 @@ class XposedDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "xposed_bridge_version",
-                name = "XposedBridge Version Properties Detected",
+                name = context.getString(R.string.chk_xposed_bridge_version_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Xposed framework version properties or bridge fields found.",
-                detailedReason = "Found: ${found.joinToString(", ")}. " +
-                    "The Xposed framework sets 'xposed.bridge.version' as a system property " +
-                    "and exposes static fields on XposedBridge. " +
-                    "These are definitive indicators that LSPosed (or another Xposed fork) is active.",
-                solution = "Uninstall LSPosed/Xposed to remove these properties.",
+                description = context.getString(R.string.chk_xposed_bridge_version_desc),
+                detailedReason = context.getString(R.string.chk_xposed_bridge_version_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_xposed_bridge_version_solution),
                 technicalDetail = found.joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "xposed_bridge_version",
-                name = "XposedBridge Version Properties",
+                name = context.getString(R.string.chk_xposed_bridge_version_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No XposedBridge version properties found.",
-                detailedReason = "No Xposed version system properties or bridge fields detected.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_xposed_bridge_version_desc_nd),
+                detailedReason = context.getString(R.string.chk_xposed_bridge_version_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -851,28 +818,25 @@ class XposedDetector(private val context: Context) {
         return if (suspiciousLoaders.isNotEmpty()) {
             DetectionResult(
                 id = "classloader_chain",
-                name = "LSPosed ClassLoader in Chain",
+                name = context.getString(R.string.chk_classloader_chain_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "LSPosed/Xposed ClassLoader found in the ClassLoader hierarchy.",
-                detailedReason = "Found: ${suspiciousLoaders.joinToString(", ")}. " +
-                    "LSPosed wraps the app's ClassLoader with its own loader to inject Xposed modules. " +
-                    "A ClassLoader with 'lsposed', 'lspd', or 'edxposed' in its class name is a direct " +
-                    "indicator of LSPosed injection into this process.",
-                solution = "Remove LSPosed or disable modules for this app.",
+                description = context.getString(R.string.chk_classloader_chain_desc),
+                detailedReason = context.getString(R.string.chk_classloader_chain_reason, suspiciousLoaders.joinToString(", ")),
+                solution = context.getString(R.string.chk_classloader_chain_solution),
                 technicalDetail = suspiciousLoaders.joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "classloader_chain",
-                name = "ClassLoader Chain",
+                name = context.getString(R.string.chk_classloader_chain_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No LSPosed/Xposed ClassLoader found in the ClassLoader hierarchy.",
-                detailedReason = "The ClassLoader parent chain contains no known hook framework class names.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_classloader_chain_desc_nd),
+                detailedReason = context.getString(R.string.chk_classloader_chain_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -957,29 +921,25 @@ class XposedDetector(private val context: Context) {
         return if (suspiciousEntries.isNotEmpty()) {
             DetectionResult(
                 id = "in_memory_dex",
-                name = "In-Memory DEX ClassLoader Detected",
+                name = context.getString(R.string.chk_in_memory_dex_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Anonymous/in-memory DEX modules detected in ClassLoader.",
-                detailedReason = "Found: ${suspiciousEntries.take(5).joinToString(", ")}. " +
-                    "LSPosed loads Xposed module APK/DEX files directly into memory using " +
-                    "InMemoryDexClassLoader. In-memory DEX elements have no file path — " +
-                    "unlike normal app ClassLoaders which reference files on disk. " +
-                    "This is one of the most reliable Java-layer indicators of active LSPosed module injection.",
-                solution = "Disable all LSPosed modules for this app via LSPosed Manager.",
+                description = context.getString(R.string.chk_in_memory_dex_desc),
+                detailedReason = context.getString(R.string.chk_in_memory_dex_reason, suspiciousEntries.take(5).joinToString(", ")),
+                solution = context.getString(R.string.chk_in_memory_dex_solution),
                 technicalDetail = suspiciousEntries.take(8).joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "in_memory_dex",
-                name = "In-Memory DEX ClassLoader",
+                name = context.getString(R.string.chk_in_memory_dex_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No in-memory DEX entries found in ClassLoader hierarchy.",
-                detailedReason = "All DEX entries in the ClassLoader hierarchy reference real files on disk.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_in_memory_dex_desc_nd),
+                detailedReason = context.getString(R.string.chk_in_memory_dex_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -1007,28 +967,25 @@ class XposedDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "lsposed_data_dirs",
-                name = "LSPosed Data Directory Exists",
+                name = context.getString(R.string.chk_lsposed_data_dirs_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "LSPosed/Xposed manager app data directory found.",
-                detailedReason = "Found: ${found.joinToString(", ")}. " +
-                    "Even when Magisk DenyList hides the LSPosed Manager APK from PackageManager, " +
-                    "the app's data directory under /data/user/0/ often persists. " +
-                    "Its existence proves LSPosed was or is installed on this device.",
-                solution = "Uninstall LSPosed Manager via the app itself or via adb.",
+                description = context.getString(R.string.chk_lsposed_data_dirs_desc),
+                detailedReason = context.getString(R.string.chk_lsposed_data_dirs_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_lsposed_data_dirs_solution),
                 technicalDetail = "Dirs: ${found.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "lsposed_data_dirs",
-                name = "LSPosed Data Directories",
+                name = context.getString(R.string.chk_lsposed_data_dirs_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No LSPosed/Xposed manager data directories found.",
-                detailedReason = "No known LSPosed/Xposed data directories were found in /data/user/0/ or /data/data/.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_lsposed_data_dirs_desc_nd),
+                detailedReason = context.getString(R.string.chk_lsposed_data_dirs_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -1085,28 +1042,25 @@ class XposedDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "zygisk_env",
-                name = "Zygisk Environment/Properties Detected",
+                name = context.getString(R.string.chk_zygisk_env_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Zygisk-specific environment variables or system properties found.",
-                detailedReason = "Found: ${found.joinToString(", ")}. " +
-                    "ZYGISK_ENABLED is set by Magisk when Zygisk is active. " +
-                    "ro.zygisk.denylists is specific to Zygisk Next (standalone Zygisk). " +
-                    "These variables/properties are not present on stock devices and confirm Zygisk is running.",
-                solution = "Disable Zygisk in Magisk settings or uninstall Magisk/Zygisk Next.",
+                description = context.getString(R.string.chk_zygisk_env_desc),
+                detailedReason = context.getString(R.string.chk_zygisk_env_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_zygisk_env_solution),
                 technicalDetail = found.joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "zygisk_env",
-                name = "Zygisk Environment/Properties",
+                name = context.getString(R.string.chk_zygisk_env_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No Zygisk environment variables or properties found.",
-                detailedReason = "ZYGISK_ENABLED is not set; no Zygisk system properties detected.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_zygisk_env_desc_nd),
+                detailedReason = context.getString(R.string.chk_zygisk_env_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -1150,27 +1104,25 @@ class XposedDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "lsposed_stack_full",
-                name = "LSPosed/lspd Frames in Stack Trace",
+                name = context.getString(R.string.chk_lsposed_stack_full_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "LSPosed/lspd class names detected in exception stack trace.",
-                detailedReason = "Found frames: ${found.take(5).joinToString(", ")}. " +
-                    "When LSPosed is injected and a module is scoped to this app, " +
-                    "lspd internal classes appear in the call stack, confirming active hooking.",
-                solution = "Remove LSPosed or disable all modules scoped to this app.",
+                description = context.getString(R.string.chk_lsposed_stack_full_desc),
+                detailedReason = context.getString(R.string.chk_lsposed_stack_full_reason, found.take(5).joinToString(", ")),
+                solution = context.getString(R.string.chk_lsposed_stack_full_solution),
                 technicalDetail = found.take(10).joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "lsposed_stack_full",
-                name = "LSPosed/lspd Stack Trace",
+                name = context.getString(R.string.chk_lsposed_stack_full_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No LSPosed/lspd class names found in stack trace.",
-                detailedReason = "No lsposed/lspd/edxposed class names appeared in the exception stack trace.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_lsposed_stack_full_desc_nd),
+                detailedReason = context.getString(R.string.chk_lsposed_stack_full_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -1211,29 +1163,25 @@ class XposedDetector(private val context: Context) {
         return if (suspiciousLibs.isNotEmpty()) {
             DetectionResult(
                 id = "smaps_inline_hooks",
-                name = "Inline Hook Detected via SMAPS",
+                name = context.getString(R.string.chk_smaps_hooks_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Critical library code segments have dirty (modified) pages.",
-                detailedReason = "Affected libraries: ${suspiciousLibs.joinToString(", ")}. " +
-                    "A non-zero Private_Dirty value in an r-xp (read-execute) code segment " +
-                    "means the normally read-only code was patched in memory, triggering " +
-                    "Linux Copy-on-Write. This is the fingerprint of inline hooking by " +
-                    "LSPosed (via LSPlant), Frida, or a Zygisk module.",
-                solution = "Remove LSPosed, Frida gadget, or any Zygisk hooking modules.",
+                description = context.getString(R.string.chk_smaps_hooks_desc),
+                detailedReason = context.getString(R.string.chk_smaps_hooks_reason, suspiciousLibs.joinToString(", ")),
+                solution = context.getString(R.string.chk_smaps_hooks_solution),
                 technicalDetail = "Dirty code segments: ${suspiciousLibs.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "smaps_inline_hooks",
-                name = "SMAPS Inline Hook Check",
+                name = context.getString(R.string.chk_smaps_hooks_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No inline hook signatures found in SMAPS.",
-                detailedReason = "All critical library code segments have Private_Dirty = 0.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_smaps_hooks_desc_nd),
+                detailedReason = context.getString(R.string.chk_smaps_hooks_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
