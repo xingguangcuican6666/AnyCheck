@@ -34,9 +34,11 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.anycheck.app.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,7 +52,7 @@ fun AboutScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "关于 / About",
+                        text = stringResource(R.string.about),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
@@ -59,7 +61,7 @@ fun AboutScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "返回 / Back"
+                            contentDescription = stringResource(R.string.navigate_back)
                         )
                     }
                 },
@@ -101,12 +103,12 @@ fun AboutScreen(
                 }
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "AnyCheck",
+                    text = stringResource(R.string.app_name),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "版本 / Version $appVersion",
+                    text = stringResource(R.string.version_format, appVersion),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -115,16 +117,10 @@ fun AboutScreen(
             // Description card
             AboutCard(
                 icon = Icons.Default.Info,
-                title = "关于应用 / About App"
+                title = stringResource(R.string.about_app_title)
             ) {
                 Text(
-                    text = "AnyCheck 是一款全面的 Android Root 检测工具，能够识别 Magisk、KernelSU、APatch 等 Root 管理框架，以及 Xposed/LSPosed 等 Hook 框架。",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "AnyCheck is a comprehensive Android root detection tool that identifies Magisk, KernelSU, APatch and other root management frameworks, as well as Xposed/LSPosed hook frameworks.",
+                    text = stringResource(R.string.about_app_description),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -133,44 +129,59 @@ fun AboutScreen(
             // Detection methods card
             AboutCard(
                 icon = Icons.Default.Security,
-                title = "检测方法 / Detection Methods"
+                title = stringResource(R.string.about_detection_methods)
             ) {
-                DetectionMethodRow("Magisk 检测", "17 项检查 / 17 checks")
+                DetectionMethodRow(
+                    stringResource(R.string.about_method_magisk),
+                    stringResource(R.string.about_method_magisk_count)
+                )
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                DetectionMethodRow("KernelSU 检测", "8 项检查 / 8 checks")
+                DetectionMethodRow(
+                    stringResource(R.string.about_method_kernelsu),
+                    stringResource(R.string.about_method_kernelsu_count)
+                )
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                DetectionMethodRow("APatch & 通用 Root", "5 项检查 / 5 checks")
+                DetectionMethodRow(
+                    stringResource(R.string.about_method_apatch),
+                    stringResource(R.string.about_method_apatch_count)
+                )
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                DetectionMethodRow("Xposed / LSPosed", "13 项检查 / 13 checks")
+                DetectionMethodRow(
+                    stringResource(R.string.about_method_xposed),
+                    stringResource(R.string.about_method_xposed_count)
+                )
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                DetectionMethodRow("高级 Root 检查 / Advanced", "19 项检查 / 19 checks")
+                DetectionMethodRow(
+                    stringResource(R.string.about_method_advanced),
+                    stringResource(R.string.about_method_advanced_count)
+                )
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                DetectionMethodRow("Luna 方法 / Luna methods", "22 项检查 / 22 checks")
+                DetectionMethodRow(
+                    stringResource(R.string.about_method_luna),
+                    stringResource(R.string.about_method_luna_count)
+                )
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                DetectionMethodRow("系统完整性 / Integrity", "多项检查 / Multiple checks")
+                DetectionMethodRow(
+                    stringResource(R.string.about_method_integrity),
+                    stringResource(R.string.about_method_integrity_count)
+                )
             }
 
             // Risk level explanation card
             AboutCard(
                 icon = Icons.Default.BugReport,
-                title = "风险等级说明 / Risk Levels"
+                title = stringResource(R.string.about_risk_levels)
             ) {
-                RiskLevelRow("严重 / Critical", "确认存在 Root 框架核心组件", "0xFF410002")
+                RiskLevelRow(stringResource(R.string.risk_critical), stringResource(R.string.risk_critical_desc))
                 Spacer(modifier = Modifier.height(6.dp))
-                RiskLevelRow("高 / High", "强烈指示 Root 框架存在", "0xFF5C1700")
+                RiskLevelRow(stringResource(R.string.risk_high), stringResource(R.string.risk_high_desc))
                 Spacer(modifier = Modifier.height(6.dp))
-                RiskLevelRow("中 / Medium", "可能存在 Root，需进一步确认", "0xFF5C3800")
+                RiskLevelRow(stringResource(R.string.risk_medium), stringResource(R.string.risk_medium_desc))
                 Spacer(modifier = Modifier.height(6.dp))
-                RiskLevelRow("低 / Low", "低风险指标，通常不影响安全判断", "0xFF0A3D0E")
+                RiskLevelRow(stringResource(R.string.risk_low), stringResource(R.string.risk_low_desc))
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "注：仅有中等及以下风险项被检出时，总结处显示「可能存在 Root」而非「已检测到 Root」。",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Note: When only MEDIUM or lower risk items are detected, the summary shows \"Root May Possibly Exist\" instead of \"Root Framework Detected\".",
+                    text = stringResource(R.string.about_risk_note),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -185,7 +196,7 @@ fun AboutScreen(
                 )
             ) {
                 Text(
-                    text = "⚠️  本应用仅供安全研究目的使用。\nFor security research purposes only.",
+                    text = stringResource(R.string.disclaimer_about),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
@@ -258,7 +269,7 @@ private fun DetectionMethodRow(name: String, detail: String) {
 }
 
 @Composable
-private fun RiskLevelRow(level: String, description: String, @Suppress("UNUSED_PARAMETER") colorHex: String) {
+private fun RiskLevelRow(level: String, description: String) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.Top,

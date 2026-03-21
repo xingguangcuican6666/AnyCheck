@@ -6,7 +6,7 @@
     <!-- 主界面 -->
     <string name="start_detection">开始检测</string>
     <string name="re_detect">重新检测</string>
-    <string name="detecting">检测中…</string>
+    <string name="detecting">检测中\u2026</string>
     <string name="detection_complete">检测完成</string>
     <string name="detection_summary">摘要</string>
     <string name="total_checks">总检查项</string>
@@ -14,9 +14,28 @@
     <string name="safe_items">安全项</string>
     <string name="not_run">未运行</string>
 
+    <!-- 导航 / 操作 -->
+    <string name="reset">重置</string>
+    <string name="navigate_back">返回</string>
+    <string name="retry">重试</string>
+    <string name="detection_failed">检测失败</string>
+    <string name="detection_failed_format">检测失败：%1$s</string>
+    <string name="unknown_error">未知错误</string>
+
+    <!-- 总结卡片 -->
+    <string name="summary_clean">设备看起来干净</string>
+    <string name="summary_possibly_rooted">可能存在 Root</string>
+    <string name="summary_detected">检测到 Root 框架</string>
+    <string name="summary_checks_run">检测完成 \u00b7 共运行 %1$d 项检查</string>
+    <string name="stat_detected">已检测</string>
+    <string name="stat_safe">安全</string>
+    <string name="stat_errors">错误</string>
+    <string name="status_clean">安全</string>
+
     <!-- 详情 -->
     <string name="detail_reason">原因</string>
     <string name="detail_solution">解决方案</string>
+    <string name="detail_technical">技术详情</string>
     <string name="detail_risk_level">风险等级</string>
     <string name="detail_category">类别</string>
     <string name="collapse">收起</string>
@@ -35,24 +54,90 @@
     <string name="risk_low">低</string>
     <string name="risk_info">信息</string>
 
+    <!-- 风险等级说明（关于界面） -->
+    <string name="risk_critical_desc">确认存在 Root 框架核心组件</string>
+    <string name="risk_high_desc">强烈指示 Root 框架存在</string>
+    <string name="risk_medium_desc">可能存在 Root，需进一步确认</string>
+    <string name="risk_low_desc">低风险指标，通常不影响安全判断</string>
+
     <!-- 类别 -->
     <string name="cat_magisk">Magisk</string>
     <string name="cat_kernelsu">KernelSU</string>
     <string name="cat_apatch">APatch</string>
     <string name="cat_su_binary">SU 二进制</string>
     <string name="cat_root_management">Root 管理</string>
+    <string name="cat_root">Root</string>
+    <string name="cat_xposed">Xposed</string>
+    <string name="cat_system">系统</string>
+    <string name="cat_adb_debug">ADB/调试</string>
+    <string name="cat_frida">Frida</string>
+    <string name="cat_environment">环境</string>
+    <string name="cat_network">网络</string>
 
     <!-- 过滤器 -->
     <string name="filter_all">全部</string>
     <string name="filter_detected">仅显示已检测</string>
     <string name="filter_magisk">Magisk</string>
     <string name="filter_kernelsu">KernelSU</string>
+    <string name="filter_all_count">全部 (%1$d)</string>
+    <string name="filter_detected_count">已检测 (%1$d)</string>
+    <string name="filter_magisk_count">Magisk (%1$d)</string>
+    <string name="filter_kernelsu_count">KernelSU (%1$d)</string>
+    <string name="filter_apatch_count">APatch (%1$d)</string>
+    <string name="filter_su_count">SU 二进制 (%1$d)</string>
+    <string name="filter_xposed_count">Xposed (%1$d)</string>
+
+    <!-- 主界面功能列表 -->
+    <string name="feature_magisk">Magisk 检测（17 项检查）</string>
+    <string name="feature_kernelsu">KernelSU 检测（8 项检查）</string>
+    <string name="feature_apatch">APatch 及通用 Root（5 项检查）</string>
+    <string name="feature_xposed">Xposed / LSPosed Hook 检测（13 项检查）</string>
+    <string name="feature_advanced">高级 Root 检查（19 项检查）</string>
+    <string name="feature_extra">扩展：挂载、权限、绕过模块（15 项检查）</string>
 
     <!-- 其他 -->
     <string name="app_description">AnyCheck 使用多种检测向量检测 Root 管理框架（Magisk、KernelSU、APatch）。</string>
     <string name="disclaimer">仅供安全研究目的使用。</string>
+    <string name="disclaimer_about">\u26a0\ufe0f  本应用仅供安全研究目的使用。</string>
     <string name="copy_results">复制结果</string>
     <string name="results_copied">结果已复制到剪贴板</string>
     <string name="about">关于</string>
     <string name="version">版本</string>
+    <string name="version_format">版本 %1$s</string>
+
+    <!-- 关于界面 -->
+    <string name="about_app_title">关于应用</string>
+    <string name="about_app_description">AnyCheck 是一款全面的 Android Root 检测工具，能够识别 Magisk、KernelSU、APatch 等 Root 管理框架，以及 Xposed/LSPosed 等 Hook 框架。</string>
+    <string name="about_detection_methods">检测方法</string>
+    <string name="about_method_magisk">Magisk 检测</string>
+    <string name="about_method_magisk_count">17 项检查</string>
+    <string name="about_method_kernelsu">KernelSU 检测</string>
+    <string name="about_method_kernelsu_count">8 项检查</string>
+    <string name="about_method_apatch">APatch 及通用 Root</string>
+    <string name="about_method_apatch_count">5 项检查</string>
+    <string name="about_method_xposed">Xposed / LSPosed</string>
+    <string name="about_method_xposed_count">13 项检查</string>
+    <string name="about_method_advanced">高级 Root 检查</string>
+    <string name="about_method_advanced_count">19 项检查</string>
+    <string name="about_method_luna">Luna 方法</string>
+    <string name="about_method_luna_count">22 项检查</string>
+    <string name="about_method_integrity">系统完整性</string>
+    <string name="about_method_integrity_count">多项检查</string>
+    <string name="about_risk_levels">风险等级说明</string>
+    <string name="about_risk_note">注：仅有中等及以下风险项被检出时，总结处显示「可能存在 Root」而非「检测到 Root 框架」。</string>
+
+    <!-- 进度消息 -->
+    <string name="progress_init">正在初始化检查\u2026</string>
+    <string name="progress_magisk">Magisk 检查完成</string>
+    <string name="progress_kernelsu">KernelSU 检查完成</string>
+    <string name="progress_generic">通用检查完成</string>
+    <string name="progress_xposed">Xposed 检查完成</string>
+    <string name="progress_advanced">高级检查完成</string>
+    <string name="progress_extra">扩展检查完成</string>
+    <string name="progress_luna">Luna 检查完成</string>
+    <string name="progress_reveny">Reveny 检查完成</string>
+    <string name="progress_rootbeer">RootBeerFresh 检查完成</string>
+    <string name="progress_ruru">Ruru 检查完成</string>
+    <string name="progress_integrity">系统完整性检查完成</string>
+    <string name="progress_format">%1$s（%2$d/%3$d）</string>
 </resources>

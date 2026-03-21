@@ -5,7 +5,7 @@
     <!-- Home Screen -->
     <string name="start_detection">Start Detection</string>
     <string name="re_detect">Re-detect</string>
-    <string name="detecting">Detecting…</string>
+    <string name="detecting">Detecting\u2026</string>
     <string name="detection_complete">Detection Complete</string>
     <string name="detection_summary">Summary</string>
     <string name="total_checks">Total Checks</string>
@@ -13,9 +13,28 @@
     <string name="safe_items">Safe Items</string>
     <string name="not_run">Not Run</string>
 
+    <!-- Navigation / Actions -->
+    <string name="reset">Reset</string>
+    <string name="navigate_back">Back</string>
+    <string name="retry">Retry</string>
+    <string name="detection_failed">Detection Failed</string>
+    <string name="detection_failed_format">Detection failed: %1$s</string>
+    <string name="unknown_error">Unknown error</string>
+
+    <!-- Summary card -->
+    <string name="summary_clean">Device Appears Clean</string>
+    <string name="summary_possibly_rooted">Root May Possibly Exist</string>
+    <string name="summary_detected">Root Framework Detected</string>
+    <string name="summary_checks_run">Detection complete \u00b7 %1$d checks run</string>
+    <string name="stat_detected">Detected</string>
+    <string name="stat_safe">Safe</string>
+    <string name="stat_errors">Errors</string>
+    <string name="status_clean">CLEAN</string>
+
     <!-- Detail -->
     <string name="detail_reason">Reason</string>
     <string name="detail_solution">Solution</string>
+    <string name="detail_technical">Technical Details</string>
     <string name="detail_risk_level">Risk Level</string>
     <string name="detail_category">Category</string>
     <string name="collapse">Collapse</string>
@@ -34,24 +53,90 @@
     <string name="risk_low">Low</string>
     <string name="risk_info">Info</string>
 
+    <!-- Risk level descriptions (About screen) -->
+    <string name="risk_critical_desc">Confirmed root framework core components present</string>
+    <string name="risk_high_desc">Strong indication of root framework presence</string>
+    <string name="risk_medium_desc">Root may exist, needs further confirmation</string>
+    <string name="risk_low_desc">Low risk indicator, usually doesn\'t affect security verdict</string>
+
     <!-- Categories -->
     <string name="cat_magisk">Magisk</string>
     <string name="cat_kernelsu">KernelSU</string>
     <string name="cat_apatch">APatch</string>
     <string name="cat_su_binary">SU Binary</string>
     <string name="cat_root_management">Root Management</string>
+    <string name="cat_root">Root</string>
+    <string name="cat_xposed">Xposed</string>
+    <string name="cat_system">System</string>
+    <string name="cat_adb_debug">ADB/Debug</string>
+    <string name="cat_frida">Frida</string>
+    <string name="cat_environment">Environment</string>
+    <string name="cat_network">Network</string>
 
-    <!-- Filter -->
+    <!-- Filter chips -->
     <string name="filter_all">All</string>
     <string name="filter_detected">Detected Only</string>
     <string name="filter_magisk">Magisk</string>
     <string name="filter_kernelsu">KernelSU</string>
+    <string name="filter_all_count">All (%1$d)</string>
+    <string name="filter_detected_count">Detected (%1$d)</string>
+    <string name="filter_magisk_count">Magisk (%1$d)</string>
+    <string name="filter_kernelsu_count">KernelSU (%1$d)</string>
+    <string name="filter_apatch_count">APatch (%1$d)</string>
+    <string name="filter_su_count">SU Binary (%1$d)</string>
+    <string name="filter_xposed_count">Xposed (%1$d)</string>
+
+    <!-- Idle screen feature list -->
+    <string name="feature_magisk">Magisk detection (17 checks)</string>
+    <string name="feature_kernelsu">KernelSU detection (8 checks)</string>
+    <string name="feature_apatch">APatch &amp; generic root (5 checks)</string>
+    <string name="feature_xposed">Xposed / LSPosed hook detection (13 checks)</string>
+    <string name="feature_advanced">Advanced root checks (19 checks)</string>
+    <string name="feature_extra">Extra: mounts, capabilities, bypass modules (15 checks)</string>
 
     <!-- Misc -->
     <string name="app_description">AnyCheck detects root management frameworks (Magisk, KernelSU, APatch) using multiple detection vectors.</string>
     <string name="disclaimer">For security research purposes only.</string>
+    <string name="disclaimer_about">\u26a0\ufe0f  For security research purposes only.</string>
     <string name="copy_results">Copy Results</string>
     <string name="results_copied">Results copied to clipboard</string>
     <string name="about">About</string>
     <string name="version">Version</string>
+    <string name="version_format">Version %1$s</string>
+
+    <!-- About screen -->
+    <string name="about_app_title">About App</string>
+    <string name="about_app_description">AnyCheck is a comprehensive Android root detection tool that identifies Magisk, KernelSU, APatch and other root management frameworks, as well as Xposed/LSPosed hook frameworks.</string>
+    <string name="about_detection_methods">Detection Methods</string>
+    <string name="about_method_magisk">Magisk Detection</string>
+    <string name="about_method_magisk_count">17 checks</string>
+    <string name="about_method_kernelsu">KernelSU Detection</string>
+    <string name="about_method_kernelsu_count">8 checks</string>
+    <string name="about_method_apatch">APatch &amp; Generic Root</string>
+    <string name="about_method_apatch_count">5 checks</string>
+    <string name="about_method_xposed">Xposed / LSPosed</string>
+    <string name="about_method_xposed_count">13 checks</string>
+    <string name="about_method_advanced">Advanced Root Checks</string>
+    <string name="about_method_advanced_count">19 checks</string>
+    <string name="about_method_luna">Luna Methods</string>
+    <string name="about_method_luna_count">22 checks</string>
+    <string name="about_method_integrity">System Integrity</string>
+    <string name="about_method_integrity_count">Multiple checks</string>
+    <string name="about_risk_levels">Risk Levels</string>
+    <string name="about_risk_note">Note: When only MEDIUM or lower risk items are detected, the summary shows \u201cRoot May Possibly Exist\u201d instead of \u201cRoot Framework Detected\u201d.</string>
+
+    <!-- Progress messages -->
+    <string name="progress_init">Initializing checks\u2026</string>
+    <string name="progress_magisk">Magisk checks complete</string>
+    <string name="progress_kernelsu">KernelSU checks complete</string>
+    <string name="progress_generic">Generic checks complete</string>
+    <string name="progress_xposed">Xposed checks complete</string>
+    <string name="progress_advanced">Advanced checks complete</string>
+    <string name="progress_extra">Extra checks complete</string>
+    <string name="progress_luna">Luna checks complete</string>
+    <string name="progress_reveny">Reveny-inspired checks complete</string>
+    <string name="progress_rootbeer">RootBeerFresh checks complete</string>
+    <string name="progress_ruru">Ruru-inspired checks complete</string>
+    <string name="progress_integrity">System integrity checks complete</string>
+    <string name="progress_format">%1$s (%2$d/%3$d)</string>
 </resources>

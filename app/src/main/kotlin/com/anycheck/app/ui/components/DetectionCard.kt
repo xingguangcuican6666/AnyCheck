@@ -48,10 +48,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.anycheck.app.R
 import com.anycheck.app.detection.DetectionCategory
 import com.anycheck.app.detection.DetectionResult
 import com.anycheck.app.detection.DetectionStatus
@@ -154,7 +156,7 @@ fun DetectionResultCard(
                 // Expand/collapse icon
                 Icon(
                     imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                    contentDescription = if (expanded) "Collapse" else "Expand",
+                    contentDescription = if (expanded) stringResource(R.string.collapse) else stringResource(R.string.expand),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(20.dp)
                 )
@@ -184,7 +186,7 @@ fun DetectionResultCard(
                     // Detailed reason
                     DetailSection(
                         icon = Icons.Default.Info,
-                        title = "Reason",
+                        title = stringResource(R.string.detail_reason),
                         content = result.detailedReason,
                         iconTint = MaterialTheme.colorScheme.primary
                     )
@@ -194,7 +196,7 @@ fun DetectionResultCard(
                         // Solution
                         DetailSection(
                             icon = Icons.AutoMirrored.Filled.HelpOutline,
-                            title = "Solution",
+                            title = stringResource(R.string.detail_solution),
                             content = result.solution,
                             iconTint = if (isSystemInDarkTheme()) RiskLowDark else RiskLow
                         )
@@ -259,12 +261,12 @@ private fun TechnicalDetailBox(detail: String, modifier: Modifier = Modifier) {
         ) {
             Icon(
                 imageVector = Icons.Default.BugReport,
-                contentDescription = "Technical Details",
+                contentDescription = stringResource(R.string.detail_technical),
                 tint = MaterialTheme.colorScheme.outline,
                 modifier = Modifier.size(16.dp)
             )
             Text(
-                text = "Technical Details",
+                text = stringResource(R.string.detail_technical),
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -293,18 +295,31 @@ private fun TechnicalDetailBox(detail: String, modifier: Modifier = Modifier) {
 @Composable
 fun CategoryBadge(category: DetectionCategory, modifier: Modifier = Modifier) {
     val isDark = isSystemInDarkTheme()
-    val (text, lightColor, darkColor) = when (category) {
-        DetectionCategory.MAGISK -> Triple("Magisk", Color(0xFF4A55A2), Color(0xFFB8C3FF))
-        DetectionCategory.KERNELSU -> Triple("KernelSU", Color(0xFF00796B), Color(0xFF80CBC4))
-        DetectionCategory.APATCH -> Triple("APatch", Color(0xFF6A1B9A), Color(0xFFCE93D8))
-        DetectionCategory.SU_BINARY -> Triple("SU Binary", Color(0xFFBF360C), Color(0xFFFFAB91))
-        DetectionCategory.ROOT_MANAGEMENT -> Triple("Root", Color(0xFF37474F), Color(0xFF90A4AE))
-        DetectionCategory.XPOSED -> Triple("Xposed", Color(0xFFC62828), Color(0xFFEF9A9A))
-        DetectionCategory.SYSTEM_INTEGRITY -> Triple("System", Color(0xFF0277BD), Color(0xFF81D4FA))
-        DetectionCategory.ADB_DEBUG -> Triple("ADB/Debug", Color(0xFF33691E), Color(0xFFAED581))
-        DetectionCategory.FRIDA -> Triple("Frida", Color(0xFF4E342E), Color(0xFFBCAAA4))
-        DetectionCategory.ENVIRONMENT -> Triple("Environment", Color(0xFF00695C), Color(0xFF80CBC4))
-        DetectionCategory.NETWORK -> Triple("Network", Color(0xFF1565C0), Color(0xFF90CAF9))
+    val text = when (category) {
+        DetectionCategory.MAGISK -> stringResource(R.string.cat_magisk)
+        DetectionCategory.KERNELSU -> stringResource(R.string.cat_kernelsu)
+        DetectionCategory.APATCH -> stringResource(R.string.cat_apatch)
+        DetectionCategory.SU_BINARY -> stringResource(R.string.cat_su_binary)
+        DetectionCategory.ROOT_MANAGEMENT -> stringResource(R.string.cat_root)
+        DetectionCategory.XPOSED -> stringResource(R.string.cat_xposed)
+        DetectionCategory.SYSTEM_INTEGRITY -> stringResource(R.string.cat_system)
+        DetectionCategory.ADB_DEBUG -> stringResource(R.string.cat_adb_debug)
+        DetectionCategory.FRIDA -> stringResource(R.string.cat_frida)
+        DetectionCategory.ENVIRONMENT -> stringResource(R.string.cat_environment)
+        DetectionCategory.NETWORK -> stringResource(R.string.cat_network)
+    }
+    val (lightColor, darkColor) = when (category) {
+        DetectionCategory.MAGISK -> Color(0xFF4A55A2) to Color(0xFFB8C3FF)
+        DetectionCategory.KERNELSU -> Color(0xFF00796B) to Color(0xFF80CBC4)
+        DetectionCategory.APATCH -> Color(0xFF6A1B9A) to Color(0xFFCE93D8)
+        DetectionCategory.SU_BINARY -> Color(0xFFBF360C) to Color(0xFFFFAB91)
+        DetectionCategory.ROOT_MANAGEMENT -> Color(0xFF37474F) to Color(0xFF90A4AE)
+        DetectionCategory.XPOSED -> Color(0xFFC62828) to Color(0xFFEF9A9A)
+        DetectionCategory.SYSTEM_INTEGRITY -> Color(0xFF0277BD) to Color(0xFF81D4FA)
+        DetectionCategory.ADB_DEBUG -> Color(0xFF33691E) to Color(0xFFAED581)
+        DetectionCategory.FRIDA -> Color(0xFF4E342E) to Color(0xFFBCAAA4)
+        DetectionCategory.ENVIRONMENT -> Color(0xFF00695C) to Color(0xFF80CBC4)
+        DetectionCategory.NETWORK -> Color(0xFF1565C0) to Color(0xFF90CAF9)
     }
     val color = if (isDark) darkColor else lightColor
     Surface(
@@ -325,11 +340,11 @@ fun CategoryBadge(category: DetectionCategory, modifier: Modifier = Modifier) {
 @Composable
 fun RiskBadge(riskLevel: RiskLevel, color: Color, modifier: Modifier = Modifier) {
     val text = when (riskLevel) {
-        RiskLevel.CRITICAL -> "Critical"
-        RiskLevel.HIGH -> "High"
-        RiskLevel.MEDIUM -> "Medium"
-        RiskLevel.LOW -> "Low"
-        RiskLevel.INFO -> "Info"
+        RiskLevel.CRITICAL -> stringResource(R.string.risk_critical)
+        RiskLevel.HIGH -> stringResource(R.string.risk_high)
+        RiskLevel.MEDIUM -> stringResource(R.string.risk_medium)
+        RiskLevel.LOW -> stringResource(R.string.risk_low)
+        RiskLevel.INFO -> stringResource(R.string.risk_info)
     }
     Surface(
         shape = RoundedCornerShape(4.dp),

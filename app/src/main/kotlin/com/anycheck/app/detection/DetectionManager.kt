@@ -1,6 +1,7 @@
 package com.anycheck.app.detection
 
 import android.content.Context
+import com.anycheck.app.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -27,54 +28,54 @@ class DetectionManager(private val context: Context) {
         val systemIntegrityDetector = SystemIntegrityDetector(context)
 
         val magiskChecks = magiskDetector.runAllChecks()
-        onProgress(magiskChecks.size, 0, "Magisk checks complete")
+        onProgress(magiskChecks.size, 0, context.getString(R.string.progress_magisk))
         allResults.addAll(magiskChecks)
 
         val ksuChecks = kernelSUDetector.runAllChecks()
-        onProgress(magiskChecks.size + ksuChecks.size, magiskChecks.size, "KernelSU checks complete")
+        onProgress(magiskChecks.size + ksuChecks.size, magiskChecks.size, context.getString(R.string.progress_kernelsu))
         allResults.addAll(ksuChecks)
 
         val genericChecks = genericDetector.runAllChecks()
         val genericEnd = magiskChecks.size + ksuChecks.size + genericChecks.size
-        onProgress(genericEnd, magiskChecks.size + ksuChecks.size, "Generic checks complete")
+        onProgress(genericEnd, magiskChecks.size + ksuChecks.size, context.getString(R.string.progress_generic))
         allResults.addAll(genericChecks)
 
         val xposedChecks = xposedDetector.runAllChecks()
         val xposedEnd = genericEnd + xposedChecks.size
-        onProgress(xposedEnd, genericEnd, "Xposed checks complete")
+        onProgress(xposedEnd, genericEnd, context.getString(R.string.progress_xposed))
         allResults.addAll(xposedChecks)
 
         val advancedChecks = advancedDetector.runAllChecks()
         val advancedEnd = xposedEnd + advancedChecks.size
-        onProgress(advancedEnd, xposedEnd, "Advanced checks complete")
+        onProgress(advancedEnd, xposedEnd, context.getString(R.string.progress_advanced))
         allResults.addAll(advancedChecks)
 
         val extraChecks = extraDetector.runAllChecks()
         val extraEnd = advancedEnd + extraChecks.size
-        onProgress(extraEnd, advancedEnd, "Extra checks complete")
+        onProgress(extraEnd, advancedEnd, context.getString(R.string.progress_extra))
         allResults.addAll(extraChecks)
 
         val lunaChecks = lunaDetector.runAllChecks()
         val lunaEnd = extraEnd + lunaChecks.size
-        onProgress(lunaEnd, extraEnd, "Luna checks complete")
+        onProgress(lunaEnd, extraEnd, context.getString(R.string.progress_luna))
         allResults.addAll(lunaChecks)
 
         val revenyChecks = revenyDetector.runAllChecks()
         val revenyEnd = lunaEnd + revenyChecks.size
-        onProgress(revenyEnd, lunaEnd, "Reveny-inspired checks complete")
+        onProgress(revenyEnd, lunaEnd, context.getString(R.string.progress_reveny))
         allResults.addAll(revenyChecks)
 
         val rootBeerFreshChecks = rootBeerFreshDetector.runAllChecks()
         val rootBeerFreshEnd = revenyEnd + rootBeerFreshChecks.size
-        onProgress(rootBeerFreshEnd, revenyEnd, "RootBeerFresh checks complete")
+        onProgress(rootBeerFreshEnd, revenyEnd, context.getString(R.string.progress_rootbeer))
         allResults.addAll(rootBeerFreshChecks)
 
         val ruruChecks = ruruDetector.runAllChecks()
-        onProgress(rootBeerFreshEnd + ruruChecks.size, rootBeerFreshEnd, "Ruru-inspired checks complete")
+        onProgress(rootBeerFreshEnd + ruruChecks.size, rootBeerFreshEnd, context.getString(R.string.progress_ruru))
         allResults.addAll(ruruChecks)
 
         val sysIntegrityChecks = systemIntegrityDetector.runAllChecks()
-        onProgress(rootBeerFreshEnd + ruruChecks.size + sysIntegrityChecks.size, rootBeerFreshEnd + ruruChecks.size, "System integrity checks complete")
+        onProgress(rootBeerFreshEnd + ruruChecks.size + sysIntegrityChecks.size, rootBeerFreshEnd + ruruChecks.size, context.getString(R.string.progress_integrity))
         allResults.addAll(sysIntegrityChecks)
 
         // Sort by: detected first, then by risk level, then by category

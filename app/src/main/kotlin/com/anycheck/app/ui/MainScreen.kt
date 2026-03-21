@@ -6,7 +6,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -57,17 +56,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.anycheck.app.DetectionUiState
+import com.anycheck.app.R
 import com.anycheck.app.detection.DetectionCategory
-import com.anycheck.app.detection.DetectionResult
 import com.anycheck.app.detection.DetectionStatus
 import com.anycheck.app.detection.DetectionSummary
-import com.anycheck.app.detection.RiskLevel
 import com.anycheck.app.ui.components.DetectionResultCard
 import com.anycheck.app.ui.theme.RiskCritical
 import com.anycheck.app.ui.theme.RiskCriticalDark
@@ -95,6 +93,7 @@ fun MainScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val clipboardManager = LocalClipboardManager.current
+    val resultsCopied = stringResource(R.string.results_copied)
 
     Scaffold(
         topBar = {
@@ -111,7 +110,7 @@ fun MainScreen(
                             modifier = Modifier.size(24.dp)
                         )
                         Text(
-                            text = "AnyCheck",
+                            text = stringResource(R.string.app_name),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold
                         )
@@ -122,16 +121,16 @@ fun MainScreen(
                         IconButton(onClick = {
                             val text = buildReportText(uiState.summary)
                             clipboardManager.setText(AnnotatedString(text))
-                            scope.launch { snackbarHostState.showSnackbar("Results copied to clipboard") }
+                            scope.launch { snackbarHostState.showSnackbar(resultsCopied) }
                         }) {
-                            Icon(Icons.Default.ContentCopy, contentDescription = "Copy results")
+                            Icon(Icons.Default.ContentCopy, contentDescription = stringResource(R.string.copy_results))
                         }
                         IconButton(onClick = onReset) {
-                            Icon(Icons.Default.Refresh, contentDescription = "Reset")
+                            Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.reset))
                         }
                     }
                     IconButton(onClick = onShowAbout) {
-                        Icon(Icons.Default.Info, contentDescription = "关于 / About")
+                        Icon(Icons.Default.Info, contentDescription = stringResource(R.string.about))
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -184,14 +183,14 @@ private fun IdleScreen(onStartDetection: () -> Unit, modifier: Modifier = Modifi
         )
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            text = "Root Detection Analyzer",
+            text = stringResource(R.string.app_subtitle),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Comprehensive detection of Magisk, KernelSU, APatch and other root frameworks using multiple detection vectors.",
+            text = stringResource(R.string.app_description),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -204,12 +203,12 @@ private fun IdleScreen(onStartDetection: () -> Unit, modifier: Modifier = Modifi
                 .padding(horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            FeatureRow("Magisk detection (17 checks)")
-            FeatureRow("KernelSU detection (8 checks)")
-            FeatureRow("APatch & generic root (5 checks)")
-            FeatureRow("Xposed / LSPosed hook detection (13 checks)")
-            FeatureRow("Advanced root checks (19 checks)")
-            FeatureRow("Extra: mounts, capabilities, bypass modules (15 checks)")
+            FeatureRow(stringResource(R.string.feature_magisk))
+            FeatureRow(stringResource(R.string.feature_kernelsu))
+            FeatureRow(stringResource(R.string.feature_apatch))
+            FeatureRow(stringResource(R.string.feature_xposed))
+            FeatureRow(stringResource(R.string.feature_advanced))
+            FeatureRow(stringResource(R.string.feature_extra))
         }
         Spacer(modifier = Modifier.height(32.dp))
         Button(
@@ -222,13 +221,13 @@ private fun IdleScreen(onStartDetection: () -> Unit, modifier: Modifier = Modifi
             Icon(Icons.Default.Search, contentDescription = null)
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Start Detection",
+                text = stringResource(R.string.start_detection),
                 style = MaterialTheme.typography.titleMedium
             )
         }
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = "For security research purposes only.",
+            text = stringResource(R.string.disclaimer),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.outline
         )
@@ -270,7 +269,7 @@ private fun RunningScreen(progress: String, modifier: Modifier = Modifier) {
         )
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            text = "Detecting...",
+            text = stringResource(R.string.detecting),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Medium
         )
@@ -305,7 +304,7 @@ private fun ErrorScreen(
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "Detection Failed",
+            text = stringResource(R.string.detection_failed),
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.error
         )
@@ -318,7 +317,7 @@ private fun ErrorScreen(
         )
         Spacer(modifier = Modifier.height(24.dp))
         Button(onClick = onRetry) {
-            Text("Retry")
+            Text(stringResource(R.string.retry))
         }
     }
 }
@@ -377,22 +376,19 @@ private fun ResultsScreen(
                         ResultFilter.SU -> summary.results.count { it.category == DetectionCategory.SU_BINARY }
                         ResultFilter.XPOSED -> summary.results.count { it.category == DetectionCategory.XPOSED }
                     }
+                    val label = when (filter) {
+                        ResultFilter.ALL -> stringResource(R.string.filter_all_count, count)
+                        ResultFilter.DETECTED -> stringResource(R.string.filter_detected_count, count)
+                        ResultFilter.MAGISK -> stringResource(R.string.filter_magisk_count, count)
+                        ResultFilter.KERNELSU -> stringResource(R.string.filter_kernelsu_count, count)
+                        ResultFilter.APATCH -> stringResource(R.string.filter_apatch_count, count)
+                        ResultFilter.SU -> stringResource(R.string.filter_su_count, count)
+                        ResultFilter.XPOSED -> stringResource(R.string.filter_xposed_count, count)
+                    }
                     FilterChip(
                         selected = activeFilter == filter,
                         onClick = { activeFilter = filter },
-                        label = {
-                            Text(
-                                text = when (filter) {
-                                    ResultFilter.ALL -> "All ($count)"
-                                    ResultFilter.DETECTED -> "Detected ($count)"
-                                    ResultFilter.MAGISK -> "Magisk ($count)"
-                                    ResultFilter.KERNELSU -> "KernelSU ($count)"
-                                    ResultFilter.APATCH -> "APatch ($count)"
-                                    ResultFilter.SU -> "SU Binary ($count)"
-                                    ResultFilter.XPOSED -> "Xposed ($count)"
-                                }
-                            )
-                        }
+                        label = { Text(text = label) }
                     )
                 }
             }
@@ -418,7 +414,7 @@ private fun ResultsScreen(
             ) {
                 Icon(Icons.Default.Refresh, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Re-detect")
+                Text(stringResource(R.string.re_detect))
             }
         }
     }
@@ -445,13 +441,12 @@ private fun SummaryCard(summary: DetectionSummary, modifier: Modifier = Modifier
         else -> MaterialTheme.colorScheme.onErrorContainer
     }
     val titleText = when {
-        overallSafe -> "设备看起来干净 / Device Appears Clean"
-        possiblyRooted -> "可能存在 Root / Root May Possibly Exist"
-        else -> "检测到 Root 框架 / Root Framework Detected"
+        overallSafe -> stringResource(R.string.summary_clean)
+        possiblyRooted -> stringResource(R.string.summary_possibly_rooted)
+        else -> stringResource(R.string.summary_detected)
     }
     val iconVector = when {
         overallSafe -> Icons.Default.ShieldMoon
-        possiblyRooted -> Icons.Default.Warning
         else -> Icons.Default.Warning
     }
     val iconTint = when {
@@ -484,7 +479,7 @@ private fun SummaryCard(summary: DetectionSummary, modifier: Modifier = Modifier
                         color = onContainerColor
                     )
                     Text(
-                        text = "检测完成 · 共运行 ${summary.results.size} 项检查",
+                        text = stringResource(R.string.summary_checks_run, summary.results.size),
                         style = MaterialTheme.typography.bodySmall,
                         color = onContainerColor.copy(0.7f)
                     )
@@ -499,17 +494,17 @@ private fun SummaryCard(summary: DetectionSummary, modifier: Modifier = Modifier
             ) {
                 SummaryStatItem(
                     count = summary.detectedCount,
-                    label = "已检测",
+                    label = stringResource(R.string.stat_detected),
                     color = if (summary.detectedCount > 0) riskCriticalColor else MaterialTheme.colorScheme.outline
                 )
                 SummaryStatItem(
                     count = summary.safeCount,
-                    label = "安全",
+                    label = stringResource(R.string.stat_safe),
                     color = riskLowColor
                 )
                 SummaryStatItem(
                     count = summary.errorCount,
-                    label = "错误",
+                    label = stringResource(R.string.stat_errors),
                     color = MaterialTheme.colorScheme.outline
                 )
             }
@@ -541,17 +536,17 @@ private fun FrameworkStatusRow(summary: DetectionSummary, modifier: Modifier = M
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         FrameworkStatusChip(
-            name = "Magisk",
+            name = stringResource(R.string.cat_magisk),
             detected = summary.hasMagisk,
             modifier = Modifier.weight(1f)
         )
         FrameworkStatusChip(
-            name = "KernelSU",
+            name = stringResource(R.string.cat_kernelsu),
             detected = summary.hasKernelSU,
             modifier = Modifier.weight(1f)
         )
         FrameworkStatusChip(
-            name = "APatch",
+            name = stringResource(R.string.cat_apatch),
             detected = summary.hasAPatch,
             modifier = Modifier.weight(1f)
         )
@@ -590,7 +585,7 @@ private fun FrameworkStatusChip(
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
-                text = if (detected) "DETECTED" else "CLEAN",
+                text = if (detected) stringResource(R.string.status_detected) else stringResource(R.string.status_clean),
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
                 color = if (detected) detectedTextColor else safeTextColor

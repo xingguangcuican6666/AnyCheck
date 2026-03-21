@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 sealed class DetectionUiState {
     data object Idle : DetectionUiState()
-    data class Running(val progress: String = "Starting...") : DetectionUiState()
+    data class Running(val progress: String = "") : DetectionUiState()
     data class Complete(val summary: DetectionSummary) : DetectionUiState()
     data class Error(val message: String) : DetectionUiState()
 }
@@ -26,18 +26,22 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun startDetection() {
         if (_uiState.value is DetectionUiState.Running) return
+        val app = getApplication<Application>()
         viewModelScope.launch {
-            _uiState.value = DetectionUiState.Running("Initializing checks...")
+            _uiState.value = DetectionUiState.Running(app.getString(R.string.progress_init))
             try {
                 val summary = detectionManager.runFullDetection { total, completed, message ->
                     _uiState.value = DetectionUiState.Running(
-                        "$message ($completed/$total)"
+                        app.getString(R.string.progress_format, message, completed, total)
                     )
                 }
                 _uiState.value = DetectionUiState.Complete(summary)
             } catch (e: Exception) {
                 _uiState.value = DetectionUiState.Error(
-                    "Detection failed: ${e.message ?: "Unknown error"}"
+                    app.getString(
+                        R.string.detection_failed_format,
+                        e.message ?: app.getString(R.string.unknown_error)
+                    )
                 )
             }
         }
