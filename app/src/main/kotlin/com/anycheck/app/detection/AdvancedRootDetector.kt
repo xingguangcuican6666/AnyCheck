@@ -49,26 +49,24 @@ class AdvancedRootDetector(private val context: Context) {
         return if (suPath.isNotEmpty()) {
             DetectionResult(
                 id = "su_command",
-                name = "SU Found via PATH",
+                name = context.getString(R.string.chk_adv_su_path_name),
                 category = DetectionCategory.SU_BINARY,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "su binary found in PATH via 'which su'.",
-                detailedReason = "Executing 'which su' returned '$suPath'. " +
-                    "The su binary is installed and accessible from the shell PATH, " +
-                    "confirming root access is available to shell commands.",
-                solution = "Remove the su binary from the reported path.",
+                description = context.getString(R.string.chk_adv_su_path_desc),
+                detailedReason = context.getString(R.string.chk_adv_su_path_reason, suPath),
+                solution = context.getString(R.string.chk_adv_su_path_solution),
                 technicalDetail = "which su → $suPath"
             )
         } else {
             DetectionResult(
                 id = "su_command",
-                name = "SU via PATH",
+                name = context.getString(R.string.chk_adv_su_path_name_nd),
                 category = DetectionCategory.SU_BINARY,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "su binary not found via PATH lookup.",
-                detailedReason = "The 'which su' command returned no result.",
+                description = context.getString(R.string.chk_adv_su_path_desc_nd),
+                detailedReason = context.getString(R.string.chk_adv_su_path_reason_nd),
                 solution = "No action required."
             )
         }
@@ -90,15 +88,13 @@ class AdvancedRootDetector(private val context: Context) {
                 val points = rwMounts.map { it.split(" ").getOrElse(1) { "?" } }
                 DetectionResult(
                     id = "rw_system",
-                    name = "System Partition Mounted R/W",
+                    name = context.getString(R.string.chk_adv_rw_sys_name),
                     category = DetectionCategory.SYSTEM_INTEGRITY,
                     status = DetectionStatus.DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
-                    description = "System partition is mounted read-write.",
-                    detailedReason = "Partitions ${points.joinToString(", ")} are mounted read-write. " +
-                        "Normally system partitions are read-only for security. " +
-                        "A read-write system mount means system files can be modified at runtime.",
-                    solution = "Remount as read-only: 'mount -o remount,ro /system'",
+                    description = context.getString(R.string.chk_adv_rw_sys_desc),
+                    detailedReason = context.getString(R.string.chk_adv_rw_sys_reason, points.joinToString(", ")),
+                    solution = context.getString(R.string.chk_adv_rw_sys_solution),
                     technicalDetail = rwMounts.joinToString("\n")
                 )
             } else {
@@ -108,8 +104,8 @@ class AdvancedRootDetector(private val context: Context) {
                     category = DetectionCategory.SYSTEM_INTEGRITY,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
-                    description = "System partitions appear to be read-only.",
-                    detailedReason = "No read-write system partition mounts were found.",
+                    description = context.getString(R.string.chk_adv_rw_sys_desc_nd),
+                    detailedReason = context.getString(R.string.chk_adv_rw_sys_reason_nd),
                     solution = "No action required."
                 )
             }
@@ -120,9 +116,9 @@ class AdvancedRootDetector(private val context: Context) {
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Could not read /proc/mounts.",
+                description = context.getString(R.string.chk_adv_rw_sys_desc_error),
                 detailedReason = "Failed: ${e.message}",
-                solution = "Ensure /proc/mounts is accessible."
+                solution = context.getString(R.string.chk_adv_rw_sys_solution_error)
             )
         }
     }
@@ -146,28 +142,24 @@ class AdvancedRootDetector(private val context: Context) {
         return if (unlocked) {
             DetectionResult(
                 id = "bootloader_unlocked",
-                name = "Bootloader Unlocked",
+                name = context.getString(R.string.chk_adv_bootloader_name),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Device bootloader is unlocked.",
-                detailedReason = "Bootloader unlock indicators: ${indicators.joinToString(", ")}. " +
-                    "An unlocked bootloader allows flashing unsigned boot images, custom kernels " +
-                    "(required for KernelSU/APatch), and custom recoveries (TWRP). " +
-                    "Verified Boot is disabled, so OS integrity is not guaranteed.",
-                solution = "Lock the bootloader via 'fastboot flashing lock' after restoring stock firmware. " +
-                    "Warning: locking with custom firmware may brick the device.",
+                description = context.getString(R.string.chk_adv_bootloader_desc),
+                detailedReason = context.getString(R.string.chk_adv_bootloader_reason, indicators.joinToString(", ")),
+                solution = context.getString(R.string.chk_adv_bootloader_solution),
                 technicalDetail = indicators.joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "bootloader_unlocked",
-                name = "Bootloader State",
+                name = context.getString(R.string.chk_adv_bootloader_name_nd),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Bootloader appears to be locked.",
-                detailedReason = "Boot state indicators suggest a locked bootloader: ${indicators.joinToString(", ")}.",
+                description = context.getString(R.string.chk_adv_bootloader_desc_nd),
+                detailedReason = context.getString(R.string.chk_adv_bootloader_reason_nd, indicators.joinToString(", ")),
                 solution = "No action required.",
                 technicalDetail = indicators.joinToString("; ")
             )
@@ -190,26 +182,24 @@ class AdvancedRootDetector(private val context: Context) {
         return if (disabled) {
             DetectionResult(
                 id = "dm_verity",
-                name = "dm-verity Disabled",
+                name = context.getString(R.string.chk_adv_dm_verity_name),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "dm-verity (Verified Boot) appears to be disabled.",
-                detailedReason = "dm-verity protects system partition integrity by verifying each block on read. " +
-                    "When disabled: ${indicators.joinToString(", ")}. " +
-                    "System files can be modified without Verified Boot detecting the change.",
-                solution = "Re-enable dm-verity by restoring a stock boot image and locking the bootloader.",
+                description = context.getString(R.string.chk_adv_dm_verity_desc),
+                detailedReason = context.getString(R.string.chk_adv_dm_verity_reason, indicators.joinToString(", ")),
+                solution = context.getString(R.string.chk_adv_dm_verity_solution),
                 technicalDetail = indicators.joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "dm_verity",
-                name = "dm-verity Status",
+                name = context.getString(R.string.chk_adv_dm_verity_name_nd),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "dm-verity appears to be enabled.",
-                detailedReason = "No dm-verity disable indicators found.",
+                description = context.getString(R.string.chk_adv_dm_verity_desc_nd),
+                detailedReason = context.getString(R.string.chk_adv_dm_verity_reason_nd),
                 solution = "No action required.",
                 technicalDetail = indicators.joinToString("; ")
             )
@@ -236,28 +226,24 @@ class AdvancedRootDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "dangerous_props",
-                name = "Dangerous Properties Detected",
+                name = context.getString(R.string.chk_adv_dang_props_name),
                 category = DetectionCategory.ADB_DEBUG,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Dangerous system properties indicate debug or root access.",
-                detailedReason = "Found: ${found.joinToString(", ")}. " +
-                    "ro.adb.secure=0 means ADB shell is not secured. " +
-                    "service.adb.root=1 means the ADB daemon runs as root. " +
-                    "ro.debuggable=1 enables app debugging for all apps. " +
-                    "ro.build.type=userdebug/eng indicates a development build with relaxed security.",
-                solution = "Use a production (user) build to restore secure property defaults.",
+                description = context.getString(R.string.chk_adv_dang_props_desc),
+                detailedReason = context.getString(R.string.chk_adv_dang_props_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_adv_dang_props_solution),
                 technicalDetail = "Props: ${found.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "dangerous_props",
-                name = "System Property Security",
+                name = context.getString(R.string.chk_adv_dang_props_name_nd),
                 category = DetectionCategory.ADB_DEBUG,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No dangerous system properties found.",
-                detailedReason = "Checked properties appear to have secure values.",
+                description = context.getString(R.string.chk_adv_dang_props_desc_nd),
+                detailedReason = context.getString(R.string.chk_adv_dang_props_reason_nd),
                 solution = "No action required."
             )
         }
@@ -273,15 +259,13 @@ class AdvancedRootDetector(private val context: Context) {
             if (devEnabled == 1) {
                 DetectionResult(
                     id = "developer_options",
-                    name = "Developer Options Enabled",
+                    name = context.getString(R.string.chk_adv_dev_opts_name),
                     category = DetectionCategory.ADB_DEBUG,
                     status = DetectionStatus.DETECTED,
                     riskLevel = RiskLevel.MEDIUM,
-                    description = "Android Developer Options is enabled.",
-                    detailedReason = "Developer Options grants access to advanced settings including " +
-                        "USB debugging, OEM unlock, process inspection, and GPU rendering tools. " +
-                        "While not root itself, it is a prerequisite for most rooting methods.",
-                    solution = "Disable via Settings → System → Developer Options → toggle off.",
+                    description = context.getString(R.string.chk_adv_dev_opts_desc),
+                    detailedReason = context.getString(R.string.chk_adv_dev_opts_reason),
+                    solution = context.getString(R.string.chk_adv_dev_opts_solution),
                     technicalDetail = "DEVELOPMENT_SETTINGS_ENABLED=1"
                 )
             } else {
@@ -291,8 +275,8 @@ class AdvancedRootDetector(private val context: Context) {
                     category = DetectionCategory.ADB_DEBUG,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.MEDIUM,
-                    description = "Developer Options is disabled.",
-                    detailedReason = "DEVELOPMENT_SETTINGS_ENABLED is 0.",
+                    description = context.getString(R.string.chk_adv_dev_opts_desc_nd),
+                    detailedReason = context.getString(R.string.chk_adv_dev_opts_reason_nd),
                     solution = "No action required."
                 )
             }
@@ -303,9 +287,9 @@ class AdvancedRootDetector(private val context: Context) {
                 category = DetectionCategory.ADB_DEBUG,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "Could not read Developer Options status.",
+                description = context.getString(R.string.chk_adv_dev_opts_desc_error),
                 detailedReason = "Settings query failed: ${e.message}",
-                solution = "Check manually in Settings → System → Developer Options."
+                solution = context.getString(R.string.chk_adv_dev_opts_solution_error)
             )
         }
     }
@@ -320,15 +304,13 @@ class AdvancedRootDetector(private val context: Context) {
             if (adbEnabled == 1) {
                 DetectionResult(
                     id = "usb_debugging",
-                    name = "USB Debugging Enabled",
+                    name = context.getString(R.string.chk_adv_adb_name),
                     category = DetectionCategory.ADB_DEBUG,
                     status = DetectionStatus.DETECTED,
                     riskLevel = RiskLevel.HIGH,
-                    description = "ADB (USB debugging) is currently enabled.",
-                    detailedReason = "USB debugging allows a connected computer to execute adb commands, " +
-                        "install/remove apps, extract data, and (on debug builds) obtain a root shell. " +
-                        "It is commonly used as part of the rooting process.",
-                    solution = "Disable via Settings → Developer Options → USB Debugging → toggle off.",
+                    description = context.getString(R.string.chk_adv_adb_desc),
+                    detailedReason = context.getString(R.string.chk_adv_adb_reason),
+                    solution = context.getString(R.string.chk_adv_adb_solution),
                     technicalDetail = "Settings.Global.ADB_ENABLED=1"
                 )
             } else {
@@ -338,8 +320,8 @@ class AdvancedRootDetector(private val context: Context) {
                     category = DetectionCategory.ADB_DEBUG,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.HIGH,
-                    description = "USB debugging (ADB) is disabled.",
-                    detailedReason = "Settings.Global.ADB_ENABLED is 0.",
+                    description = context.getString(R.string.chk_adv_adb_desc_nd),
+                    detailedReason = context.getString(R.string.chk_adv_adb_reason_nd),
                     solution = "No action required."
                 )
             }
@@ -350,9 +332,9 @@ class AdvancedRootDetector(private val context: Context) {
                 category = DetectionCategory.ADB_DEBUG,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Could not read USB debugging status.",
+                description = context.getString(R.string.chk_adv_adb_desc_error),
                 detailedReason = "Settings query failed: ${e.message}",
-                solution = "Check manually in Settings → Developer Options."
+                solution = context.getString(R.string.chk_adv_adb_solution_error)
             )
         }
     }
@@ -379,15 +361,13 @@ class AdvancedRootDetector(private val context: Context) {
             if (found.isNotEmpty()) {
                 DetectionResult(
                     id = "frida_process",
-                    name = "Frida Server Running",
+                    name = context.getString(R.string.chk_adv_frida_proc_name),
                     category = DetectionCategory.FRIDA,
                     status = DetectionStatus.DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
-                    description = "Frida dynamic instrumentation server is running.",
-                    detailedReason = "Frida is a reverse engineering toolkit used for runtime hooking, " +
-                        "tracing, and app tampering. Found processes: ${found.joinToString(", ")}. " +
-                        "frida-server enables remote injection and patching of running processes.",
-                    solution = "Kill the frida-server process: 'kill \$(pgrep frida-server)'",
+                    description = context.getString(R.string.chk_adv_frida_proc_desc),
+                    detailedReason = context.getString(R.string.chk_adv_frida_proc_reason, found.joinToString(", ")),
+                    solution = context.getString(R.string.chk_adv_frida_proc_solution),
                     technicalDetail = "Processes: ${found.joinToString("; ")}"
                 )
             } else {
@@ -397,8 +377,8 @@ class AdvancedRootDetector(private val context: Context) {
                     category = DetectionCategory.FRIDA,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
-                    description = "No Frida server processes found.",
-                    detailedReason = "No frida-server or related processes are running.",
+                    description = context.getString(R.string.chk_adv_frida_proc_desc_nd),
+                    detailedReason = context.getString(R.string.chk_adv_frida_proc_reason_nd),
                     solution = "No action required."
                 )
             }
@@ -409,9 +389,9 @@ class AdvancedRootDetector(private val context: Context) {
                 category = DetectionCategory.FRIDA,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Could not enumerate running processes.",
+                description = context.getString(R.string.chk_adv_frida_proc_desc_error),
                 detailedReason = "Process enumeration failed: ${e.message}",
-                solution = "Ensure /proc is accessible."
+                solution = context.getString(R.string.chk_adv_frida_proc_solution_error)
             )
         }
     }
@@ -439,26 +419,24 @@ class AdvancedRootDetector(private val context: Context) {
         return if (openPorts.isNotEmpty()) {
             DetectionResult(
                 id = "frida_port",
-                name = "Frida Port Open",
+                name = context.getString(R.string.chk_adv_frida_port_name),
                 category = DetectionCategory.FRIDA,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Frida server default port(s) are listening.",
-                detailedReason = "Ports ${openPorts.joinToString(", ")} are in LISTEN state. " +
-                    "Port 27042 is the Frida server default. " +
-                    "An open Frida port confirms the server is active and accepting connections.",
-                solution = "Kill the Frida server process.",
+                description = context.getString(R.string.chk_adv_frida_port_desc),
+                detailedReason = context.getString(R.string.chk_adv_frida_port_reason, openPorts.joinToString(", ")),
+                solution = context.getString(R.string.chk_adv_frida_port_solution),
                 technicalDetail = "Listening ports: ${openPorts.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "frida_port",
-                name = "Frida Port",
+                name = context.getString(R.string.chk_adv_frida_port_name_nd),
                 category = DetectionCategory.FRIDA,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No Frida ports detected as listening.",
-                detailedReason = "Ports 27042/27043 are not in LISTEN state.",
+                description = context.getString(R.string.chk_adv_frida_port_desc_nd),
+                detailedReason = context.getString(R.string.chk_adv_frida_port_reason_nd),
                 solution = "No action required."
             )
         }
@@ -479,26 +457,24 @@ class AdvancedRootDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "frida_files",
-                name = "Frida Server Files Found",
+                name = context.getString(R.string.chk_adv_frida_files_name),
                 category = DetectionCategory.FRIDA,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Frida server binary found on the filesystem.",
-                detailedReason = "Found: ${found.joinToString(", ")}. " +
-                    "Frida server binaries are typically placed in /data/local/tmp before execution. " +
-                    "Their presence indicates active or recent reverse engineering activity.",
-                solution = "Delete the binary: 'rm /data/local/tmp/frida-server'",
+                description = context.getString(R.string.chk_adv_frida_files_desc),
+                detailedReason = context.getString(R.string.chk_adv_frida_files_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_adv_frida_files_solution),
                 technicalDetail = "Files: ${found.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "frida_files",
-                name = "Frida Server Files",
+                name = context.getString(R.string.chk_adv_frida_files_name_nd),
                 category = DetectionCategory.FRIDA,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No Frida server files found.",
-                detailedReason = "No Frida server binaries found at common locations.",
+                description = context.getString(R.string.chk_adv_frida_files_desc_nd),
+                detailedReason = context.getString(R.string.chk_adv_frida_files_reason_nd),
                 solution = "No action required."
             )
         }
@@ -519,26 +495,24 @@ class AdvancedRootDetector(private val context: Context) {
         return if (foundFiles.isNotEmpty()) {
             DetectionResult(
                 id = "riru",
-                name = "Riru Framework Detected",
+                name = context.getString(R.string.chk_adv_riru_name),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Riru Zygote injection framework detected.",
-                detailedReason = "Riru injects code into the Zygote process to enable system-wide hooks. " +
-                    "It is a predecessor to Zygisk. Found: ${foundFiles.joinToString(", ")}. " +
-                    "libmemtrack_real.so is the backup of the original libmemtrack that Riru replaces.",
-                solution = "Remove Riru via the Magisk/KernelSU module manager.",
+                description = context.getString(R.string.chk_adv_riru_desc),
+                detailedReason = context.getString(R.string.chk_adv_riru_reason, foundFiles.joinToString(", ")),
+                solution = context.getString(R.string.chk_adv_riru_solution),
                 technicalDetail = "Files: ${foundFiles.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "riru",
-                name = "Riru Framework",
+                name = context.getString(R.string.chk_adv_riru_name_nd),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Riru framework not detected.",
-                detailedReason = "No Riru files were found.",
+                description = context.getString(R.string.chk_adv_riru_desc_nd),
+                detailedReason = context.getString(R.string.chk_adv_riru_reason_nd),
                 solution = "No action required."
             )
         }
@@ -567,25 +541,24 @@ class AdvancedRootDetector(private val context: Context) {
             if (foundPkgs.isNotEmpty()) indicators.add("Packages: ${foundPkgs.joinToString(", ")}")
             DetectionResult(
                 id = "twrp_recovery",
-                name = "Custom Recovery (TWRP) Detected",
+                name = context.getString(R.string.chk_adv_twrp_name),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "TWRP or custom recovery artifacts detected.",
-                detailedReason = "TWRP allows flashing custom ROMs and root packages from recovery mode. " +
-                    "Evidence: ${indicators.joinToString("; ")}.",
-                solution = "Flash stock recovery via fastboot: 'fastboot flash recovery stock_recovery.img'",
+                description = context.getString(R.string.chk_adv_twrp_desc),
+                detailedReason = context.getString(R.string.chk_adv_twrp_reason, indicators.joinToString("; ")),
+                solution = context.getString(R.string.chk_adv_twrp_solution),
                 technicalDetail = indicators.joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "twrp_recovery",
-                name = "Custom Recovery",
+                name = context.getString(R.string.chk_adv_twrp_name_nd),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No TWRP or custom recovery artifacts found.",
-                detailedReason = "No known TWRP files or packages were detected.",
+                description = context.getString(R.string.chk_adv_twrp_desc_nd),
+                detailedReason = context.getString(R.string.chk_adv_twrp_reason_nd),
                 solution = "No action required."
             )
         }
@@ -620,25 +593,24 @@ class AdvancedRootDetector(private val context: Context) {
         return if (indicators.isNotEmpty()) {
             DetectionResult(
                 id = "emulator",
-                name = "Emulator/VM Detected",
+                name = context.getString(R.string.chk_adv_emulator_name),
                 category = DetectionCategory.ENVIRONMENT,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "Device appears to be an emulator or virtual machine.",
-                detailedReason = "Emulator indicators: ${indicators.joinToString("; ")}. " +
-                    "Emulators often have relaxed security settings and can more easily simulate rooting.",
-                solution = "Use a physical device for production/security-sensitive use cases.",
+                description = context.getString(R.string.chk_adv_emulator_desc),
+                detailedReason = context.getString(R.string.chk_adv_emulator_reason, indicators.joinToString("; ")),
+                solution = context.getString(R.string.chk_adv_emulator_solution),
                 technicalDetail = "Indicators: ${indicators.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "emulator",
-                name = "Emulator Detection",
+                name = context.getString(R.string.chk_adv_emulator_name_nd),
                 category = DetectionCategory.ENVIRONMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "Device does not appear to be an emulator.",
-                detailedReason = "No emulator indicators were found.",
+                description = context.getString(R.string.chk_adv_emulator_desc_nd),
+                detailedReason = context.getString(R.string.chk_adv_emulator_reason_nd),
                 solution = "No action required."
             )
         }
@@ -680,14 +652,13 @@ class AdvancedRootDetector(private val context: Context) {
             if (found.isNotEmpty()) {
                 DetectionResult(
                     id = "injected_libs",
-                    name = "Injected Libraries Detected",
+                    name = context.getString(R.string.chk_adv_inj_libs_name),
                     category = DetectionCategory.ROOT_MANAGEMENT,
                     status = DetectionStatus.DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
-                    description = "Root/hook framework libraries are injected into this process.",
-                    detailedReason = "Suspicious libraries mapped in /proc/self/maps: ${found.joinToString(", ")}. " +
-                        "Library injection is used by Zygisk, Riru, LSPosed, and Frida to hook app code at runtime.",
-                    solution = "Remove the root framework to prevent library injection.",
+                    description = context.getString(R.string.chk_adv_inj_libs_desc),
+                    detailedReason = context.getString(R.string.chk_adv_inj_libs_reason, found.joinToString(", ")),
+                    solution = context.getString(R.string.chk_adv_inj_libs_solution),
                     technicalDetail = "Mapped libs: ${found.joinToString("; ")}"
                 )
             } else {
@@ -697,8 +668,8 @@ class AdvancedRootDetector(private val context: Context) {
                     category = DetectionCategory.ROOT_MANAGEMENT,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
-                    description = "No suspicious libraries injected into this process.",
-                    detailedReason = "No root/hook framework libraries found in /proc/self/maps.",
+                    description = context.getString(R.string.chk_adv_inj_libs_desc_nd),
+                    detailedReason = context.getString(R.string.chk_adv_inj_libs_reason_nd),
                     solution = "No action required."
                 )
             }
@@ -709,9 +680,9 @@ class AdvancedRootDetector(private val context: Context) {
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Could not read process memory maps.",
+                description = context.getString(R.string.chk_adv_inj_libs_desc_error),
                 detailedReason = "Failed to read /proc/self/maps: ${e.message}",
-                solution = "Ensure /proc/self/maps is accessible."
+                solution = context.getString(R.string.chk_adv_inj_libs_solution_error)
             )
         }
     }
@@ -729,11 +700,9 @@ class AdvancedRootDetector(private val context: Context) {
                     category = DetectionCategory.MAGISK,
                     status = DetectionStatus.DETECTED,
                     riskLevel = RiskLevel.HIGH,
-                    description = "Zygisk companion process socket detected.",
-                    detailedReason = "Zygisk uses a companion process in Zygote that communicates via Unix sockets. " +
-                        "Sockets found: ${found.joinToString(", ")}. " +
-                        "This confirms Zygisk is actively running and injecting into app processes.",
-                    solution = "Disable Zygisk in Magisk settings or uninstall Magisk.",
+                    description = context.getString(R.string.chk_adv_zygisk_sock_desc),
+                    detailedReason = context.getString(R.string.chk_adv_zygisk_sock_reason, found.joinToString(", ")),
+                    solution = context.getString(R.string.chk_adv_zygisk_sock_solution),
                     technicalDetail = "Sockets: ${found.joinToString("; ")}"
                 )
             } else {
@@ -743,8 +712,8 @@ class AdvancedRootDetector(private val context: Context) {
                     category = DetectionCategory.MAGISK,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.HIGH,
-                    description = "No Zygisk companion socket found.",
-                    detailedReason = "No Zygisk socket names found in /proc/net/unix.",
+                    description = context.getString(R.string.chk_adv_zygisk_sock_desc_nd),
+                    detailedReason = context.getString(R.string.chk_adv_zygisk_sock_reason_nd),
                     solution = "No action required."
                 )
             }
@@ -755,9 +724,9 @@ class AdvancedRootDetector(private val context: Context) {
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Could not read /proc/net/unix.",
+                description = context.getString(R.string.chk_adv_zygisk_sock_desc_error),
                 detailedReason = "Failed: ${e.message}",
-                solution = "Ensure /proc/net/unix is accessible."
+                solution = context.getString(R.string.chk_adv_zygisk_sock_solution_error)
             )
         }
     }
@@ -771,15 +740,13 @@ class AdvancedRootDetector(private val context: Context) {
                 val nameList = modules.take(10).map { it.name }
                 DetectionResult(
                     id = "magisk_module_count",
-                    name = "Magisk Modules Installed",
+                    name = context.getString(R.string.chk_adv_mgsk_mods_name),
                     category = DetectionCategory.MAGISK,
                     status = DetectionStatus.DETECTED,
                     riskLevel = RiskLevel.MEDIUM,
-                    description = "${modules.size} Magisk module(s) installed.",
-                    detailedReason = "Found ${modules.size} module(s) in /data/adb/modules: " +
-                        "${nameList.joinToString(", ")}${if (modules.size > 10) "…" else ""}. " +
-                        "Magisk modules can modify system files, inject libraries, and alter app behaviour.",
-                    solution = "Review installed modules in Magisk Manager and remove untrusted ones.",
+                    description = context.getString(R.string.chk_adv_mgsk_mods_desc, modules.size),
+                    detailedReason = context.getString(R.string.chk_adv_mgsk_mods_reason, modules.size, nameList.joinToString(", ") + if (modules.size > 10) "…" else ""),
+                    solution = context.getString(R.string.chk_adv_mgsk_mods_solution),
                     technicalDetail = "Modules: ${modules.map { it.name }.joinToString("; ")}"
                 )
             } else {
@@ -789,8 +756,8 @@ class AdvancedRootDetector(private val context: Context) {
                     category = DetectionCategory.MAGISK,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.MEDIUM,
-                    description = "No Magisk modules installed.",
-                    detailedReason = "/data/adb/modules exists but contains no module directories.",
+                    description = context.getString(R.string.chk_adv_mgsk_mods_desc_nd),
+                    detailedReason = context.getString(R.string.chk_adv_mgsk_mods_reason_nd),
                     solution = "No action required."
                 )
             }
@@ -801,8 +768,8 @@ class AdvancedRootDetector(private val context: Context) {
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "Magisk modules directory not found.",
-                detailedReason = "/data/adb/modules does not exist.",
+                description = context.getString(R.string.chk_adv_mgsk_mods_desc_nodir),
+                detailedReason = context.getString(R.string.chk_adv_mgsk_mods_reason_nodir),
                 solution = "No action required."
             )
         }
@@ -821,12 +788,9 @@ class AdvancedRootDetector(private val context: Context) {
                     category = DetectionCategory.ROOT_MANAGEMENT,
                     status = DetectionStatus.DETECTED,
                     riskLevel = RiskLevel.HIGH,
-                    description = "A debugger or tracer is attached to this process.",
-                    detailedReason = "TracerPid=$tracerPid in /proc/self/status. " +
-                        "A non-zero TracerPid means another process is using ptrace on this app. " +
-                        "This is used by debuggers (e.g. Android Studio, GDB) and also by some " +
-                        "tampering tools (e.g. Frida gadget, Objection).",
-                    solution = "Disconnect the debugger. If in production, this indicates tampering.",
+                    description = context.getString(R.string.chk_adv_debugger_desc),
+                    detailedReason = context.getString(R.string.chk_adv_debugger_reason, tracerPid),
+                    solution = context.getString(R.string.chk_adv_debugger_solution),
                     technicalDetail = "TracerPid=$tracerPid"
                 )
             } else {
@@ -836,8 +800,8 @@ class AdvancedRootDetector(private val context: Context) {
                     category = DetectionCategory.ROOT_MANAGEMENT,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.HIGH,
-                    description = "No debugger attached to this process.",
-                    detailedReason = "TracerPid=0 — no process is tracing this app.",
+                    description = context.getString(R.string.chk_adv_debugger_desc_nd),
+                    detailedReason = context.getString(R.string.chk_adv_debugger_reason_nd),
                     solution = "No action required.",
                     technicalDetail = "TracerPid=0"
                 )
@@ -849,9 +813,9 @@ class AdvancedRootDetector(private val context: Context) {
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Could not read /proc/self/status.",
+                description = context.getString(R.string.chk_adv_debugger_desc_error),
                 detailedReason = "Status read failed: ${e.message}",
-                solution = "Ensure /proc/self/status is accessible."
+                solution = context.getString(R.string.chk_adv_debugger_solution_error)
             )
         }
     }
@@ -876,26 +840,24 @@ class AdvancedRootDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "root_cloaking",
-                name = "Root-Cloaking Apps Detected",
+                name = context.getString(R.string.chk_adv_cloaking_name),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Apps designed to hide or bypass root detection found.",
-                detailedReason = "Found: ${found.joinToString(", ")}. " +
-                    "These apps attempt to conceal root indicators from other apps, " +
-                    "bypassing SafetyNet, Play Integrity, and in-app root checks.",
-                solution = "Uninstall root-cloaking apps via Settings → Apps.",
+                description = context.getString(R.string.chk_adv_cloaking_desc),
+                detailedReason = context.getString(R.string.chk_adv_cloaking_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_adv_cloaking_solution),
                 technicalDetail = "Packages: ${found.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "root_cloaking",
-                name = "Root-Cloaking Apps",
+                name = context.getString(R.string.chk_adv_cloaking_name_nd),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No root-cloaking apps detected.",
-                detailedReason = "No known root-cloaking packages were found.",
+                description = context.getString(R.string.chk_adv_cloaking_desc_nd),
+                detailedReason = context.getString(R.string.chk_adv_cloaking_reason_nd),
                 solution = "No action required."
             )
         }
@@ -910,15 +872,13 @@ class AdvancedRootDetector(private val context: Context) {
             if (found.isNotEmpty()) {
                 DetectionResult(
                     id = "kernel_modules",
-                    name = "Root Kernel Module Loaded",
+                    name = context.getString(R.string.chk_adv_kern_mods_name),
                     category = DetectionCategory.KERNELSU,
                     status = DetectionStatus.DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
-                    description = "KernelSU or APatch kernel module found in /proc/modules.",
-                    detailedReason = "Kernel module strings found: ${found.joinToString(", ")}. " +
-                        "KernelSU on GKI kernels may load as a kernel module. " +
-                        "Finding ksu/kernelsu in /proc/modules confirms kernel-level root.",
-                    solution = "Flash a stock kernel without the KernelSU or APatch module.",
+                    description = context.getString(R.string.chk_adv_kern_mods_desc),
+                    detailedReason = context.getString(R.string.chk_adv_kern_mods_reason, found.joinToString(", ")),
+                    solution = context.getString(R.string.chk_adv_kern_mods_solution),
                     technicalDetail = "Modules: ${found.joinToString("; ")}"
                 )
             } else {
@@ -928,8 +888,8 @@ class AdvancedRootDetector(private val context: Context) {
                     category = DetectionCategory.KERNELSU,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
-                    description = "No root-related kernel modules found.",
-                    detailedReason = "No KernelSU or APatch kernel module strings were found in /proc/modules.",
+                    description = context.getString(R.string.chk_adv_kern_mods_desc_nd),
+                    detailedReason = context.getString(R.string.chk_adv_kern_mods_reason_nd),
                     solution = "No action required."
                 )
             }
@@ -940,9 +900,9 @@ class AdvancedRootDetector(private val context: Context) {
                 category = DetectionCategory.KERNELSU,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Could not read /proc/modules.",
+                description = context.getString(R.string.chk_adv_kern_mods_desc_error),
                 detailedReason = "Failed: ${e.message}",
-                solution = "Ensure /proc/modules is accessible."
+                solution = context.getString(R.string.chk_adv_kern_mods_solution_error)
             )
         }
     }
