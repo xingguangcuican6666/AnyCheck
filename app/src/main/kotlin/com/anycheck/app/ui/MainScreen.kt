@@ -48,6 +48,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -330,6 +331,10 @@ private fun ResultsScreen(
 ) {
     var activeFilter by remember { mutableStateOf(ResultFilter.ALL) }
 
+    // Hoist expanded state here so it persists when items scroll off screen.
+    // Keys are result IDs; default (absent) means expanded only for DETECTED items.
+    val expandedMap = remember { mutableStateMapOf<String, Boolean>() }
+
     val filteredResults = remember(activeFilter, summary.results) {
         when (activeFilter) {
             ResultFilter.ALL -> summary.results
@@ -398,6 +403,8 @@ private fun ResultsScreen(
         items(filteredResults, key = { it.id }) { result ->
             DetectionResultCard(
                 result = result,
+                expanded = expandedMap.getOrDefault(result.id, result.status == DetectionStatus.DETECTED),
+                onExpandedChange = { expanded -> expandedMap[result.id] = expanded },
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
         }

@@ -40,9 +40,6 @@ import androidx.compose.material3.Text
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -88,9 +85,10 @@ import com.anycheck.app.ui.theme.StatusNotDetectedDark
 @Composable
 fun DetectionResultCard(
     result: DetectionResult,
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var expanded by remember { mutableStateOf(result.status == DetectionStatus.DETECTED) }
 
     val (riskColor, riskContainerColor) = riskColors(result.riskLevel)
     val (statusColor, statusIcon) = statusStyle(result.status)
@@ -104,7 +102,7 @@ fun DetectionResultCard(
         modifier = modifier
             .fillMaxWidth()
             .animateContentSize()
-            .clickable { expanded = !expanded },
+            .clickable { onExpandedChange(!expanded) },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = cardContainerColor
