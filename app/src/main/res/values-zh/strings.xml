@@ -1604,7 +1604,7 @@
     <string name="chk_rikkax_core_crack_solution">卸载 Lucky Patcher 及其相关的计费绕过软件包。如果系统框架文件已被修补，请重刷官方固件。检查所有已安装的非系统应用中是否有持有 android.permission.INSTALL_PACKAGES 权限的应用。</string>
     <string name="chk_rikkax_core_crack_name_nd">核心破解 / 包管理器完整性</string>
     <string name="chk_rikkax_core_crack_desc_nd">未检测到核心破解或包管理器完整性异常。</string>
-    <string name="chk_rikkax_core_crack_reason_nd">未发现 Lucky Patcher 计费绕过软件包、系统级 Lucky Patcher 文件，以及持有 android.permission.INSTALL_PACKAGES 权限的非系统应用。</string>
+    <string name="chk_rikkax_core_crack_reason_nd">全部 8 项子检查均通过：(A) pm.checkSignatures("android", 本应用) 返回预期的 SIGNATURE_NO_MATCH；(B) 手动证书比较结果与 pm.checkSignatures() 一致；(C) 系统框架文件（services.jar/odex/vdex）的修改时间不晚于 OS 构建日期；(D) 未发现 Lucky Patcher 框架备份文件；(E) Google Play 计费服务未被劫持；(F) 未发现已知 Lucky Patcher 软件包或系统路径；(G) 未发现 Lucky Patcher 数据目录；(H) 未发现持有 android.permission.INSTALL_PACKAGES 权限的非系统应用。</string>
 
     <!-- RikkaXInspiredDetector：EMUI 通过字符串 -->
     <string name="chk_rikkax_emui_name_pass">%1$s – 官方版本</string>

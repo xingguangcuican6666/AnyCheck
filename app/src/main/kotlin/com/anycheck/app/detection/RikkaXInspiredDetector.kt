@@ -1,6 +1,8 @@
 package com.anycheck.app.detection
 
 import android.content.Context
+import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import com.anycheck.app.R
@@ -448,8 +450,8 @@ class RikkaXInspiredDetector(private val context: Context) {
         }
 
         // MIUI EU is a community-maintained MIUI port; official regions are "CN", "GLOBAL", "EEA", "IN", etc.
-        val isEuRom = miuiVersion.contains("EU", ignoreCase = true) &&
-                      !miuiVersion.contains("EEA", ignoreCase = true) ||
+        val isEuRom = (miuiVersion.contains("EU", ignoreCase = true) &&
+                       !miuiVersion.contains("EEA", ignoreCase = true)) ||
                       miuiRegion.equals("EU", ignoreCase = true)
 
         return if (isEuRom) {
@@ -552,39 +554,194 @@ class RikkaXInspiredDetector(private val context: Context) {
     // apps with mismatched or forged signatures to be installed. Lucky Patcher
     // is the most common tool that enables this.
     //
-    // Detection approach:
-    //  a) Lucky Patcher billing-bypass packages (injected fake Google billing)
-    //  b) System-level Lucky Patcher artifacts (files/dirs patched into /system)
-    //  c) Non-system apps holding android.permission.INSTALL_PACKAGES — a
-    //     permission that should only be granted to system apps; its presence
-    //     on a non-system app is a strong PM tampering indicator
+    // Detection approach (multiple independent sub-checks):
+    //  A) PM.checkSignatures() poisoning — the most reliable test
+    //     Our app and "android" can NEVER share the same signer.
+    //     If checkSignatures returns MATCH, the function is provably patched.
+    //  B) Manual signature cross-validation
+    //     Get raw cert bytes via getPackageInfo and compare manually.
+    //     If manual comparison says DIFFERENT but checkSignatures says MATCH →
+    //     the PM comparison function is patched.
+    //  C) Framework file modification timestamp
+    //     /system/framework/services.jar mtime vs ro.build.date.utc.
+    //     Files newer than the OS build date have been modified post-flash.
+    //  D) Lucky Patcher framework backup files
+    //     LP creates .bak files when patching services.jar / services.odex.
+    //  E) Google Play billing service hijack
+    //     Resolving InAppBillingService.BIND to a non-Play-Store package.
+    //  F) Lucky Patcher package list (extended)
+    //     Many known LP package name variants, including injected billing APKs.
+    //  G) LP data directories on external storage
+    //  H) Non-system apps holding android.permission.INSTALL_PACKAGES
     // ----------------------------------------------------------------
     private fun checkCoreCrack(): DetectionResult {
-        // Lucky Patcher billing-intercept / core-crack helper packages
-        val coreCrackPkgs = listOf(
+        val indicators = mutableListOf<String>()
+
+        // ── Sub-check A: pm.checkSignatures() poisoning ──────────────────────
+        // The "android" package is always present and always OEM/platform-signed.
+        // Our app is signed with a completely different key.
+        // Core crack patches PackageManagerService.compareSignatures() to always
+        // return SIGNATURE_MATCH (0), so this call will return 0 on a patched device.
+        try {
+            val result = context.packageManager
+                .checkSignatures("android", context.packageName)
+            if (result == PackageManager.SIGNATURE_MATCH) {
+                indicators.add(
+                    "Sub-A: pm.checkSignatures(\"android\", ourApp)=SIGNATURE_MATCH " +
+                    "— impossible without PM patch (these can never share a signer)"
+                )
+            }
+        } catch (_: Exception) {}
+
+        // ── Sub-check B: Manual signature cross-validation ───────────────────
+        // Retrieve raw certificate bytes independently via getPackageInfo and
+        // compare them ourselves.  If bytes say DIFFERENT but checkSignatures
+        // returns MATCH, the comparison function is conclusively patched.
+        try {
+            @Suppress("DEPRECATION")
+            val androidSigs = context.packageManager
+                .getPackageInfo("android", PackageManager.GET_SIGNATURES)
+                .signatures
+                .map { it.toByteArray().toList() }.toSet()
+
+            @Suppress("DEPRECATION")
+            val ourSigs = context.packageManager
+                .getPackageInfo(context.packageName, PackageManager.GET_SIGNATURES)
+                .signatures
+                .map { it.toByteArray().toList() }.toSet()
+
+            val manuallyDifferent = androidSigs.intersect(ourSigs).isEmpty()
+            val pmSaysMatch = context.packageManager
+                .checkSignatures("android", context.packageName) == PackageManager.SIGNATURE_MATCH
+
+            if (manuallyDifferent && pmSaysMatch) {
+                indicators.add(
+                    "Sub-B: getPackageInfo() certs differ but checkSignatures() returns MATCH " +
+                    "— PM comparison function is patched"
+                )
+            }
+        } catch (_: Exception) {}
+
+        // ── Sub-check C: Framework file modification timestamp ───────────────
+        // LP patches /system/framework/services.jar (and related .odex/.vdex).
+        // Any of these files being newer than ro.build.date.utc is suspicious.
+        try {
+            val buildDateUtcSecs = getSystemProperty("ro.build.date.utc").toLongOrNull() ?: 0L
+            if (buildDateUtcSecs > 0L) {
+                val frameworkTargets = listOf(
+                    "/system/framework/services.jar",
+                    "/system/framework/services.odex",
+                    "/system/framework/services.vdex",
+                    "/system/framework/oat/arm64/services.vdex",
+                    "/system/framework/oat/arm/services.vdex"
+                )
+                frameworkTargets.forEach { path ->
+                    val f = File(path)
+                    if (f.exists()) {
+                        val mtimeSecs = f.lastModified() / 1000L
+                        // Allow 24-hour grace for build-system time skew
+                        if (mtimeSecs > buildDateUtcSecs + 86400L) {
+                            indicators.add(
+                                "Sub-C: $path modified after OS build " +
+                                "(file_mtime=${mtimeSecs}s, build_date=${buildDateUtcSecs}s)"
+                            )
+                        }
+                    }
+                }
+            }
+        } catch (_: Exception) {}
+
+        // ── Sub-check D: LP framework backup files ───────────────────────────
+        // Lucky Patcher saves backups when patching the framework.
+        val lpBackupFiles = listOf(
+            "/system/framework/services.jar.bak",
+            "/system/framework/services.odex.bak",
+            "/system/framework/services.vdex.bak",
+            "/system/framework/boot.oat.bak",
+            "/data/system/lp_install.log",
+            "/data/system/lp_backup",
+            "/data/local/tmp/lp_service.jar"
+        )
+        val foundBackups = lpBackupFiles.filter { File(it).exists() }
+        if (foundBackups.isNotEmpty()) {
+            indicators.add("Sub-D: LP framework backup files: ${foundBackups.joinToString()}")
+        }
+
+        // ── Sub-check E: Google Play billing service hijack ──────────────────
+        // LP injects a fake billing service.  The real InAppBillingService must
+        // always come from com.android.vending (Google Play Store).
+        try {
+            @Suppress("DEPRECATION")
+            val billingService = context.packageManager.resolveService(
+                Intent("com.android.vending.billing.InAppBillingService.BIND"),
+                0
+            )
+            val billingPkg = billingService?.serviceInfo?.packageName
+            if (billingPkg != null && billingPkg != "com.android.vending") {
+                indicators.add("Sub-E: Billing service hijacked by: $billingPkg")
+            }
+        } catch (_: Exception) {}
+
+        // ── Sub-check F: Extended Lucky Patcher package list ─────────────────
+        // Covers: main LP app under various distribution names,
+        // LP billing injection APKs, and older/regional LP variants.
+        val lpPackages = listOf(
+            // Main LP app variants
             "cc.luckypatcher",
             "com.luckypatcher",
             "cc.meditato.luckypatcher",
             "com.forpda.lp",
-            "cc.happylife.luckypatcher"
+            "cc.happylife.luckypatcher",
+            "com.chelpus.lackypatch",
+            "com.dimonvideo.luckypatcher",
+            // Injected fake Google billing service APKs installed by LP
+            "com.android.vending.billing.InAppBillingService.LUCK",
+            "com.android.vending.billing.InAppBillingService.CRAC",
+            "com.android.vending.billing.InAppBillingService.LACK",
+            "com.android.vending.billing.InAppBillingService.LOCK",
+            "com.android.vending.billing.InAppBillingService.COIN",
+            "com.android.vending.billing.InAppBillingService.ADS",
+            "com.android.vending.billing.InAppBillingService.GEMs",
+            "com.android.vending.billing.InAppBillingService.CASH",
+            "com.android.vending.billing.InAppBillingService.HACK",
+            // LP system-level app paths (if installed as system app)
+            // checked via packageExists which uses getPackageInfo
+            "ru.luckypatcher",
+            "org.luckypatcher"
         )
+        val foundPkgs = lpPackages.filter { packageExists(it) }
+        if (foundPkgs.isNotEmpty()) {
+            indicators.add("Sub-F: LP/crack packages installed: ${foundPkgs.joinToString()}")
+        }
 
-        // Files that indicate Lucky Patcher has patched the system framework
-        val coreCrackFiles = listOf(
+        // Also check for LP system-level installation paths
+        val lpSystemPaths = listOf(
             "/system/app/LuckyPatcher",
             "/system/priv-app/LuckyPatcher",
             "/system/app/LuckyPatcher.apk",
-            "/system/priv-app/LuckyPatcher.apk",
-            "/data/system/lp_install.log",
-            "/data/system/lp_backup"
+            "/system/priv-app/LuckyPatcher.apk"
         )
+        val foundSystemPaths = lpSystemPaths.filter { File(it).exists() }
+        if (foundSystemPaths.isNotEmpty()) {
+            indicators.add("Sub-F: LP system paths: ${foundSystemPaths.joinToString()}")
+        }
 
-        val foundPkgs  = coreCrackPkgs.filter  { packageExists(it) }
-        val foundFiles = coreCrackFiles.filter { File(it).exists() }
+        // ── Sub-check G: LP data directories ─────────────────────────────────
+        val lpDataDirs = listOf(
+            "/sdcard/LuckyPatcher",
+            "/storage/emulated/0/LuckyPatcher",
+            "/data/data/cc.luckypatcher",
+            "/data/data/com.forpda.lp"
+        )
+        val foundDirs = lpDataDirs.filter { File(it).exists() }
+        if (foundDirs.isNotEmpty()) {
+            indicators.add("Sub-G: LP data directories: ${foundDirs.joinToString()}")
+        }
 
-        // PM permission anomaly: a non-system app that holds
-        // android.permission.INSTALL_PACKAGES is a strong indicator that the
-        // PackageManager has been tampered to grant install-bypass permissions.
+        // ── Sub-check H: Non-system app with INSTALL_PACKAGES permission ─────
+        // android.permission.INSTALL_PACKAGES is a privileged permission that
+        // should only be held by system packages.  A non-system app with this
+        // permission is a strong PM-tampering indicator.
         val pmAnomalyPkgs = mutableListOf<String>()
         try {
             @Suppress("DEPRECATION")
@@ -592,7 +749,7 @@ class RikkaXInspiredDetector(private val context: Context) {
                 .getInstalledPackages(PackageManager.GET_PERMISSIONS)
                 .forEach { pkg ->
                     val isSystem = (pkg.applicationInfo.flags and
-                        android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0
+                        ApplicationInfo.FLAG_SYSTEM) != 0
                     if (!isSystem &&
                         pkg.requestedPermissions?.contains(
                             "android.permission.INSTALL_PACKAGES"
@@ -602,11 +759,9 @@ class RikkaXInspiredDetector(private val context: Context) {
                     }
                 }
         } catch (_: Exception) {}
-
-        val indicators = mutableListOf<String>()
-        if (foundPkgs.isNotEmpty())     indicators.add("Packages: ${foundPkgs.joinToString()}")
-        if (foundFiles.isNotEmpty())    indicators.add("Files: ${foundFiles.joinToString()}")
-        if (pmAnomalyPkgs.isNotEmpty()) indicators.add("PM anomaly (non-system INSTALL_PACKAGES): ${pmAnomalyPkgs.joinToString()}")
+        if (pmAnomalyPkgs.isNotEmpty()) {
+            indicators.add("Sub-H: Non-system INSTALL_PACKAGES: ${pmAnomalyPkgs.joinToString()}")
+        }
 
         return if (indicators.isNotEmpty()) {
             DetectionResult(
@@ -616,7 +771,9 @@ class RikkaXInspiredDetector(private val context: Context) {
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
                 description = context.getString(R.string.chk_rikkax_core_crack_desc),
-                detailedReason = context.getString(R.string.chk_rikkax_core_crack_reason, indicators.joinToString("; ")),
+                detailedReason = context.getString(
+                    R.string.chk_rikkax_core_crack_reason, indicators.joinToString("; ")
+                ),
                 solution = context.getString(R.string.chk_rikkax_core_crack_solution),
                 technicalDetail = indicators.joinToString("\n")
             )
@@ -629,7 +786,8 @@ class RikkaXInspiredDetector(private val context: Context) {
                 riskLevel = RiskLevel.HIGH,
                 description = context.getString(R.string.chk_rikkax_core_crack_desc_nd),
                 detailedReason = context.getString(R.string.chk_rikkax_core_crack_reason_nd),
-                solution = context.getString(R.string.chk_no_action_needed)
+                solution = context.getString(R.string.chk_no_action_needed),
+                technicalDetail = "All 8 sub-checks passed (A: checkSignatures, B: cert cross-validation, C: framework mtime, D: backup files, E: billing service, F: LP packages/paths, G: LP data dirs, H: INSTALL_PACKAGES)"
             )
         }
     }

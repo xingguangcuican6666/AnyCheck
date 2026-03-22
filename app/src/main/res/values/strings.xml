@@ -1603,7 +1603,7 @@
     <string name="chk_rikkax_core_crack_solution">Remove Lucky Patcher and any associated billing-bypass packages. If system framework files have been patched, reflash the stock firmware. Review all installed apps for apps holding android.permission.INSTALL_PACKAGES that are not system packages.</string>
     <string name="chk_rikkax_core_crack_name_nd">Core Crack / PM Integrity</string>
     <string name="chk_rikkax_core_crack_desc_nd">No core crack or PackageManager integrity anomalies detected.</string>
-    <string name="chk_rikkax_core_crack_reason_nd">No Lucky Patcher billing-bypass packages, no system-level Lucky Patcher artifacts, and no non-system apps holding android.permission.INSTALL_PACKAGES were found.</string>
+    <string name="chk_rikkax_core_crack_reason_nd">All 8 sub-checks passed: (A) pm.checkSignatures("android", ourApp) returns SIGNATURE_NO_MATCH as expected; (B) manual cert comparison is consistent with pm.checkSignatures(); (C) framework files (services.jar/odex/vdex) are not newer than the OS build date; (D) no Lucky Patcher framework backup files found; (E) Google Play billing service is not hijacked; (F) no known Lucky Patcher packages or system paths found; (G) no Lucky Patcher data directories found; (H) no non-system apps hold android.permission.INSTALL_PACKAGES.</string>
 
     <!-- RikkaXInspiredDetector: EMUI pass strings -->
     <string name="chk_rikkax_emui_name_pass">%1$s – Official Build</string>
