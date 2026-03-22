@@ -85,6 +85,7 @@
     <string name="filter_apatch_count">APatch (%1$d)</string>
     <string name="filter_su_count">SU Binary (%1$d)</string>
     <string name="filter_xposed_count">Xposed (%1$d)</string>
+    <string name="filter_environment_count">Environment (%1$d)</string>
 
     <!-- Idle screen feature list -->
     <string name="feature_magisk">Magisk detection (17 checks)</string>
@@ -881,8 +882,8 @@
     <string name="chk_adv_emulator_name_nd">Emulator Check</string>
     <string name="chk_adv_emulator_desc">This device appears to be running in an emulator.</string>
     <string name="chk_adv_emulator_desc_nd">No emulator indicators detected.</string>
-    <string name="chk_adv_emulator_reason">Emulator indicators: %1$s</string>
-    <string name="chk_adv_emulator_reason_nd">No emulator-related properties or files were found.</string>
+    <string name="chk_adv_emulator_reason">Emulator score: %1$d/%2$d. Matched indicators: %3$s</string>
+    <string name="chk_adv_emulator_reason_nd">Emulator score: %1$d/%2$d. No significant emulator indicators were found.</string>
     <string name="chk_adv_emulator_solution">Run the app on a physical device instead of an emulator.</string>
 
     <string name="chk_adv_inj_libs_name">Injected Libraries Detected</string>
