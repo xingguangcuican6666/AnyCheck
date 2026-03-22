@@ -1,0 +1,1486 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AnyCheck</string>
+    <string name="app_subtitle">Root 检测分析工具</string>
+
+    <!-- 主界面 -->
+    <string name="start_detection">开始检测</string>
+    <string name="re_detect">重新检测</string>
+    <string name="detecting">检测中\u2026</string>
+    <string name="detection_complete">检测完成</string>
+    <string name="detection_summary">摘要</string>
+    <string name="total_checks">总检查项</string>
+    <string name="issues_found">发现问题</string>
+    <string name="safe_items">安全项</string>
+    <string name="not_run">未运行</string>
+
+    <!-- 导航 / 操作 -->
+    <string name="reset">重置</string>
+    <string name="navigate_back">返回</string>
+    <string name="retry">重试</string>
+    <string name="detection_failed">检测失败</string>
+    <string name="detection_failed_format">检测失败：%1$s</string>
+    <string name="unknown_error">未知错误</string>
+
+    <!-- 总结卡片 -->
+    <string name="summary_clean">设备看起来干净</string>
+    <string name="summary_possibly_rooted">可能存在 Root</string>
+    <string name="summary_detected">检测到 Root 框架</string>
+    <string name="summary_checks_run">检测完成 \u00b7 共运行 %1$d 项检查</string>
+    <string name="stat_detected">已检测</string>
+    <string name="stat_safe">安全</string>
+    <string name="stat_errors">错误</string>
+    <string name="status_clean">安全</string>
+
+    <!-- 详情 -->
+    <string name="detail_reason">原因</string>
+    <string name="detail_solution">解决方案</string>
+    <string name="detail_technical">技术详情</string>
+    <string name="detail_risk_level">风险等级</string>
+    <string name="detail_category">类别</string>
+    <string name="collapse">收起</string>
+    <string name="expand">展开</string>
+
+    <!-- 状态 -->
+    <string name="status_detected">已检测</string>
+    <string name="status_not_detected">未检测</string>
+    <string name="status_error">错误</string>
+    <string name="status_checking">检测中</string>
+
+    <!-- 风险等级 -->
+    <string name="risk_critical">严重</string>
+    <string name="risk_high">高</string>
+    <string name="risk_medium">中</string>
+    <string name="risk_low">低</string>
+    <string name="risk_info">信息</string>
+
+    <!-- 风险等级说明（关于界面） -->
+    <string name="risk_critical_desc">确认存在 Root 框架核心组件</string>
+    <string name="risk_high_desc">强烈指示 Root 框架存在</string>
+    <string name="risk_medium_desc">可能存在 Root，需进一步确认</string>
+    <string name="risk_low_desc">低风险指标，通常不影响安全判断</string>
+
+    <!-- 类别 -->
+    <string name="cat_magisk">Magisk</string>
+    <string name="cat_kernelsu">KernelSU</string>
+    <string name="cat_apatch">APatch</string>
+    <string name="cat_su_binary">SU 二进制</string>
+    <string name="cat_root_management">Root 管理</string>
+    <string name="cat_root">Root</string>
+    <string name="cat_xposed">Xposed</string>
+    <string name="cat_system">系统</string>
+    <string name="cat_adb_debug">ADB/调试</string>
+    <string name="cat_frida">Frida</string>
+    <string name="cat_environment">环境</string>
+    <string name="cat_network">网络</string>
+
+    <!-- 过滤器 -->
+    <string name="filter_all">全部</string>
+    <string name="filter_detected">仅显示已检测</string>
+    <string name="filter_magisk">Magisk</string>
+    <string name="filter_kernelsu">KernelSU</string>
+    <string name="filter_all_count">全部 (%1$d)</string>
+    <string name="filter_detected_count">已检测 (%1$d)</string>
+    <string name="filter_magisk_count">Magisk (%1$d)</string>
+    <string name="filter_kernelsu_count">KernelSU (%1$d)</string>
+    <string name="filter_apatch_count">APatch (%1$d)</string>
+    <string name="filter_su_count">SU 二进制 (%1$d)</string>
+    <string name="filter_xposed_count">Xposed (%1$d)</string>
+
+    <!-- 主界面功能列表 -->
+    <string name="feature_magisk">Magisk 检测（17 项检查）</string>
+    <string name="feature_kernelsu">KernelSU 检测（8 项检查）</string>
+    <string name="feature_apatch">APatch 及通用 Root（5 项检查）</string>
+    <string name="feature_xposed">Xposed / LSPosed Hook 检测（13 项检查）</string>
+    <string name="feature_advanced">高级 Root 检查（19 项检查）</string>
+    <string name="feature_extra">扩展：挂载、权限、绕过模块（15 项检查）</string>
+
+    <!-- 其他 -->
+    <string name="app_description">AnyCheck 使用多种检测向量检测 Root 管理框架（Magisk、KernelSU、APatch）。</string>
+    <string name="disclaimer">仅供安全研究目的使用。</string>
+    <string name="disclaimer_about">\u26a0\ufe0f  本应用仅供安全研究目的使用。</string>
+    <string name="copy_results">复制结果</string>
+    <string name="results_copied">结果已复制到剪贴板</string>
+    <string name="about">关于</string>
+    <string name="version">版本</string>
+    <string name="version_format">版本 %1$s</string>
+
+    <!-- 关于界面 -->
+    <string name="about_app_title">关于应用</string>
+    <string name="about_app_description">AnyCheck 是一款全面的 Android Root 检测工具，能够识别 Magisk、KernelSU、APatch 等 Root 管理框架，以及 Xposed/LSPosed 等 Hook 框架。</string>
+    <string name="about_detection_methods">检测方法</string>
+    <string name="about_method_magisk">Magisk 检测</string>
+    <string name="about_method_magisk_count">17 项检查</string>
+    <string name="about_method_kernelsu">KernelSU 检测</string>
+    <string name="about_method_kernelsu_count">8 项检查</string>
+    <string name="about_method_apatch">APatch 及通用 Root</string>
+    <string name="about_method_apatch_count">5 项检查</string>
+    <string name="about_method_xposed">Xposed / LSPosed</string>
+    <string name="about_method_xposed_count">13 项检查</string>
+    <string name="about_method_advanced">高级 Root 检查</string>
+    <string name="about_method_advanced_count">19 项检查</string>
+    <string name="about_method_luna">Luna 方法</string>
+    <string name="about_method_luna_count">22 项检查</string>
+    <string name="about_method_integrity">系统完整性</string>
+    <string name="about_method_integrity_count">多项检查</string>
+    <string name="about_risk_levels">风险等级说明</string>
+    <string name="about_risk_note">注：仅有中等及以下风险项被检出时，总结处显示「可能存在 Root」而非「检测到 Root 框架」。</string>
+    <string name="about_author_title">作者与仓库</string>
+    <string name="about_author_github_label">GitHub</string>
+    <string name="about_author_github_value">xingguangcuican6666</string>
+    <string name="about_author_repo_label">仓库</string>
+    <string name="about_author_repo_value">xingguangcuican6666/AnyCheck</string>
+    <string name="about_philosophy_title">设计理念</string>
+    <string name="about_philosophy_content">与市面上某些「检测到了！」却拿不出任何证据和细节的工具截然不同，AnyCheck 的核心理念是：发现问题，就必须说清楚问题在哪里、为何构成风险，以及如何加以解决。那种一声令下、有罪推定、不给任何解释的检测方式，不过是制造焦虑、混淆视听罢了。本工具或许尚未覆盖所有检测场景，但每一项结论背后都有据可查、有因可循——让使用者真正看得懂、做得到。</string>
+
+    <!-- 进度消息 -->
+    <string name="progress_init">正在初始化检查\u2026</string>
+    <string name="progress_magisk">Magisk 检查完成</string>
+    <string name="progress_kernelsu">KernelSU 检查完成</string>
+    <string name="progress_generic">通用检查完成</string>
+    <string name="progress_xposed">Xposed 检查完成</string>
+    <string name="progress_advanced">高级检查完成</string>
+    <string name="progress_extra">扩展检查完成</string>
+    <string name="progress_luna">Luna 检查完成</string>
+    <string name="progress_reveny">Reveny 检查完成</string>
+    <string name="progress_rootbeer">RootBeerFresh 检查完成</string>
+    <string name="progress_ruru">Ruru 检查完成</string>
+    <string name="progress_integrity">系统完整性检查完成</string>
+    <string name="progress_format">%1$s（%2$d/%3$d）</string>
+
+    <!-- 通用检查字符串 -->
+    <string name="chk_no_action_needed">无需任何操作。</string>
+
+    <!-- KernelSU 检测器 -->
+    <!-- ksu_files -->
+    <string name="chk_ksu_files_name">检测到 KernelSU 文件</string>
+    <string name="chk_ksu_files_name_nd">KernelSU 文件</string>
+    <string name="chk_ksu_files_desc">发现 KernelSU 特定文件或目录。</string>
+    <string name="chk_ksu_files_desc_nd">未检测到 KernelSU 特定文件。</string>
+    <string name="chk_ksu_files_reason">发现以下 KernelSU 文件：%1$s。KernelSU 是基于内核的 Root 解决方案。ksud 是 KernelSU 守护程序，/data/adb/ksu 是其工作目录。</string>
+    <string name="chk_ksu_files_reason_nd">未在此设备上发现已知的 KernelSU 文件路径。</string>
+    <string name="chk_ksu_files_solution">要移除 KernelSU：使用 KernelSU 管理器 → 卸载，或通过 fastboot 刷入非 KernelSU 内核/原厂 boot 镜像。</string>
+
+    <!-- ksu_packages -->
+    <string name="chk_ksu_packages_name">检测到 KernelSU 管理器</string>
+    <string name="chk_ksu_packages_name_nd">KernelSU 管理器包</string>
+    <string name="chk_ksu_packages_desc">已安装 KernelSU 管理器或相关应用。</string>
+    <string name="chk_ksu_packages_desc_nd">未发现 KernelSU 管理器包。</string>
+    <string name="chk_ksu_packages_reason">发现 KernelSU 包：%1$s。KernelSU 管理器应用是 KernelSU 的管理界面。其存在确认已安装 KernelSU。</string>
+    <string name="chk_ksu_packages_reason_nd">未安装已知的 KernelSU 包名称。</string>
+    <string name="chk_ksu_packages_solution">使用 KernelSU 管理器卸载，然后刷入原厂内核。</string>
+
+    <!-- ksu_kernel_version -->
+    <string name="chk_ksu_kernel_version_name">内核版本中包含 KernelSU</string>
+    <string name="chk_ksu_kernel_version_name_nd">KernelSU 内核版本</string>
+    <string name="chk_ksu_kernel_version_desc">在内核版本字符串中发现 KernelSU 签名。</string>
+    <string name="chk_ksu_kernel_version_desc_nd">内核版本字符串中未发现 KernelSU 签名。</string>
+    <string name="chk_ksu_kernel_version_desc_error">无法读取内核版本。</string>
+    <string name="chk_ksu_kernel_version_reason">内核版本字符串包含 KernelSU 标记：%1$s。KernelSU 修补内核并将其版本嵌入内核字符串。内核：%2$s</string>
+    <string name="chk_ksu_kernel_version_reason_nd">内核版本字符串不包含 KernelSU 标记。</string>
+    <string name="chk_ksu_kernel_version_reason_error">读取 /proc/version 失败：%1$s</string>
+    <string name="chk_ksu_kernel_version_solution">通过 fastboot 或 recovery 刷入原厂（非 KernelSU）内核。</string>
+    <string name="chk_ksu_kernel_version_solution_error">确保 /proc/version 可访问。</string>
+
+    <!-- ksu_db -->
+    <string name="chk_ksu_db_name">发现 KernelSU 数据库</string>
+    <string name="chk_ksu_db_name_nd">KernelSU 数据库</string>
+    <string name="chk_ksu_db_desc">检测到 KernelSU SQLite 数据库。</string>
+    <string name="chk_ksu_db_desc_nd">未发现 KernelSU 数据库。</string>
+    <string name="chk_ksu_db_reason">KernelSU 使用 SQLite 数据库存储允许的包 UID 和策略规则。发现位置：%1$s。</string>
+    <string name="chk_ksu_db_reason_nd">未在已知位置发现 KernelSU 数据库。</string>
+    <string name="chk_ksu_db_solution">完全卸载 KernelSU 时将删除该数据库。</string>
+
+    <!-- ksu_mounts -->
+    <string name="chk_ksu_mounts_name">检测到 KernelSU 挂载点</string>
+    <string name="chk_ksu_mounts_name_nd">KernelSU 挂载点</string>
+    <string name="chk_ksu_mounts_desc">发现 KernelSU 相关挂载点。</string>
+    <string name="chk_ksu_mounts_desc_nd">未发现 KernelSU 挂载点。</string>
+    <string name="chk_ksu_mounts_desc_error">无法读取挂载信息。</string>
+    <string name="chk_ksu_mounts_reason">KernelSU 使用 OverlayFS 覆盖模块文件。在 /proc/mounts 中发现的关键词：%1$s。</string>
+    <string name="chk_ksu_mounts_reason_nd">未发现 KernelSU 特定挂载条目。</string>
+    <string name="chk_ksu_mounts_reason_error">读取 /proc/mounts 失败：%1$s</string>
+    <string name="chk_ksu_mounts_solution">挂载点由 KernelSU 管理。卸载时将移除。</string>
+    <string name="chk_ksu_mounts_solution_error">确保 /proc/mounts 可访问。</string>
+
+    <!-- ksu_processes -->
+    <string name="chk_ksu_processes_name">KernelSU 进程正在运行</string>
+    <string name="chk_ksu_processes_name_nd">KernelSU 进程</string>
+    <string name="chk_ksu_processes_desc">KernelSU 守护进程正在运行。</string>
+    <string name="chk_ksu_processes_desc_nd">未发现 KernelSU 守护进程。</string>
+    <string name="chk_ksu_processes_desc_error">无法枚举进程。</string>
+    <string name="chk_ksu_processes_reason">发现进程：%1$s。ksud 是 KernelSU 用户空间守护程序，处理 su 请求。</string>
+    <string name="chk_ksu_processes_reason_nd">未在运行进程列表中发现 KernelSU 进程名称。</string>
+    <string name="chk_ksu_processes_reason_error">进程枚举失败：%1$s</string>
+    <string name="chk_ksu_processes_solution">移除 KernelSU 并重启设备后进程将停止。</string>
+    <string name="chk_ksu_processes_solution_error">确保 /proc 可访问。</string>
+
+    <!-- ksu_syscall -->
+    <string name="chk_ksu_syscall_name">KernelSU 内核接口</string>
+    <string name="chk_ksu_syscall_name_selinux">SELinux 宽容模式</string>
+    <string name="chk_ksu_syscall_desc">检测到 KernelSU 内核接口。</string>
+    <string name="chk_ksu_syscall_desc_nd">未发现 KernelSU 内核接口。</string>
+    <string name="chk_ksu_syscall_desc_selinux">SELinux 处于宽容模式（潜在 KernelSU 指标）。</string>
+    <string name="chk_ksu_syscall_reason">KernelSU 在 /sys/kernel/ksu 或 /proc/sys/kernel/ksu 公开内核接口。这确认 KernelSU 已编译到运行的内核中。发现：%1$s。</string>
+    <string name="chk_ksu_syscall_reason_nd">未检测到 KernelSU 特定内核接口。</string>
+    <string name="chk_ksu_syscall_reason_selinux">SELinux 强制状态为 0（宽容）。KernelSU 和其他 Root 解决方案通常将 SELinux 设置为宽容模式以允许无限制的 Root 访问。这会显著降低设备安全性。</string>
+    <string name="chk_ksu_syscall_solution">刷入不含 KernelSU 的原厂内核以移除此接口。</string>
+    <string name="chk_ksu_syscall_solution_selinux">将 SELinux 设置为强制模式：`setenforce 1`。此设置仅在重启前有效，除非 KernelSU/Magisk 策略覆盖它。</string>
+
+    <!-- ksu_props -->
+    <string name="chk_ksu_props_name">KernelSU 系统属性</string>
+    <string name="chk_ksu_props_desc">发现 KernelSU 特定系统属性。</string>
+    <string name="chk_ksu_props_desc_nd">未发现 KernelSU 系统属性。</string>
+    <string name="chk_ksu_props_reason">发现以下 KernelSU 属性：%1$s。这些属性由 KernelSU 设置并确认其存在。</string>
+    <string name="chk_ksu_props_reason_nd">未检测到 KernelSU 特定系统属性。</string>
+    <string name="chk_ksu_props_solution">卸载 KernelSU 时将移除这些属性。</string>
+
+    <!-- apatch -->
+    <string name="chk_apatch_name">检测到 APatch</string>
+    <string name="chk_apatch_name_nd">APatch</string>
+    <string name="chk_apatch_desc">检测到 APatch Root 框架。</string>
+    <string name="chk_apatch_desc_nd">未检测到 APatch。</string>
+    <string name="chk_apatch_reason">APatch 是类似于 KernelSU 的基于内核的 Root 解决方案。发现证据：%1$s。APatch 通过修补内核引导镜像启用 Root 访问。</string>
+    <string name="chk_apatch_reason_nd">未发现 APatch 文件或软件包。</string>
+    <string name="chk_apatch_solution">使用 APatch Manager 卸载，然后刷入原厂引导镜像。</string>
+
+    <!-- su_binary -->
+    <string name="chk_su_binary_name">检测到 su 二进制文件</string>
+    <string name="chk_su_binary_name_nd">su 二进制文件</string>
+    <string name="chk_su_binary_desc">在系统位置发现 su 二进制文件。</string>
+    <string name="chk_su_binary_desc_nd">在常见系统路径未发现 su 二进制文件。</string>
+    <string name="chk_su_binary_reason">发现 su（超级用户）二进制文件位于：%1$s。su 二进制文件允许应用请求提升的 Root 权限。其在系统路径中的存在表明设备已被 Root。</string>
+    <string name="chk_su_binary_reason_nd">未在标准系统路径发现 su 二进制文件。</string>
+    <string name="chk_su_binary_solution">通过启动到恢复模式并删除 su 二进制文件，或通过刷入原厂系统镜像恢复。</string>
+
+    <!-- root_apps -->
+    <string name="chk_root_apps_name">发现 Root 管理应用</string>
+    <string name="chk_root_apps_name_nd">Root 管理应用</string>
+    <string name="chk_root_apps_desc">检测到 Root 管理或漏洞利用应用。</string>
+    <string name="chk_root_apps_desc_nd">未发现 Root 管理应用。</string>
+    <string name="chk_root_apps_reason">发现：%1$s。这些应用提供 Root 访问管理、漏洞利用功能或表明设备已被 Root 的相关功能。</string>
+    <string name="chk_root_apps_reason_nd">未发现已知的 Root 管理或漏洞利用应用包。</string>
+    <string name="chk_root_apps_solution">通过 设置 → 应用 或使用 adb uninstall 卸载这些应用。</string>
+
+    <!-- generic_test_keys -->
+    <string name="chk_generic_test_keys_name">检测到测试密钥构建</string>
+    <string name="chk_generic_test_keys_name_debug">检测到调试构建</string>
+    <string name="chk_generic_test_keys_name_nd">构建签名</string>
+    <string name="chk_generic_test_keys_desc">设备正在运行测试密钥签名的构建。</string>
+    <string name="chk_generic_test_keys_desc_debug">设备正在运行调试构建。</string>
+    <string name="chk_generic_test_keys_desc_nd">构建似乎使用官方发布密钥。</string>
+    <string name="chk_generic_test_keys_reason">构建标签：\'%1$s\'，指纹：\'%2$s\'。测试密钥构建使用非官方密钥签名，表明是定制或已 Root 的 ROM。官方 Google 签名的构建使用 \'release-keys\'。</string>
+    <string name="chk_generic_test_keys_reason_debug">构建标签：\'%1$s\'。调试构建启用了额外的调试功能，可能放宽了安全限制。</string>
+    <string name="chk_generic_test_keys_reason_nd">构建标签 \'%1$s\' 表明使用官方发布密钥签名。</string>
+    <string name="chk_generic_test_keys_solution">通过 fastboot 或 OTA 刷入使用 release-keys 签名的官方 OEM ROM。</string>
+    <string name="chk_generic_test_keys_solution_debug">使用发布/生产构建以获得更好的安全性。</string>
+
+    <!-- generic_busybox -->
+    <string name="chk_generic_busybox_name">发现 Busybox</string>
+    <string name="chk_generic_busybox_name_nd">Busybox</string>
+    <string name="chk_generic_busybox_desc">检测到 Busybox 二进制文件。</string>
+    <string name="chk_generic_busybox_desc_nd">未发现 Busybox 二进制文件。</string>
+    <string name="chk_generic_busybox_reason">发现 Busybox 位于：%1$s。Busybox 提供 Android 上通常不存在的 Unix 实用程序。虽然本身不是 Root，但通常与 Root 框架一起安装。</string>
+    <string name="chk_generic_busybox_reason_nd">未在常见安装路径发现 Busybox。</string>
+    <string name="chk_generic_busybox_solution">卸载关联的 Root 框架时将移除 Busybox。</string>
+
+    <!-- rootbeerfresh_dangerous_apps -->
+    <string name="chk_rootbeerfresh_dangerous_apps_name">检测到危险/盗版应用</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_name_nd">危险/盗版应用</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_desc">发现潜在危险、盗版或游戏作弊应用。</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_desc_nd">未检测到危险或盗版应用。</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_reason">发现 %1$d 个应用：%2$s。这些包包括黑市商店、应用内购绕过工具、游戏作弊和类间谍软件应用。它们的存在表明系统受损或故意违反安全策略。</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_reason_nd">未发现已知的危险/盗版/作弊包。</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_solution">立即通过 设置 → 应用 或 adb uninstall 卸载这些应用。</string>
+
+    <!-- rootbeerfresh_root_cloaking -->
+    <string name="chk_rootbeerfresh_root_cloaking_name">检测到扩展 Root 隐藏应用</string>
+    <string name="chk_rootbeerfresh_root_cloaking_name_nd">扩展 Root 隐藏应用</string>
+    <string name="chk_rootbeerfresh_root_cloaking_desc">检测到额外的 Root 隐藏或代码注入框架应用。</string>
+    <string name="chk_rootbeerfresh_root_cloaking_desc_nd">未检测到额外的 Root 隐藏应用。</string>
+    <string name="chk_rootbeerfresh_root_cloaking_reason">发现：%1$s。Cydia Substrate 是一个运行时代码注入框架，经常用于隐藏 Root。HideMyRoot 和 HideRoot 变体从应用中隐藏 Root 指标。</string>
+    <string name="chk_rootbeerfresh_root_cloaking_reason_nd">未发现 Cydia Substrate 和 HideMyRoot/HideRoot 变体。</string>
+    <string name="chk_rootbeerfresh_root_cloaking_solution">通过 设置 → 应用 卸载 Root 隐藏应用。</string>
+
+    <!-- rootbeerfresh_path_su -->
+    <string name="chk_rootbeerfresh_path_su_name">检测到通过 PATH 枚举的 su 二进制文件</string>
+    <string name="chk_rootbeerfresh_path_su_name_nd">通过 PATH 枚举的 su 二进制文件</string>
+    <string name="chk_rootbeerfresh_path_su_desc">通过动态 PATH 枚举发现 su 二进制文件。</string>
+    <string name="chk_rootbeerfresh_path_su_desc_nd">通过 PATH 枚举未发现 su 二进制文件。</string>
+    <string name="chk_rootbeerfresh_path_su_reason">发现 su 二进制文件位于：%1$s。此检查动态读取 PATH 环境变量（如 rootbeerFresh）以及已知静态路径，捕获放置在非标准目录但仍在可执行搜索路径上的 su 二进制文件。</string>
+    <string name="chk_rootbeerfresh_path_su_reason_nd">未在任何静态或 PATH 派生目录中发现 su。</string>
+    <string name="chk_rootbeerfresh_path_su_solution">移除 su 二进制文件并恢复原厂系统镜像。</string>
+
+    <!-- rootbeerfresh_rw_paths -->
+    <string name="chk_rootbeerfresh_rw_paths_name">系统路径以读写模式挂载</string>
+    <string name="chk_rootbeerfresh_rw_paths_name_nd">系统路径挂载检查</string>
+    <string name="chk_rootbeerfresh_rw_paths_desc">关键系统路径以读写模式挂载：%1$s。</string>
+    <string name="chk_rootbeerfresh_rw_paths_desc_nd">没有关键系统路径以读写模式挂载。</string>
+    <string name="chk_rootbeerfresh_rw_paths_desc_error">无法运行 mount 命令。</string>
+    <string name="chk_rootbeerfresh_rw_paths_reason">以下应为只读的路径以读写模式挂载：%1$s。这是通过使用 SDK 版本感知字段偏移量（rootbeerFresh 技术）解析 \`mount\` 命令输出检测的。以读写模式挂载的 /system 表明系统分区已被修改。</string>
+    <string name="chk_rootbeerfresh_rw_paths_reason_nd">mount 命令输出显示所有敏感路径均为只读。</string>
+    <string name="chk_rootbeerfresh_rw_paths_reason_error">mount 命令未返回输出。</string>
+    <string name="chk_rootbeerfresh_rw_paths_solution">将系统分区重新挂载为只读：\`adb shell mount -o remount,ro /system\`。</string>
+    <string name="chk_rootbeerfresh_rw_paths_solution_error">确保 /proc 可访问。</string>
+
+    <!-- avb_boot_state -->
+    <string name="chk_avb_boot_state_name_nd">AVB 启动状态</string>
+    <string name="chk_avb_boot_state_name_yellow">AVB 启动状态：YELLOW</string>
+    <string name="chk_avb_boot_state_name_orange">AVB 启动状态：ORANGE（已解锁）</string>
+    <string name="chk_avb_boot_state_name_red">AVB 启动状态：RED（完整性失败）</string>
+    <string name="chk_avb_boot_state_name_unknown">AVB 启动状态：未知</string>
+    <string name="chk_avb_boot_state_desc_green">已验证启动状态为 GREEN。</string>
+    <string name="chk_avb_boot_state_desc_yellow">已验证启动状态为 YELLOW（定制 ROM / 自签名）。</string>
+    <string name="chk_avb_boot_state_desc_orange">已验证启动状态为 ORANGE -- bootloader 已解锁。</string>
+    <string name="chk_avb_boot_state_desc_red">已验证启动状态为 RED -- 引导镜像验证失败。</string>
+    <string name="chk_avb_boot_state_desc_unknown">意外的已验证启动状态：%1$s。</string>
+    <string name="chk_avb_boot_state_desc_nd">AVB 状态属性不可用。</string>
+    <string name="chk_avb_boot_state_desc_error">无法确定 AVB 启动状态。</string>
+    <string name="chk_avb_boot_state_reason_green">ro.boot.verifiedbootstate=%1$s。设备从已验证、未修改的系统分区启动。这是最强的启动完整性保证。</string>
+    <string name="chk_avb_boot_state_reason_yellow">ro.boot.verifiedbootstate=%1$s。bootloader 针对用户安装的密钥而非制造商密钥验证引导镜像。这表明是定制 ROM 或用户注册的 AVB 密钥。设备可能正在运行非官方固件。</string>
+    <string name="chk_avb_boot_state_reason_orange">ro.boot.verifiedbootstate=%1$s。bootloader 已解锁且未强制执行签名。设备可以启动任意未签名镜像。这是设备已被 Root 或修改的强指标。</string>
+    <string name="chk_avb_boot_state_reason_red">ro.boot.verifiedbootstate=%1$s。设备未能验证引导镜像的完整性。这可能表明 bootloader 已修改或系统分区已损坏。</string>
+    <string name="chk_avb_boot_state_reason_unknown">ro.boot.verifiedbootstate=%1$s 不是标准值。预期：green、yellow、orange 或 red。</string>
+    <string name="chk_avb_boot_state_reason_nd">ro.boot.verifiedbootstate 为空或不可访问。这在不支持 AVB 2.0 的旧设备（Android 8 之前）上是正常的。</string>
+    <string name="chk_avb_boot_state_reason_error">读取 AVB 属性时出现异常：%1$s</string>
+    <string name="chk_avb_boot_state_solution_yellow">刷入官方 OEM 固件以恢复 GREEN 已验证启动状态。</string>
+    <string name="chk_avb_boot_state_solution_orange">恢复原厂固件后通过 \'fastboot flashing lock\' 重新锁定 bootloader。</string>
+    <string name="chk_avb_boot_state_solution_red">通过 fastboot 或 OTA 恢复出厂固件。</string>
+    <string name="chk_avb_boot_state_solution_unknown">检查设备固件完整性。</string>
+
+    <!-- tee_hardware_backed -->
+    <string name="chk_tee_hardware_backed_name">TEE 密钥生成：仅软件</string>
+    <string name="chk_tee_hardware_backed_name_nd">TEE 密钥生成</string>
+    <string name="chk_tee_hardware_backed_desc">AES 密钥在软件中生成 -- 无硬件 TEE 支持。</string>
+    <string name="chk_tee_hardware_backed_desc_nd">AES 密钥在安全硬件（%1$s）内生成。</string>
+    <string name="chk_tee_hardware_backed_desc_error">无法完成 TEE 密钥生成检查。</string>
+    <string name="chk_tee_hardware_backed_reason">通过 AndroidKeyStore 生成了探测 AES 密钥，但 KeyInfo 报告它是在软件仿真层中创建的。这强烈表明设备是模拟器，或 TEE 已被绕过（例如通过 Keymaster/KeyMint shim 模块）。敏感的加密材料不受安全硬件保护。</string>
+    <string name="chk_tee_hardware_backed_reason_nd">通过 AndroidKeyStore 生成了探测 AES 密钥，KeyInfo 确认它驻留在 %1$s 中。此检查无法被 Magisk 属性隐藏欺骗，因为它通过基于 Binder 的 Keymaster/KeyMint HAL 实际使用 TEE 子系统。</string>
+    <string name="chk_tee_hardware_backed_reason_error">探测密钥生成期间出现异常：%1$s</string>
+    <string name="chk_tee_hardware_backed_solution">使用具有硬件 TEE 的真实设备进行安全密钥操作。</string>
+
+    <!-- keystore_attestation -->
+    <string name="chk_keystore_attestation_name">硬件支持的 RSA 密钥：仅软件</string>
+    <string name="chk_keystore_attestation_name_nd">硬件支持的 RSA 密钥</string>
+    <string name="chk_keystore_attestation_desc">RSA 密钥对位于软件密钥库，而非安全硬件。</string>
+    <string name="chk_keystore_attestation_desc_nd">RSA-2048 密钥对驻留在安全硬件（TEE/StrongBox）中。</string>
+    <string name="chk_keystore_attestation_desc_error">无法完成密钥库证明检查。</string>
+    <string name="chk_keystore_attestation_reason">AndroidKeyStore RSA 密钥在软件仿真层而非硬件 TEE 中生成。这可能表明是模拟器、启用了 Magisk 隐藏的已 Root 设备，或不具有硬件支持密钥库的设备。</string>
+    <string name="chk_keystore_attestation_reason_nd">通过 AndroidKeyStore 生成的 RSA-2048 密钥驻留在可信执行环境或 StrongBox HSM 内。私钥材料永不离开安全硬件。</string>
+    <string name="chk_keystore_attestation_reason_error">RSA 密钥生成/检查期间出现异常：%1$s</string>
+    <string name="chk_keystore_attestation_solution">使用具有硬件支持密钥存储的设备进行敏感操作。</string>
+
+    <!-- suspicious_root_daemons -->
+    <string name="chk_suspicious_root_daemons_name">Root 守护进程正在运行</string>
+    <string name="chk_suspicious_root_daemons_name_nd">Root 守护进程</string>
+    <string name="chk_suspicious_root_daemons_desc">在进程列表中检测到活动的 Root 框架守护进程。</string>
+    <string name="chk_suspicious_root_daemons_desc_nd">在进程列表中未发现已知的 Root 框架守护进程。</string>
+    <string name="chk_suspicious_root_daemons_desc_error">无法扫描进程列表。</string>
+    <string name="chk_suspicious_root_daemons_reason">以下 Root 相关进程正在运行：%1$s。lspd 是 LSPosed/Xposed 框架守护进程。ksud 是 KernelSU 守护进程。magiskd 是 Magisk 守护进程。zygiskd 是 Zygisk 配套守护进程。即使文件工件被隐藏，这些也确认了活动的 Root 框架。</string>
+    <string name="chk_suspicious_root_daemons_reason_nd">已扫描 /proc 中的 lspd、ksud、magiskd、zygiskd、riru、apd 和其他已知 Root 框架守护进程。未发现任何进程。</string>
+    <string name="chk_suspicious_root_daemons_reason_error">读取 /proc 时出现异常：%1$s</string>
+    <string name="chk_suspicious_root_daemons_solution">卸载 Root 框架并重启以停止这些守护进程。</string>
+
+    <!-- prop_tampering -->
+    <string name="chk_prop_tampering_name">系统属性篡改</string>
+    <string name="chk_prop_tampering_name_nd">系统属性篡改</string>
+    <string name="chk_prop_tampering_desc">系统属性显示修改迹象。</string>
+    <string name="chk_prop_tampering_desc_nd">未检测到系统属性篡改。</string>
+    <string name="chk_prop_tampering_reason">检测到以下属性不一致：%1$s。Magisk resetprop 可以在启动后修改任何系统属性，但在应用启动时烘焙到应用 JVM 中的 Android 框架常量无法追溯更改 -- 不匹配证明篡改。</string>
+    <string name="chk_prop_tampering_reason_nd">Build.TAGS 与实时 ro.build.tags、安全补丁交叉检查、指纹与设备名称以及 Magisk 属性检查全部通过。系统属性与原厂构建一致。</string>
+    <string name="chk_prop_tampering_solution">恢复原厂引导镜像以将系统属性重置为出厂值。</string>
+
+    <!-- su_extended_paths -->
+    <string name="chk_su_extended_paths_name">su 二进制文件（扩展扫描）</string>
+    <string name="chk_su_extended_paths_name_nd">su 二进制文件（扩展扫描）</string>
+    <string name="chk_su_extended_paths_desc">发现 su 二进制文件或 Root 管理文件。</string>
+    <string name="chk_su_extended_paths_desc_nd">未发现 su 二进制文件或 Root 管理文件。</string>
+    <string name="chk_su_extended_paths_reason">发现以下与 su 相关的路径：%1$s。su 二进制文件的存在是设备已被 Root 的强指标。</string>
+    <string name="chk_su_extended_paths_reason_nd">已扫描 %1$d 个已知 su 二进制文件路径并检查了 PATH。未发现此设备上可访问的 su 二进制文件。</string>
+    <string name="chk_su_extended_paths_solution">移除所有 Root 框架（Magisk、KernelSU、APatch、SuperSU）并恢复原厂引导镜像。</string>
+
+    <!-- MagiskDetector checks -->
+    <string name="chk_magisk_files_name">已检测到 Magisk 文件</string>
+    <string name="chk_magisk_files_name_nd">Magisk 文件</string>
+    <string name="chk_magisk_files_desc">在文件系统中发现了 Magisk 特有的文件或目录。</string>
+    <string name="chk_magisk_files_desc_nd">未检测到 Magisk 特有文件。</string>
+    <string name="chk_magisk_files_reason">发现了以下 Magisk 特有文件：%1$s。这些文件由 Magisk 在安装和运行期间创建。其存在强烈表明该设备已安装 Magisk。</string>
+    <string name="chk_magisk_files_reason_nd">已知的 Magisk 文件路径均不可访问或不存在。</string>
+    <string name="chk_magisk_files_solution">要移除 Magisk：打开 Magisk Manager → 卸载 → 完全卸载。或通过 fastboot 刷入原厂 boot.img：`fastboot flash boot stock_boot.img`。</string>
+
+    <string name="chk_magisk_dirs_name">已检测到 Magisk 目录</string>
+    <string name="chk_magisk_dirs_name_nd">Magisk 目录</string>
+    <string name="chk_magisk_dirs_desc">发现了 Magisk 工作目录。</string>
+    <string name="chk_magisk_dirs_desc_nd">未发现 Magisk 工作目录。</string>
+    <string name="chk_magisk_dirs_reason">目录 %1$s 存在。Magisk 使用 /data/adb/magisk 作为其主工作目录，使用 /data/adb/modules 存储已安装的模块。这些目录在 Magisk 安装期间创建。</string>
+    <string name="chk_magisk_dirs_reason_nd">未找到 Magisk 工作目录。</string>
+    <string name="chk_magisk_dirs_solution">通过 Magisk Manager 卸载 Magisk 或重新刷入原厂 boot 镜像。</string>
+
+    <string name="chk_magisk_db_name">已发现 Magisk 数据库</string>
+    <string name="chk_magisk_db_name_nd">Magisk 数据库</string>
+    <string name="chk_magisk_db_desc">已检测到 Magisk SQLite 数据库。</string>
+    <string name="chk_magisk_db_desc_nd">未发现 Magisk 数据库。</string>
+    <string name="chk_magisk_db_reason">Magisk 数据库（magisk.db）存储策略规则、模块配置和超级用户授权记录。发现于：%1$s。</string>
+    <string name="chk_magisk_db_reason_nd">在已知位置未发现 Magisk SQLite 数据库。</string>
+    <string name="chk_magisk_db_solution">完全卸载 Magisk 后数据库将被删除。</string>
+
+    <string name="chk_magisk_packages_name">已检测到 Magisk 应用</string>
+    <string name="chk_magisk_packages_name_nd">Magisk 应用软件包</string>
+    <string name="chk_magisk_packages_desc">已安装 Magisk Manager 或相关应用。</string>
+    <string name="chk_magisk_packages_desc_nd">未发现 Magisk Manager 软件包。</string>
+    <string name="chk_magisk_packages_reason">发现以下与 Magisk 相关的软件包：%1$s。这些应用是 Magisk 的主要管理界面，其存在确认 Magisk 已安装。</string>
+    <string name="chk_magisk_packages_reason_nd">未发现已知的 Magisk Manager 软件包名称。</string>
+    <string name="chk_magisk_packages_solution">先通过 Magisk Manager 卸载（以正确移除 root），然后再卸载 Magisk Manager 应用本身。</string>
+
+    <string name="chk_magisk_su_name">已发现 Magisk SU 二进制文件</string>
+    <string name="chk_magisk_su_name_nd">Magisk SU 二进制文件</string>
+    <string name="chk_magisk_su_desc">已检测到 Magisk su 或核心二进制文件。</string>
+    <string name="chk_magisk_su_desc_nd">未发现 Magisk su 或核心二进制文件。</string>
+    <string name="chk_magisk_su_reason">Magisk 安装其 su 二进制文件和核心组件以管理 root 访问权限。发现：%1$s。这些二进制文件处理 root 权限请求和策略执行。</string>
+    <string name="chk_magisk_su_reason_nd">在已知路径未找到 Magisk 核心二进制文件。</string>
+    <string name="chk_magisk_su_solution">通过 Magisk Manager → 卸载 卸载 Magisk 后，这些二进制文件将被删除。</string>
+
+    <string name="chk_magisk_unix_socket_name">已检测到 Magisk Unix 套接字</string>
+    <string name="chk_magisk_unix_socket_name_nd">Magisk Unix 套接字</string>
+    <string name="chk_magisk_unix_socket_desc">在 /proc/net/unix 中发现了 Magisk 守护进程套接字。</string>
+    <string name="chk_magisk_unix_socket_desc_nd">未发现 Magisk 守护进程套接字。</string>
+    <string name="chk_magisk_unix_socket_reason">Magisk 运行一个监听 Unix 套接字的后台守护进程。套接字名称 \'%1$s\' 在 /proc/net/unix 中被发现，表明 Magisk 守护进程当前正在运行。</string>
+    <string name="chk_magisk_unix_socket_reason_nd">在 /proc/net/unix 中未找到与 Magisk 相关的套接字名称。</string>
+    <string name="chk_magisk_unix_socket_reason_error">无法读取 /proc/net/unix：%1$s</string>
+    <string name="chk_magisk_unix_socket_solution">卸载 Magisk 并重启设备后，套接字将消失。</string>
+
+    <string name="chk_magisk_mounts_name">已检测到 Magisk 挂载点</string>
+    <string name="chk_magisk_mounts_name_nd">Magisk 挂载点</string>
+    <string name="chk_magisk_mounts_desc">在 /proc/mounts 中发现了与 Magisk 相关的挂载点。</string>
+    <string name="chk_magisk_mounts_desc_nd">未发现 Magisk 挂载点。</string>
+    <string name="chk_magisk_mounts_reason">Magisk 使用绑定挂载将修改后的文件覆盖到系统上，而无需实际修改底层分区。发现的关键字：%1$s。</string>
+    <string name="chk_magisk_mounts_reason_nd">在 /proc/mounts 中未发现 Magisk 特有的挂载条目。</string>
+    <string name="chk_magisk_mounts_reason_error">无法读取 /proc/mounts：%1$s</string>
+    <string name="chk_magisk_mounts_solution">挂载点由 Magisk 守护进程管理，卸载后将被删除。</string>
+
+    <string name="chk_magisk_props_name">可疑系统属性</string>
+    <string name="chk_magisk_props_name_nd">Magisk 系统属性</string>
+    <string name="chk_magisk_props_desc">发现了可疑或与 Magisk 相关的系统属性。</string>
+    <string name="chk_magisk_props_desc_nd">未发现可疑的 Magisk 相关系统属性。</string>
+    <string name="chk_magisk_props_reason">以下属性表明存在 root 访问权限或 Magisk：%1$s。ro.debuggable=1 和 ro.secure=0 是 root/可调试版本的典型特征。ro.magisk.version 由 Magisk 直接设置。</string>
+    <string name="chk_magisk_props_reason_nd">系统属性似乎处于原厂配置状态。</string>
+    <string name="chk_magisk_props_solution">这些属性由 Magisk 或设备 root 过程设置。恢复原厂 boot 镜像以重置这些属性。</string>
+
+    <string name="chk_zygisk_lib_name">已检测到 Zygisk 库</string>
+    <string name="chk_zygisk_lib_name_nd">Zygisk 库</string>
+    <string name="chk_zygisk_lib_desc">发现了 Zygisk（Zygote 中的 Magisk）库文件。</string>
+    <string name="chk_zygisk_lib_desc_nd">未发现 Zygisk 库文件。</string>
+    <string name="chk_zygisk_lib_reason">Zygisk 是 Magisk 在 Zygote 进程中运行的功能，能够向每个应用注入代码。发现：%1$s。这允许绕过许多检测方法并启用强大的模块功能。</string>
+    <string name="chk_zygisk_lib_reason_nd">未找到 Zygisk 库文件。Zygisk 可能已禁用或 Magisk 未安装。</string>
+    <string name="chk_zygisk_lib_solution">在 Magisk 设置中禁用 Zygisk 或完全卸载 Magisk。</string>
+
+    <string name="chk_magisk_hide_name">MagiskHide / 已修改指纹</string>
+    <string name="chk_magisk_hide_name_nd">MagiskHide / 指纹</string>
+    <string name="chk_magisk_hide_desc">检测到 MagiskHide 痕迹或已修改的构建指纹。</string>
+    <string name="chk_magisk_hide_desc_nd">未检测到 MagiskHide 痕迹或指纹修改。</string>
+    <string name="chk_magisk_hide_reason">证据：%1$s。MagiskHide（或其继任者 DenyList）试图对特定应用隐藏 Magisk。已修改的构建指纹可能表明存在 SafetyNet 绕过尝试。</string>
+    <string name="chk_magisk_hide_reason_nd">未发现 MagiskHide 文件，构建指纹似乎未被修改。</string>
+    <string name="chk_magisk_hide_solution">在 Magisk 设置中禁用 MagiskHide/DenyList。使用原厂未修改的构建指纹。谨慎使用 Play Integrity 修复模块。</string>
+
+    <string name="chk_magisk_processes_name">Magisk 进程正在运行</string>
+    <string name="chk_magisk_processes_name_nd">Magisk 进程</string>
+    <string name="chk_magisk_processes_desc">与 Magisk 相关的进程当前正在运行。</string>
+    <string name="chk_magisk_processes_desc_nd">未发现正在运行的 Magisk 进程。</string>
+    <string name="chk_magisk_processes_desc_error">未发现 Magisk 进程。</string>
+    <string name="chk_magisk_processes_reason">发现以下 Magisk 进程正在运行：%1$s。magiskd 是管理 root 请求的 Magisk 守护进程。这些进程确认 Magisk 在设备上处于活动状态。</string>
+    <string name="chk_magisk_processes_reason_nd">在 /proc 中未找到与 Magisk 相关的进程名称。</string>
+    <string name="chk_magisk_processes_reason_error">进程枚举无法完成：%1$s</string>
+    <string name="chk_magisk_processes_solution">卸载 Magisk 并重启设备后，进程将停止。</string>
+
+    <string name="chk_magisk_hidden_manager_name">已检测到隐藏的 Magisk Manager</string>
+    <string name="chk_magisk_hidden_manager_name_nd">隐藏的 Magisk Manager</string>
+    <string name="chk_magisk_hidden_manager_desc">发现了伪装成 Magisk Manager 的应用。</string>
+    <string name="chk_magisk_hidden_manager_desc_nd">未检测到隐藏的 Magisk Manager。</string>
+    <string name="chk_magisk_hidden_manager_desc_error">无法扫描隐藏的 Magisk Manager。</string>
+    <string name="chk_magisk_hidden_manager_reason">Magisk Manager 可以隐藏在随机软件包名称下以逃避检测。发现潜在的隐藏管理器：%1$s。</string>
+    <string name="chk_magisk_hidden_manager_reason_nd">未在非标准软件包名称下发现具有 Magisk Manager 特征的应用。</string>
+    <string name="chk_magisk_hidden_manager_reason_error">软件包扫描无法完成：%1$s</string>
+    <string name="chk_magisk_hidden_manager_solution">打开该应用并通过它卸载 Magisk，或使用 adb 删除该软件包。</string>
+
+    <string name="chk_magisk_dev_files_name">已检测到 Magisk /dev 文件</string>
+    <string name="chk_magisk_dev_files_name_nd">Magisk /dev 文件</string>
+    <string name="chk_magisk_dev_files_desc">在 /dev 中发现了 Magisk 特有的文件或套接字。</string>
+    <string name="chk_magisk_dev_files_desc_nd">未发现 Magisk /dev 文件或套接字。</string>
+    <string name="chk_magisk_dev_files_reason">发现：%1$s。Magisk 使用 /dev 文件系统（tmpfs）创建控制套接字和镜像点，以便从任何 SELinux 上下文访问。这些文件仅在安装了活动 Magisk 的设备上存在。</string>
+    <string name="chk_magisk_dev_files_reason_nd">在 /dev 下未发现 Magisk 特有文件。</string>
+    <string name="chk_magisk_dev_files_solution">卸载 Magisk 以移除这些 /dev 文件。</string>
+
+    <string name="chk_zygisk_active_maps_name">Zygisk 库已注入</string>
+    <string name="chk_zygisk_active_maps_name_nd">Zygisk 库</string>
+    <string name="chk_zygisk_active_maps_desc">Zygisk 原生库已加载到此进程中。</string>
+    <string name="chk_zygisk_active_maps_desc_nd">在进程内存映射中未发现 Zygisk 库。</string>
+    <string name="chk_zygisk_active_maps_desc_error">在进程内存中未发现 Zygisk 库。</string>
+    <string name="chk_zygisk_active_maps_reason">在 /proc/self/maps 中发现 Zygisk 库：%1$s。Zygisk（Zygote + Magisk）通过在 fork 之前钩挂 Zygote 进程，将其原生库注入到每个应用进程中。这确认 Zygisk 正在活动运行。</string>
+    <string name="chk_zygisk_active_maps_reason_nd">在 /proc/self/maps 中未发现 Zygisk 原生库。</string>
+    <string name="chk_zygisk_active_maps_reason_error">无法读取 /proc/self/maps：%1$s</string>
+    <string name="chk_zygisk_active_maps_solution">在 Magisk 设置中禁用 Zygisk 或卸载 Magisk。</string>
+
+    <string name="chk_magisk_stub_app_name">已检测到 Magisk Stub 应用</string>
+    <string name="chk_magisk_stub_app_name_nd">Magisk Stub 应用</string>
+    <string name="chk_magisk_stub_app_desc">发现具有 Magisk stub APK 特征的应用。</string>
+    <string name="chk_magisk_stub_app_desc_nd">未检测到 Magisk stub 应用。</string>
+    <string name="chk_magisk_stub_app_reason">具有 Magisk stub 元数据的软件包：%1$s。Magisk 的隐藏功能将自身重新打包为看似无害的应用。stub 保留了 Magisk 的内容提供程序授权和特定权限集。</string>
+    <string name="chk_magisk_stub_app_reason_nd">没有已安装的软件包与 Magisk stub APK 签名匹配。</string>
+    <string name="chk_magisk_stub_app_solution">打开 stub 应用并通过它卸载 Magisk。</string>
+
+    <string name="chk_magisk_selinux_name">已检测到 Magisk SELinux 上下文</string>
+    <string name="chk_magisk_selinux_name_nd">Magisk SELinux 上下文</string>
+    <string name="chk_magisk_selinux_desc">发现了与 Magisk 相关的 SELinux 上下文。</string>
+    <string name="chk_magisk_selinux_desc_nd">未检测到 Magisk SELinux 上下文。</string>
+    <string name="chk_magisk_selinux_desc_error">未发现 Magisk SELinux 上下文。</string>
+    <string name="chk_magisk_selinux_reason">发现：%1$s。Magisk 注入自定义 SELinux 策略规则，某些版本在其自身的 SELinux 上下文（u:r:magisk:s0）下运行。与 root 相关进程的非标准 SELinux 上下文确认了 Magisk 活动。</string>
+    <string name="chk_magisk_selinux_reason_nd">在 /proc/*/attr/current 中未发现与 Magisk 相关的 SELinux 上下文。</string>
+    <string name="chk_magisk_selinux_reason_error">无法读取 /proc/self/attr/current：%1$s</string>
+    <string name="chk_magisk_selinux_solution">移除 Magisk 以恢复标准 SELinux 策略。</string>
+
+    <string name="chk_magisk_apex_name">已检测到 Magisk APEX 覆盖</string>
+    <string name="chk_magisk_apex_name_nd">Magisk APEX 覆盖</string>
+    <string name="chk_magisk_apex_desc">在 /apex 内检测到 Magisk 覆盖。</string>
+    <string name="chk_magisk_apex_desc_nd">未检测到 Magisk APEX 覆盖。</string>
+    <string name="chk_magisk_apex_reason">发现：%1$s。Magisk（v24+）可以通过绑定挂载将模块注入 APEX（Android Pony EXpress）分区库。\'orig\' 目录作为原始 APEX 内容的备份创建。这些文件仅在 Magisk 模块处于活动状态时存在。</string>
+    <string name="chk_magisk_apex_reason_nd">在 /apex 内未发现 Magisk 特有文件。</string>
+    <string name="chk_magisk_apex_solution">在 Magisk Manager 中禁用针对 APEX 的模块或卸载 Magisk。</string>
+
+    <string name="chk_magisk_fd_name">已检测到 Magisk 文件描述符</string>
+    <string name="chk_magisk_fd_name_nd">Magisk 文件描述符</string>
+    <string name="chk_magisk_fd_desc">此进程有指向 Magisk 路径的打开文件描述符。</string>
+    <string name="chk_magisk_fd_desc_nd">在 /proc/self/fd 中未发现与 Magisk 相关的文件描述符。</string>
+    <string name="chk_magisk_fd_reason">在 /proc/self/fd 中发现：%1$s。Magisk 保持对其镜像挂载点和套接字文件的打开文件描述符。这些文件描述符在应用进程中的存在确认 Magisk 已接触此进程。</string>
+    <string name="chk_magisk_fd_reason_nd">没有打开的文件描述符指向 Magisk 路径。</string>
+    <string name="chk_magisk_fd_solution">移除 Magisk 以清除这些文件描述符引用。</string>
+
+    <string name="chk_native_bridge_name">已检测到原生桥接注入</string>
+    <string name="chk_native_bridge_name_nd">原生桥接</string>
+    <string name="chk_native_bridge_desc">已检测到 Riru/Zygisk 原生桥接注入。</string>
+    <string name="chk_native_bridge_desc_nd">未发现可疑的原生桥接注入。</string>
+    <string name="chk_native_bridge_reason">ro.dalvik.vm.native.bridge = \'%1$s\'。Riru（Zygisk 的前身）通过将此属性替换为其自身的加载器库来劫持 ART 原生桥接机制。此处的可疑值是 Riru/Zygisk 注入的强烈指标。</string>
+    <string name="chk_native_bridge_reason_nd">ro.dalvik.vm.native.bridge 为 \'%1$s\'\u2014\u2014原厂值。</string>
+    <string name="chk_native_bridge_solution">移除 Riru 或 Zygisk Magisk 模块以恢复正常的原生桥接。</string>
+
+    <string name="chk_zygisk_su_daemon_name">已检测到 Zygisk 伴随守护进程</string>
+    <string name="chk_zygisk_su_daemon_name_nd">Zygisk/Magisk 守护进程</string>
+    <string name="chk_zygisk_su_daemon_desc">Zygisk/Magisk 守护进程正在运行。</string>
+    <string name="chk_zygisk_su_daemon_desc_nd">未发现 Zygisk/Magisk 守护进程。</string>
+    <string name="chk_zygisk_su_daemon_reason">发现守护进程：%1$s。Zygisk Next（独立的 Zygisk 实现）运行名为 zn-daemon、zn-nsdaemon 和 zn-zygisk-companion 的特权守护进程。Magisk 本身以 \'magiskd\' 运行。这些是活动 root 注入的确定性指标。</string>
+    <string name="chk_zygisk_su_daemon_reason_nd">在 /proc/*/cmdline 中未发现 Zygisk Next 或 Magisk 守护进程名称。</string>
+    <string name="chk_zygisk_su_daemon_solution">卸载 Magisk 或 Zygisk Next 模块以移除这些守护进程。</string>
+
+    <string name="chk_magisk_timing_name">Magisk 钩子延迟异常</string>
+    <string name="chk_magisk_timing_name_nd">文件访问时序</string>
+    <string name="chk_magisk_timing_desc">可疑的文件访问延迟表明存在 Magisk DenyList 钩子。</string>
+    <string name="chk_magisk_timing_desc_nd">未检测到 Magisk 文件访问的可疑时序异常。</string>
+    <string name="chk_magisk_timing_desc_error">时序检查结果不确定。</string>
+    <string name="chk_magisk_timing_reason">File.exists(\'%1$s\') 耗时 %2$sms（比基准慢 %3$s 倍）。Magisk 的 DenyList 补丁拦截文件系统调用以隐藏 Magisk 文件。与访问未钩挂路径相比，这种拦截增加了可测量的延迟。</string>
+    <string name="chk_magisk_timing_reason_nd">File.exists() 延迟在正常范围内（比率=%1$s\u00D7，%2$sms）。未检测到 Magisk DenyList 钩子延迟。</string>
+    <string name="chk_magisk_timing_reason_error">无法完成时序检查：%1$s</string>
+    <string name="chk_magisk_timing_solution">禁用 Magisk DenyList 或卸载 Magisk。</string>
+
+    <string name="chk_broad_maps_name">进程内存中存在 Root/钩子库</string>
+    <string name="chk_broad_maps_name_nd">Root/钩子库</string>
+    <string name="chk_broad_maps_desc">Root 或钩子框架原生库已加载到此进程中。</string>
+    <string name="chk_broad_maps_desc_nd">在进程内存中未发现 root/钩子框架原生库。</string>
+    <string name="chk_broad_maps_reason">在 /proc/self/maps 中发现：%1$s。这些是属于 Magisk（libsu）、Riru 和 Xposed 兼容框架使用的内联钩子引擎（Dobby、SandHook、Pine、Whale）的原生库。其存在确认了对此进程的活动注入。</string>
+    <string name="chk_broad_maps_reason_nd">在 /proc/self/maps 中未发现已知的 root/钩子库名称。</string>
+    <string name="chk_broad_maps_solution">移除相关的 root 框架或模块以防止库注入。</string>
+
+    <!-- XposedDetector strings -->
+    <string name="chk_xposed_packages_name">已检测到 Xposed/LSPosed 管理器</string>
+    <string name="chk_xposed_packages_name_nd">Xposed 管理器软件包</string>
+    <string name="chk_xposed_packages_desc">已安装 Xposed 框架管理应用。</string>
+    <string name="chk_xposed_packages_desc_nd">未发现 Xposed/LSPosed 管理器软件包。</string>
+    <string name="chk_xposed_packages_reason">发现：%1$s。这些应用管理 Xposed/LSPosed/EdXposed 框架。Xposed 框架可在运行时钩挂任何 Android 应用或系统服务。</string>
+    <string name="chk_xposed_packages_reason_nd">未安装已知的 Xposed 框架管理器软件包。</string>
+    <string name="chk_xposed_packages_solution">通过框架管理器卸载。刷入原厂 boot 镜像以彻底移除 Zygote 中的钩子。</string>
+
+    <string name="chk_xposed_files_name">已发现 Xposed 框架文件</string>
+    <string name="chk_xposed_files_name_nd">Xposed 框架文件</string>
+    <string name="chk_xposed_files_desc">检测到原版 Xposed 框架文件。</string>
+    <string name="chk_xposed_files_desc_nd">未发现原版 Xposed 框架文件。</string>
+    <string name="chk_xposed_files_reason">发现：%1$s。XposedBridge.jar 是 Xposed 核心钩挂库。app_process_xposed 是在 Zygote 启动时引导 Xposed 的修改版 app_process 二进制文件。</string>
+    <string name="chk_xposed_files_reason_nd">在此设备上未发现已知的 Xposed 文件路径。</string>
+    <string name="chk_xposed_files_solution">使用 Xposed Installer 卸载，或手动恢复原厂 app_process 二进制文件。</string>
+
+    <string name="chk_lsposed_files_name">已发现 LSPosed 模块文件</string>
+    <string name="chk_lsposed_files_name_nd">LSPosed 文件</string>
+    <string name="chk_lsposed_files_desc">检测到 LSPosed 框架文件。</string>
+    <string name="chk_lsposed_files_desc_nd">未发现 LSPosed 文件。</string>
+    <string name="chk_lsposed_files_reason">发现：%1$s。LSPosed 是适用于 Android 8+ 的现代 Xposed 实现。它作为 Zygisk 或 Riru 模块运行，支持按应用设置 Xposed 模块作用域。</string>
+    <string name="chk_lsposed_files_reason_nd">未发现 LSPosed 特有文件路径。</string>
+    <string name="chk_lsposed_files_solution">通过 LSPosed 管理器 \u2192 卸载，或删除 Magisk/KernelSU 模块。</string>
+
+    <string name="chk_edxposed_files_name">已发现 EdXposed 文件</string>
+    <string name="chk_edxposed_files_name_nd">EdXposed 文件</string>
+    <string name="chk_edxposed_files_desc">检测到 EdXposed 框架文件。</string>
+    <string name="chk_edxposed_files_desc_nd">未发现 EdXposed 文件。</string>
+    <string name="chk_edxposed_files_reason">发现：%1$s。EdXposed 是适用于 Android 8\u201311 的 Xposed 实现，作为 Riru 模块运行，提供与旧版 Xposed 模块兼容的系统级代码钩挂。</string>
+    <string name="chk_edxposed_files_reason_nd">未发现 EdXposed 特有文件路径。</string>
+    <string name="chk_edxposed_files_solution">通过 EdXposed 管理器卸载，或删除 Riru/Magisk 模块。</string>
+
+    <string name="chk_xposed_bridge_class_name">XposedBridge 类已加载</string>
+    <string name="chk_xposed_bridge_class_name_nd">XposedBridge 类</string>
+    <string name="chk_xposed_bridge_class_desc">XposedBridge 类存在于类路径中。</string>
+    <string name="chk_xposed_bridge_class_desc_nd">类路径中未发现 XposedBridge 类。</string>
+    <string name="chk_xposed_bridge_class_reason">类 \'de.robv.android.xposed.XposedBridge\' 已成功加载。此类是 Xposed 框架的核心，仅在 Xposed（或兼容分支如 LSPosed/EdXposed）在此进程中处于活动状态时存在。</string>
+    <string name="chk_xposed_bridge_class_reason_nd">XposedBridge 类无法加载——Xposed 在此进程中未激活。</string>
+    <string name="chk_xposed_bridge_class_reason_error">类检查未找到 XposedBridge：%1$s</string>
+    <string name="chk_xposed_bridge_class_solution">卸载 Xposed/LSPosed/EdXposed 框架。</string>
+
+    <string name="chk_xposed_stack_name">堆栈跟踪中存在 Xposed 钩子</string>
+    <string name="chk_xposed_stack_name_nd">堆栈跟踪中的 Xposed</string>
+    <string name="chk_xposed_stack_desc">在异常调用栈中检测到 Xposed 框架。</string>
+    <string name="chk_xposed_stack_desc_nd">异常堆栈跟踪中无 Xposed 框架条目。</string>
+    <string name="chk_xposed_stack_reason">在异常堆栈跟踪中发现 Xposed/LSPlant 框架条目。这确认 Xposed 正在此进程中活跃钩挂方法调用。</string>
+    <string name="chk_xposed_stack_reason_nd">异常堆栈跟踪中未显示 Xposed 框架方法。</string>
+    <string name="chk_xposed_stack_solution">卸载 Xposed/LSPosed 框架。</string>
+
+    <string name="chk_xposed_props_name">已发现 Xposed 系统属性</string>
+    <string name="chk_xposed_props_name_nd">Xposed 系统属性</string>
+    <string name="chk_xposed_props_desc">发现 Xposed 特有系统属性。</string>
+    <string name="chk_xposed_props_desc_nd">未发现 Xposed 系统属性。</string>
+    <string name="chk_xposed_props_reason">发现：%1$s。这些属性由 Xposed 框架或其安装程序设置。</string>
+    <string name="chk_xposed_props_reason_nd">未检测到 Xposed 特有系统属性。</string>
+    <string name="chk_xposed_props_solution">正确卸载 Xposed 后这些属性将被移除。</string>
+
+    <string name="chk_virtual_frameworks_name">已检测到虚拟应用框架</string>
+    <string name="chk_virtual_frameworks_name_nd">虚拟应用框架</string>
+    <string name="chk_virtual_frameworks_desc">检测到虚拟应用/多账户框架。</string>
+    <string name="chk_virtual_frameworks_desc_nd">未检测到虚拟应用框架。</string>
+    <string name="chk_virtual_frameworks_reason">发现：%1$s。VirtualApp、平行空间等虚拟框架创建虚拟化 Android 环境，可在沙盒克隆中运行应用，可能通过在修改后的容器内运行应用来绕过检测。</string>
+    <string name="chk_virtual_frameworks_reason_nd">未发现已知虚拟框架软件包。</string>
+    <string name="chk_virtual_frameworks_solution">通过「设置」\u2192「应用」卸载虚拟框架应用。</string>
+
+    <string name="chk_lsposed_socket_name">已检测到 LSPosed 守护进程套接字</string>
+    <string name="chk_lsposed_socket_name_nd">LSPosed 守护进程套接字</string>
+    <string name="chk_lsposed_socket_desc">LSPosed 守护进程 Unix 套接字处于活动状态。</string>
+    <string name="chk_lsposed_socket_desc_nd">未发现 LSPosed 守护进程套接字。</string>
+    <string name="chk_lsposed_socket_reason">在 /proc/net/unix 中发现套接字：%1$s。LSPosed（lspd）使用 Unix 域套接字在守护进程和管理器应用之间进行 IPC。此套接字的存在确认 lspd 当前正在运行。</string>
+    <string name="chk_lsposed_socket_reason_nd">在 /proc/net/unix 中未发现 lspd 套接字名称。</string>
+    <string name="chk_lsposed_socket_reason_error">无法读取 /proc/net/unix：%1$s</string>
+    <string name="chk_lsposed_socket_solution">通过 LSPosed 管理器应用移除 LSPosed，或删除 Magisk/KSU 模块。</string>
+
+    <string name="chk_lsposed_dex_maps_name">进程内存中存在 LSPosed 文件</string>
+    <string name="chk_lsposed_dex_maps_name_nd">进程中的 LSPosed 文件</string>
+    <string name="chk_lsposed_dex_maps_desc">LSPosed/LSPlant 文件已加载到此进程中。</string>
+    <string name="chk_lsposed_dex_maps_desc_nd">进程内存中未发现 LSPosed/LSPlant 文件。</string>
+    <string name="chk_lsposed_dex_maps_reason">在 /proc/self/maps 中发现：%1$s。LSPosed 将其钩子引擎（LSPlant）和模块 DEX 文件注入每个有作用域的应用进程。这些映射路径是活动 LSPosed 注入的确定性指标。</string>
+    <string name="chk_lsposed_dex_maps_reason_nd">在 /proc/self/maps 中未发现 LSPosed 相关文件。</string>
+    <string name="chk_lsposed_dex_maps_reason_error">无法读取 /proc/self/maps：%1$s</string>
+    <string name="chk_lsposed_dex_maps_solution">移除 LSPosed 或为此应用禁用模块作用域。</string>
+
+    <string name="chk_lsposed_config_name">已发现 LSPosed 配置文件</string>
+    <string name="chk_lsposed_config_name_nd">LSPosed 配置文件</string>
+    <string name="chk_lsposed_config_desc">检测到 LSPosed 配置或模块文件。</string>
+    <string name="chk_lsposed_config_desc_nd">未发现 LSPosed 配置文件。</string>
+    <string name="chk_lsposed_config_reason">发现：%1$s。LSPosed 将其守护进程配置和模块作用域列表存储在 /data/misc/lspd/ 中。这些文件的存在确认 LSPosed 已安装或曾被安装。</string>
+    <string name="chk_lsposed_config_reason_nd">磁盘上未发现 LSPosed 配置路径。</string>
+    <string name="chk_lsposed_config_solution">通过管理器应用卸载 LSPosed，或删除 Magisk/KSU 模块目录。</string>
+
+    <string name="chk_hooked_methods_name">已检测到已钩挂的 Java 方法</string>
+    <string name="chk_hooked_methods_name_nd">Java 方法钩子</string>
+    <string name="chk_hooked_methods_desc">Java 方法被 LSPosed/LSPlant 钩挂。</string>
+    <string name="chk_hooked_methods_desc_nd">通过反射未检测到 Java 方法钩子。</string>
+    <string name="chk_hooked_methods_reason">检测到已钩挂方法：%1$s。LSPosed 使用 LSPlant 库作为其 ART 钩子引擎。被钩挂的方法的 ArtMethod 实现指针被替换，这可以通过反射检测到。</string>
+    <string name="chk_hooked_methods_reason_nd">在反射或堆栈跟踪中未发现 LSPlant/XposedBridge 钩子指标。</string>
+    <string name="chk_hooked_methods_solution">移除 LSPosed 或禁用钩挂这些方法的模块。</string>
+
+    <string name="chk_lsposed_scope_name">LSPosed 模块正在针对此应用</string>
+    <string name="chk_lsposed_scope_name_nd">LSPosed 模块作用域</string>
+    <string name="chk_lsposed_scope_desc">某个 LSPosed 模块的作用域包含此应用。</string>
+    <string name="chk_lsposed_scope_desc_nd">没有 LSPosed 模块的作用域包含此应用。</string>
+    <string name="chk_lsposed_scope_reason">在 LSPosed 作用域文件中发现 \'%1$s\'：%2$s。LSPosed 记录每个模块应注入哪些应用。在作用域配置中看到此应用的包名确认有活动模块正在针对它。</string>
+    <string name="chk_lsposed_scope_reason_nd">在任何可读的 LSPosed 作用域配置中未发现此应用的包名。</string>
+    <string name="chk_lsposed_scope_solution">打开 LSPosed 管理器，禁用所有作用域包含此应用的模块。</string>
+
+    <string name="chk_lsposed_classes_name">已检测到 LSPosed 内部类</string>
+    <string name="chk_lsposed_classes_name_nd">LSPosed 内部类</string>
+    <string name="chk_lsposed_classes_desc">LSPosed 内部类已加载到此进程中。</string>
+    <string name="chk_lsposed_classes_desc_nd">类路径中未发现 LSPosed 内部类。</string>
+    <string name="chk_lsposed_classes_reason">已成功加载：%1$s。这些是 LSPosed 的私有实现类（lspd 核心）。它们仅在 LSPosed 注入此进程时才存在于类路径中。这是活动 LSPosed 钩挂最可靠的 Java 层指标。</string>
+    <string name="chk_lsposed_classes_reason_nd">无法加载任何已知的 LSPosed lspd 实现类。</string>
+    <string name="chk_lsposed_classes_solution">卸载 LSPosed 或为此应用禁用模块作用域。</string>
+
+    <string name="chk_xposed_bridge_version_name">已检测到 XposedBridge 版本属性</string>
+    <string name="chk_xposed_bridge_version_name_nd">XposedBridge 版本属性</string>
+    <string name="chk_xposed_bridge_version_desc">发现 Xposed 框架版本属性或桥接字段。</string>
+    <string name="chk_xposed_bridge_version_desc_nd">未发现 XposedBridge 版本属性。</string>
+    <string name="chk_xposed_bridge_version_reason">发现：%1$s。Xposed 框架将 \'xposed.bridge.version\' 设置为系统属性，并在 XposedBridge 上公开静态字段。这些是 LSPosed（或其他 Xposed 分支）处于活动状态的确定性指标。</string>
+    <string name="chk_xposed_bridge_version_reason_nd">未检测到 Xposed 版本系统属性或桥接字段。</string>
+    <string name="chk_xposed_bridge_version_solution">卸载 LSPosed/Xposed 以移除这些属性。</string>
+
+    <string name="chk_classloader_chain_name">ClassLoader 链中存在 LSPosed ClassLoader</string>
+    <string name="chk_classloader_chain_name_nd">ClassLoader 链</string>
+    <string name="chk_classloader_chain_desc">在 ClassLoader 层次结构中发现 LSPosed/Xposed ClassLoader。</string>
+    <string name="chk_classloader_chain_desc_nd">在 ClassLoader 层次结构中未发现 LSPosed/Xposed ClassLoader。</string>
+    <string name="chk_classloader_chain_reason">发现：%1$s。LSPosed 用自己的加载器包装应用的 ClassLoader 以注入 Xposed 模块。类名中包含 \'lsposed\'、\'lspd\' 或 \'edxposed\' 的 ClassLoader 是活动注入的直接指标。</string>
+    <string name="chk_classloader_chain_reason_nd">ClassLoader 父链中不含已知钩子框架类名。</string>
+    <string name="chk_classloader_chain_solution">移除 LSPosed 或为此应用禁用模块。</string>
+
+    <string name="chk_in_memory_dex_name">已检测到内存中 DEX ClassLoader</string>
+    <string name="chk_in_memory_dex_name_nd">内存中 DEX ClassLoader</string>
+    <string name="chk_in_memory_dex_desc">在 ClassLoader 中检测到匿名/内存中 DEX 模块。</string>
+    <string name="chk_in_memory_dex_desc_nd">在 ClassLoader 层次结构中未发现内存中 DEX 条目。</string>
+    <string name="chk_in_memory_dex_reason">发现：%1$s。LSPosed 使用 InMemoryDexClassLoader 将 Xposed 模块 APK/DEX 文件直接加载到内存中。内存中 DEX 元素没有文件路径——这是活动 LSPosed 模块注入最可靠的 Java 层指标之一。</string>
+    <string name="chk_in_memory_dex_reason_nd">ClassLoader 层次结构中的所有 DEX 条目均引用磁盘上的真实文件。</string>
+    <string name="chk_in_memory_dex_solution">通过 LSPosed 管理器禁用此应用的所有 LSPosed 模块。</string>
+
+    <string name="chk_lsposed_data_dirs_name">LSPosed 数据目录存在</string>
+    <string name="chk_lsposed_data_dirs_name_nd">LSPosed 数据目录</string>
+    <string name="chk_lsposed_data_dirs_desc">发现 LSPosed/Xposed 管理器应用数据目录。</string>
+    <string name="chk_lsposed_data_dirs_desc_nd">未发现 LSPosed/Xposed 管理器数据目录。</string>
+    <string name="chk_lsposed_data_dirs_reason">发现：%1$s。即使 Magisk DenyList 对 PackageManager 隐藏了 LSPosed 管理器 APK，其应用数据目录仍保留在磁盘上。其存在证明 LSPosed 曾被或正在此设备上安装。</string>
+    <string name="chk_lsposed_data_dirs_reason_nd">在 /data/user/0/ 或 /data/data/ 中未发现已知的 LSPosed/Xposed 数据目录。</string>
+    <string name="chk_lsposed_data_dirs_solution">通过应用本身或 adb 卸载 LSPosed 管理器。</string>
+
+    <string name="chk_zygisk_env_name">已检测到 Zygisk 环境/属性</string>
+    <string name="chk_zygisk_env_name_nd">Zygisk 环境/属性</string>
+    <string name="chk_zygisk_env_desc">发现 Zygisk 特有环境变量或系统属性。</string>
+    <string name="chk_zygisk_env_desc_nd">未发现 Zygisk 环境变量或属性。</string>
+    <string name="chk_zygisk_env_reason">发现：%1$s。ZYGISK_ENABLED 由 Magisk 在 Zygisk 活动时设置。这些变量/属性在原厂设备上不存在，确认 Zygisk 正在运行。</string>
+    <string name="chk_zygisk_env_reason_nd">ZYGISK_ENABLED 未设置；未检测到 Zygisk 系统属性。</string>
+    <string name="chk_zygisk_env_solution">在 Magisk 设置中禁用 Zygisk，或卸载 Magisk/Zygisk Next。</string>
+
+    <string name="chk_lsposed_stack_full_name">堆栈跟踪中存在 LSPosed/lspd 帧</string>
+    <string name="chk_lsposed_stack_full_name_nd">LSPosed/lspd 堆栈跟踪</string>
+    <string name="chk_lsposed_stack_full_desc">在异常堆栈跟踪中检测到 LSPosed/lspd 类名。</string>
+    <string name="chk_lsposed_stack_full_desc_nd">堆栈跟踪中未发现 LSPosed/lspd 类名。</string>
+    <string name="chk_lsposed_stack_full_reason">发现帧：%1$s。当 LSPosed 被注入且某个模块的作用域包含此应用时，lspd 类名会出现在调用栈中。</string>
+    <string name="chk_lsposed_stack_full_reason_nd">异常堆栈跟踪中未出现 lsposed/lspd/edxposed 类名。</string>
+    <string name="chk_lsposed_stack_full_solution">移除 LSPosed 或禁用所有作用域包含此应用的模块。</string>
+
+    <string name="chk_smaps_hooks_name">通过 SMAPS 检测到内联钩子</string>
+    <string name="chk_smaps_hooks_name_nd">SMAPS 内联钩子检查</string>
+    <string name="chk_smaps_hooks_desc">关键库代码段存在脏（已修改）页面。</string>
+    <string name="chk_smaps_hooks_desc_nd">SMAPS 中未发现内联钩子特征。</string>
+    <string name="chk_smaps_hooks_reason">受影响的库：%1$s。r-xp（读-执行）代码段中非零的 Private_Dirty 值表明代码页因 Linux 写时复制而被复制。这是 LSPosed（通过 LSPlant）、Frida 或 Zygisk 模块进行内联钩挂的特征。</string>
+    <string name="chk_smaps_hooks_reason_nd">所有关键库代码段的 Private_Dirty = 0。</string>
+    <string name="chk_smaps_hooks_solution">移除 LSPosed、Frida gadget 或任何 Zygisk 钩挂模块。</string>
+
+    <string name="chk_zygisk_module_inject_name">已将 Zygisk 模块注入进程</string>
+    <string name="chk_zygisk_module_inject_name_nd">Zygisk 模块注入</string>
+    <string name="chk_zygisk_module_inject_desc">Zygisk 模块库已映射到此进程中。</string>
+    <string name="chk_zygisk_module_inject_desc_nd">进程内存映射中未发现 Zygisk 模块库。</string>
+    <string name="chk_zygisk_module_inject_reason">在 /proc/self/maps 中发现 Zygisk 模块路径：%1$s。Zygisk 从 /data/adb/modules/&lt;名称&gt;/zygisk/ 将每个已启用模块的原生库直接加载到应用进程中。看到此路径确认 Zygisk 处于活动状态并已在此处注入模块。</string>
+    <string name="chk_zygisk_module_inject_reason_nd">在 /proc/self/maps 中未发现 /data/adb/modules/*/zygisk/ 路径。</string>
+    <string name="chk_zygisk_module_inject_solution">在 Magisk 设置中禁用 Zygisk，或移除注入模块。</string>
+
+    <string name="chk_lspd_process_name">已检测到 LSPosed 守护进程</string>
+    <string name="chk_lspd_process_name_nd">LSPosed 守护进程</string>
+    <string name="chk_lspd_process_desc">LSPosed 守护进程（lspd）正在此设备上运行。</string>
+    <string name="chk_lspd_process_desc_nd">未发现 LSPosed 守护进程（lspd）。</string>
+    <string name="chk_lspd_process_reason">在 /proc 中发现名为 \'lspd\' 的进程。lspd 是 LSPosed 框架的后台守护进程，通过 Zygote 管理钩子模块并向应用进程注入代码。发现：%1$s。</string>
+    <string name="chk_lspd_process_reason_nd">在 /proc 中未发现名为 \'lspd\' 的进程。</string>
+    <string name="chk_lspd_process_solution">通过其管理器应用卸载 LSPosed 并重启以停止守护进程。</string>
+
+
+    <!-- AdvancedRootDetector 字符串 -->
+    <string name="chk_adv_su_path_name">发现 Su 二进制文件</string>
+    <string name="chk_adv_su_path_name_nd">Su 二进制文件检查</string>
+    <string name="chk_adv_su_path_desc">在设备上发现了 su 二进制文件。</string>
+    <string name="chk_adv_su_path_desc_nd">在常见位置未发现 su 二进制文件。</string>
+    <string name="chk_adv_su_path_reason">在以下位置发现：%1$s</string>
+    <string name="chk_adv_su_path_reason_nd">在所检查的位置均未发现 su 二进制文件。</string>
+    <string name="chk_adv_su_path_solution">从报告的路径中删除 su 二进制文件。</string>
+
+    <string name="chk_adv_rw_sys_name">系统分区以读写方式挂载</string>
+    <string name="chk_adv_rw_sys_desc">一个或多个系统分区以读写方式挂载。</string>
+    <string name="chk_adv_rw_sys_desc_nd">系统分区以只读方式挂载。</string>
+    <string name="chk_adv_rw_sys_desc_error">无法检查系统挂载标志。</string>
+    <string name="chk_adv_rw_sys_reason">读写挂载点：%1$s。安全设备上系统分区应以只读方式挂载。</string>
+    <string name="chk_adv_rw_sys_reason_nd">所有已检查的系统分区均以只读方式挂载。</string>
+    <string name="chk_adv_rw_sys_solution">将系统分区重新挂载为只读，或恢复出厂镜像。</string>
+    <string name="chk_adv_rw_sys_solution_error">通过 adb shell mount 手动验证挂载标志。</string>
+
+    <string name="chk_adv_bootloader_name">Bootloader 已解锁</string>
+    <string name="chk_adv_bootloader_name_nd">Bootloader 锁定状态</string>
+    <string name="chk_adv_bootloader_desc">Bootloader 疑似已解锁。</string>
+    <string name="chk_adv_bootloader_desc_nd">未发现 Bootloader 解锁指标。</string>
+    <string name="chk_adv_bootloader_reason">指标：%1$s</string>
+    <string name="chk_adv_bootloader_reason_nd">未检测到 Bootloader 解锁指标。</string>
+    <string name="chk_adv_bootloader_solution">如可能，通过 OEM/fastboot 重新锁定 Bootloader。</string>
+
+    <string name="chk_adv_dm_verity_name">dm-verity 已禁用</string>
+    <string name="chk_adv_dm_verity_name_nd">dm-verity 状态</string>
+    <string name="chk_adv_dm_verity_desc">dm-verity 已禁用，允许修改系统分区。</string>
+    <string name="chk_adv_dm_verity_desc_nd">dm-verity 疑似已启用。</string>
+    <string name="chk_adv_dm_verity_reason">指标：%1$s。dm-verity 在启动时验证系统分区完整性。</string>
+    <string name="chk_adv_dm_verity_reason_nd">未检测到 dm-verity 禁用指标。</string>
+    <string name="chk_adv_dm_verity_solution">通过 fastboot 重新启用 dm-verity 或恢复出厂镜像。</string>
+
+    <string name="chk_adv_dang_props_name">发现危险系统属性</string>
+    <string name="chk_adv_dang_props_name_nd">危险系统属性</string>
+    <string name="chk_adv_dang_props_desc">与 Root 或调试相关的危险系统属性已被设置。</string>
+    <string name="chk_adv_dang_props_desc_nd">未检测到危险系统属性。</string>
+    <string name="chk_adv_dang_props_reason">发现：%1$s</string>
+    <string name="chk_adv_dang_props_reason_nd">未发现危险系统属性。</string>
+    <string name="chk_adv_dang_props_solution">删除或取消设置危险属性并重启。</string>
+
+    <string name="chk_adv_dev_opts_name">开发者选项已启用</string>
+    <string name="chk_adv_dev_opts_desc">此设备已启用 Android 开发者选项。</string>
+    <string name="chk_adv_dev_opts_desc_nd">开发者选项已禁用。</string>
+    <string name="chk_adv_dev_opts_desc_error">无法确定开发者选项状态。</string>
+    <string name="chk_adv_dev_opts_reason">开发者选项设置已启用（值=1）。</string>
+    <string name="chk_adv_dev_opts_reason_nd">开发者选项设置已禁用（值=0）。</string>
+    <string name="chk_adv_dev_opts_solution">通过 设置 → 系统 → 开发者选项 → 关闭 禁用。</string>
+    <string name="chk_adv_dev_opts_solution_error">在 设置 → 系统 → 开发者选项 中手动检查。</string>
+
+    <string name="chk_adv_adb_name">ADB 调试已启用</string>
+    <string name="chk_adv_adb_desc">此设备已启用 USB 调试（ADB）。</string>
+    <string name="chk_adv_adb_desc_nd">ADB 调试已禁用。</string>
+    <string name="chk_adv_adb_desc_error">无法确定 ADB 状态。</string>
+    <string name="chk_adv_adb_reason">adb_enabled 设置已启用（值=1）。</string>
+    <string name="chk_adv_adb_reason_nd">ADB 调试未启用（值=0）。</string>
+    <string name="chk_adv_adb_solution">通过 设置 → 开发者选项 → USB 调试 → 关闭 禁用。</string>
+    <string name="chk_adv_adb_solution_error">在 设置 → 开发者选项 中手动检查。</string>
+
+    <string name="chk_adv_frida_proc_name">检测到 Frida 服务进程</string>
+    <string name="chk_adv_frida_proc_desc">此设备正在运行 Frida 服务进程。</string>
+    <string name="chk_adv_frida_proc_desc_nd">未检测到 Frida 服务进程。</string>
+    <string name="chk_adv_frida_proc_desc_error">无法扫描进程以检查 Frida。</string>
+    <string name="chk_adv_frida_proc_reason">发现 Frida 进程：%1$s</string>
+    <string name="chk_adv_frida_proc_reason_nd">在 /proc 中未发现 Frida 服务进程。</string>
+    <string name="chk_adv_frida_proc_solution">终止并从设备卸载 frida-server。</string>
+    <string name="chk_adv_frida_proc_solution_error">使用 adb shell ps 手动验证。</string>
+
+    <string name="chk_adv_frida_port_name">Frida 默认端口开放</string>
+    <string name="chk_adv_frida_port_name_nd">Frida 默认端口检查</string>
+    <string name="chk_adv_frida_port_desc">Frida 的默认端口（27042）在此设备上开放。</string>
+    <string name="chk_adv_frida_port_desc_nd">Frida 的默认端口未开放。</string>
+    <string name="chk_adv_frida_port_reason">端口 27042 开放 — 这是 Frida 服务的默认端口。</string>
+    <string name="chk_adv_frida_port_reason_nd">端口 27042 未开放。</string>
+    <string name="chk_adv_frida_port_solution">终止 frida-server 并从设备中删除。</string>
+
+    <string name="chk_adv_frida_files_name">发现 Frida 相关文件</string>
+    <string name="chk_adv_frida_files_name_nd">Frida 文件检查</string>
+    <string name="chk_adv_frida_files_desc">在文件系统中发现了与 Frida 相关的文件。</string>
+    <string name="chk_adv_frida_files_desc_nd">未发现 Frida 相关文件。</string>
+    <string name="chk_adv_frida_files_reason">发现：%1$s</string>
+    <string name="chk_adv_frida_files_reason_nd">在所检查的位置未发现 Frida 文件。</string>
+    <string name="chk_adv_frida_files_solution">删除 Frida 文件并从设备中删除 frida-server。</string>
+
+    <string name="chk_adv_riru_name">检测到 Riru（Riru Core）</string>
+    <string name="chk_adv_riru_name_nd">Riru 模块检查</string>
+    <string name="chk_adv_riru_desc">Riru（Riru Core）注入框架存在。</string>
+    <string name="chk_adv_riru_desc_nd">未检测到 Riru 框架文件。</string>
+    <string name="chk_adv_riru_reason">发现 Riru 指标：%1$s</string>
+    <string name="chk_adv_riru_reason_nd">未发现 Riru 相关文件或进程。</string>
+    <string name="chk_adv_riru_solution">通过 Magisk Manager 移除 Riru 模块并重启。</string>
+
+    <string name="chk_adv_twrp_name">检测到自定义 Recovery</string>
+    <string name="chk_adv_twrp_name_nd">自定义 Recovery 检查</string>
+    <string name="chk_adv_twrp_desc">已安装自定义 Recovery（TWRP 或类似工具）。</string>
+    <string name="chk_adv_twrp_desc_nd">未发现自定义 Recovery 指标。</string>
+    <string name="chk_adv_twrp_reason">自定义 Recovery 指标：%1$s</string>
+    <string name="chk_adv_twrp_reason_nd">未检测到自定义 Recovery 指标。</string>
+    <string name="chk_adv_twrp_solution">刷入原厂 Recovery 并重新锁定 Bootloader。</string>
+
+    <string name="chk_adv_emulator_name">检测到模拟器</string>
+    <string name="chk_adv_emulator_name_nd">模拟器检查</string>
+    <string name="chk_adv_emulator_desc">此设备疑似在模拟器中运行。</string>
+    <string name="chk_adv_emulator_desc_nd">未检测到模拟器指标。</string>
+    <string name="chk_adv_emulator_reason">模拟器指标：%1$s</string>
+    <string name="chk_adv_emulator_reason_nd">未发现与模拟器相关的属性或文件。</string>
+    <string name="chk_adv_emulator_solution">在物理设备上运行应用，而非模拟器。</string>
+
+    <string name="chk_adv_inj_libs_name">检测到注入的库文件</string>
+    <string name="chk_adv_inj_libs_desc">可疑的库文件已映射到此进程中。</string>
+    <string name="chk_adv_inj_libs_desc_nd">未在进程内存中检测到注入的库文件。</string>
+    <string name="chk_adv_inj_libs_desc_error">无法读取进程内存映射。</string>
+    <string name="chk_adv_inj_libs_reason">可疑路径：%1$s</string>
+    <string name="chk_adv_inj_libs_reason_nd">在 /proc/self/maps 中未发现可疑库路径。</string>
+    <string name="chk_adv_inj_libs_solution">移除 Hook 框架或注入的库文件。</string>
+    <string name="chk_adv_inj_libs_solution_error">手动检查 /proc/self/maps 中的可疑条目。</string>
+
+    <string name="chk_adv_zygisk_sock_name">检测到 Zygisk Companion Socket</string>
+    <string name="chk_adv_zygisk_sock_name_nd">Zygisk Companion Socket</string>
+    <string name="chk_adv_zygisk_sock_desc">在抽象 Socket 命名空间中发现了 Zygisk Companion Socket。</string>
+    <string name="chk_adv_zygisk_sock_desc_nd">未发现 Zygisk Companion Socket。</string>
+    <string name="chk_adv_zygisk_sock_desc_error">无法扫描抽象 Socket 命名空间。</string>
+    <string name="chk_adv_zygisk_sock_reason">发现 Socket：%1$s。Zygisk 创建抽象 Socket 用于 Companion 进程与注入代码之间的 IPC 通信。</string>
+    <string name="chk_adv_zygisk_sock_reason_nd">在 /proc/net/unix 中未发现 Zygisk Socket 名称。</string>
+    <string name="chk_adv_zygisk_sock_solution">在 Magisk 设置中禁用 Zygisk 并重启。</string>
+    <string name="chk_adv_zygisk_sock_solution_error">手动检查 /proc/net/unix 中的 Zygisk Socket 条目。</string>
+
+    <string name="chk_adv_mgsk_mods_name">检测到 Magisk 模块</string>
+    <string name="chk_adv_mgsk_mods_desc">此设备上发现了激活的 Magisk 模块。</string>
+    <string name="chk_adv_mgsk_mods_desc_nd">未发现激活的 Magisk 模块。</string>
+    <string name="chk_adv_mgsk_mods_desc_nodir">Magisk 模块目录不存在。</string>
+    <string name="chk_adv_mgsk_mods_reason">激活的模块：%1$s</string>
+    <string name="chk_adv_mgsk_mods_reason_nd">在 /data/adb/modules/ 中未发现已启用的模块目录。</string>
+    <string name="chk_adv_mgsk_mods_reason_nodir">/data/adb/modules/ 目录不存在 — Magisk 可能未安装。</string>
+    <string name="chk_adv_mgsk_mods_solution">通过 Magisk Manager 移除或禁用 Magisk 模块。</string>
+
+    <string name="chk_adv_debugger_name">检测到调试器</string>
+    <string name="chk_adv_debugger_name_nd">调试器连接检查</string>
+    <string name="chk_adv_debugger_desc">有调试器连接到此进程。</string>
+    <string name="chk_adv_debugger_desc_nd">此进程未连接调试器。</string>
+    <string name="chk_adv_debugger_desc_error">无法读取进程状态以检查调试器。</string>
+    <string name="chk_adv_debugger_reason">TracerPid=%1$d — /proc/self/status 中非零的 TracerPid 表示已连接调试器。</string>
+    <string name="chk_adv_debugger_reason_nd">TracerPid=0 — 未连接调试器。</string>
+    <string name="chk_adv_debugger_solution">断开调试器连接，不要在调试器下运行应用。</string>
+    <string name="chk_adv_debugger_solution_error">手动检查 /proc/self/status 的 TracerPid。</string>
+
+    <string name="chk_adv_cloaking_name">检测到 Root 隐藏软件</string>
+    <string name="chk_adv_cloaking_name_nd">Root 隐藏检查</string>
+    <string name="chk_adv_cloaking_desc">Root 隐藏软件（MagiskHide、Shamiko 等）正在活动。</string>
+    <string name="chk_adv_cloaking_desc_nd">未检测到 Root 隐藏指标。</string>
+    <string name="chk_adv_cloaking_reason">隐藏指标：%1$s</string>
+    <string name="chk_adv_cloaking_reason_nd">未发现 Root 隐藏指标。</string>
+    <string name="chk_adv_cloaking_solution">禁用 MagiskHide/DenyList 或移除隐藏模块并重启。</string>
+
+    <string name="chk_adv_kern_mods_name">检测到 Root 内核模块</string>
+    <string name="chk_adv_kern_mods_desc">已加载与 Root 相关的可疑内核模块。</string>
+    <string name="chk_adv_kern_mods_desc_nd">未发现可疑内核模块。</string>
+    <string name="chk_adv_kern_mods_desc_error">无法读取内核模块列表。</string>
+    <string name="chk_adv_kern_mods_reason">可疑模块：%1$s</string>
+    <string name="chk_adv_kern_mods_reason_nd">在 /proc/modules 中未发现可疑内核模块。</string>
+    <string name="chk_adv_kern_mods_solution">移除或卸载可疑内核模块并重启。</string>
+    <string name="chk_adv_kern_mods_solution_error">手动检查 /proc/modules 中的可疑条目。</string>
+
+    <string name="no_action_required">无需采取任何行动。</string>
+    <string name="chk_adv_rw_sys_name_nd">系统分区挂载</string>
+    <string name="chk_adv_dev_opts_name_nd">开发者选项</string>
+    <string name="chk_adv_adb_name_nd">USB 调试</string>
+    <string name="chk_adv_frida_proc_name_nd">Frida 进程检查</string>
+    <string name="chk_adv_inj_libs_name_nd">注入库文件检查</string>
+    <string name="chk_adv_kern_mods_name_nd">Root 内核模块检查</string>
+    <string name="chk_adv_mgsk_mods_name_nd">Magisk 模块检查</string>
+
+    <!-- ExtraRootDetector: Check 1 - LD_PRELOAD -->
+    <string name="chk_ext_ldpreload_name">LD_PRELOAD / LD_LIBRARY_PATH 已设置</string>
+    <string name="chk_ext_ldpreload_desc">检测到链接器环境变量注入。</string>
+    <string name="chk_ext_ldpreload_reason">发现：%1$s。设置 LD_PRELOAD 会使动态链接器在所有其他库之前加载攻击者指定的库，从而允许在任意进程中拦截函数调用。Frida gadget、Substrate 式钩子及部分 su 包装器均使用此技术。</string>
+    <string name="chk_ext_ldpreload_solution">从环境变量中删除 LD_PRELOAD/LD_LIBRARY_PATH，并卸载任何通过链接器注入的钩子框架。</string>
+    <string name="chk_ext_ldpreload_name_nd">LD_PRELOAD 环境变量</string>
+    <string name="chk_ext_ldpreload_desc_nd">未检测到 LD_PRELOAD 注入。</string>
+    <string name="chk_ext_ldpreload_reason_nd">LD_PRELOAD 和 LD_LIBRARY_PATH 未设置为可疑值。</string>
+    <string name="chk_ext_ldpreload_desc_error">无法读取进程环境变量。</string>
+    <string name="chk_ext_ldpreload_solution_error">请确保 /proc/self/environ 可访问。</string>
+    <!-- ExtraRootDetector: Check 2 - Linux Capabilities -->
+    <string name="chk_ext_caps_name">已提升 Linux 能力</string>
+    <string name="chk_ext_caps_desc">进程具有非零 Linux 能力。</string>
+    <string name="chk_ext_caps_reason">CapPrm=%1$s，CapEff=%2$s。普通 Android 应用程序运行时能力值为零。非零值表明该进程已被授予提升的 Linux 权限，这通常由 su 或 Root 框架操控进程时发生。</string>
+    <string name="chk_ext_caps_solution">撤销提升的能力。这些能力通常由 Root 框架授予。</string>
+    <string name="chk_ext_caps_name_nd">Linux 能力</string>
+    <string name="chk_ext_caps_desc_nd">进程无提升的 Linux 能力。</string>
+    <string name="chk_ext_caps_reason_nd">CapPrm=0 且 CapEff=0 — 沙箱化 Android 应用的正常状态。</string>
+    <string name="chk_ext_caps_desc_error">无法读取进程状态。</string>
+    <string name="chk_ext_caps_solution_error">请确保 /proc/self/status 可访问。</string>
+    <!-- ExtraRootDetector: Check 3 - Mountinfo Overlay -->
+    <string name="chk_ext_overlay_name">检测到 Magisk/KSU 叠加挂载</string>
+    <string name="chk_ext_overlay_desc">在 /proc/self/mountinfo 中发现 Root 框架叠加挂载条目。</string>
+    <string name="chk_ext_overlay_reason">/proc/self/mountinfo 中显示 %1$d 个来自 Magisk/KSU 目录（/data/adb/magisk 或 /data/adb/ksu）的挂载条目。这些是 Root 框架模块系统创建的绑定挂载，用于将修改后的文件覆盖到原始系统分区。</string>
+    <string name="chk_ext_overlay_solution">删除 Root 框架模块或完全卸载 Root 框架。</string>
+    <string name="chk_ext_overlay_name_nd">Root 叠加挂载</string>
+    <string name="chk_ext_overlay_desc_nd">未发现 Magisk/KSU 叠加挂载。</string>
+    <string name="chk_ext_overlay_reason_nd">在 /proc/self/mountinfo 中未发现 Root 框架标记。</string>
+    <string name="chk_ext_overlay_desc_error">无法读取 /proc/self/mountinfo。</string>
+    <string name="chk_ext_overlay_solution_error">请确保 /proc/self/mountinfo 可访问。</string>
+    <!-- ExtraRootDetector: Check 4 - tmpfs at /sbin -->
+    <string name="chk_ext_sbin_tmpfs_name">tmpfs 挂载于 /sbin</string>
+    <string name="chk_ext_sbin_tmpfs_desc">tmpfs 挂载在 /sbin 上 — 旧版 Magisk 特征。</string>
+    <string name="chk_ext_sbin_tmpfs_reason">v24 之前的 Magisk 版本会在 /sbin 上挂载 tmpfs，以存储其二进制文件并规避检测。生产设备上在 /sbin 挂载 tmpfs 是 Magisk 的强烈特征。</string>
+    <string name="chk_ext_sbin_tmpfs_solution">卸载 Magisk 后此挂载将被移除。</string>
+    <string name="chk_ext_sbin_tmpfs_name_nd">/sbin tmpfs</string>
+    <string name="chk_ext_sbin_tmpfs_desc_nd">/sbin 上无 tmpfs 挂载。</string>
+    <string name="chk_ext_sbin_tmpfs_reason_nd">/sbin 上未发现 tmpfs 挂载。</string>
+    <string name="chk_ext_sbin_tmpfs_desc_error">无法读取 /proc/mounts。</string>
+    <string name="chk_ext_sbin_tmpfs_solution_error">请确保 /proc/mounts 可访问。</string>
+    <!-- ExtraRootDetector: Check 5 - Privileged Processes -->
+    <string name="chk_ext_priv_proc_name">发现意外的 Root 进程</string>
+    <string name="chk_ext_priv_proc_desc">存在以 uid=0（root）运行的意外进程。</string>
+    <string name="chk_ext_priv_proc_reason">发现 %1$d 个意外的 root 进程：%2$s。在原厂设备上，uid=0 进程集合是固定的。额外的 root 进程表明存在活跃的 Root 框架（如 magiskd、ksud 等）。</string>
+    <string name="chk_ext_priv_proc_solution">停止或移除 Root 框架以消除意外的 root 进程。</string>
+    <string name="chk_ext_priv_proc_name_nd">特权进程</string>
+    <string name="chk_ext_priv_proc_desc_nd">未发现意外的 uid=0 进程。</string>
+    <string name="chk_ext_priv_proc_reason_nd">仅发现预期的系统进程以 root 权限运行。</string>
+    <string name="chk_ext_priv_proc_desc_error">无法枚举进程。</string>
+    <string name="chk_ext_priv_proc_solution_error">请确保 /proc 可访问。</string>
+    <!-- ExtraRootDetector: Check 6 - Terminal/Hacking Apps -->
+    <string name="chk_ext_hacking_apps_name">检测到终端/黑客工具</string>
+    <string name="chk_ext_hacking_apps_desc">已安装终端模拟器或安全工具应用。</string>
+    <string name="chk_ext_hacking_apps_reason">发现 %1$d 个应用：%2$s。这些应用提供终端访问、SSH、脚本执行环境或高级文件系统访问，许多应用需要或可以获取 Root 权限。</string>
+    <string name="chk_ext_hacking_apps_solution">如非合法用途需要，请卸载终端和黑客工具应用。</string>
+    <string name="chk_ext_hacking_apps_name_nd">终端/黑客工具</string>
+    <string name="chk_ext_hacking_apps_desc_nd">未检测到终端模拟器或黑客工具。</string>
+    <string name="chk_ext_hacking_apps_reason_nd">未发现已知的终端或安全工具软件包。</string>
+    <!-- ExtraRootDetector: Check 7 - Security Patch Age -->
+    <string name="chk_ext_sec_patch_name_critical">安全补丁严重过时</string>
+    <string name="chk_ext_sec_patch_desc_critical">安全补丁已有 %1$d 个月（&gt;= 2 年）。</string>
+    <string name="chk_ext_sec_patch_reason_critical">安全补丁级别：%1$s（%2$d 个月前）。已 Root 设备通常为保留 Root 状态而避免 OTA 更新，导致安全补丁严重过时，存在已知 CVE 漏洞风险。</string>
+    <string name="chk_ext_sec_patch_solution_critical">请应用所有可用的 OTA/安全更新。</string>
+    <string name="chk_ext_sec_patch_name_warn">安全补丁已过时</string>
+    <string name="chk_ext_sec_patch_desc_warn">安全补丁已有 %1$d 个月（&gt;= 1 年）。</string>
+    <string name="chk_ext_sec_patch_reason_warn">安全补丁级别：%1$s（%2$d 个月前）。保持补丁更新对设备安全至关重要。</string>
+    <string name="chk_ext_sec_patch_solution_warn">请应用制造商提供的所有安全更新。</string>
+    <string name="chk_ext_sec_patch_name_nd">安全补丁级别</string>
+    <string name="chk_ext_sec_patch_desc_nd">安全补丁级别较新（&lt; 12 个月）。</string>
+    <string name="chk_ext_sec_patch_reason_nd">补丁日期：%1$s（%2$d 个月前）。</string>
+    <string name="chk_ext_sec_patch_desc_error">无法确定安全补丁年龄。</string>
+    <string name="chk_ext_sec_patch_solution_error">请检查 设置 → 关于手机 → Android 安全补丁程序级别。</string>
+    <!-- ExtraRootDetector: Check 8 - Test-Keys Build -->
+    <string name="chk_ext_test_keys_name">检测到测试密钥构建</string>
+    <string name="chk_ext_test_keys_desc">设备运行的是测试密钥签名的构建。</string>
+    <string name="chk_ext_test_keys_reason">ro.build.tags=%1$s。生产（零售）Android 构建使用发布密钥签名并报告 \'release-keys\'。\'test-keys\' 表示构建使用 Android 公开已知的 AOSP 测试密钥签名，这是自定义 ROM（LineageOS、AOSP 构建）和开发者镜像的典型特征，此类构建通常具有 Root 访问权限或较弱的安全策略。</string>
+    <string name="chk_ext_test_keys_solution">请使用 OEM 提供的、经发布密钥签名的官方 ROM。</string>
+    <string name="chk_ext_test_keys_name_nd">构建签名密钥</string>
+    <string name="chk_ext_test_keys_desc_nd">构建使用发布密钥签名。</string>
+    <string name="chk_ext_test_keys_reason_nd">ro.build.tags=%1$s — 非 test-keys。</string>
+    <!-- ExtraRootDetector: Check 9 - OEM Unlock -->
+    <string name="chk_ext_oem_unlock_name">OEM 解锁已启用</string>
+    <string name="chk_ext_oem_unlock_desc">OEM 解锁当前已启用。</string>
+    <string name="chk_ext_oem_unlock_reason">OEM 解锁已启用：%1$s。当 OEM 解锁被允许时，用户可以在开发者选项中解锁 bootloader。启用 OEM 解锁设置表明设备已为 Root 做好准备。</string>
+    <string name="chk_ext_oem_unlock_solution">通过 设置 → 开发者选项 → OEM 解锁 → 关闭 来禁用 OEM 解锁。</string>
+    <string name="chk_ext_oem_unlock_name_nd">OEM 解锁</string>
+    <string name="chk_ext_oem_unlock_desc_nd">OEM 解锁似乎未启用。</string>
+    <string name="chk_ext_oem_unlock_reason_nd">未发现 OEM 解锁已启用的指标。</string>
+    <!-- ExtraRootDetector: Check 10 - Mock Locations -->
+    <string name="chk_ext_mock_loc_name">模拟位置已启用</string>
+    <string name="chk_ext_mock_loc_desc">模拟位置提供者已启用。</string>
+    <string name="chk_ext_mock_loc_reason">模拟位置允许任何应用提供虚假的 GPS 坐标，常用于 GPS 欺骗和游戏作弊。详细信息：%1$s</string>
+    <string name="chk_ext_mock_loc_solution">禁用模拟位置：设置 → 开发者选项 → 模拟位置应用 → 无。</string>
+    <string name="chk_ext_mock_loc_name_nd">模拟位置</string>
+    <string name="chk_ext_mock_loc_desc_nd">模拟位置未启用。</string>
+    <string name="chk_ext_mock_loc_reason_nd">allow_mock_location=0 且未配置模拟位置应用。</string>
+    <string name="chk_ext_mock_loc_desc_error">无法读取模拟位置设置。</string>
+    <string name="chk_ext_mock_loc_solution_error">请在 设置 → 开发者选项 中手动检查。</string>
+    <!-- ExtraRootDetector: Check 11 - Wireless ADB -->
+    <string name="chk_ext_wireless_adb_name">ADB Wi-Fi 调试已激活</string>
+    <string name="chk_ext_wireless_adb_desc">ADB Wi-Fi 调试端口正在监听。</string>
+    <string name="chk_ext_wireless_adb_reason">端口 %1$s 处于 LISTEN 状态。端口 5555 是 ADB Wi-Fi 调试的默认端口。同一网络上的任何设备都可以连接并发出 ADB 命令，包括安装/卸载应用，以及（在调试构建上）获取 shell 访问权限。</string>
+    <string name="chk_ext_wireless_adb_solution">通过 \'adb disconnect\' 或 设置 → 无线调试 → 关闭 来禁用。</string>
+    <string name="chk_ext_wireless_adb_name_nd">ADB Wi-Fi 调试</string>
+    <string name="chk_ext_wireless_adb_desc_nd">未检测到 ADB Wi-Fi 端口监听。</string>
+    <string name="chk_ext_wireless_adb_reason_nd">端口 5555/5037 不处于 LISTEN 状态。</string>
+    <!-- ExtraRootDetector: Check 12 - BusyBox -->
+    <string name="chk_ext_busybox_name">BusyBox 已安装</string>
+    <string name="chk_ext_busybox_desc">发现 BusyBox 二进制文件。</string>
+    <string name="chk_ext_busybox_reason">发现：%1$s。BusyBox 是一套 Unix 命令行工具（ls、cp、wget 等），通常与 Root 一起安装以扩展 shell 功能。在 /system/xbin 或 /sbin 中存在通常需要先进行 Root。</string>
+    <string name="chk_ext_busybox_solution">通过 BusyBox 卸载程序应用或手动删除二进制文件来移除。</string>
+    <string name="chk_ext_busybox_name_nd">BusyBox</string>
+    <string name="chk_ext_busybox_desc_nd">未发现 BusyBox。</string>
+    <string name="chk_ext_busybox_reason_nd">在常见位置未发现 BusyBox 二进制文件。</string>
+    <!-- ExtraRootDetector: Check 13 - SUID su Binary -->
+    <string name="chk_ext_su_suid_name">检测到 SUID su 二进制文件</string>
+    <string name="chk_ext_su_suid_desc">发现 SUID root su 二进制文件。</string>
+    <string name="chk_ext_su_suid_reason">SUID 二进制文件：%1$s。SUID root su 二进制文件可被任何用户执行以获取 root 权限，这是 Unix/Android 上的经典授权 Root 机制。</string>
+    <string name="chk_ext_su_suid_solution">删除 su 二进制文件或撤销其 SUID 位：\'chmod 755 /system/bin/su\'</string>
+    <string name="chk_ext_su_suid_name_nd">SUID su 二进制文件</string>
+    <string name="chk_ext_su_suid_desc_nd">未检测到 SUID su 二进制文件。</string>
+    <string name="chk_ext_su_suid_reason_nd">在常见路径上未发现 SUID root su 二进制文件。</string>
+    <!-- ExtraRootDetector: Check 14 - Shamiko/ZygiskAssist -->
+    <string name="chk_ext_shamiko_name">发现检测规避模块</string>
+    <string name="chk_ext_shamiko_desc">检测到 Root 检测绕过模块。</string>
+    <string name="chk_ext_shamiko_reason">发现：%1$s。Shamiko、Zygisk-Assistant 和 ReZygisk 是专门设计用于使用 DenyList/允许列表向应用隐藏 Root 的 Zygisk 模块。Play Integrity Fix 模块会伪造 Play 完整性 API 结果。这些表明存在主动隐藏 Root 的行为。</string>
+    <string name="chk_ext_shamiko_solution">从 Magisk Manager → 模块 中移除隐藏模块。</string>
+    <string name="chk_ext_shamiko_name_nd">检测规避模块</string>
+    <string name="chk_ext_shamiko_desc_nd">未发现 Shamiko/ZygiskAssist 检测绕过模块。</string>
+    <string name="chk_ext_shamiko_reason_nd">未发现已知的检测绕过模块目录或软件包。</string>
+    <!-- ExtraRootDetector: Check 15 - Hidden System Bind-Mounts -->
+    <string name="chk_ext_sys_mounts_name">可疑的系统绑定挂载</string>
+    <string name="chk_ext_sys_mounts_desc">检测到 Root 框架对 /system 的绑定挂载。</string>
+    <string name="chk_ext_sys_mounts_reason">Magisk 和 KernelSU 模块通过从 /data/adb 绑定挂载修改后的副本来替换 /system 中的文件。发现的绑定挂载：%1$s。这些挂载将原始系统文件替换为模块提供的版本。</string>
+    <string name="chk_ext_sys_mounts_solution">移除 Root 模块或卸载 Root 框架。</string>
+    <string name="chk_ext_sys_mounts_name_nd">系统绑定挂载</string>
+    <string name="chk_ext_sys_mounts_desc_nd">未发现可疑的 /system 绑定挂载。</string>
+    <string name="chk_ext_sys_mounts_reason_nd">未发现来自 Root 框架（/data/adb）对 /system、/vendor 或 /product 的绑定挂载。</string>
+    <string name="chk_ext_sys_mounts_desc_error">无法读取 /proc/self/mountinfo。</string>
+    <string name="chk_ext_sys_mounts_solution_error">请确保 /proc/self/mountinfo 可访问。</string>
+
+
+    <!-- LunaDetector: Check 1 - LSPosed API Property -->
+    <string name="chk_luna_lsp_prop_name">检测到 LSPosed API 属性</string>
+    <string name="chk_luna_lsp_prop_desc">发现 LSPosed 特有的系统属性。</string>
+    <string name="chk_luna_lsp_prop_reason">Luna 方法 (findlsp)：对 LSPosed API 属性执行 __system_property_get。发现：%1$s。persist.lsp.api 由 LSPosed 设置，包含其 API 版本号。</string>
+    <string name="chk_luna_lsp_prop_solution">禁用或卸载 LSPosed 以移除这些属性。</string>
+    <string name="chk_luna_lsp_prop_name_nd">LSPosed API 属性</string>
+    <string name="chk_luna_lsp_prop_desc_nd">未发现 LSPosed 特有的系统属性。</string>
+    <string name="chk_luna_lsp_prop_reason_nd">Luna 方法 (findlsp)：未发现已知的 LSPosed 系统属性（persist.lsp.api、init.svc.lspd）。</string>
+    <!-- LunaDetector: Check 2 - KernelSU Daemon -->
+    <string name="chk_luna_ksu_daemon_name">KernelSU 守护进程服务属性</string>
+    <string name="chk_luna_ksu_daemon_desc">发现 KernelSU 守护进程服务属性。</string>
+    <string name="chk_luna_ksu_daemon_reason">Luna 方法 (findksu)：__system_property_get 确认了 KernelSU 守护进程。发现：%1$s。当 KernelSU 用户空间守护进程（ksuud）活跃时，Android init 系统会设置 init.svc.ksuud。</string>
+    <string name="chk_luna_ksu_daemon_solution">通过 KernelSU Manager 应用卸载 KernelSU，或刷入原厂内核。</string>
+    <string name="chk_luna_ksu_daemon_desc_nd">未发现 KernelSU 守护进程服务属性。</string>
+    <string name="chk_luna_ksu_daemon_reason_nd">Luna 方法 (findksu)：未发现 KernelSU 服务属性（init.svc.ksuud、init.svc.ksu）。</string>
+    <!-- LunaDetector: Check 3 - Magisk Daemon Property -->
+    <string name="chk_luna_magisk_svc_name">Magisk 守护进程服务属性</string>
+    <string name="chk_luna_magisk_svc_desc">发现 Magisk 守护进程服务属性。</string>
+    <string name="chk_luna_magisk_svc_reason">Luna 方法 (checkappnum)：__system_property_get 确认了 Magisk 守护进程。发现：%1$s。当 Magisk 守护进程运行时，Android init 系统会设置 init.svc.magiskd。</string>
+    <string name="chk_luna_magisk_svc_solution">通过 Magisk Manager 应用卸载 Magisk。</string>
+    <string name="chk_luna_magisk_svc_desc_nd">未发现 Magisk 守护进程服务属性。</string>
+    <string name="chk_luna_magisk_svc_reason_nd">Luna 方法 (checkappnum)：未发现已知的 Magisk 服务属性。</string>
+    <!-- LunaDetector: Check 4 - Root Binaries in PATH -->
+    <string name="chk_luna_path_su_name">PATH 目录中发现 Root 二进制文件</string>
+    <string name="chk_luna_path_su_desc">在 PATH 目录中发现与 Root 相关的二进制文件。</string>
+    <string name="chk_luna_path_su_reason">Luna 方法 (psdir)：扫描 getenv(PATH) 目录中的 root 二进制文件。发现：%1$s。放置在 PATH 目录中的 root 二进制文件可方便地在 shell 层面获取 root 权限。</string>
+    <string name="chk_luna_path_su_solution">移除 root 工具以消除 PATH 中的这些二进制文件。</string>
+    <string name="chk_luna_path_su_desc_nd">在 PATH 目录中未发现 root 二进制文件。</string>
+    <string name="chk_luna_path_su_reason_nd">Luna 方法 (psdir)：扫描 getenv(PATH) 目录时未发现与 root 相关的二进制文件。</string>
+    <!-- LunaDetector: Check 5 - APatch Processes -->
+    <string name="chk_luna_apatch_proc_name">检测到 APatch/Root 进程</string>
+    <string name="chk_luna_apatch_proc_desc">发现 APatch 或 root 框架进程正在运行。</string>
+    <string name="chk_luna_apatch_proc_reason">Luna 方法 (rustmagisk)：扫描 /proc 以查找 APatch/root 进程名称。发现：%1$s。apd 是 APatch 守护进程，其存在确认 APatch 处于活跃状态；magiskd 表明 Magisk 正在运行。</string>
+    <string name="chk_luna_apatch_proc_solution">通过 APatch Manager 应用卸载 APatch，或通过 Magisk Manager 卸载 Magisk。</string>
+    <string name="chk_luna_apatch_proc_name_nd">APatch/Root 进程</string>
+    <string name="chk_luna_apatch_proc_desc_nd">未检测到 APatch 或 root 框架进程。</string>
+    <string name="chk_luna_apatch_proc_reason_nd">Luna 方法 (rustmagisk)：在 /proc 中未发现与 APatch 相关的进程名称。</string>
+    <!-- LunaDetector: Check 6 - Suspicious File Size -->
+    <string name="chk_luna_file_size_name">可疑的文件大小异常</string>
+    <string name="chk_luna_file_size_desc">系统文件具有意外大小，可能表明存在篡改。</string>
+    <string name="chk_luna_file_size_reason">Luna 方法 (fhma)：stat() 检查发现文件大小异常。%1$s。Root 工具可能替换或追加内容至系统文件，导致文件大小超出预期。</string>
+    <string name="chk_luna_file_size_solution">从原厂固件镜像还原受影响的系统文件。</string>
+    <string name="chk_luna_file_size_name_nd">文件大小异常</string>
+    <string name="chk_luna_file_size_desc_nd">未检测到可疑的文件大小异常。</string>
+    <string name="chk_luna_file_size_reason_nd">Luna 方法 (fhma)：已检查系统文件大小异常，未发现异常。</string>
+    <!-- LunaDetector: Check 7 - Kernel Stat Anomaly -->
+    <string name="chk_luna_kernel_stat_name">检测到内核统计异常</string>
+    <string name="chk_luna_kernel_stat_desc">通过 /proc 检查发现内核级异常。</string>
+    <string name="chk_luna_kernel_stat_reason">Luna 方法 (checksuskernel)：内核统计异常检查发现：%1$s。Root 框架在 /proc/net/unix 中注册 UNIX 套接字，并可能以提升的 SELinux 上下文运行。</string>
+    <string name="chk_luna_kernel_stat_solution">完全卸载 root 框架后，这些内核级指标将被清除。</string>
+    <string name="chk_luna_kernel_stat_name_nd">内核统计异常</string>
+    <string name="chk_luna_kernel_stat_desc_nd">未检测到内核统计异常。</string>
+    <string name="chk_luna_kernel_stat_reason_nd">Luna 方法 (checksuskernel)：在 /proc 中未发现内核异常。</string>
+    <!-- LunaDetector: Check 8 - Magisk Proc Mounts -->
+    <string name="chk_luna_magisk_mounts_name">检测到 Magisk 挂载条目</string>
+    <string name="chk_luna_magisk_mounts_desc">在 /proc/self/mounts 中发现与 Magisk 相关的条目。</string>
+    <string name="chk_luna_magisk_mounts_reason">Luna 方法 (magiskmounts)：/proc/self/mounts 包含 Magisk 绑定挂载或叠加文件系统特征条目。发现：%1$s。Magisk 通过创建绑定挂载和叠加文件系统来隐藏自身及其模块，在挂载表中留下痕迹。</string>
+    <string name="chk_luna_magisk_mounts_solution">通过 Magisk Manager 应用卸载 Magisk 并重启以恢复原厂挂载。</string>
+    <string name="chk_luna_magisk_mounts_name_nd">Magisk 挂载条目</string>
+    <string name="chk_luna_magisk_mounts_desc_nd">未发现与 Magisk 相关的挂载条目。</string>
+    <string name="chk_luna_magisk_mounts_reason_nd">Luna 方法 (magiskmounts)：/proc/self/mounts 中不包含已知的 Magisk 特有绑定挂载或叠加文件系统标记。</string>
+    <!-- LunaDetector: Check 9 - Zygote Injection -->
+    <string name="chk_luna_zygote_inject_name">检测到 Zygote 注入</string>
+    <string name="chk_luna_zygote_inject_desc">SELinux 上下文表明可能存在 Magisk/LSPosed 的 Zygote 级注入。</string>
+    <string name="chk_luna_zygote_inject_reason">Luna 方法 (zygoteinject)：SELinux 上下文分析发现：%1$s。Magisk 和 LSPosed 钩入 Zygote 以向每个新应用进程注入代码，这会在 /proc/self/attr/ 中留下特征性 SELinux 上下文痕迹。</string>
+    <string name="chk_luna_zygote_inject_solution">卸载 Magisk 和 LSPosed，然后验证 SELinux 策略已恢复到原厂状态。</string>
+    <string name="chk_luna_zygote_inject_name_nd">Zygote 注入</string>
+    <string name="chk_luna_zygote_inject_desc_nd">在 SELinux 上下文中未发现 Zygote 注入指标。</string>
+    <string name="chk_luna_zygote_inject_reason_nd">Luna 方法 (zygoteinject)：/proc/self/attr/current 和 attr/prev 未显示 Zygote 级注入迹象。</string>
+    <!-- LunaDetector: Check 10 - Tmpfs Mount Anomaly -->
+    <string name="chk_luna_tmpfs_mount_name">检测到 Tmpfs 挂载异常</string>
+    <string name="chk_luna_tmpfs_mount_desc">在系统挂载点上检测到可疑的 tmpfs 挂载。</string>
+    <string name="chk_luna_tmpfs_mount_reason">Native-Test 方法 (tmpfsmount)：在 /mnt/obb 或 /mnt/asec 上发现异常：%1$s。Magisk 在这些路径上创建私有 tmpfs 命名空间以隔离其模块叠加层，导致同一路径出现多个 tmpfs 条目。</string>
+    <string name="chk_luna_tmpfs_mount_solution">卸载 Magisk 并重启以恢复原厂挂载命名空间。</string>
+    <string name="chk_luna_tmpfs_mount_name_nd">Tmpfs 挂载异常</string>
+    <string name="chk_luna_tmpfs_mount_desc_nd">未检测到可疑的 tmpfs 挂载异常。</string>
+    <string name="chk_luna_tmpfs_mount_reason_nd">Native-Test 方法 (tmpfsmount)：/mnt/obb 和 /mnt/asec 挂载条目显示正常。</string>
+    <!-- LunaDetector: Check 11 - Proc Scan -->
+    <string name="chk_luna_procscan_name">可疑进程 / Root 叠加挂载</string>
+    <string name="chk_luna_procscan_desc">发现 root 框架进程或与 root 相关的 overlayfs 挂载。</string>
+    <string name="chk_luna_procscan_reason">Luna 方法 (procscan)：/proc/&lt;pid&gt;/cmdline 和 /proc/self/mountinfo 揭示：%1$s。仅标记 lowerdir/upperdir 指向 root 工具路径（如 /data/adb、/magisk）或覆盖 APEX/RRO 以外系统路径的叠加层。</string>
+    <string name="chk_luna_procscan_solution">卸载 root 框架并重启。</string>
+    <string name="chk_luna_procscan_name_nd">进程 / Root 叠加层扫描</string>
+    <string name="chk_luna_procscan_desc_nd">未发现可疑的 root 进程或与 root 相关的叠加挂载。</string>
+    <string name="chk_luna_procscan_reason_nd">Luna 方法 (procscan)：/proc 中无已知 root 进程名称，mountinfo 中无与 root 工具关联的 overlayfs 条目。</string>
+    <!-- LunaDetector: Check 12 - Root Files -->
+    <string name="chk_luna_root_files_name">检测到 Root 二进制文件 / 框架文件</string>
+    <string name="chk_luna_root_files_desc">在文件系统上发现与 root 相关的文件。</string>
+    <string name="chk_luna_root_files_reason">Luna 方法 (roots)：发现的 root 文件：%1$s。</string>
+    <string name="chk_luna_root_files_solution">移除 root 工具以消除这些文件。</string>
+    <string name="chk_luna_root_files_name_nd">Root 二进制文件 / 框架文件</string>
+    <string name="chk_luna_root_files_desc_nd">在标准位置未发现 root 文件。</string>
+    <string name="chk_luna_root_files_reason_nd">Luna 方法 (roots)：在常见路径中未发现与 root 相关的文件。</string>
+    <!-- LunaDetector: Check 13 - Kernel Version -->
+    <string name="chk_luna_kernel_version_name">检测到自定义 / 已 Root 的内核</string>
+    <string name="chk_luna_kernel_version_desc">内核版本或启动参数表明存在自定义/修改的内核。</string>
+    <string name="chk_luna_kernel_version_reason">Luna 方法 (kernels)：%1$s。内核级 root（如 KernelSU 修补）需要自定义内核。</string>
+    <string name="chk_luna_kernel_version_solution">通过 Fastboot 或支持的恢复模式恢复原厂内核。</string>
+    <string name="chk_luna_kernel_version_name_nd">内核版本检查</string>
+    <string name="chk_luna_kernel_version_desc_nd">内核版本显示为标准版本。</string>
+    <string name="chk_luna_kernel_version_reason_nd">Luna 方法 (kernels)：/proc/version 中不包含自定义内核指标。</string>
+    <!-- LunaDetector: Check 14 - Attestation File -->
+    <string name="chk_luna_attestation_file_name">检测到 Root 认证文件</string>
+    <string name="chk_luna_attestation_file_desc">在 /data/local/tmp/attestation 发现 root 认证测试文件。</string>
+    <string name="chk_luna_attestation_file_reason">Luna 方法 (findauth)：access(/data/local/tmp/attestation) 成功。Root 工具创建此文件作为授权/认证标记。</string>
+    <string name="chk_luna_attestation_file_solution">使用 root 权限删除该文件：`rm /data/local/tmp/attestation`。</string>
+    <string name="chk_luna_attestation_file_name_nd">Root 认证文件</string>
+    <string name="chk_luna_attestation_file_desc_nd">未发现 root 认证文件。</string>
+    <string name="chk_luna_attestation_file_reason_nd">Luna 方法 (findauth)：/data/local/tmp/attestation 不存在。</string>
+    <!-- LunaDetector: Check 15 - Evil Modules -->
+    <string name="chk_luna_evil_modules_name">检测到 Root 原生模块</string>
+    <string name="chk_luna_evil_modules_desc">检测到已知的 root 框架原生库。</string>
+    <string name="chk_luna_evil_modules_reason">Luna 方法 (getEvilModules)：发现：%1$s。libmagiskinit.so / libzygisk.so / liblspd.so 是核心 root 框架组件。</string>
+    <string name="chk_luna_evil_modules_solution">卸载相关的 root 框架。</string>
+    <string name="chk_luna_evil_modules_name_nd">Root 原生模块</string>
+    <string name="chk_luna_evil_modules_desc_nd">未检测到已知的 root 原生模块文件。</string>
+    <string name="chk_luna_evil_modules_reason_nd">Luna 方法 (getEvilModules)：未发现已知的 root 原生库。</string>
+    <!-- LunaDetector: Check 16 - Installed Root Apps -->
+    <string name="chk_luna_root_apps_name">检测到 Root 管理应用</string>
+    <string name="chk_luna_root_apps_desc">已安装已知的 root 管理器或钩子框架应用。</string>
+    <string name="chk_luna_root_apps_reason">Luna 方法 (getapps)：已安装的 root 软件包：%1$s。</string>
+    <string name="chk_luna_root_apps_solution">卸载这些应用以移除 root 指标。</string>
+    <string name="chk_luna_root_apps_name_nd">Root 管理应用</string>
+    <string name="chk_luna_root_apps_desc_nd">未检测到已知的 root 管理应用。</string>
+    <string name="chk_luna_root_apps_reason_nd">Luna 方法 (getapps)：未安装已知的 root 管理器或钩子框架软件包。</string>
+    <!-- LunaDetector: Check 17 - Accessibility Services -->
+    <string name="chk_luna_accessibility_svc_name">无障碍服务中发现自动化工具</string>
+    <string name="chk_luna_accessibility_svc_desc">已知的 root 自动化工具作为无障碍服务处于活跃状态。</string>
+    <string name="chk_luna_accessibility_svc_reason">Luna 方法 (findapply)：发现可疑的无障碍服务：%1$s。Auto.js 及类似工具使用无障碍 API 进行基于 root 的自动化操作。</string>
+    <string name="chk_luna_accessibility_svc_solution">在设置中禁用列出的无障碍服务。</string>
+    <string name="chk_luna_accessibility_svc_name_nd">无障碍服务检查</string>
+    <string name="chk_luna_accessibility_svc_desc_nd">未检测到可疑的无障碍服务。</string>
+    <string name="chk_luna_accessibility_svc_reason_nd">Luna 方法 (findapply)：在已启用的无障碍服务中未发现已知的自动化工具。</string>
+    <!-- LunaDetector: Check 18 - Bootloader Unlocked -->
+    <string name="chk_luna_bootloader_name">Bootloader 已解锁</string>
+    <string name="chk_luna_bootloader_desc">系统属性表明 bootloader 已解锁。</string>
+    <string name="chk_luna_bootloader_reason">Luna 方法 (findbootbl)：%1$s。解锁的 bootloader 是刷入 root 框架的前提条件。</string>
+    <string name="chk_luna_bootloader_solution">通过制造商的官方程序重新锁定 bootloader。</string>
+    <string name="chk_luna_bootloader_name_nd">Bootloader 状态</string>
+    <string name="chk_luna_bootloader_desc_nd">Bootloader 似乎已锁定。</string>
+    <string name="chk_luna_bootloader_reason_nd">Luna 方法 (findbootbl)：启动属性表明 bootloader 已锁定并经过验证。</string>
+    <!-- LunaDetector: Check 19 - Vold Isolation -->
+    <string name="chk_luna_vold_isolation_name">Vold 数据隔离已禁用</string>
+    <string name="chk_luna_vold_isolation_desc">persist.sys.vold_app_data_isolation 被设置为 0（已禁用）。</string>
+    <string name="chk_luna_vold_isolation_reason">Luna 方法 (checknum)：persist.sys.vold_app_data_isolation=0。Root 工具禁用 vold 应用数据隔离以获取跨应用存储访问权限。</string>
+    <string name="chk_luna_vold_isolation_solution">重新启用存储数据隔离；卸载修改此属性的 root 工具。</string>
+    <string name="chk_luna_vold_isolation_name_nd">Vold 数据隔离</string>
+    <string name="chk_luna_vold_isolation_desc_nd">Vold 数据隔离属性未被禁用。</string>
+    <string name="chk_luna_vold_isolation_reason_nd">Luna 方法 (checknum)：persist.sys.vold_app_data_isolation=%1$s。未被 root 工具禁用。</string>
+    <!-- LunaDetector: Check 20 - Native Library Scan -->
+    <string name="chk_luna_scanlib_name">应用目录中发现 Root 原生库</string>
+    <string name="chk_luna_scanlib_desc">在已安装应用的原生库目录中发现 root 框架原生库。</string>
+    <string name="chk_luna_scanlib_reason">Luna 方法 (scanlib)：发现可疑模块：%1$s。</string>
+    <string name="chk_luna_scanlib_solution">卸载相关应用 / root 框架。</string>
+    <string name="chk_luna_scanlib_name_nd">原生库扫描</string>
+    <string name="chk_luna_scanlib_desc_nd">在任何已安装应用目录中均未发现 root 原生库。</string>
+    <string name="chk_luna_scanlib_reason_nd">Luna 方法 (scanlib)：在任何应用的 nativeLibraryDir 中均未发现已知的 root .so 文件。</string>
+    <!-- LunaDetector: Check 21 - Sensitive Packages -->
+    <string name="chk_luna_sensitive_pkgs_name">检测到 Root 隐藏 / 绕过应用</string>
+    <string name="chk_luna_sensitive_pkgs_desc">已安装旨在隐藏 root 状态或绕过检测的应用。</string>
+    <string name="chk_luna_sensitive_pkgs_reason">Luna 方法 (wNxM8s/K0ajGz)：发现软件包：%1$s。HideMyAppList 和 TaiChi 可在应用层面隐藏 root 管理器软件包。</string>
+    <string name="chk_luna_sensitive_pkgs_solution">卸载这些应用。</string>
+    <string name="chk_luna_sensitive_pkgs_name_nd">Root 隐藏 / 绕过应用</string>
+    <string name="chk_luna_sensitive_pkgs_desc_nd">未检测到 root 隐藏应用。</string>
+    <string name="chk_luna_sensitive_pkgs_reason_nd">Luna 方法 (wNxM8s/K0ajGz)：未安装已知的 root 隐藏软件包。</string>
+    <!-- LunaDetector: Check 22 - MAC Address Anomaly -->
+    <string name="chk_luna_mac_anomaly_name">MAC 地址异常（零 MAC）</string>
+    <string name="chk_luna_mac_anomaly_desc">网络接口具有零 MAC 地址，表明可能存在 root 欺骗。</string>
+    <string name="chk_luna_mac_anomaly_reason">Luna 方法 (magiskmac)：%1$s。Magisk 或 root 模块可能抑制 MAC 地址以绕过设备指纹识别。</string>
+    <string name="chk_luna_mac_anomaly_solution">调查是否有 Magisk 模块在抑制 MAC 地址。</string>
+    <string name="chk_luna_mac_anomaly_name_nd">MAC 地址检查</string>
+    <string name="chk_luna_mac_anomaly_desc_nd">未检测到零 MAC 地址异常。</string>
+    <string name="chk_luna_mac_anomaly_reason_nd">Luna 方法 (magiskmac)：所有可读的网络接口均具有非零 MAC 地址。</string>
+
+
+    <!-- RevenyInspiredDetector: Check 1 - Custom ROM -->
+    <string name="chk_reveny_custom_rom_name">检测到自定义 ROM</string>
+    <string name="chk_reveny_custom_rom_desc">检测到此设备运行自定义 ROM（如 LineageOS）。</string>
+    <string name="chk_reveny_custom_rom_reason">发现自定义 ROM 指标：%1$s。自定义 ROM 可能具有宽松的安全策略，且通常内置 root 访问权限。</string>
+    <string name="chk_reveny_custom_rom_solution">通过 fastboot 刷入官方 OEM 固件以恢复原厂环境。</string>
+    <string name="chk_reveny_custom_rom_name_nd">自定义 ROM</string>
+    <string name="chk_reveny_custom_rom_desc_nd">未检测到自定义 ROM。</string>
+    <string name="chk_reveny_custom_rom_reason_nd">未发现已知的自定义 ROM 属性或指纹关键词。</string>
+    <!-- RevenyInspiredDetector: Check 2 - Custom Kernel -->
+    <string name="chk_reveny_custom_kernel_name">检测到自定义内核</string>
+    <string name="chk_reveny_custom_kernel_desc">检测到非原厂（自定义）内核。</string>
+    <string name="chk_reveny_custom_kernel_reason">/proc/version 中的自定义内核指标：%1$s。自定义内核可能已移除安全补丁或启用了额外的能力。</string>
+    <string name="chk_reveny_custom_kernel_solution">刷入 OEM 原厂内核/boot 镜像以恢复官方内核。</string>
+    <string name="chk_reveny_custom_kernel_name_nd">自定义内核</string>
+    <string name="chk_reveny_custom_kernel_desc_nd">未发现自定义内核指标。</string>
+    <string name="chk_reveny_custom_kernel_reason_nd">内核横幅不包含已知的自定义内核字符串。</string>
+    <!-- RevenyInspiredDetector: Check 3 - Resetprop -->
+    <string name="chk_reveny_resetprop_name">检测到 Resetprop</string>
+    <string name="chk_reveny_resetprop_desc">在此设备上发现 resetprop 工具。</string>
+    <string name="chk_reveny_resetprop_reason">resetprop 是 Magisk 的实用工具，可在运行时修改 Android 系统属性而不在正常属性服务中留下痕迹。发现于：%1$s。</string>
+    <string name="chk_reveny_resetprop_solution">通过 Magisk Manager 应用卸载 Magisk，或刷入原厂 boot 镜像。</string>
+    <string name="chk_reveny_resetprop_name_nd">Resetprop</string>
+    <string name="chk_reveny_resetprop_desc_nd">未发现 Resetprop 工具。</string>
+    <string name="chk_reveny_resetprop_reason_nd">在已知的 Magisk 路径中未检测到 resetprop 二进制文件。</string>
+    <!-- RevenyInspiredDetector: Check 4 - Debug Fingerprint -->
+    <string name="chk_reveny_debug_fp_name">检测到调试指纹</string>
+    <string name="chk_reveny_debug_fp_desc">设备正在运行 userdebug 或 eng 构建。</string>
+    <string name="chk_reveny_debug_fp_reason">构建类型 \'%1$s\' 是调试变体。调试构建具有 ADB root 权限、宽松的 SELinux 策略，可能暴露敏感的系统接口。指纹：%2$s。</string>
+    <string name="chk_reveny_debug_fp_solution">请使用生产版（\'user\'）构建以获得适当的安全加固。</string>
+    <string name="chk_reveny_debug_fp_name_nd">调试指纹</string>
+    <string name="chk_reveny_debug_fp_desc_nd">未检测到调试指纹。</string>
+    <string name="chk_reveny_debug_fp_reason_nd">构建类型为 \'%1$s\'，这是生产版构建。</string>
+    <!-- RevenyInspiredDetector: Check 5 - Hide My Applist -->
+    <string name="chk_reveny_hma_name">检测到 Hide My Applist</string>
+    <string name="chk_reveny_hma_desc">检测到 Hide My Applist 框架。</string>
+    <string name="chk_reveny_hma_reason">Hide My Applist (HMA) 是一个 Xposed/LSPosed 模块，通过拦截 PackageManager 调用来向其他应用隐藏已安装的应用。指标：%1$s。</string>
+    <string name="chk_reveny_hma_solution">通过 LSPosed Manager 禁用或卸载 Hide My Applist 模块。</string>
+    <string name="chk_reveny_hma_name_nd">Hide My Applist</string>
+    <string name="chk_reveny_hma_desc_nd">未检测到 Hide My Applist。</string>
+    <string name="chk_reveny_hma_reason_nd">未发现 Hide My Applist 软件包或套接字。</string>
+    <!-- RevenyInspiredDetector: Check 6 - Mount Inconsistency -->
+    <string name="chk_reveny_mount_inc_name">检测到挂载不一致</string>
+    <string name="chk_reveny_mount_inc_desc">检测到挂载表不一致 — 可能存在基于 umount 的隐藏。</string>
+    <string name="chk_reveny_mount_inc_reason">在 /proc/self/mountinfo 中可见但在 /proc/mounts 中不存在的挂载表明某进程调用了 umount() 以向简单的挂载文件解析器隐藏 root 相关绑定挂载。可疑路径：%1$s。</string>
+    <string name="chk_reveny_mount_inc_solution">这是 Magisk 或类似框架使用挂载命名空间操控的强烈指标。请卸载 root 框架。</string>
+    <string name="chk_reveny_mount_inc_name_nd">挂载不一致</string>
+    <string name="chk_reveny_mount_inc_desc_nd">未检测到挂载表不一致。</string>
+    <string name="chk_reveny_mount_inc_reason_nd">/proc/mounts 和 /proc/self/mountinfo 保持一致。</string>
+    <string name="chk_reveny_mount_inc_desc_error">挂载不一致检查无法完成。</string>
+    <string name="chk_reveny_mount_inc_reason_error">无法读取 /proc/mounts 或 /proc/self/mountinfo。</string>
+    <!-- RevenyInspiredDetector: Check 7 - Addon.d -->
+    <string name="chk_reveny_addon_d_name">检测到 Addon.d / install-recovery.sh</string>
+    <string name="chk_reveny_addon_d_desc">在系统分区中发现 OTA 持久化脚本。</string>
+    <string name="chk_reveny_addon_d_reason">addon.d 脚本和 install-recovery.sh 被自定义 ROM 和 root 框架用于在 OTA 更新后通过重新应用补丁来保持持久性。指标：%1$s。</string>
+    <string name="chk_reveny_addon_d_solution">这些文件表明系统已被修改。请刷入官方 OEM ROM 以移除它们。</string>
+    <string name="chk_reveny_addon_d_name_nd">Addon.d / install-recovery.sh</string>
+    <string name="chk_reveny_addon_d_desc_nd">未发现 addon.d 脚本或 install-recovery.sh。</string>
+    <string name="chk_reveny_addon_d_reason_nd">在系统分区中未检测到 OTA 持久化脚本。</string>
+    <!-- RevenyInspiredDetector: Check 8 - System Apps Absence -->
+    <string name="chk_reveny_sys_apps_name">系统应用被隐藏</string>
+    <string name="chk_reveny_sys_apps_desc">可见的系统应用异常少 — 应用列表隐藏可能处于活跃状态。</string>
+    <string name="chk_reveny_sys_apps_reason">PackageManager 仅返回 %1$d 个系统应用。正常的 Android 设备可暴露 50 个以上的系统应用。这强烈表明应用列表隐藏框架（如 Hide My Applist）正在拦截查询。</string>
+    <string name="chk_reveny_sys_apps_solution">通过 LSPosed Manager 禁用应用列表隐藏模块。</string>
+    <string name="chk_reveny_sys_apps_name_nd">系统应用可见性</string>
+    <string name="chk_reveny_sys_apps_desc_nd">系统应用显示正常。</string>
+    <string name="chk_reveny_sys_apps_reason_nd">PackageManager 返回 %1$d 个系统应用 — 在正常范围内。</string>
+    <string name="chk_reveny_sys_apps_desc_error">无法查询系统应用列表。</string>
+    <string name="chk_reveny_sys_apps_reason_error">PackageManager 查询失败。</string>
+    <!-- RevenyInspiredDetector: Check 9 - Vendor SEPolicy -->
+    <string name="chk_reveny_vendor_sep_name_notfound">供应商 SEPolicy LineageOS 检查</string>
+    <string name="chk_reveny_vendor_sep_desc_notfound">vendor_sepolicy.cil 未找到或无法访问。</string>
+    <string name="chk_reveny_vendor_sep_reason_notfound">供应商 SELinux 策略文件不存在或不可读。</string>
+    <string name="chk_reveny_vendor_sep_name">检测到 LineageOS SEPolicy</string>
+    <string name="chk_reveny_vendor_sep_desc">vendor_sepolicy.cil 包含 LineageOS 特有条目。</string>
+    <string name="chk_reveny_vendor_sep_reason">供应商 SELinux 策略文件包含自定义 ROM 策略条目：%1$s。这确认了该设备运行自定义 ROM 构建。</string>
+    <string name="chk_reveny_vendor_sep_solution">刷入官方 OEM ROM 以恢复原始 SELinux 策略。</string>
+    <string name="chk_reveny_vendor_sep_name_nd">供应商 SEPolicy LineageOS 检查</string>
+    <string name="chk_reveny_vendor_sep_desc_nd">vendor_sepolicy.cil 中无 LineageOS 条目。</string>
+    <string name="chk_reveny_vendor_sep_reason_nd">供应商 SELinux 策略不包含已知的自定义 ROM 条目。</string>
+    <string name="chk_reveny_vendor_sep_desc_error">无法读取 vendor_sepolicy.cil。</string>
+    <string name="chk_reveny_vendor_sep_reason_error">读取 SELinux 策略文件时权限被拒绝或发生 I/O 错误。</string>
+    <!-- RevenyInspiredDetector: Check 10 - Framework Patch -->
+    <string name="chk_reveny_fw_patch_name_noaccess">框架补丁检查</string>
+    <string name="chk_reveny_fw_patch_desc_noaccess">/system/framework 不可访问。</string>
+    <string name="chk_reveny_fw_patch_reason_noaccess">无法读取框架目录。</string>
+    <string name="chk_reveny_fw_patch_desc_empty">在 /system/framework 中未发现文件。</string>
+    <string name="chk_reveny_fw_patch_reason_empty">框架目录似乎为空。</string>
+    <string name="chk_reveny_fw_patch_name">检测到框架补丁</string>
+    <string name="chk_reveny_fw_patch_desc">系统框架可能已被修补。</string>
+    <string name="chk_reveny_fw_patch_reason">框架修改证据：%1$s。Xposed / LSPosed 通过修补 Android 运行时框架（services.jar、framework.jar）来实现钩子功能。</string>
+    <string name="chk_reveny_fw_patch_solution">移除 Xposed 框架并通过刷入原厂 ROM 来恢复原始框架文件。</string>
+    <string name="chk_reveny_fw_patch_name_nd">框架补丁</string>
+    <string name="chk_reveny_fw_patch_desc_nd">未发现框架补丁指标。</string>
+    <string name="chk_reveny_fw_patch_reason_nd">/system/framework 中未发现可疑文件或修改时间异常。</string>
+    <string name="chk_reveny_fw_patch_desc_error">无法完成框架补丁检查。</string>
+    <string name="chk_reveny_fw_patch_reason_error">读取 /system/framework 时权限被拒绝或发生 I/O 错误。</string>
+
+
+    <!-- RuruInspiredDetector: Check 1 - Dual/Work Profile -->
+    <string name="chk_ruru_dual_profile_name">检测到双开 / 工作资料</string>
+    <string name="chk_ruru_dual_profile_desc">应用正在克隆/双开空间或工作资料中运行。</string>
+    <string name="chk_ruru_dual_profile_reason">应用的 filesDir 为 \'%1$s\'，以 /data/user 开头但不以 /data/user/0 开头。这表明应用正在辅助用户、设备克隆空间或 Android 工作资料中运行，而非主用户空间。</string>
+    <string name="chk_ruru_dual_profile_solution">这在双开空间或工作资料场景中是正常的。请验证这是预期的运行环境。</string>
+    <string name="chk_ruru_dual_profile_name_nd">双开 / 工作资料</string>
+    <string name="chk_ruru_dual_profile_desc_nd">在主用户空间中运行（未检测到双开/工作资料）。</string>
+    <string name="chk_ruru_dual_profile_reason_nd">filesDir=\'%1$s\' 以 /data/user/0 开头，表明这是主用户。</string>
+    <!-- RuruInspiredDetector: Check 2 - XPrivacyLua -->
+    <string name="chk_ruru_xprivacy_name">检测到 XPrivacyLua 数据目录</string>
+    <string name="chk_ruru_xprivacy_desc">在 /data/system/xlua 发现 XPrivacyLua 数据目录。</string>
+    <string name="chk_ruru_xprivacy_reason">XPrivacyLua 是一个 Xposed 模块，用于伪造或限制返回给应用的隐私敏感数据。其在 /data/system/xlua 的存在强烈表明存在具有隐私钩子的活跃 Xposed/LSPosed 环境。</string>
+    <string name="chk_ruru_xprivacy_solution">通过 LSPosed Manager 禁用或移除 XPrivacyLua 模块。</string>
+    <string name="chk_ruru_xprivacy_name_nd">XPrivacyLua 数据目录</string>
+    <string name="chk_ruru_xprivacy_desc_nd">未发现 XPrivacyLua 数据目录。</string>
+    <string name="chk_ruru_xprivacy_reason_nd">在 /data/system/xlua 未检测到 XPrivacyLua 数据目录。</string>
+    <!-- RuruInspiredDetector: Check 3 - Xposed Edge -->
+    <string name="chk_ruru_xedge_name">检测到 Xposed Edge 数据目录</string>
+    <string name="chk_ruru_xedge_desc">在 /data/system/xedge 发现 Xposed Edge 数据目录。</string>
+    <string name="chk_ruru_xedge_reason">Xposed Edge 是一个用于高级边缘手势自定义的 Xposed 模块。其在 /data/system/xedge 的数据目录表明存在活跃的 Xposed 框架。</string>
+    <string name="chk_ruru_xedge_solution">如非有意安装，请禁用 Xposed Edge 模块。</string>
+    <string name="chk_ruru_xedge_name_nd">Xposed Edge 数据目录</string>
+    <string name="chk_ruru_xedge_desc_nd">未发现 Xposed Edge 数据目录。</string>
+    <string name="chk_ruru_xedge_reason_nd">在 /data/system/xedge 未检测到 Xposed Edge 数据目录。</string>
+    <!-- RuruInspiredDetector: Check 4 - Riru Clipboard -->
+    <string name="chk_ruru_riru_clip_name">检测到 Riru 剪贴板目录</string>
+    <string name="chk_ruru_riru_clip_desc">在 /data/misc/clipboard 发现 Riru 剪贴板模块数据目录。</string>
+    <string name="chk_ruru_riru_clip_reason">Riru 剪贴板 Zygisk 模块将其数据保留在 /data/misc/clipboard。该目录表明 Riru 或相关 Zygisk 模块已（或曾经）安装。</string>
+    <string name="chk_ruru_riru_clip_solution">如非有意安装，请移除或禁用 Riru 剪贴板模块。</string>
+    <string name="chk_ruru_riru_clip_name_nd">Riru 剪贴板目录</string>
+    <string name="chk_ruru_riru_clip_desc_nd">未发现 Riru 剪贴板数据目录。</string>
+    <string name="chk_ruru_riru_clip_reason_nd">在 /data/misc/clipboard 未发现 Riru 剪贴板目录。</string>
+    <!-- RuruInspiredDetector: Check 5 - Privacy Space -->
+    <string name="chk_ruru_privacy_space_name">检测到 Privacy Space 数据目录</string>
+    <string name="chk_ruru_privacy_space_desc">发现 Privacy Space (cn.geektang.privacyspace) 数据目录。</string>
+    <string name="chk_ruru_privacy_space_reason">Privacy Space 是一个通过拦截 PackageManager API 来隐藏已安装软件包的 Xposed 模块。其在 /data/system/cn.geektang.privacyspace 的数据目录确认其已安装且可能处于活跃状态。</string>
+    <string name="chk_ruru_privacy_space_solution">通过 LSPosed Manager 禁用或移除 Privacy Space 模块。</string>
+    <string name="chk_ruru_privacy_space_name_nd">Privacy Space 数据目录</string>
+    <string name="chk_ruru_privacy_space_desc_nd">未发现 Privacy Space 数据目录。</string>
+    <string name="chk_ruru_privacy_space_reason_nd">在 /data/system/cn.geektang.privacyspace 未发现 Privacy Space 目录。</string>
+    <!-- RuruInspiredDetector: Check 6 - HMA Old Version -->
+    <string name="chk_ruru_hma_old_name">检测到 HMA（旧版）数据目录</string>
+    <string name="chk_ruru_hma_old_desc">在 /data/misc/hide_my_applist 发现 Hide My Applist 旧版数据目录。</string>
+    <string name="chk_ruru_hma_old_reason">旧版 Hide My Applist Xposed 模块将配置数据存储在 /data/misc/hide_my_applist。该目录的存在强烈表明 HMA 曾经或正在安装。</string>
+    <string name="chk_ruru_hma_old_solution">卸载 Hide My Applist 并清理残留数据。</string>
+    <string name="chk_ruru_hma_old_name_nd">HMA（旧版）数据目录</string>
+    <string name="chk_ruru_hma_old_desc_nd">未发现 HMA 旧版数据目录。</string>
+    <string name="chk_ruru_hma_old_reason_nd">在 /data/misc/hide_my_applist 未发现旧版 HMA 目录。</string>
+    <!-- RuruInspiredDetector: Check 7 - PM Cross-Method -->
+    <string name="chk_ruru_pm_cross_name_error">PM 交叉方法异常</string>
+    <string name="chk_ruru_pm_cross_desc_error">无法运行 `pm list packages` shell 命令。</string>
+    <string name="chk_ruru_pm_cross_reason_error">shell 命令 `pm list packages` 不可用或返回了空结果。无法与 PackageManager API 结果进行比较。</string>
+    <string name="chk_ruru_pm_cross_solution_error">确保应用有权限执行 shell 命令。</string>
+    <string name="chk_ruru_pm_cross_name">检测到 PM 交叉方法异常</string>
+    <string name="chk_ruru_pm_cross_desc">PackageManager API 隐藏了通过 shell 可见的软件包。</string>
+    <string name="chk_ruru_pm_cross_reason">以下软件包出现在 `pm list packages` shell 输出中，但对 getInstalledPackages() API 不可见，表明 PackageManager 钩子（如 HideMyApplist）正在过滤 API 结果。隐藏的软件包：%1$s。</string>
+    <string name="chk_ruru_pm_cross_solution">禁用任何钩住 PackageManager 的 Xposed/LSPosed 模块（如 HideMyApplist、Privacy Space）。</string>
+    <string name="chk_ruru_pm_cross_name_nd">PM 交叉方法异常</string>
+    <string name="chk_ruru_pm_cross_desc_nd">shell pm 与 PackageManager API 之间未发现差异。</string>
+    <string name="chk_ruru_pm_cross_reason_nd">shell `pm list packages` 和 getInstalledPackages() API 对已检查软件包列表返回了一致的结果。</string>
+    <!-- RuruInspiredDetector: Check 8 - Xposed Module Metadata -->
+    <string name="chk_ruru_xposed_meta_name">通过元数据检测到 Xposed 模块</string>
+    <string name="chk_ruru_xposed_meta_desc">发现具有 Xposed 模块元数据的应用。</string>
+    <string name="chk_ruru_xposed_meta_reason">以下已安装应用声明了 \'xposedminversion\' 或 \'xposeddescription\' 元数据键，将其标识为 Xposed 模块：%1$s。</string>
+    <string name="chk_ruru_xposed_meta_solution">通过 LSPosed Manager 禁用或卸载已识别的 Xposed 模块。</string>
+    <string name="chk_ruru_xposed_meta_name_nd">Xposed 模块元数据扫描</string>
+    <string name="chk_ruru_xposed_meta_desc_nd">未发现具有 Xposed 模块元数据的应用。</string>
+    <string name="chk_ruru_xposed_meta_reason_nd">没有已安装应用声明 \'xposedminversion\' 或 \'xposeddescription\' 元数据。</string>
+    <!-- RuruInspiredDetector: Check 9 - LSPatch AppComponentFactory -->
+    <string name="chk_ruru_lspatch_name_skip">通过 AppComponentFactory 检测 LSPatch</string>
+    <string name="chk_ruru_lspatch_desc_skip">检查需要 API 28+；已在此设备上跳过。</string>
+    <string name="chk_ruru_lspatch_reason_skip">appComponentFactory 属性仅在 Android 9 (API 28)+ 上可用。</string>
+    <string name="chk_ruru_lspatch_name">通过 AppComponentFactory 检测到 LSPatch</string>
+    <string name="chk_ruru_lspatch_desc">通过 appComponentFactory 检测到使用 LSPatch 修补的应用。</string>
+    <string name="chk_ruru_lspatch_reason">以下应用的 appComponentFactory 属性包含 \'lsposed\' 或 \'lspatch\'，表明它们使用 LSPatch（一种将框架直接嵌入 APK 的 Xposed 实现）进行了修补：%1$s。</string>
+    <string name="chk_ruru_lspatch_solution">将 LSPatch 嵌入的 APK 替换为官方来源的原始版本。</string>
+    <string name="chk_ruru_lspatch_name_nd">通过 AppComponentFactory 检测 LSPatch</string>
+    <string name="chk_ruru_lspatch_desc_nd">未通过 appComponentFactory 检测到 LSPatch 修补的应用。</string>
+    <string name="chk_ruru_lspatch_reason_nd">没有应用的 appComponentFactory 属性包含 \'lsposed\' 或 \'lspatch\'。</string>
+    <!-- RuruInspiredDetector: Check 10 - Account List -->
+    <string name="chk_ruru_account_name">账户列表异常</string>
+    <string name="chk_ruru_account_desc">通过 AccountManager 发现设备账户。</string>
+    <string name="chk_ruru_account_reason">AccountManager 报告此设备上有 %1$d 个账户。某些具有隐私侵犯性的应用或框架会注册虚假账户。账户：%2$s。</string>
+    <string name="chk_ruru_account_solution">查看列出的账户，并通过设备设置 → 账户移除任何可疑账户。</string>
+    <string name="chk_ruru_account_desc_nd">AccountManager 中未发现设备账户。</string>
+    <string name="chk_ruru_account_reason_nd">AccountManager 未返回任何账户。</string>
+    <!-- RuruInspiredDetector: Check 11 - VPN Connection -->
+    <string name="chk_ruru_vpn_name">检测到 VPN 连接</string>
+    <string name="chk_ruru_vpn_desc">检测到活跃的 VPN 或代理连接。</string>
+    <string name="chk_ruru_vpn_reason">此设备上有 VPN 或代理连接处于活跃状态。VPN 可用于拦截网络流量或将其路由至第三方服务器。指标：%1$s。</string>
+    <string name="chk_ruru_vpn_solution">如果 VPN 或代理不是故意配置的，请断开连接。</string>
+    <string name="chk_ruru_vpn_name_nd">VPN 连接</string>
+    <string name="chk_ruru_vpn_desc_nd">未检测到 VPN 或代理连接。</string>
+    <string name="chk_ruru_vpn_reason_nd">未发现 VPN 网络接口（tun0/ppp0）、TYPE_VPN 连接或 http.proxyHost 系统属性。</string>
+    <!-- RuruInspiredDetector: Check 12 - Accessibility Services -->
+    <string name="chk_ruru_a11y_name">无障碍服务处于活跃状态</string>
+    <string name="chk_ruru_a11y_desc">当前启用了一个或多个无障碍服务。</string>
+    <string name="chk_ruru_a11y_reason">无障碍服务具有广泛的系统访问权限，可以读取屏幕内容、模拟点击并拦截输入事件。如果存在未知服务处于活跃状态，这可能构成安全隐患。AccessibilityManager.isEnabled=%1$s，服务：%2$s。</string>
+    <string name="chk_ruru_a11y_solution">在设置 → 无障碍中查看已启用的无障碍服务，并禁用任何您不认识的服务。</string>
+    <string name="chk_ruru_a11y_name_nd">无障碍服务</string>
+    <string name="chk_ruru_a11y_desc_nd">当前没有无障碍服务处于活跃状态。</string>
+    <string name="chk_ruru_a11y_reason_nd">AccessibilityManager.isEnabled=false 且未发现已启用的无障碍服务。</string>
+    <!-- RuruInspiredDetector: Check 13 - PM API Discrepancy -->
+    <string name="chk_ruru_pm_api_name">检测到 PackageManager API 不一致</string>
+    <string name="chk_ruru_pm_api_desc">PackageManager API 对相同软件包返回了不一致的结果。</string>
+    <string name="chk_ruru_pm_api_reason">在 getApplicationInfo 和杂项 PM API（getPackageUid / getInstallSourceInfo / getLaunchIntentForPackage）之间发现不一致。这是不完整的 PackageManager 钩子（如 HideMyApplist）的典型特征：它拦截了某些 API 但遗漏了其他 API。不一致：%1$s。</string>
+    <string name="chk_ruru_pm_api_solution">禁用任何钩住 PackageManager 的 Xposed/LSPosed 模块。</string>
+    <string name="chk_ruru_pm_api_name_nd">PackageManager API 不一致</string>
+    <string name="chk_ruru_pm_api_desc_nd">PackageManager API 返回了一致的结果。</string>
+    <string name="chk_ruru_pm_api_reason_nd">getApplicationInfo 和杂项 PM API（getPackageUid、getInstallSourceInfo、getLaunchIntentForPackage）对所有已检查的软件包的可见性达成一致。</string>
+
+
+    <!-- Shared error detail format strings -->
+    <string name="err_detail_failed">失败：%1$s</string>
+    <string name="err_detail_failed_read">读取 %1$s 失败：%2$s</string>
+    <string name="err_detail_error">错误：%1$s</string>
+    <string name="err_detail_query_failed">%1$s 查询失败：%2$s</string>
+
+</resources>

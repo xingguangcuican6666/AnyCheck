@@ -20,3 +20,25 @@ rad.json
 *.flf
 #Test results file
 TestResults.xml
+
+### Android ###
+# Gradle files
+.gradle/
+build/
+app/build/
+
+# Local configuration file (sdk path, etc.)
+local.properties
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.DS_Store
+
+# Kotlin build cache
+**/.kotlin/
+
+# Generated files
+app/src/main/gen/

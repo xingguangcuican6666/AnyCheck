@@ -1,0 +1,1485 @@
+<resources>
+    <string name="app_name">AnyCheck</string>
+    <string name="app_subtitle">Root Detection Analyzer</string>
+
+    <!-- Home Screen -->
+    <string name="start_detection">Start Detection</string>
+    <string name="re_detect">Re-detect</string>
+    <string name="detecting">Detecting\u2026</string>
+    <string name="detection_complete">Detection Complete</string>
+    <string name="detection_summary">Summary</string>
+    <string name="total_checks">Total Checks</string>
+    <string name="issues_found">Issues Found</string>
+    <string name="safe_items">Safe Items</string>
+    <string name="not_run">Not Run</string>
+
+    <!-- Navigation / Actions -->
+    <string name="reset">Reset</string>
+    <string name="navigate_back">Back</string>
+    <string name="retry">Retry</string>
+    <string name="detection_failed">Detection Failed</string>
+    <string name="detection_failed_format">Detection failed: %1$s</string>
+    <string name="unknown_error">Unknown error</string>
+
+    <!-- Summary card -->
+    <string name="summary_clean">Device Appears Clean</string>
+    <string name="summary_possibly_rooted">Root May Possibly Exist</string>
+    <string name="summary_detected">Root Framework Detected</string>
+    <string name="summary_checks_run">Detection complete \u00b7 %1$d checks run</string>
+    <string name="stat_detected">Detected</string>
+    <string name="stat_safe">Safe</string>
+    <string name="stat_errors">Errors</string>
+    <string name="status_clean">CLEAN</string>
+
+    <!-- Detail -->
+    <string name="detail_reason">Reason</string>
+    <string name="detail_solution">Solution</string>
+    <string name="detail_technical">Technical Details</string>
+    <string name="detail_risk_level">Risk Level</string>
+    <string name="detail_category">Category</string>
+    <string name="collapse">Collapse</string>
+    <string name="expand">Expand</string>
+
+    <!-- Status -->
+    <string name="status_detected">Detected</string>
+    <string name="status_not_detected">Not Detected</string>
+    <string name="status_error">Error</string>
+    <string name="status_checking">Checking</string>
+
+    <!-- Risk Levels -->
+    <string name="risk_critical">Critical</string>
+    <string name="risk_high">High</string>
+    <string name="risk_medium">Medium</string>
+    <string name="risk_low">Low</string>
+    <string name="risk_info">Info</string>
+
+    <!-- Risk level descriptions (About screen) -->
+    <string name="risk_critical_desc">Confirmed root framework core components present</string>
+    <string name="risk_high_desc">Strong indication of root framework presence</string>
+    <string name="risk_medium_desc">Root may exist, needs further confirmation</string>
+    <string name="risk_low_desc">Low risk indicator, usually doesn\'t affect security verdict</string>
+
+    <!-- Categories -->
+    <string name="cat_magisk">Magisk</string>
+    <string name="cat_kernelsu">KernelSU</string>
+    <string name="cat_apatch">APatch</string>
+    <string name="cat_su_binary">SU Binary</string>
+    <string name="cat_root_management">Root Management</string>
+    <string name="cat_root">Root</string>
+    <string name="cat_xposed">Xposed</string>
+    <string name="cat_system">System</string>
+    <string name="cat_adb_debug">ADB/Debug</string>
+    <string name="cat_frida">Frida</string>
+    <string name="cat_environment">Environment</string>
+    <string name="cat_network">Network</string>
+
+    <!-- Filter chips -->
+    <string name="filter_all">All</string>
+    <string name="filter_detected">Detected Only</string>
+    <string name="filter_magisk">Magisk</string>
+    <string name="filter_kernelsu">KernelSU</string>
+    <string name="filter_all_count">All (%1$d)</string>
+    <string name="filter_detected_count">Detected (%1$d)</string>
+    <string name="filter_magisk_count">Magisk (%1$d)</string>
+    <string name="filter_kernelsu_count">KernelSU (%1$d)</string>
+    <string name="filter_apatch_count">APatch (%1$d)</string>
+    <string name="filter_su_count">SU Binary (%1$d)</string>
+    <string name="filter_xposed_count">Xposed (%1$d)</string>
+
+    <!-- Idle screen feature list -->
+    <string name="feature_magisk">Magisk detection (17 checks)</string>
+    <string name="feature_kernelsu">KernelSU detection (8 checks)</string>
+    <string name="feature_apatch">APatch &amp; generic root (5 checks)</string>
+    <string name="feature_xposed">Xposed / LSPosed hook detection (13 checks)</string>
+    <string name="feature_advanced">Advanced root checks (19 checks)</string>
+    <string name="feature_extra">Extra: mounts, capabilities, bypass modules (15 checks)</string>
+
+    <!-- Misc -->
+    <string name="app_description">AnyCheck detects root management frameworks (Magisk, KernelSU, APatch) using multiple detection vectors.</string>
+    <string name="disclaimer">For security research purposes only.</string>
+    <string name="disclaimer_about">\u26a0\ufe0f  For security research purposes only.</string>
+    <string name="copy_results">Copy Results</string>
+    <string name="results_copied">Results copied to clipboard</string>
+    <string name="about">About</string>
+    <string name="version">Version</string>
+    <string name="version_format">Version %1$s</string>
+
+    <!-- About screen -->
+    <string name="about_app_title">About App</string>
+    <string name="about_app_description">AnyCheck is a comprehensive Android root detection tool that identifies Magisk, KernelSU, APatch and other root management frameworks, as well as Xposed/LSPosed hook frameworks.</string>
+    <string name="about_detection_methods">Detection Methods</string>
+    <string name="about_method_magisk">Magisk Detection</string>
+    <string name="about_method_magisk_count">17 checks</string>
+    <string name="about_method_kernelsu">KernelSU Detection</string>
+    <string name="about_method_kernelsu_count">8 checks</string>
+    <string name="about_method_apatch">APatch &amp; Generic Root</string>
+    <string name="about_method_apatch_count">5 checks</string>
+    <string name="about_method_xposed">Xposed / LSPosed</string>
+    <string name="about_method_xposed_count">13 checks</string>
+    <string name="about_method_advanced">Advanced Root Checks</string>
+    <string name="about_method_advanced_count">19 checks</string>
+    <string name="about_method_luna">Luna Methods</string>
+    <string name="about_method_luna_count">22 checks</string>
+    <string name="about_method_integrity">System Integrity</string>
+    <string name="about_method_integrity_count">Multiple checks</string>
+    <string name="about_risk_levels">Risk Levels</string>
+    <string name="about_risk_note">Note: When only MEDIUM or lower risk items are detected, the summary shows \u201cRoot May Possibly Exist\u201d instead of \u201cRoot Framework Detected\u201d.</string>
+    <string name="about_author_title">Author &amp; Repository</string>
+    <string name="about_author_github_label">GitHub</string>
+    <string name="about_author_github_value">xingguangcuican6666</string>
+    <string name="about_author_repo_label">Repository</string>
+    <string name="about_author_repo_value">xingguangcuican6666/AnyCheck</string>
+    <string name="about_philosophy_title">Our Philosophy</string>
+    <string name="about_philosophy_content">Unlike certain tools that simply shout \u201cDetected!\u201d without providing any evidence, context, or explanation, AnyCheck is built on a different principle: if something is found, you deserve to know exactly what it is, why it matters, and how to fix it. The habit of issuing an authoritative verdict with zero supporting detail is nothing more than fearmongering dressed up as security. AnyCheck may not yet cover every possible detection scenario, but every result it delivers comes with clear reasoning and actionable guidance\u2014so you can actually understand what was found and do something about it.</string>
+
+    <!-- Progress messages -->
+    <string name="progress_init">Initializing checks\u2026</string>
+    <string name="progress_magisk">Magisk checks complete</string>
+    <string name="progress_kernelsu">KernelSU checks complete</string>
+    <string name="progress_generic">Generic checks complete</string>
+    <string name="progress_xposed">Xposed checks complete</string>
+    <string name="progress_advanced">Advanced checks complete</string>
+    <string name="progress_extra">Extra checks complete</string>
+    <string name="progress_luna">Luna checks complete</string>
+    <string name="progress_reveny">Reveny-inspired checks complete</string>
+    <string name="progress_rootbeer">RootBeerFresh checks complete</string>
+    <string name="progress_ruru">Ruru-inspired checks complete</string>
+    <string name="progress_integrity">System integrity checks complete</string>
+    <string name="progress_format">%1$s (%2$d/%3$d)</string>
+
+    <!-- Common check strings -->
+    <string name="chk_no_action_needed">No action required.</string>
+
+    <!-- KernelSU Detector -->
+    <!-- ksu_files -->
+    <string name="chk_ksu_files_name">KernelSU Files Detected</string>
+    <string name="chk_ksu_files_name_nd">KernelSU Files</string>
+    <string name="chk_ksu_files_desc">KernelSU-specific files or directories found.</string>
+    <string name="chk_ksu_files_desc_nd">No KernelSU-specific files detected.</string>
+    <string name="chk_ksu_files_reason">The following KernelSU files were found: %1$s. KernelSU is a kernel-based root solution. ksud is the KernelSU daemon and /data/adb/ksu is its working directory.</string>
+    <string name="chk_ksu_files_reason_nd">No known KernelSU file paths were found on this device.</string>
+    <string name="chk_ksu_files_solution">To remove KernelSU: Use KernelSU Manager → Uninstall, or flash a non-KernelSU kernel/stock boot image via fastboot.</string>
+
+    <!-- ksu_packages -->
+    <string name="chk_ksu_packages_name">KernelSU Manager Detected</string>
+    <string name="chk_ksu_packages_name_nd">KernelSU Manager Packages</string>
+    <string name="chk_ksu_packages_desc">KernelSU Manager or related apps installed.</string>
+    <string name="chk_ksu_packages_desc_nd">No KernelSU Manager packages found.</string>
+    <string name="chk_ksu_packages_reason">Found KernelSU packages: %1$s. The KernelSU Manager app is the management interface for KernelSU. Its presence confirms KernelSU is installed.</string>
+    <string name="chk_ksu_packages_reason_nd">No known KernelSU package names were installed.</string>
+    <string name="chk_ksu_packages_solution">Use KernelSU Manager to uninstall, then flash a stock kernel.</string>
+
+    <!-- ksu_kernel_version -->
+    <string name="chk_ksu_kernel_version_name">KernelSU in Kernel Version</string>
+    <string name="chk_ksu_kernel_version_name_nd">KernelSU Kernel Version</string>
+    <string name="chk_ksu_kernel_version_desc">KernelSU signature found in kernel version string.</string>
+    <string name="chk_ksu_kernel_version_desc_nd">No KernelSU signature in kernel version string.</string>
+    <string name="chk_ksu_kernel_version_desc_error">Could not read kernel version.</string>
+    <string name="chk_ksu_kernel_version_reason">The kernel version string contains KernelSU markers: %1$s. KernelSU patches the kernel and embeds its version in the kernel string. Kernel: %2$s</string>
+    <string name="chk_ksu_kernel_version_reason_nd">The kernel version string does not contain KernelSU markers.</string>
+    <string name="chk_ksu_kernel_version_reason_error">Failed to read /proc/version: %1$s</string>
+    <string name="chk_ksu_kernel_version_solution">Flash a stock (non-KernelSU) kernel via fastboot or recovery.</string>
+    <string name="chk_ksu_kernel_version_solution_error">Ensure /proc/version is accessible.</string>
+
+    <!-- ksu_db -->
+    <string name="chk_ksu_db_name">KernelSU Database Found</string>
+    <string name="chk_ksu_db_name_nd">KernelSU Database</string>
+    <string name="chk_ksu_db_desc">KernelSU SQLite database detected.</string>
+    <string name="chk_ksu_db_desc_nd">KernelSU database not found.</string>
+    <string name="chk_ksu_db_reason">KernelSU uses a SQLite database to store allowed package UIDs and policy rules. Found at: %1$s.</string>
+    <string name="chk_ksu_db_reason_nd">No KernelSU database was found at known locations.</string>
+    <string name="chk_ksu_db_solution">The database is removed when KernelSU is fully uninstalled.</string>
+
+    <!-- ksu_mounts -->
+    <string name="chk_ksu_mounts_name">KernelSU Mount Points Detected</string>
+    <string name="chk_ksu_mounts_name_nd">KernelSU Mount Points</string>
+    <string name="chk_ksu_mounts_desc">KernelSU-related mount points found.</string>
+    <string name="chk_ksu_mounts_desc_nd">No KernelSU mount points found.</string>
+    <string name="chk_ksu_mounts_desc_error">Could not read mount information.</string>
+    <string name="chk_ksu_mounts_reason">KernelSU uses OverlayFS to overlay module files. Keywords found in /proc/mounts: %1$s.</string>
+    <string name="chk_ksu_mounts_reason_nd">No KernelSU-specific mount entries found.</string>
+    <string name="chk_ksu_mounts_reason_error">Failed to read /proc/mounts: %1$s</string>
+    <string name="chk_ksu_mounts_solution">Mount points are managed by KernelSU. Removed upon uninstallation.</string>
+    <string name="chk_ksu_mounts_solution_error">Ensure /proc/mounts is accessible.</string>
+
+    <!-- ksu_processes -->
+    <string name="chk_ksu_processes_name">KernelSU Processes Running</string>
+    <string name="chk_ksu_processes_name_nd">KernelSU Processes</string>
+    <string name="chk_ksu_processes_desc">KernelSU daemon processes are running.</string>
+    <string name="chk_ksu_processes_desc_nd">No KernelSU daemon processes found.</string>
+    <string name="chk_ksu_processes_desc_error">Could not enumerate processes.</string>
+    <string name="chk_ksu_processes_reason">Found processes: %1$s. ksud is the KernelSU userspace daemon that handles su requests.</string>
+    <string name="chk_ksu_processes_reason_nd">No KernelSU process names found in running process list.</string>
+    <string name="chk_ksu_processes_reason_error">Process enumeration failed: %1$s</string>
+    <string name="chk_ksu_processes_solution">Processes stop after KernelSU is removed and device rebooted.</string>
+    <string name="chk_ksu_processes_solution_error">Ensure /proc is accessible.</string>
+
+    <!-- ksu_syscall -->
+    <string name="chk_ksu_syscall_name">KernelSU Kernel Interface</string>
+    <string name="chk_ksu_syscall_name_selinux">SELinux Permissive Mode</string>
+    <string name="chk_ksu_syscall_desc">KernelSU kernel interface detected.</string>
+    <string name="chk_ksu_syscall_desc_nd">No KernelSU kernel interface found.</string>
+    <string name="chk_ksu_syscall_desc_selinux">SELinux is in permissive mode (potential KernelSU indicator).</string>
+    <string name="chk_ksu_syscall_reason">KernelSU exposes a kernel interface at /sys/kernel/ksu or /proc/sys/kernel/ksu. This confirms KernelSU is compiled into the running kernel. Found: %1$s.</string>
+    <string name="chk_ksu_syscall_reason_nd">No KernelSU-specific kernel interfaces were detected.</string>
+    <string name="chk_ksu_syscall_reason_selinux">SELinux enforce status is 0 (permissive). KernelSU and other root solutions often set SELinux to permissive mode to allow unrestricted root access. This significantly reduces device security.</string>
+    <string name="chk_ksu_syscall_solution">Flash a stock kernel without KernelSU to remove this interface.</string>
+    <string name="chk_ksu_syscall_solution_selinux">Set SELinux to enforcing mode: `setenforce 1`. This setting persists only until reboot unless KernelSU/Magisk policies override it.</string>
+
+    <!-- ksu_props -->
+    <string name="chk_ksu_props_name">KernelSU System Properties</string>
+    <string name="chk_ksu_props_desc">KernelSU-specific system properties found.</string>
+    <string name="chk_ksu_props_desc_nd">No KernelSU system properties found.</string>
+    <string name="chk_ksu_props_reason">The following KernelSU properties were found: %1$s. These properties are set by KernelSU and confirm its presence.</string>
+    <string name="chk_ksu_props_reason_nd">No KernelSU-specific system properties were detected.</string>
+    <string name="chk_ksu_props_solution">These properties are removed when KernelSU is uninstalled.</string>
+
+    <!-- apatch -->
+    <string name="chk_apatch_name">APatch Detected</string>
+    <string name="chk_apatch_name_nd">APatch</string>
+    <string name="chk_apatch_desc">APatch root framework detected.</string>
+    <string name="chk_apatch_desc_nd">APatch not detected.</string>
+    <string name="chk_apatch_reason">APatch is a kernel-based root solution similar to KernelSU. Evidence found: %1$s. APatch patches the kernel boot image to enable root access.</string>
+    <string name="chk_apatch_reason_nd">No APatch files or packages were found.</string>
+    <string name="chk_apatch_solution">Use APatch Manager to uninstall, then flash a stock boot image.</string>
+
+    <!-- su_binary -->
+    <string name="chk_su_binary_name">SU Binary Detected</string>
+    <string name="chk_su_binary_name_nd">SU Binary</string>
+    <string name="chk_su_binary_desc">su binary found at system locations.</string>
+    <string name="chk_su_binary_desc_nd">No su binary found at common system paths.</string>
+    <string name="chk_su_binary_reason">The su (superuser) binary was found at: %1$s. The su binary allows apps to request elevated root privileges. Its presence in system paths indicates the device has been rooted.</string>
+    <string name="chk_su_binary_reason_nd">The su binary was not found at standard system paths.</string>
+    <string name="chk_su_binary_solution">Remove the su binary by booting into recovery and deleting it, or restore via stock system image flash.</string>
+
+    <!-- root_apps -->
+    <string name="chk_root_apps_name">Root Management Apps Found</string>
+    <string name="chk_root_apps_name_nd">Root Management Apps</string>
+    <string name="chk_root_apps_desc">Root management or exploit apps detected.</string>
+    <string name="chk_root_apps_desc_nd">No root management apps found.</string>
+    <string name="chk_root_apps_reason">Found: %1$s. These apps provide root access management, exploit capabilities, or root-related functionality that indicates a rooted device.</string>
+    <string name="chk_root_apps_reason_nd">No known root management or exploit app packages were found.</string>
+    <string name="chk_root_apps_solution">Uninstall these apps via Settings → Apps or using adb uninstall.</string>
+
+    <!-- generic_test_keys -->
+    <string name="chk_generic_test_keys_name">Test-Keys Build Detected</string>
+    <string name="chk_generic_test_keys_name_debug">Debug Build Detected</string>
+    <string name="chk_generic_test_keys_name_nd">Build Signature</string>
+    <string name="chk_generic_test_keys_desc">Device is running a test-keys signed build.</string>
+    <string name="chk_generic_test_keys_desc_debug">Device is running a debug build.</string>
+    <string name="chk_generic_test_keys_desc_nd">Build appears to use official release keys.</string>
+    <string name="chk_generic_test_keys_reason">Build tags: \'%1$s\', Fingerprint: \'%2$s\'. Test-keys builds are signed with unofficial keys, indicating a custom or rooted ROM. Official Google-signed builds use \'release-keys\'.</string>
+    <string name="chk_generic_test_keys_reason_debug">Build tags: \'%1$s\'. Debug builds have additional debugging capabilities enabled and may have relaxed security restrictions.</string>
+    <string name="chk_generic_test_keys_reason_nd">Build tags \'%1$s\' indicate official release key signing.</string>
+    <string name="chk_generic_test_keys_solution">Flash an official OEM ROM signed with release-keys via fastboot or OTA.</string>
+    <string name="chk_generic_test_keys_solution_debug">Use a release/production build for better security.</string>
+
+    <!-- generic_busybox -->
+    <string name="chk_generic_busybox_name">Busybox Found</string>
+    <string name="chk_generic_busybox_name_nd">Busybox</string>
+    <string name="chk_generic_busybox_desc">Busybox binary detected.</string>
+    <string name="chk_generic_busybox_desc_nd">No Busybox binary found.</string>
+    <string name="chk_generic_busybox_reason">Busybox was found at: %1$s. Busybox provides Unix utilities typically not found on Android. While not root itself, it is commonly installed alongside root frameworks.</string>
+    <string name="chk_generic_busybox_reason_nd">Busybox was not found at common installation paths.</string>
+    <string name="chk_generic_busybox_solution">Busybox is removed when the associated root framework is uninstalled.</string>
+
+    <!-- rootbeerfresh_dangerous_apps -->
+    <string name="chk_rootbeerfresh_dangerous_apps_name">Dangerous / Piracy Apps Detected</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_name_nd">Dangerous / Piracy Apps</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_desc">Potentially dangerous, piracy, or game-cheat apps found.</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_desc_nd">No dangerous or piracy apps detected.</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_reason">Found %1$d app(s): %2$s. These packages include black-market stores, in-app purchase bypass tools, game cheats, and spyware-like apps. Their presence indicates system compromise or intentional security policy violations.</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_reason_nd">None of the known dangerous/piracy/cheat packages were found.</string>
+    <string name="chk_rootbeerfresh_dangerous_apps_solution">Uninstall these apps immediately via Settings → Apps or adb uninstall.</string>
+
+    <!-- rootbeerfresh_root_cloaking -->
+    <string name="chk_rootbeerfresh_root_cloaking_name">Extended Root-Cloaking Apps Detected</string>
+    <string name="chk_rootbeerfresh_root_cloaking_name_nd">Extended Root-Cloaking Apps</string>
+    <string name="chk_rootbeerfresh_root_cloaking_desc">Additional root-hiding or code-injection framework apps detected.</string>
+    <string name="chk_rootbeerfresh_root_cloaking_desc_nd">No additional root-cloaking apps detected.</string>
+    <string name="chk_rootbeerfresh_root_cloaking_reason">Found: %1$s. Cydia Substrate is a runtime code injection framework frequently used to hide root. HideMyRoot and HideRoot variants conceal root indicators from apps.</string>
+    <string name="chk_rootbeerfresh_root_cloaking_reason_nd">Cydia Substrate and HideMyRoot/HideRoot variants were not found.</string>
+    <string name="chk_rootbeerfresh_root_cloaking_solution">Uninstall root-cloaking apps via Settings → Apps.</string>
+
+    <!-- rootbeerfresh_path_su -->
+    <string name="chk_rootbeerfresh_path_su_name">SU Binary via PATH Enumeration Detected</string>
+    <string name="chk_rootbeerfresh_path_su_name_nd">SU Binary via PATH Enumeration</string>
+    <string name="chk_rootbeerfresh_path_su_desc">su binary found via dynamic PATH enumeration.</string>
+    <string name="chk_rootbeerfresh_path_su_desc_nd">No su binary found via PATH enumeration.</string>
+    <string name="chk_rootbeerfresh_path_su_reason">su binary found at: %1$s. This check dynamically reads the PATH environment variable (like rootbeerFresh) in addition to well-known static paths, catching su binaries placed in non-standard directories that are still on the executable search path.</string>
+    <string name="chk_rootbeerfresh_path_su_reason_nd">su was not found in any static or PATH-derived directory.</string>
+    <string name="chk_rootbeerfresh_path_su_solution">Remove the su binary and restore a stock system image.</string>
+
+    <!-- rootbeerfresh_rw_paths -->
+    <string name="chk_rootbeerfresh_rw_paths_name">System Paths Mounted Read-Write</string>
+    <string name="chk_rootbeerfresh_rw_paths_name_nd">System Paths Mount Check</string>
+    <string name="chk_rootbeerfresh_rw_paths_desc">Critical system paths mounted rw: %1$s.</string>
+    <string name="chk_rootbeerfresh_rw_paths_desc_nd">No critical system paths mounted read-write.</string>
+    <string name="chk_rootbeerfresh_rw_paths_desc_error">Could not run mount command.</string>
+    <string name="chk_rootbeerfresh_rw_paths_reason">The following paths that should be read-only are mounted read-write: %1$s. This is detected by parsing the \`mount\` command output with SDK-version-aware field offsets (rootbeerFresh technique). A rw-mounted /system indicates the system partition has been modified.</string>
+    <string name="chk_rootbeerfresh_rw_paths_reason_nd">mount command output shows all sensitive paths are read-only.</string>
+    <string name="chk_rootbeerfresh_rw_paths_reason_error">The mount command returned no output.</string>
+    <string name="chk_rootbeerfresh_rw_paths_solution">Remount system partition as read-only: \`adb shell mount -o remount,ro /system\`.</string>
+    <string name="chk_rootbeerfresh_rw_paths_solution_error">Ensure /proc is accessible.</string>
+
+    <!-- avb_boot_state -->
+    <string name="chk_avb_boot_state_name_nd">AVB Boot State</string>
+    <string name="chk_avb_boot_state_name_yellow">AVB Boot State: YELLOW</string>
+    <string name="chk_avb_boot_state_name_orange">AVB Boot State: ORANGE (Unlocked)</string>
+    <string name="chk_avb_boot_state_name_red">AVB Boot State: RED (Integrity Failure)</string>
+    <string name="chk_avb_boot_state_name_unknown">AVB Boot State: Unknown</string>
+    <string name="chk_avb_boot_state_desc_green">Verified Boot state is GREEN.</string>
+    <string name="chk_avb_boot_state_desc_yellow">Verified Boot state is YELLOW (custom ROM / self-signed).</string>
+    <string name="chk_avb_boot_state_desc_orange">Verified Boot state is ORANGE -- bootloader is UNLOCKED.</string>
+    <string name="chk_avb_boot_state_desc_red">Verified Boot state is RED -- boot image verification FAILED.</string>
+    <string name="chk_avb_boot_state_desc_unknown">Unexpected Verified Boot state: %1$s.</string>
+    <string name="chk_avb_boot_state_desc_nd">AVB state property not available.</string>
+    <string name="chk_avb_boot_state_desc_error">Could not determine AVB boot state.</string>
+    <string name="chk_avb_boot_state_reason_green">ro.boot.verifiedbootstate=%1$s. The device booted from verified, unmodified system partitions. This is the strongest boot integrity assurance.</string>
+    <string name="chk_avb_boot_state_reason_yellow">ro.boot.verifiedbootstate=%1$s. The bootloader verified the boot image against a user-installed key rather than a manufacturer key. This indicates a custom ROM or user-enrolled AVB key. The device may be running unofficial firmware.</string>
+    <string name="chk_avb_boot_state_reason_orange">ro.boot.verifiedbootstate=%1$s. The bootloader is unlocked and no signature is enforced. The device can boot arbitrary unsigned images. This is a strong indicator of a rooted or modified device.</string>
+    <string name="chk_avb_boot_state_reason_red">ro.boot.verifiedbootstate=%1$s. The device failed to verify the integrity of the boot image. This may indicate a modified bootloader or corrupted system partition.</string>
+    <string name="chk_avb_boot_state_reason_unknown">ro.boot.verifiedbootstate=%1$s is not a standard value. Expected: green, yellow, orange, or red.</string>
+    <string name="chk_avb_boot_state_reason_nd">ro.boot.verifiedbootstate is empty or inaccessible. This is normal on older devices (pre-Android 8) that do not support AVB 2.0.</string>
+    <string name="chk_avb_boot_state_reason_error">Exception reading AVB properties: %1$s</string>
+    <string name="chk_avb_boot_state_solution_yellow">Flash official OEM firmware to restore GREEN verified boot state.</string>
+    <string name="chk_avb_boot_state_solution_orange">Re-lock the bootloader via \'fastboot flashing lock\' after restoring stock firmware.</string>
+    <string name="chk_avb_boot_state_solution_red">Restore factory firmware via fastboot or OTA.</string>
+    <string name="chk_avb_boot_state_solution_unknown">Check device firmware integrity.</string>
+
+    <!-- tee_hardware_backed -->
+    <string name="chk_tee_hardware_backed_name">TEE Key Generation: Software Only</string>
+    <string name="chk_tee_hardware_backed_name_nd">TEE Key Generation</string>
+    <string name="chk_tee_hardware_backed_desc">AES key was generated in software -- no hardware TEE backing.</string>
+    <string name="chk_tee_hardware_backed_desc_nd">AES key was generated inside secure hardware (%1$s).</string>
+    <string name="chk_tee_hardware_backed_desc_error">TEE key generation check could not be completed.</string>
+    <string name="chk_tee_hardware_backed_reason">A probe AES key was generated via AndroidKeyStore but KeyInfo reports it was created in the software emulation layer. This strongly suggests the device is an emulator, or the TEE has been bypassed (e.g. by a Keymaster/KeyMint shim module). Sensitive cryptographic material is NOT protected by secure hardware.</string>
+    <string name="chk_tee_hardware_backed_reason_nd">A probe AES key was generated via AndroidKeyStore and KeyInfo confirms it resides in %1$s. This check cannot be spoofed by Magisk property hiding because it exercises the actual TEE subsystem via the Binder-based Keymaster/KeyMint HAL.</string>
+    <string name="chk_tee_hardware_backed_reason_error">Exception during probe key generation: %1$s</string>
+    <string name="chk_tee_hardware_backed_solution">Use a real device with a hardware TEE for secure key operations.</string>
+
+    <!-- keystore_attestation -->
+    <string name="chk_keystore_attestation_name">Hardware-Backed RSA Key: Software Only</string>
+    <string name="chk_keystore_attestation_name_nd">Hardware-Backed RSA Key</string>
+    <string name="chk_keystore_attestation_desc">RSA key pair is in software keystore, not secure hardware.</string>
+    <string name="chk_keystore_attestation_desc_nd">RSA-2048 key pair resides in secure hardware (TEE/StrongBox).</string>
+    <string name="chk_keystore_attestation_desc_error">Keystore attestation check could not be completed.</string>
+    <string name="chk_keystore_attestation_reason">The AndroidKeyStore RSA key was generated in the software emulation layer rather than in a hardware TEE. This may indicate an emulator, a rooted device with Magisk hiding active, or a device that does not have a hardware-backed keystore.</string>
+    <string name="chk_keystore_attestation_reason_nd">RSA-2048 key generated via AndroidKeyStore resides inside the Trusted Execution Environment or StrongBox HSM. Private key material never leaves secure hardware.</string>
+    <string name="chk_keystore_attestation_reason_error">Exception during RSA key generation/inspection: %1$s</string>
+    <string name="chk_keystore_attestation_solution">Use a device with hardware-backed key storage for sensitive operations.</string>
+
+    <!-- suspicious_root_daemons -->
+    <string name="chk_suspicious_root_daemons_name">Root Daemon Processes Running</string>
+    <string name="chk_suspicious_root_daemons_name_nd">Root Daemon Processes</string>
+    <string name="chk_suspicious_root_daemons_desc">Active root framework daemon(s) detected in process list.</string>
+    <string name="chk_suspicious_root_daemons_desc_nd">No known root framework daemons found in process list.</string>
+    <string name="chk_suspicious_root_daemons_desc_error">Could not scan process list.</string>
+    <string name="chk_suspicious_root_daemons_reason">The following root-related processes are running: %1$s. lspd is the LSPosed/Xposed framework daemon. ksud is the KernelSU daemon. magiskd is the Magisk daemon. zygiskd is the Zygisk companion daemon. These confirm an active root framework even if file artifacts are hidden.</string>
+    <string name="chk_suspicious_root_daemons_reason_nd">Scanned /proc for lspd, ksud, magiskd, zygiskd, riru, apd, and other known root framework daemons. None were found.</string>
+    <string name="chk_suspicious_root_daemons_reason_error">Exception reading /proc: %1$s</string>
+    <string name="chk_suspicious_root_daemons_solution">Uninstall the root framework and reboot to stop these daemons.</string>
+
+    <!-- prop_tampering -->
+    <string name="chk_prop_tampering_name">System Property Tampering</string>
+    <string name="chk_prop_tampering_name_nd">System Property Tampering</string>
+    <string name="chk_prop_tampering_desc">System properties show signs of modification.</string>
+    <string name="chk_prop_tampering_desc_nd">No system property tampering detected.</string>
+    <string name="chk_prop_tampering_reason">The following property inconsistencies were detected: %1$s. Magisk resetprop can modify any system property after boot, but Android framework constants baked into the app JVM at launch cannot be changed retroactively -- a mismatch proves tampering.</string>
+    <string name="chk_prop_tampering_reason_nd">Build.TAGS vs live ro.build.tags, security patch cross-check, fingerprint vs device name, and Magisk prop checks all passed. System properties are consistent with the stock build.</string>
+    <string name="chk_prop_tampering_solution">Restore stock boot image to reset system properties to factory values.</string>
+
+    <!-- su_extended_paths -->
+    <string name="chk_su_extended_paths_name">Su Binary (Extended Scan)</string>
+    <string name="chk_su_extended_paths_name_nd">Su Binary (Extended Scan)</string>
+    <string name="chk_su_extended_paths_desc">Su binary or root management files found.</string>
+    <string name="chk_su_extended_paths_desc_nd">No su binary or root management files found.</string>
+    <string name="chk_su_extended_paths_reason">The following su-related paths were found: %1$s. Presence of a su binary is a strong indicator that the device is rooted.</string>
+    <string name="chk_su_extended_paths_reason_nd">Scanned %1$d known su binary paths and checked PATH. No su binary was found accessible on this device.</string>
+    <string name="chk_su_extended_paths_solution">Remove all root frameworks (Magisk, KernelSU, APatch, SuperSU) and restore the stock boot image.</string>
+
+    <!-- MagiskDetector checks -->
+    <string name="chk_magisk_files_name">Magisk Files Detected</string>
+    <string name="chk_magisk_files_name_nd">Magisk Files</string>
+    <string name="chk_magisk_files_desc">Magisk-specific files or directories found on the filesystem.</string>
+    <string name="chk_magisk_files_desc_nd">No Magisk-specific files detected.</string>
+    <string name="chk_magisk_files_reason">The following Magisk-specific files were found: %1$s. These files are created by Magisk during installation and runtime. Their presence strongly indicates that Magisk is installed on this device.</string>
+    <string name="chk_magisk_files_reason_nd">None of the known Magisk file paths were accessible or present.</string>
+    <string name="chk_magisk_files_solution">To remove Magisk: Open Magisk Manager → Uninstall → Complete Uninstall. Or flash the stock boot.img via fastboot: `fastboot flash boot stock_boot.img`.</string>
+
+    <string name="chk_magisk_dirs_name">Magisk Directories Detected</string>
+    <string name="chk_magisk_dirs_name_nd">Magisk Directories</string>
+    <string name="chk_magisk_dirs_desc">Magisk working directories found.</string>
+    <string name="chk_magisk_dirs_desc_nd">No Magisk working directories found.</string>
+    <string name="chk_magisk_dirs_reason">Directories %1$s exist. Magisk uses /data/adb/magisk as its primary working directory and /data/adb/modules to store installed modules. These are created during Magisk installation.</string>
+    <string name="chk_magisk_dirs_reason_nd">Magisk working directories were not found.</string>
+    <string name="chk_magisk_dirs_solution">Uninstall Magisk via Magisk Manager or reflash stock boot image.</string>
+
+    <string name="chk_magisk_db_name">Magisk Database Found</string>
+    <string name="chk_magisk_db_name_nd">Magisk Database</string>
+    <string name="chk_magisk_db_desc">Magisk SQLite database detected.</string>
+    <string name="chk_magisk_db_desc_nd">Magisk database not found.</string>
+    <string name="chk_magisk_db_reason">The Magisk database (magisk.db) stores policy rules, module configurations, and superuser grant records. Found at: %1$s.</string>
+    <string name="chk_magisk_db_reason_nd">No Magisk SQLite database was found at known locations.</string>
+    <string name="chk_magisk_db_solution">The database will be removed when Magisk is fully uninstalled.</string>
+
+    <string name="chk_magisk_packages_name">Magisk App Detected</string>
+    <string name="chk_magisk_packages_name_nd">Magisk App Packages</string>
+    <string name="chk_magisk_packages_desc">Magisk Manager or related apps installed.</string>
+    <string name="chk_magisk_packages_desc_nd">No Magisk Manager packages found.</string>
+    <string name="chk_magisk_packages_reason">The following Magisk-related packages were found: %1$s. These apps are the primary management interface for Magisk. Their presence confirms Magisk installation.</string>
+    <string name="chk_magisk_packages_reason_nd">No known Magisk Manager package names were found installed.</string>
+    <string name="chk_magisk_packages_solution">Uninstall via Magisk Manager first (to properly remove root), then uninstall the Magisk Manager app itself.</string>
+
+    <string name="chk_magisk_su_name">Magisk SU Binary Found</string>
+    <string name="chk_magisk_su_name_nd">Magisk SU Binary</string>
+    <string name="chk_magisk_su_desc">Magisk su or core binaries detected.</string>
+    <string name="chk_magisk_su_desc_nd">No Magisk su or core binaries found.</string>
+    <string name="chk_magisk_su_reason">Magisk installs its su binary and core components to manage root access. Found: %1$s. These binaries handle root permission requests and policy enforcement.</string>
+    <string name="chk_magisk_su_reason_nd">Magisk core binaries were not found at known paths.</string>
+    <string name="chk_magisk_su_solution">These binaries are removed when Magisk is uninstalled via Magisk Manager → Uninstall.</string>
+
+    <string name="chk_magisk_unix_socket_name">Magisk Unix Socket Detected</string>
+    <string name="chk_magisk_unix_socket_name_nd">Magisk Unix Socket</string>
+    <string name="chk_magisk_unix_socket_desc">Magisk daemon socket found in /proc/net/unix.</string>
+    <string name="chk_magisk_unix_socket_desc_nd">No Magisk daemon socket found.</string>
+    <string name="chk_magisk_unix_socket_reason">Magisk runs a background daemon that listens on a Unix socket. The socket name \'%1$s\' was found in /proc/net/unix, indicating the Magisk daemon is currently running.</string>
+    <string name="chk_magisk_unix_socket_reason_nd">No Magisk-related socket names were found in /proc/net/unix.</string>
+    <string name="chk_magisk_unix_socket_reason_error">Could not read /proc/net/unix: %1$s</string>
+    <string name="chk_magisk_unix_socket_solution">The socket disappears when Magisk is uninstalled and the device is rebooted.</string>
+
+    <string name="chk_magisk_mounts_name">Magisk Mount Points Detected</string>
+    <string name="chk_magisk_mounts_name_nd">Magisk Mount Points</string>
+    <string name="chk_magisk_mounts_desc">Magisk-related mount points found in /proc/mounts.</string>
+    <string name="chk_magisk_mounts_desc_nd">No Magisk mount points found.</string>
+    <string name="chk_magisk_mounts_reason">Magisk uses bind mounts to overlay modified files onto the system without actually modifying the underlying partition. Keywords found: %1$s.</string>
+    <string name="chk_magisk_mounts_reason_nd">No Magisk-specific mount entries found in /proc/mounts.</string>
+    <string name="chk_magisk_mounts_reason_error">Could not read /proc/mounts: %1$s</string>
+    <string name="chk_magisk_mounts_solution">Mount points are managed by Magisk daemon. They are removed upon uninstallation.</string>
+
+    <string name="chk_magisk_props_name">Suspicious System Props</string>
+    <string name="chk_magisk_props_name_nd">Magisk System Properties</string>
+    <string name="chk_magisk_props_desc">Suspicious or Magisk-related system properties found.</string>
+    <string name="chk_magisk_props_desc_nd">No suspicious Magisk-related system properties found.</string>
+    <string name="chk_magisk_props_reason">The following properties suggest root access or Magisk presence: %1$s. ro.debuggable=1 and ro.secure=0 are typical on rooted/debuggable builds. ro.magisk.version is set by Magisk directly.</string>
+    <string name="chk_magisk_props_reason_nd">System properties appear to be in their stock configuration.</string>
+    <string name="chk_magisk_props_solution">These properties are set by Magisk or during device rooting. Restore the stock boot image to reset these properties.</string>
+
+    <string name="chk_zygisk_lib_name">Zygisk Library Detected</string>
+    <string name="chk_zygisk_lib_name_nd">Zygisk Library</string>
+    <string name="chk_zygisk_lib_desc">Zygisk (Magisk in Zygote) library files found.</string>
+    <string name="chk_zygisk_lib_desc_nd">No Zygisk library files found.</string>
+    <string name="chk_zygisk_lib_reason">Zygisk is Magisk\'s feature that runs in the Zygote process, enabling code injection into every app. Found: %1$s. This allows bypassing many detection methods and enables powerful module functionality.</string>
+    <string name="chk_zygisk_lib_reason_nd">Zygisk library files were not found. Either Zygisk is disabled or Magisk is not installed.</string>
+    <string name="chk_zygisk_lib_solution">Disable Zygisk in Magisk settings or fully uninstall Magisk.</string>
+
+    <string name="chk_magisk_hide_name">MagiskHide / Modified Fingerprint</string>
+    <string name="chk_magisk_hide_name_nd">MagiskHide / Fingerprint</string>
+    <string name="chk_magisk_hide_desc">MagiskHide artifacts or modified build fingerprint detected.</string>
+    <string name="chk_magisk_hide_desc_nd">No MagiskHide artifacts or fingerprint modifications detected.</string>
+    <string name="chk_magisk_hide_reason">Evidence: %1$s. MagiskHide (or its successor DenyList) attempts to hide Magisk from specific apps. A modified build fingerprint may indicate SafetyNet bypass attempts.</string>
+    <string name="chk_magisk_hide_reason_nd">No MagiskHide files found and build fingerprint appears unmodified.</string>
+    <string name="chk_magisk_hide_solution">Disable MagiskHide/DenyList in Magisk settings. Use a stock, unmodified build fingerprint. Consider using a Play Integrity fix module carefully.</string>
+
+    <string name="chk_magisk_processes_name">Magisk Processes Running</string>
+    <string name="chk_magisk_processes_name_nd">Magisk Processes</string>
+    <string name="chk_magisk_processes_desc">Magisk-related processes are currently running.</string>
+    <string name="chk_magisk_processes_desc_nd">No Magisk processes found running.</string>
+    <string name="chk_magisk_processes_desc_error">No Magisk processes found.</string>
+    <string name="chk_magisk_processes_reason">The following Magisk processes were found running: %1$s. magiskd is the Magisk daemon that manages root requests. These processes confirm Magisk is active on the device.</string>
+    <string name="chk_magisk_processes_reason_nd">No Magisk-related process names were found in /proc.</string>
+    <string name="chk_magisk_processes_reason_error">Process enumeration could not be completed: %1$s</string>
+    <string name="chk_magisk_processes_solution">Processes will stop after Magisk is uninstalled and device rebooted.</string>
+
+    <string name="chk_magisk_hidden_manager_name">Hidden Magisk Manager Detected</string>
+    <string name="chk_magisk_hidden_manager_name_nd">Hidden Magisk Manager</string>
+    <string name="chk_magisk_hidden_manager_desc">An app disguised as Magisk Manager was found.</string>
+    <string name="chk_magisk_hidden_manager_desc_nd">No hidden Magisk Manager detected.</string>
+    <string name="chk_magisk_hidden_manager_desc_error">Could not scan for hidden Magisk Manager.</string>
+    <string name="chk_magisk_hidden_manager_reason">Magisk Manager can be hidden under a random package name to evade detection. Found potential hidden manager: %1$s.</string>
+    <string name="chk_magisk_hidden_manager_reason_nd">No apps with Magisk Manager characteristics were found under non-standard package names.</string>
+    <string name="chk_magisk_hidden_manager_reason_error">Package scan could not be completed: %1$s</string>
+    <string name="chk_magisk_hidden_manager_solution">Open the app and uninstall Magisk, or use adb to remove the package.</string>
+
+    <string name="chk_magisk_dev_files_name">Magisk /dev Files Detected</string>
+    <string name="chk_magisk_dev_files_name_nd">Magisk /dev Files</string>
+    <string name="chk_magisk_dev_files_desc">Magisk-specific files or sockets found in /dev.</string>
+    <string name="chk_magisk_dev_files_desc_nd">No Magisk /dev files or sockets found.</string>
+    <string name="chk_magisk_dev_files_reason">Found: %1$s. Magisk uses the /dev filesystem (tmpfs) to create control sockets and mirror points that it can access from any SELinux context. These files only exist on devices with active Magisk.</string>
+    <string name="chk_magisk_dev_files_reason_nd">No Magisk-specific files were found under /dev.</string>
+    <string name="chk_magisk_dev_files_solution">Uninstall Magisk to remove these /dev artifacts.</string>
+
+    <string name="chk_zygisk_active_maps_name">Zygisk Library Injected</string>
+    <string name="chk_zygisk_active_maps_name_nd">Zygisk Library</string>
+    <string name="chk_zygisk_active_maps_desc">Zygisk native library is loaded in this process.</string>
+    <string name="chk_zygisk_active_maps_desc_nd">No Zygisk library found in process memory maps.</string>
+    <string name="chk_zygisk_active_maps_desc_error">No Zygisk library found in process memory.</string>
+    <string name="chk_zygisk_active_maps_reason">Zygisk library found in /proc/self/maps: %1$s. Zygisk (Zygote + Magisk) injects its native library into every app process by hooking the Zygote process before forks. This confirms Zygisk is actively running.</string>
+    <string name="chk_zygisk_active_maps_reason_nd">No Zygisk native library was found in /proc/self/maps.</string>
+    <string name="chk_zygisk_active_maps_reason_error">Could not read /proc/self/maps: %1$s</string>
+    <string name="chk_zygisk_active_maps_solution">Disable Zygisk in Magisk settings or uninstall Magisk.</string>
+
+    <string name="chk_magisk_stub_app_name">Magisk Stub App Detected</string>
+    <string name="chk_magisk_stub_app_name_nd">Magisk Stub App</string>
+    <string name="chk_magisk_stub_app_desc">App with Magisk stub APK characteristics found.</string>
+    <string name="chk_magisk_stub_app_desc_nd">No Magisk stub app detected.</string>
+    <string name="chk_magisk_stub_app_reason">Package(s) with Magisk stub metadata: %1$s. Magisk\'s hide feature repackages itself as an innocent-looking app. The stub retains Magisk\'s content provider authority and specific permission set.</string>
+    <string name="chk_magisk_stub_app_reason_nd">No installed packages match the Magisk stub APK signature.</string>
+    <string name="chk_magisk_stub_app_solution">Open the stub app and uninstall Magisk through it.</string>
+
+    <string name="chk_magisk_selinux_name">Magisk SELinux Context Detected</string>
+    <string name="chk_magisk_selinux_name_nd">Magisk SELinux Context</string>
+    <string name="chk_magisk_selinux_desc">Magisk-related SELinux context found.</string>
+    <string name="chk_magisk_selinux_desc_nd">No Magisk SELinux contexts detected.</string>
+    <string name="chk_magisk_selinux_desc_error">No Magisk SELinux context found.</string>
+    <string name="chk_magisk_selinux_reason">Found: %1$s. Magisk injects custom SELinux policy rules and some versions run under their own SELinux context (u:r:magisk:s0). A non-standard SELinux context for a root-related process confirms Magisk activity.</string>
+    <string name="chk_magisk_selinux_reason_nd">No Magisk-related SELinux contexts found in /proc/*/attr/current.</string>
+    <string name="chk_magisk_selinux_reason_error">Could not read /proc/self/attr/current: %1$s</string>
+    <string name="chk_magisk_selinux_solution">Remove Magisk to restore standard SELinux policy.</string>
+
+    <string name="chk_magisk_apex_name">Magisk APEX Overlay Detected</string>
+    <string name="chk_magisk_apex_name_nd">Magisk APEX Overlay</string>
+    <string name="chk_magisk_apex_desc">Magisk overlay inside /apex detected.</string>
+    <string name="chk_magisk_apex_desc_nd">No Magisk APEX overlay detected.</string>
+    <string name="chk_magisk_apex_reason">Found: %1$s. Magisk (v24+) can inject modules into APEX (Android Pony EXpress) partition libraries by bind-mounting over them. The \'orig\' directory is created as a backup of the original APEX content. These artefacts are only present when Magisk modules are active.</string>
+    <string name="chk_magisk_apex_reason_nd">No Magisk-specific files were found inside /apex.</string>
+    <string name="chk_magisk_apex_solution">Disable APEX-targeting modules in Magisk Manager or uninstall Magisk.</string>
+
+    <string name="chk_magisk_fd_name">Magisk File Descriptors Detected</string>
+    <string name="chk_magisk_fd_name_nd">Magisk File Descriptors</string>
+    <string name="chk_magisk_fd_desc">This process has open file descriptors pointing to Magisk paths.</string>
+    <string name="chk_magisk_fd_desc_nd">No Magisk-related file descriptors found in /proc/self/fd.</string>
+    <string name="chk_magisk_fd_reason">Found in /proc/self/fd: %1$s. Magisk keeps open FDs to its mirror mount points and socket files. The presence of these FDs in an app process confirms Magisk has touched this process.</string>
+    <string name="chk_magisk_fd_reason_nd">No open file descriptors point to Magisk paths.</string>
+    <string name="chk_magisk_fd_solution">Remove Magisk to clear these file descriptor references.</string>
+
+    <string name="chk_native_bridge_name">Native Bridge Injection Detected</string>
+    <string name="chk_native_bridge_name_nd">Native Bridge</string>
+    <string name="chk_native_bridge_desc">Riru/Zygisk native bridge injection detected.</string>
+    <string name="chk_native_bridge_desc_nd">No suspicious native bridge injection found.</string>
+    <string name="chk_native_bridge_reason">ro.dalvik.vm.native.bridge = \'%1$s\'. Riru (a predecessor of Zygisk) hijacks the ART native bridge mechanism by replacing this property with its own loader library. A suspicious value here is a strong indicator of Riru/Zygisk-based injection.</string>
+    <string name="chk_native_bridge_reason_nd">ro.dalvik.vm.native.bridge is \'%1$s\' \u2014 stock value.</string>
+    <string name="chk_native_bridge_solution">Remove the Riru or Zygisk Magisk module to restore the normal native bridge.</string>
+
+    <string name="chk_zygisk_su_daemon_name">Zygisk Companion Daemon Detected</string>
+    <string name="chk_zygisk_su_daemon_name_nd">Zygisk/Magisk Daemon Processes</string>
+    <string name="chk_zygisk_su_daemon_desc">Zygisk/Magisk daemon processes are running.</string>
+    <string name="chk_zygisk_su_daemon_desc_nd">No Zygisk/Magisk daemon processes found.</string>
+    <string name="chk_zygisk_su_daemon_reason">Found daemon process(es): %1$s. Zygisk Next (a standalone Zygisk implementation) runs privileged daemon processes named zn-daemon, zn-nsdaemon, and zn-zygisk-companion. Magisk itself runs as \'magiskd\'. These are definitive indicators of active root injection.</string>
+    <string name="chk_zygisk_su_daemon_reason_nd">No Zygisk Next or Magisk daemon process names were found in /proc/*/cmdline.</string>
+    <string name="chk_zygisk_su_daemon_solution">Uninstall Magisk or the Zygisk Next module to remove these daemon processes.</string>
+
+    <string name="chk_magisk_timing_name">Magisk Hook Latency Anomaly</string>
+    <string name="chk_magisk_timing_name_nd">File Access Timing</string>
+    <string name="chk_magisk_timing_desc">Suspicious file access latency suggests Magisk DenyList hooks.</string>
+    <string name="chk_magisk_timing_desc_nd">No suspicious timing anomaly for Magisk file access.</string>
+    <string name="chk_magisk_timing_desc_error">Timing check inconclusive.</string>
+    <string name="chk_magisk_timing_reason">File.exists(\'%1$s\') took %2$sms (%3$s\u00D7 slower than baseline). Magisk\'s DenyList patches intercept filesystem calls to hide Magisk files. This interception adds measurable latency compared to accessing non-hooked paths.</string>
+    <string name="chk_magisk_timing_reason_nd">File.exists() latency is within normal range (ratio=%1$s\u00D7, %2$sms). No Magisk DenyList hook latency detected.</string>
+    <string name="chk_magisk_timing_reason_error">Could not complete timing check: %1$s</string>
+    <string name="chk_magisk_timing_solution">Disable Magisk DenyList or uninstall Magisk.</string>
+
+    <string name="chk_broad_maps_name">Root/Hook Libraries in Process Memory</string>
+    <string name="chk_broad_maps_name_nd">Root/Hook Libraries</string>
+    <string name="chk_broad_maps_desc">Root or hook framework native libraries are loaded in this process.</string>
+    <string name="chk_broad_maps_desc_nd">No root/hook framework native libraries found in process memory.</string>
+    <string name="chk_broad_maps_reason">Found in /proc/self/maps: %1$s. These are native libraries belonging to Magisk (libsu), Riru, and inline hook engines (Dobby, SandHook, Pine, Whale) used by Xposed-compatible frameworks. Their presence confirms active injection into this process.</string>
+    <string name="chk_broad_maps_reason_nd">No known root/hook library names were found in /proc/self/maps.</string>
+    <string name="chk_broad_maps_solution">Remove the relevant root framework or module to prevent library injection.</string>
+
+    <!-- XposedDetector strings -->
+    <string name="chk_xposed_packages_name">Xposed/LSPosed Manager Detected</string>
+    <string name="chk_xposed_packages_name_nd">Xposed Manager Packages</string>
+    <string name="chk_xposed_packages_desc">Xposed framework management app installed.</string>
+    <string name="chk_xposed_packages_desc_nd">No Xposed/LSPosed manager packages found.</string>
+    <string name="chk_xposed_packages_reason">Found: %1$s. These apps manage Xposed/LSPosed/EdXposed frameworks. Xposed frameworks hook into any Android app or system service at runtime.</string>
+    <string name="chk_xposed_packages_reason_nd">No known Xposed framework manager packages are installed.</string>
+    <string name="chk_xposed_packages_solution">Uninstall via the framework manager. Flash a stock boot image to fully remove hooks from Zygote.</string>
+
+    <string name="chk_xposed_files_name">Xposed Framework Files Found</string>
+    <string name="chk_xposed_files_name_nd">Xposed Framework Files</string>
+    <string name="chk_xposed_files_desc">Original Xposed framework files detected.</string>
+    <string name="chk_xposed_files_desc_nd">No original Xposed framework files found.</string>
+    <string name="chk_xposed_files_reason">Found: %1$s. XposedBridge.jar is the core Xposed hooking library. app_process_xposed is the modified app_process binary used to bootstrap Xposed at Zygote startup.</string>
+    <string name="chk_xposed_files_reason_nd">No known Xposed file paths were found on this device.</string>
+    <string name="chk_xposed_files_solution">Use Xposed Installer to uninstall, or manually restore the stock app_process binary.</string>
+
+    <string name="chk_lsposed_files_name">LSPosed Module Files Found</string>
+    <string name="chk_lsposed_files_name_nd">LSPosed Files</string>
+    <string name="chk_lsposed_files_desc">LSPosed framework files detected.</string>
+    <string name="chk_lsposed_files_desc_nd">No LSPosed files found.</string>
+    <string name="chk_lsposed_files_reason">Found: %1$s. LSPosed is the modern Xposed implementation for Android 8+. It runs as a Zygisk or Riru module and enables per-app Xposed module scoping.</string>
+    <string name="chk_lsposed_files_reason_nd">No LSPosed-specific file paths were found.</string>
+    <string name="chk_lsposed_files_solution">Remove via LSPosed Manager \u2192 Uninstall, or remove the Magisk/KernelSU module.</string>
+
+    <string name="chk_edxposed_files_name">EdXposed Files Found</string>
+    <string name="chk_edxposed_files_name_nd">EdXposed Files</string>
+    <string name="chk_edxposed_files_desc">EdXposed framework files detected.</string>
+    <string name="chk_edxposed_files_desc_nd">No EdXposed files found.</string>
+    <string name="chk_edxposed_files_reason">Found: %1$s. EdXposed is an Xposed implementation for Android 8\u201311 running as a Riru module. It enables system-wide code hooks compatible with legacy Xposed modules.</string>
+    <string name="chk_edxposed_files_reason_nd">No EdXposed-specific file paths were found.</string>
+    <string name="chk_edxposed_files_solution">Remove via EdXposed Manager or delete the Riru/Magisk module.</string>
+
+    <string name="chk_xposed_bridge_class_name">XposedBridge Class Loaded</string>
+    <string name="chk_xposed_bridge_class_name_nd">XposedBridge Class</string>
+    <string name="chk_xposed_bridge_class_desc">XposedBridge class is present in the classpath.</string>
+    <string name="chk_xposed_bridge_class_desc_nd">XposedBridge class not found in classpath.</string>
+    <string name="chk_xposed_bridge_class_reason">The class \'de.robv.android.xposed.XposedBridge\' was successfully loaded. This class is the core of the Xposed framework and is only present when Xposed (or a compatible fork like LSPosed/EdXposed) is active in this process.</string>
+    <string name="chk_xposed_bridge_class_reason_nd">XposedBridge class could not be loaded \u2014 Xposed is not active in this process.</string>
+    <string name="chk_xposed_bridge_class_reason_error">Class check did not locate XposedBridge: %1$s</string>
+    <string name="chk_xposed_bridge_class_solution">Uninstall the Xposed/LSPosed/EdXposed framework.</string>
+
+    <string name="chk_xposed_stack_name">Xposed Hooks in Stack Trace</string>
+    <string name="chk_xposed_stack_name_nd">Xposed in Stack Trace</string>
+    <string name="chk_xposed_stack_desc">Xposed framework detected in exception call stack.</string>
+    <string name="chk_xposed_stack_desc_nd">No Xposed framework entries in exception stack trace.</string>
+    <string name="chk_xposed_stack_reason">Xposed/LSPlant framework entries were found in the exception stack trace. This confirms that Xposed is actively hooking method calls in this process.</string>
+    <string name="chk_xposed_stack_reason_nd">Exception stack trace shows no Xposed framework methods.</string>
+    <string name="chk_xposed_stack_solution">Uninstall Xposed/LSPosed framework.</string>
+
+    <string name="chk_xposed_props_name">Xposed System Properties Found</string>
+    <string name="chk_xposed_props_name_nd">Xposed System Properties</string>
+    <string name="chk_xposed_props_desc">Xposed-specific system properties found.</string>
+    <string name="chk_xposed_props_desc_nd">No Xposed system properties found.</string>
+    <string name="chk_xposed_props_reason">Found: %1$s. These properties are set by the Xposed framework or its installer.</string>
+    <string name="chk_xposed_props_reason_nd">No Xposed-specific system properties were detected.</string>
+    <string name="chk_xposed_props_solution">Properties are removed when Xposed is properly uninstalled.</string>
+
+    <string name="chk_virtual_frameworks_name">Virtual App Framework Detected</string>
+    <string name="chk_virtual_frameworks_name_nd">Virtual App Frameworks</string>
+    <string name="chk_virtual_frameworks_desc">Virtual app / multi-account framework detected.</string>
+    <string name="chk_virtual_frameworks_desc_nd">No virtual app frameworks detected.</string>
+    <string name="chk_virtual_frameworks_reason">Found: %1$s. Virtual frameworks like VirtualApp and Parallel Space create virtualized Android environments. They can run apps in sandboxed clones and may bypass detection by running apps inside a modified container.</string>
+    <string name="chk_virtual_frameworks_reason_nd">No known virtual framework packages were found.</string>
+    <string name="chk_virtual_frameworks_solution">Uninstall virtual framework apps via Settings \u2192 Apps.</string>
+
+    <string name="chk_lsposed_socket_name">LSPosed Daemon Socket Detected</string>
+    <string name="chk_lsposed_socket_name_nd">LSPosed Daemon Socket</string>
+    <string name="chk_lsposed_socket_desc">LSPosed daemon Unix socket is active.</string>
+    <string name="chk_lsposed_socket_desc_nd">No LSPosed daemon socket found.</string>
+    <string name="chk_lsposed_socket_reason">Found socket(s) in /proc/net/unix: %1$s. LSPosed (lspd) uses a Unix domain socket for IPC between its daemon and the manager app. The presence of this socket confirms lspd is currently running.</string>
+    <string name="chk_lsposed_socket_reason_nd">No lspd socket names found in /proc/net/unix.</string>
+    <string name="chk_lsposed_socket_reason_error">Could not read /proc/net/unix: %1$s</string>
+    <string name="chk_lsposed_socket_solution">Remove LSPosed via the LSPosed Manager app or delete the Magisk/KSU module.</string>
+
+    <string name="chk_lsposed_dex_maps_name">LSPosed Files in Process Memory</string>
+    <string name="chk_lsposed_dex_maps_name_nd">LSPosed Files in Process</string>
+    <string name="chk_lsposed_dex_maps_desc">LSPosed/LSPlant files are loaded into this process.</string>
+    <string name="chk_lsposed_dex_maps_desc_nd">No LSPosed/LSPlant files found in process memory.</string>
+    <string name="chk_lsposed_dex_maps_reason">Found in /proc/self/maps: %1$s. LSPosed injects its hook engine (LSPlant) and module DEX files into every scoped app process. These mapped paths are a definitive indicator of active LSPosed injection.</string>
+    <string name="chk_lsposed_dex_maps_reason_nd">No LSPosed-related files were found in /proc/self/maps.</string>
+    <string name="chk_lsposed_dex_maps_reason_error">Could not read /proc/self/maps: %1$s</string>
+    <string name="chk_lsposed_dex_maps_solution">Remove LSPosed or disable module scoping for this app.</string>
+
+    <string name="chk_lsposed_config_name">LSPosed Configuration Files Found</string>
+    <string name="chk_lsposed_config_name_nd">LSPosed Configuration Files</string>
+    <string name="chk_lsposed_config_desc">LSPosed configuration or module files detected.</string>
+    <string name="chk_lsposed_config_desc_nd">No LSPosed configuration files found.</string>
+    <string name="chk_lsposed_config_reason">Found: %1$s. LSPosed stores its daemon configuration and module scope lists in /data/misc/lspd/. The presence of these files confirms LSPosed is or was installed.</string>
+    <string name="chk_lsposed_config_reason_nd">No LSPosed config paths were found on disk.</string>
+    <string name="chk_lsposed_config_solution">Uninstall LSPosed via the manager app or remove the Magisk/KSU module directory.</string>
+
+    <string name="chk_hooked_methods_name">Hooked Java Methods Detected</string>
+    <string name="chk_hooked_methods_name_nd">Java Method Hooks</string>
+    <string name="chk_hooked_methods_desc">Java methods are hooked by LSPosed/LSPlant.</string>
+    <string name="chk_hooked_methods_desc_nd">No Java method hooks detected via reflection.</string>
+    <string name="chk_hooked_methods_reason">Hooked methods detected: %1$s. LSPosed uses the LSPlant library as its ART hook engine. Hooked methods have their ArtMethod implementation pointer replaced, which is detectable via reflection.</string>
+    <string name="chk_hooked_methods_reason_nd">No LSPlant/XposedBridge hook indicators found in reflection or stack traces.</string>
+    <string name="chk_hooked_methods_solution">Remove LSPosed or disable modules that hook these methods.</string>
+
+    <string name="chk_lsposed_scope_name">LSPosed Module Targeting This App</string>
+    <string name="chk_lsposed_scope_name_nd">LSPosed Module Scope</string>
+    <string name="chk_lsposed_scope_desc">An LSPosed module is scoped to hook this application.</string>
+    <string name="chk_lsposed_scope_desc_nd">No LSPosed module appears to be scoped to this app.</string>
+    <string name="chk_lsposed_scope_reason">Found \'%1$s\' in LSPosed scope file(s): %2$s. LSPosed records which apps each module should be injected into. Seeing this app\'s package name in the scope config confirms an active module is targeting it.</string>
+    <string name="chk_lsposed_scope_reason_nd">This app\'s package name was not found in any readable LSPosed scope config.</string>
+    <string name="chk_lsposed_scope_solution">Open LSPosed Manager and disable all modules scoped to this app.</string>
+
+    <string name="chk_lsposed_classes_name">LSPosed Internal Classes Detected</string>
+    <string name="chk_lsposed_classes_name_nd">LSPosed Internal Classes</string>
+    <string name="chk_lsposed_classes_desc">LSPosed internal classes are loaded in this process.</string>
+    <string name="chk_lsposed_classes_desc_nd">No LSPosed internal classes found in classpath.</string>
+    <string name="chk_lsposed_classes_reason">Successfully loaded: %1$s. These are LSPosed\'s private implementation classes (lspd core). They are only present in the classpath when LSPosed has injected into this process. This is the most reliable Java-layer indicator of active LSPosed hooking.</string>
+    <string name="chk_lsposed_classes_reason_nd">None of the known LSPosed lspd implementation classes could be loaded.</string>
+    <string name="chk_lsposed_classes_solution">Uninstall LSPosed or disable module scoping for this application.</string>
+
+    <string name="chk_xposed_bridge_version_name">XposedBridge Version Properties Detected</string>
+    <string name="chk_xposed_bridge_version_name_nd">XposedBridge Version Properties</string>
+    <string name="chk_xposed_bridge_version_desc">Xposed framework version properties or bridge fields found.</string>
+    <string name="chk_xposed_bridge_version_desc_nd">No XposedBridge version properties found.</string>
+    <string name="chk_xposed_bridge_version_reason">Found: %1$s. The Xposed framework sets \'xposed.bridge.version\' as a system property and exposes static fields on XposedBridge. These are definitive indicators that LSPosed (or another Xposed fork) is active.</string>
+    <string name="chk_xposed_bridge_version_reason_nd">No Xposed version system properties or bridge fields detected.</string>
+    <string name="chk_xposed_bridge_version_solution">Uninstall LSPosed/Xposed to remove these properties.</string>
+
+    <string name="chk_classloader_chain_name">LSPosed ClassLoader in Chain</string>
+    <string name="chk_classloader_chain_name_nd">ClassLoader Chain</string>
+    <string name="chk_classloader_chain_desc">LSPosed/Xposed ClassLoader found in the ClassLoader hierarchy.</string>
+    <string name="chk_classloader_chain_desc_nd">No LSPosed/Xposed ClassLoader found in the ClassLoader hierarchy.</string>
+    <string name="chk_classloader_chain_reason">Found: %1$s. LSPosed wraps the app\'s ClassLoader with its own loader to inject Xposed modules. A ClassLoader with \'lsposed\', \'lspd\', or \'edxposed\' in its class name is a direct indicator of active injection.</string>
+    <string name="chk_classloader_chain_reason_nd">The ClassLoader parent chain contains no known hook framework class names.</string>
+    <string name="chk_classloader_chain_solution">Remove LSPosed or disable modules for this app.</string>
+
+    <string name="chk_in_memory_dex_name">In-Memory DEX ClassLoader Detected</string>
+    <string name="chk_in_memory_dex_name_nd">In-Memory DEX ClassLoader</string>
+    <string name="chk_in_memory_dex_desc">Anonymous/in-memory DEX modules detected in ClassLoader.</string>
+    <string name="chk_in_memory_dex_desc_nd">No in-memory DEX entries found in ClassLoader hierarchy.</string>
+    <string name="chk_in_memory_dex_reason">Found: %1$s. LSPosed loads Xposed module APK/DEX files directly into memory using InMemoryDexClassLoader. In-memory DEX elements have no file path \u2014 this is one of the most reliable Java-layer indicators of active LSPosed module injection.</string>
+    <string name="chk_in_memory_dex_reason_nd">All DEX entries in the ClassLoader hierarchy reference real files on disk.</string>
+    <string name="chk_in_memory_dex_solution">Disable all LSPosed modules for this app via LSPosed Manager.</string>
+
+    <string name="chk_lsposed_data_dirs_name">LSPosed Data Directory Exists</string>
+    <string name="chk_lsposed_data_dirs_name_nd">LSPosed Data Directories</string>
+    <string name="chk_lsposed_data_dirs_desc">LSPosed/Xposed manager app data directory found.</string>
+    <string name="chk_lsposed_data_dirs_desc_nd">No LSPosed/Xposed manager data directories found.</string>
+    <string name="chk_lsposed_data_dirs_reason">Found: %1$s. Even when Magisk DenyList hides the LSPosed Manager APK from PackageManager, its app data directory remains on disk. Its existence proves LSPosed was or is installed on this device.</string>
+    <string name="chk_lsposed_data_dirs_reason_nd">No known LSPosed/Xposed data directories were found in /data/user/0/ or /data/data/.</string>
+    <string name="chk_lsposed_data_dirs_solution">Uninstall LSPosed Manager via the app itself or via adb.</string>
+
+    <string name="chk_zygisk_env_name">Zygisk Environment/Properties Detected</string>
+    <string name="chk_zygisk_env_name_nd">Zygisk Environment/Properties</string>
+    <string name="chk_zygisk_env_desc">Zygisk-specific environment variables or system properties found.</string>
+    <string name="chk_zygisk_env_desc_nd">No Zygisk environment variables or properties found.</string>
+    <string name="chk_zygisk_env_reason">Found: %1$s. ZYGISK_ENABLED is set by Magisk when Zygisk is active. These variables/properties are not present on stock devices and confirm Zygisk is running.</string>
+    <string name="chk_zygisk_env_reason_nd">ZYGISK_ENABLED is not set; no Zygisk system properties detected.</string>
+    <string name="chk_zygisk_env_solution">Disable Zygisk in Magisk settings or uninstall Magisk/Zygisk Next.</string>
+
+    <string name="chk_lsposed_stack_full_name">LSPosed/lspd Frames in Stack Trace</string>
+    <string name="chk_lsposed_stack_full_name_nd">LSPosed/lspd Stack Trace</string>
+    <string name="chk_lsposed_stack_full_desc">LSPosed/lspd class names detected in exception stack trace.</string>
+    <string name="chk_lsposed_stack_full_desc_nd">No LSPosed/lspd class names found in stack trace.</string>
+    <string name="chk_lsposed_stack_full_reason">Found frames: %1$s. When LSPosed is injected and a module is scoped to this app, lspd class names appear in the call stack.</string>
+    <string name="chk_lsposed_stack_full_reason_nd">No lsposed/lspd/edxposed class names appeared in the exception stack trace.</string>
+    <string name="chk_lsposed_stack_full_solution">Remove LSPosed or disable all modules scoped to this app.</string>
+
+    <string name="chk_smaps_hooks_name">Inline Hook Detected via SMAPS</string>
+    <string name="chk_smaps_hooks_name_nd">SMAPS Inline Hook Check</string>
+    <string name="chk_smaps_hooks_desc">Critical library code segments have dirty (modified) pages.</string>
+    <string name="chk_smaps_hooks_desc_nd">No inline hook signatures found in SMAPS.</string>
+    <string name="chk_smaps_hooks_reason">Affected libraries: %1$s. A non-zero Private_Dirty value in an r-xp (read-execute) code segment means that code pages were copied due to Linux Copy-on-Write. This is the fingerprint of inline hooking by LSPosed (via LSPlant), Frida, or a Zygisk module.</string>
+    <string name="chk_smaps_hooks_reason_nd">All critical library code segments have Private_Dirty = 0.</string>
+    <string name="chk_smaps_hooks_solution">Remove LSPosed, Frida gadget, or any Zygisk hooking modules.</string>
+
+    <string name="chk_zygisk_module_inject_name">Zygisk Module Injected into Process</string>
+    <string name="chk_zygisk_module_inject_name_nd">Zygisk Module Injection</string>
+    <string name="chk_zygisk_module_inject_desc">A Zygisk module library is mapped into this process.</string>
+    <string name="chk_zygisk_module_inject_desc_nd">No Zygisk module libraries found in process memory map.</string>
+    <string name="chk_zygisk_module_inject_reason">Found Zygisk module path(s) in /proc/self/maps: %1$s. Zygisk loads each enabled module\'s native library directly into the app process from /data/adb/modules/&lt;name&gt;/zygisk/. Seeing this path confirms that Zygisk is active and has injected a module here.</string>
+    <string name="chk_zygisk_module_inject_reason_nd">No /data/adb/modules/*/zygisk/ paths found in /proc/self/maps.</string>
+    <string name="chk_zygisk_module_inject_solution">Disable Zygisk in Magisk settings or remove injecting modules.</string>
+
+    <string name="chk_lspd_process_name">LSPosed Daemon Process Detected</string>
+    <string name="chk_lspd_process_name_nd">LSPosed Daemon Process</string>
+    <string name="chk_lspd_process_desc">The LSPosed daemon (lspd) is running on this device.</string>
+    <string name="chk_lspd_process_desc_nd">No LSPosed daemon (lspd) process found.</string>
+    <string name="chk_lspd_process_reason">A process named \'lspd\' was found in /proc. lspd is the background daemon of the LSPosed framework that manages hook modules and injects code into app processes via Zygote. Found: %1$s.</string>
+    <string name="chk_lspd_process_reason_nd">No process named \'lspd\' was found in /proc.</string>
+    <string name="chk_lspd_process_solution">Uninstall LSPosed via its manager app and reboot to stop the daemon.</string>
+
+
+    <!-- AdvancedRootDetector strings -->
+    <string name="chk_adv_su_path_name">Su Binary Found</string>
+    <string name="chk_adv_su_path_name_nd">Su Binary Check</string>
+    <string name="chk_adv_su_path_desc">A su binary was found on the device.</string>
+    <string name="chk_adv_su_path_desc_nd">No su binary found in standard locations.</string>
+    <string name="chk_adv_su_path_reason">Found at: %1$s</string>
+    <string name="chk_adv_su_path_reason_nd">No su binary found in the checked locations.</string>
+    <string name="chk_adv_su_path_solution">Remove the su binary from the reported path.</string>
+
+    <string name="chk_adv_rw_sys_name">System Partition Mounted Read-Write</string>
+    <string name="chk_adv_rw_sys_desc">One or more system partitions are mounted read-write.</string>
+    <string name="chk_adv_rw_sys_desc_nd">System partitions are mounted read-only.</string>
+    <string name="chk_adv_rw_sys_desc_error">Could not check system mount flags.</string>
+    <string name="chk_adv_rw_sys_reason">Read-write mount points: %1$s. System partitions should be mounted read-only on secure devices.</string>
+    <string name="chk_adv_rw_sys_reason_nd">All checked system partitions are mounted read-only.</string>
+    <string name="chk_adv_rw_sys_solution">Remount system partitions as read-only or restore factory image.</string>
+    <string name="chk_adv_rw_sys_solution_error">Verify mount flags manually via adb shell mount.</string>
+
+    <string name="chk_adv_bootloader_name">Bootloader Unlocked</string>
+    <string name="chk_adv_bootloader_name_nd">Bootloader Lock Status</string>
+    <string name="chk_adv_bootloader_desc">The bootloader appears to be unlocked.</string>
+    <string name="chk_adv_bootloader_desc_nd">No bootloader unlock indicators found.</string>
+    <string name="chk_adv_bootloader_reason">Indicators: %1$s</string>
+    <string name="chk_adv_bootloader_reason_nd">No bootloader unlock indicators were detected.</string>
+    <string name="chk_adv_bootloader_solution">Re-lock the bootloader via OEM/fastboot if possible.</string>
+
+    <string name="chk_adv_dm_verity_name">dm-verity Disabled</string>
+    <string name="chk_adv_dm_verity_name_nd">dm-verity Status</string>
+    <string name="chk_adv_dm_verity_desc">dm-verity is disabled, allowing system partition modification.</string>
+    <string name="chk_adv_dm_verity_desc_nd">dm-verity appears to be enabled.</string>
+    <string name="chk_adv_dm_verity_reason">Indicators: %1$s. dm-verity verifies system partition integrity on boot.</string>
+    <string name="chk_adv_dm_verity_reason_nd">No dm-verity disable indicators detected.</string>
+    <string name="chk_adv_dm_verity_solution">Re-enable dm-verity via fastboot or restore the factory image.</string>
+
+    <string name="chk_adv_dang_props_name">Dangerous System Properties Set</string>
+    <string name="chk_adv_dang_props_name_nd">Dangerous System Properties</string>
+    <string name="chk_adv_dang_props_desc">Dangerous system properties associated with root or debugging are set.</string>
+    <string name="chk_adv_dang_props_desc_nd">No dangerous system properties detected.</string>
+    <string name="chk_adv_dang_props_reason">Found: %1$s</string>
+    <string name="chk_adv_dang_props_reason_nd">No dangerous system properties were found.</string>
+    <string name="chk_adv_dang_props_solution">Remove or unset the dangerous properties and reboot.</string>
+
+    <string name="chk_adv_dev_opts_name">Developer Options Enabled</string>
+    <string name="chk_adv_dev_opts_desc">Android Developer Options are enabled on this device.</string>
+    <string name="chk_adv_dev_opts_desc_nd">Developer Options are disabled.</string>
+    <string name="chk_adv_dev_opts_desc_error">Could not determine Developer Options status.</string>
+    <string name="chk_adv_dev_opts_reason">The Developer Options setting is enabled (value=1).</string>
+    <string name="chk_adv_dev_opts_reason_nd">Developer Options setting is disabled (value=0).</string>
+    <string name="chk_adv_dev_opts_solution">Disable via Settings &#8594; System &#8594; Developer Options &#8594; toggle off.</string>
+    <string name="chk_adv_dev_opts_solution_error">Check manually in Settings &#8594; System &#8594; Developer Options.</string>
+
+    <string name="chk_adv_adb_name">ADB Debugging Enabled</string>
+    <string name="chk_adv_adb_desc">USB debugging (ADB) is enabled on this device.</string>
+    <string name="chk_adv_adb_desc_nd">ADB debugging is disabled.</string>
+    <string name="chk_adv_adb_desc_error">Could not determine ADB status.</string>
+    <string name="chk_adv_adb_reason">The adb_enabled setting is enabled (value=1).</string>
+    <string name="chk_adv_adb_reason_nd">ADB debugging is not enabled (value=0).</string>
+    <string name="chk_adv_adb_solution">Disable via Settings &#8594; Developer Options &#8594; USB Debugging &#8594; toggle off.</string>
+    <string name="chk_adv_adb_solution_error">Check manually in Settings &#8594; Developer Options.</string>
+
+    <string name="chk_adv_frida_proc_name">Frida Server Process Detected</string>
+    <string name="chk_adv_frida_proc_desc">A Frida server process is running on this device.</string>
+    <string name="chk_adv_frida_proc_desc_nd">No Frida server process detected.</string>
+    <string name="chk_adv_frida_proc_desc_error">Could not scan processes for Frida.</string>
+    <string name="chk_adv_frida_proc_reason">Frida processes found: %1$s</string>
+    <string name="chk_adv_frida_proc_reason_nd">No Frida server processes found in /proc.</string>
+    <string name="chk_adv_frida_proc_solution">Kill and uninstall frida-server from the device.</string>
+    <string name="chk_adv_frida_proc_solution_error">Verify manually using adb shell ps.</string>
+
+    <string name="chk_adv_frida_port_name">Frida Default Port Open</string>
+    <string name="chk_adv_frida_port_name_nd">Frida Default Port Check</string>
+    <string name="chk_adv_frida_port_desc">Frida\'s default port (27042) is open on this device.</string>
+    <string name="chk_adv_frida_port_desc_nd">Frida\'s default port is not open.</string>
+    <string name="chk_adv_frida_port_reason">Port 27042 is open — this is the default Frida server port.</string>
+    <string name="chk_adv_frida_port_reason_nd">Port 27042 is not open.</string>
+    <string name="chk_adv_frida_port_solution">Kill frida-server and remove it from the device.</string>
+
+    <string name="chk_adv_frida_files_name">Frida Files Found</string>
+    <string name="chk_adv_frida_files_name_nd">Frida Files Check</string>
+    <string name="chk_adv_frida_files_desc">Frida-related files were found on the filesystem.</string>
+    <string name="chk_adv_frida_files_desc_nd">No Frida-related files found.</string>
+    <string name="chk_adv_frida_files_reason">Found: %1$s</string>
+    <string name="chk_adv_frida_files_reason_nd">No Frida files found in the checked locations.</string>
+    <string name="chk_adv_frida_files_solution">Delete the Frida files and remove frida-server from the device.</string>
+
+    <string name="chk_adv_riru_name">Riru (Riru Core) Detected</string>
+    <string name="chk_adv_riru_name_nd">Riru Module Check</string>
+    <string name="chk_adv_riru_desc">Riru (Riru Core) injection framework is present.</string>
+    <string name="chk_adv_riru_desc_nd">No Riru framework files detected.</string>
+    <string name="chk_adv_riru_reason">Found Riru indicators: %1$s</string>
+    <string name="chk_adv_riru_reason_nd">No Riru-related files or processes were found.</string>
+    <string name="chk_adv_riru_solution">Remove the Riru module via Magisk Manager and reboot.</string>
+
+    <string name="chk_adv_twrp_name">Custom Recovery Detected</string>
+    <string name="chk_adv_twrp_name_nd">Custom Recovery Check</string>
+    <string name="chk_adv_twrp_desc">A custom recovery (TWRP or similar) is installed.</string>
+    <string name="chk_adv_twrp_desc_nd">No custom recovery indicators found.</string>
+    <string name="chk_adv_twrp_reason">Custom recovery indicators: %1$s</string>
+    <string name="chk_adv_twrp_reason_nd">No custom recovery indicators were detected.</string>
+    <string name="chk_adv_twrp_solution">Flash the stock recovery and re-lock the bootloader.</string>
+
+    <string name="chk_adv_emulator_name">Emulator Detected</string>
+    <string name="chk_adv_emulator_name_nd">Emulator Check</string>
+    <string name="chk_adv_emulator_desc">This device appears to be running in an emulator.</string>
+    <string name="chk_adv_emulator_desc_nd">No emulator indicators detected.</string>
+    <string name="chk_adv_emulator_reason">Emulator indicators: %1$s</string>
+    <string name="chk_adv_emulator_reason_nd">No emulator-related properties or files were found.</string>
+    <string name="chk_adv_emulator_solution">Run the app on a physical device instead of an emulator.</string>
+
+    <string name="chk_adv_inj_libs_name">Injected Libraries Detected</string>
+    <string name="chk_adv_inj_libs_desc">Suspicious libraries are mapped into this process.</string>
+    <string name="chk_adv_inj_libs_desc_nd">No injected libraries detected in process memory.</string>
+    <string name="chk_adv_inj_libs_desc_error">Could not read process memory maps.</string>
+    <string name="chk_adv_inj_libs_reason">Suspicious paths: %1$s</string>
+    <string name="chk_adv_inj_libs_reason_nd">No suspicious library paths found in /proc/self/maps.</string>
+    <string name="chk_adv_inj_libs_solution">Remove the hooking framework or injected library.</string>
+    <string name="chk_adv_inj_libs_solution_error">Check /proc/self/maps manually for suspicious entries.</string>
+
+    <string name="chk_adv_zygisk_sock_name">Zygisk Companion Socket Detected</string>
+    <string name="chk_adv_zygisk_sock_name_nd">Zygisk Companion Socket</string>
+    <string name="chk_adv_zygisk_sock_desc">Zygisk companion sockets were found in the abstract socket namespace.</string>
+    <string name="chk_adv_zygisk_sock_desc_nd">No Zygisk companion sockets found.</string>
+    <string name="chk_adv_zygisk_sock_desc_error">Could not scan abstract socket namespace.</string>
+    <string name="chk_adv_zygisk_sock_reason">Sockets found: %1$s. Zygisk creates abstract sockets for IPC between the companion process and injected code.</string>
+    <string name="chk_adv_zygisk_sock_reason_nd">No Zygisk socket names found in /proc/net/unix.</string>
+    <string name="chk_adv_zygisk_sock_solution">Disable Zygisk in Magisk settings and reboot.</string>
+    <string name="chk_adv_zygisk_sock_solution_error">Check /proc/net/unix manually for Zygisk socket entries.</string>
+
+    <string name="chk_adv_mgsk_mods_name">Magisk Modules Detected</string>
+    <string name="chk_adv_mgsk_mods_desc">Active Magisk modules were found on this device.</string>
+    <string name="chk_adv_mgsk_mods_desc_nd">No active Magisk modules found.</string>
+    <string name="chk_adv_mgsk_mods_desc_nodir">The Magisk modules directory does not exist.</string>
+    <string name="chk_adv_mgsk_mods_reason">Active modules: %1$s</string>
+    <string name="chk_adv_mgsk_mods_reason_nd">No enabled module directories found in /data/adb/modules/.</string>
+    <string name="chk_adv_mgsk_mods_reason_nodir">The /data/adb/modules/ directory does not exist — Magisk is likely not installed.</string>
+    <string name="chk_adv_mgsk_mods_solution">Remove or disable Magisk modules via Magisk Manager.</string>
+
+    <string name="chk_adv_debugger_name">Debugger Attached</string>
+    <string name="chk_adv_debugger_name_nd">Debugger Attach Check</string>
+    <string name="chk_adv_debugger_desc">A debugger is attached to this process.</string>
+    <string name="chk_adv_debugger_desc_nd">No debugger is attached to this process.</string>
+    <string name="chk_adv_debugger_desc_error">Could not read process status to check for debugger.</string>
+    <string name="chk_adv_debugger_reason">TracerPid=%1$d — a non-zero TracerPid in /proc/self/status indicates a debugger is attached.</string>
+    <string name="chk_adv_debugger_reason_nd">TracerPid=0 — no debugger attached.</string>
+    <string name="chk_adv_debugger_solution">Detach the debugger and do not run the app under a debugger.</string>
+    <string name="chk_adv_debugger_solution_error">Check /proc/self/status TracerPid manually.</string>
+
+    <string name="chk_adv_cloaking_name">Root Cloaking Detected</string>
+    <string name="chk_adv_cloaking_name_nd">Root Cloaking Check</string>
+    <string name="chk_adv_cloaking_desc">Root-cloaking software (MagiskHide, Shamiko, etc.) is active.</string>
+    <string name="chk_adv_cloaking_desc_nd">No root cloaking indicators detected.</string>
+    <string name="chk_adv_cloaking_reason">Cloaking indicators: %1$s</string>
+    <string name="chk_adv_cloaking_reason_nd">No root cloaking indicators were found.</string>
+    <string name="chk_adv_cloaking_solution">Disable MagiskHide/DenyList or remove cloaking modules and reboot.</string>
+
+    <string name="chk_adv_kern_mods_name">Root Kernel Modules Loaded</string>
+    <string name="chk_adv_kern_mods_desc">Suspicious kernel modules associated with root are loaded.</string>
+    <string name="chk_adv_kern_mods_desc_nd">No suspicious kernel modules found.</string>
+    <string name="chk_adv_kern_mods_desc_error">Could not read kernel module list.</string>
+    <string name="chk_adv_kern_mods_reason">Suspicious modules: %1$s</string>
+    <string name="chk_adv_kern_mods_reason_nd">No suspicious kernel modules found in /proc/modules.</string>
+    <string name="chk_adv_kern_mods_solution">Remove or unload the suspicious kernel modules and reboot.</string>
+    <string name="chk_adv_kern_mods_solution_error">Check /proc/modules manually for suspicious entries.</string>
+
+    <string name="no_action_required">No action required.</string>
+    <string name="chk_adv_rw_sys_name_nd">System Partition Mount</string>
+    <string name="chk_adv_dev_opts_name_nd">Developer Options</string>
+    <string name="chk_adv_adb_name_nd">USB Debugging</string>
+    <string name="chk_adv_frida_proc_name_nd">Frida Process Check</string>
+    <string name="chk_adv_inj_libs_name_nd">Injected Libraries Check</string>
+    <string name="chk_adv_kern_mods_name_nd">Root Kernel Modules Check</string>
+    <string name="chk_adv_mgsk_mods_name_nd">Magisk Modules Check</string>
+
+    <!-- ExtraRootDetector: Check 1 - LD_PRELOAD -->
+    <string name="chk_ext_ldpreload_name">LD_PRELOAD / LD_LIBRARY_PATH Set</string>
+    <string name="chk_ext_ldpreload_desc">Linker environment variable injection detected.</string>
+    <string name="chk_ext_ldpreload_reason">Found: %1$s. Setting LD_PRELOAD causes the dynamic linker to load an attacker-chosen library before all others, enabling function interception in any process. This is used by Frida gadget, Substrate-style hooks, and some su wrappers.</string>
+    <string name="chk_ext_ldpreload_solution">Remove any LD_PRELOAD/LD_LIBRARY_PATH from the environment. Uninstall any hooking framework that injects via the linker.</string>
+    <string name="chk_ext_ldpreload_name_nd">LD_PRELOAD Environment</string>
+    <string name="chk_ext_ldpreload_desc_nd">No LD_PRELOAD injection detected.</string>
+    <string name="chk_ext_ldpreload_reason_nd">LD_PRELOAD and LD_LIBRARY_PATH are not set to suspicious values.</string>
+    <string name="chk_ext_ldpreload_desc_error">Could not read process environment.</string>
+    <string name="chk_ext_ldpreload_solution_error">Ensure /proc/self/environ is accessible.</string>
+    <!-- ExtraRootDetector: Check 2 - Linux Capabilities -->
+    <string name="chk_ext_caps_name">Elevated Linux Capabilities</string>
+    <string name="chk_ext_caps_desc">Process has non-zero Linux capabilities.</string>
+    <string name="chk_ext_caps_reason">CapPrm=%1$s, CapEff=%2$s. Normal Android apps run with zero capabilities. Non-zero values indicate this process was granted elevated Linux privileges, which can happen when su or a root framework manipulates the process.</string>
+    <string name="chk_ext_caps_solution">Revoke elevated capabilities. These are normally granted by root frameworks.</string>
+    <string name="chk_ext_caps_name_nd">Linux Capabilities</string>
+    <string name="chk_ext_caps_desc_nd">Process has no elevated Linux capabilities.</string>
+    <string name="chk_ext_caps_reason_nd">CapPrm=0 and CapEff=0 — normal for a sandboxed Android app.</string>
+    <string name="chk_ext_caps_desc_error">Could not read process status.</string>
+    <string name="chk_ext_caps_solution_error">Ensure /proc/self/status is accessible.</string>
+    <!-- ExtraRootDetector: Check 3 - Mountinfo Overlay -->
+    <string name="chk_ext_overlay_name">Magisk/KSU Overlay Mounts Detected</string>
+    <string name="chk_ext_overlay_desc">Root framework overlay mount entries found in /proc/self/mountinfo.</string>
+    <string name="chk_ext_overlay_reason">/proc/self/mountinfo shows %1$d mount entry/entries sourced from Magisk/KSU directories (/data/adb/magisk or /data/adb/ksu). These are bind-mounts created by the root framework\'s module system to overlay modified files over the original system partition.</string>
+    <string name="chk_ext_overlay_solution">Remove root framework modules or uninstall the root framework entirely.</string>
+    <string name="chk_ext_overlay_name_nd">Root Overlay Mounts</string>
+    <string name="chk_ext_overlay_desc_nd">No Magisk/KSU overlay mounts found.</string>
+    <string name="chk_ext_overlay_reason_nd">No root framework markers were found in /proc/self/mountinfo.</string>
+    <string name="chk_ext_overlay_desc_error">Could not read /proc/self/mountinfo.</string>
+    <string name="chk_ext_overlay_solution_error">Ensure /proc/self/mountinfo is accessible.</string>
+    <!-- ExtraRootDetector: Check 4 - tmpfs at /sbin -->
+    <string name="chk_ext_sbin_tmpfs_name">tmpfs Mounted at /sbin</string>
+    <string name="chk_ext_sbin_tmpfs_desc">tmpfs is mounted over /sbin — legacy Magisk indicator.</string>
+    <string name="chk_ext_sbin_tmpfs_reason">Magisk versions prior to v24 mounted a tmpfs over /sbin to store its binaries and hide them from detection. A tmpfs on /sbin on a production device is a strong Magisk indicator.</string>
+    <string name="chk_ext_sbin_tmpfs_solution">This is removed when Magisk is uninstalled.</string>
+    <string name="chk_ext_sbin_tmpfs_name_nd">tmpfs at /sbin</string>
+    <string name="chk_ext_sbin_tmpfs_desc_nd">No tmpfs mount at /sbin.</string>
+    <string name="chk_ext_sbin_tmpfs_reason_nd">/sbin does not have a tmpfs mount.</string>
+    <string name="chk_ext_sbin_tmpfs_desc_error">Could not read /proc/mounts.</string>
+    <string name="chk_ext_sbin_tmpfs_solution_error">Ensure /proc/mounts is accessible.</string>
+    <!-- ExtraRootDetector: Check 5 - Privileged Processes -->
+    <string name="chk_ext_priv_proc_name">Unexpected Root Processes</string>
+    <string name="chk_ext_priv_proc_desc">Unexpected processes running as uid=0 (root).</string>
+    <string name="chk_ext_priv_proc_reason">Found %1$d unexpected root process(es): %2$s. On a stock device, the set of uid=0 processes is fixed. Extra root processes indicate active root frameworks (magiskd, ksud, etc.).</string>
+    <string name="chk_ext_priv_proc_solution">Stop or remove the root framework to eliminate unexpected root processes.</string>
+    <string name="chk_ext_priv_proc_name_nd">Privileged Processes</string>
+    <string name="chk_ext_priv_proc_desc_nd">No unexpected uid=0 processes found.</string>
+    <string name="chk_ext_priv_proc_reason_nd">Only expected system processes were found running as root.</string>
+    <string name="chk_ext_priv_proc_desc_error">Could not enumerate processes.</string>
+    <string name="chk_ext_priv_proc_solution_error">Ensure /proc is accessible.</string>
+    <!-- ExtraRootDetector: Check 6 - Terminal/Hacking Apps -->
+    <string name="chk_ext_hacking_apps_name">Terminal / Hacking Apps Detected</string>
+    <string name="chk_ext_hacking_apps_desc">Terminal emulator or security tool apps installed.</string>
+    <string name="chk_ext_hacking_apps_reason">Found %1$d app(s): %2$s. These apps provide terminal access, SSH, scripting environments, or advanced file system access. Many require or facilitate root access.</string>
+    <string name="chk_ext_hacking_apps_solution">Uninstall terminal and hacking apps if not needed for legitimate use.</string>
+    <string name="chk_ext_hacking_apps_name_nd">Terminal / Hacking Apps</string>
+    <string name="chk_ext_hacking_apps_desc_nd">No terminal emulator or hacking apps detected.</string>
+    <string name="chk_ext_hacking_apps_reason_nd">No known terminal or security tool packages were found.</string>
+    <!-- ExtraRootDetector: Check 7 - Security Patch Age -->
+    <string name="chk_ext_sec_patch_name_critical">Security Patch Very Outdated</string>
+    <string name="chk_ext_sec_patch_desc_critical">Security patch is %1$d months old (&gt;= 2 years).</string>
+    <string name="chk_ext_sec_patch_reason_critical">Security patch level: %1$s (%2$d months ago). Rooted devices often avoid OTA updates to preserve root access, resulting in severely outdated security patches. An extremely old patch level exposes the device to known CVEs.</string>
+    <string name="chk_ext_sec_patch_solution_critical">Apply all available OTA/security updates.</string>
+    <string name="chk_ext_sec_patch_name_warn">Security Patch Outdated</string>
+    <string name="chk_ext_sec_patch_desc_warn">Security patch is %1$d months old (&gt;= 1 year).</string>
+    <string name="chk_ext_sec_patch_reason_warn">Security patch level: %1$s (%2$d months ago). Keeping the patch level current is important for device security.</string>
+    <string name="chk_ext_sec_patch_solution_warn">Apply all available security updates from the manufacturer.</string>
+    <string name="chk_ext_sec_patch_name_nd">Security Patch Level</string>
+    <string name="chk_ext_sec_patch_desc_nd">Security patch level is reasonably current (&lt; 12 months).</string>
+    <string name="chk_ext_sec_patch_reason_nd">Patch date: %1$s (%2$d months ago).</string>
+    <string name="chk_ext_sec_patch_desc_error">Could not determine security patch age.</string>
+    <string name="chk_ext_sec_patch_solution_error">Check Settings → About Phone → Android security patch level.</string>
+    <!-- ExtraRootDetector: Check 8 - Test-Keys Build -->
+    <string name="chk_ext_test_keys_name">Test-Keys Build Detected</string>
+    <string name="chk_ext_test_keys_desc">Device is running a test-keys signed build.</string>
+    <string name="chk_ext_test_keys_reason">ro.build.tags=%1$s. Production (retail) Android builds are signed with release keys and report \'release-keys\'. \'test-keys\' means the build was signed with Android\'s publicly known AOSP test keys, which is typical for custom ROMs (LineageOS, AOSP builds) and developer images. Such builds often have root access or weaker security policies.</string>
+    <string name="chk_ext_test_keys_solution">Use an OEM-provided, release-keys signed official ROM.</string>
+    <string name="chk_ext_test_keys_name_nd">Build Signing Keys</string>
+    <string name="chk_ext_test_keys_desc_nd">Build is signed with release keys.</string>
+    <string name="chk_ext_test_keys_reason_nd">ro.build.tags=%1$s — not test-keys.</string>
+    <!-- ExtraRootDetector: Check 9 - OEM Unlock -->
+    <string name="chk_ext_oem_unlock_name">OEM Unlock Enabled</string>
+    <string name="chk_ext_oem_unlock_desc">OEM unlock is currently enabled.</string>
+    <string name="chk_ext_oem_unlock_reason">OEM unlock enabled: %1$s. When OEM unlock is allowed, the user can unlock the bootloader from Developer Options. An enabled OEM unlock setting indicates the device is prepared for rooting.</string>
+    <string name="chk_ext_oem_unlock_solution">Disable OEM unlock via Settings → Developer Options → OEM unlocking → toggle off.</string>
+    <string name="chk_ext_oem_unlock_name_nd">OEM Unlock</string>
+    <string name="chk_ext_oem_unlock_desc_nd">OEM unlock does not appear to be enabled.</string>
+    <string name="chk_ext_oem_unlock_reason_nd">No OEM unlock enabled indicators found.</string>
+    <!-- ExtraRootDetector: Check 10 - Mock Locations -->
+    <string name="chk_ext_mock_loc_name">Mock Locations Enabled</string>
+    <string name="chk_ext_mock_loc_desc">Mock location provider is enabled.</string>
+    <string name="chk_ext_mock_loc_reason">Mock locations allow any app to supply fake GPS coordinates. This is commonly used for GPS spoofing and game cheating. Detail: %1$s</string>
+    <string name="chk_ext_mock_loc_solution">Disable mock location: Settings → Developer Options → Mock location app → None.</string>
+    <string name="chk_ext_mock_loc_name_nd">Mock Locations</string>
+    <string name="chk_ext_mock_loc_desc_nd">Mock locations are not enabled.</string>
+    <string name="chk_ext_mock_loc_reason_nd">allow_mock_location=0 and no mock location app is configured.</string>
+    <string name="chk_ext_mock_loc_desc_error">Could not read mock location settings.</string>
+    <string name="chk_ext_mock_loc_solution_error">Check manually in Settings → Developer Options.</string>
+    <!-- ExtraRootDetector: Check 11 - Wireless ADB -->
+    <string name="chk_ext_wireless_adb_name">ADB over Wi-Fi Active</string>
+    <string name="chk_ext_wireless_adb_desc">ADB over Wi-Fi port is listening.</string>
+    <string name="chk_ext_wireless_adb_reason">Port(s) %1$s are in LISTEN state. Port 5555 is the ADB-over-Wi-Fi default. Any device on the same network can connect and issue ADB commands, including installing/removing apps and (on debug builds) gaining a shell.</string>
+    <string name="chk_ext_wireless_adb_solution">Disable via \'adb disconnect\' or Settings → Wireless Debugging → toggle off.</string>
+    <string name="chk_ext_wireless_adb_name_nd">ADB over Wi-Fi</string>
+    <string name="chk_ext_wireless_adb_desc_nd">No ADB Wi-Fi ports detected as listening.</string>
+    <string name="chk_ext_wireless_adb_reason_nd">Ports 5555/5037 are not in LISTEN state.</string>
+    <!-- ExtraRootDetector: Check 12 - BusyBox -->
+    <string name="chk_ext_busybox_name">BusyBox Installed</string>
+    <string name="chk_ext_busybox_desc">BusyBox binary found.</string>
+    <string name="chk_ext_busybox_reason">Found: %1$s. BusyBox is a suite of Unix command-line utilities (ls, cp, wget, etc.) commonly installed alongside root to extend shell capabilities. Presence in /system/xbin or /sbin usually requires root to have been installed.</string>
+    <string name="chk_ext_busybox_solution">Remove via BusyBox uninstaller app or manually delete the binary.</string>
+    <string name="chk_ext_busybox_name_nd">BusyBox</string>
+    <string name="chk_ext_busybox_desc_nd">BusyBox not found.</string>
+    <string name="chk_ext_busybox_reason_nd">No BusyBox binary found at common locations.</string>
+    <!-- ExtraRootDetector: Check 13 - SUID su Binary -->
+    <string name="chk_ext_su_suid_name">SUID su Binary Detected</string>
+    <string name="chk_ext_su_suid_desc">SUID root su binary found.</string>
+    <string name="chk_ext_su_suid_reason">SUID binaries: %1$s. A SUID root su binary can be executed by any user to gain root privileges. This is the classic root-granting mechanism on Unix/Android.</string>
+    <string name="chk_ext_su_suid_solution">Remove the su binary or revoke its SUID bit: \'chmod 755 /system/bin/su\'</string>
+    <string name="chk_ext_su_suid_name_nd">SUID su Binary</string>
+    <string name="chk_ext_su_suid_desc_nd">No SUID su binary detected.</string>
+    <string name="chk_ext_su_suid_reason_nd">No SUID root su binary was found at common paths.</string>
+    <!-- ExtraRootDetector: Check 14 - Shamiko/ZygiskAssist -->
+    <string name="chk_ext_shamiko_name">Detection-Bypass Module Found</string>
+    <string name="chk_ext_shamiko_desc">Root detection bypass module detected.</string>
+    <string name="chk_ext_shamiko_reason">Found: %1$s. Shamiko, Zygisk-Assistant, and ReZygisk are Zygisk modules specifically designed to hide root from apps using DenyList / allow-listing. Play Integrity Fix modules spoof the Play Integrity API verdict. These indicate active attempts to conceal root from this app.</string>
+    <string name="chk_ext_shamiko_solution">Remove hide modules from Magisk Manager → Modules.</string>
+    <string name="chk_ext_shamiko_name_nd">Detection-Bypass Modules</string>
+    <string name="chk_ext_shamiko_desc_nd">No Shamiko/ZygiskAssist detection-bypass modules found.</string>
+    <string name="chk_ext_shamiko_reason_nd">No known detection-bypass module directories or packages were found.</string>
+    <!-- ExtraRootDetector: Check 15 - Hidden System Bind-Mounts -->
+    <string name="chk_ext_sys_mounts_name">Suspicious System Bind-Mounts</string>
+    <string name="chk_ext_sys_mounts_desc">Root-framework bind-mounts over /system detected.</string>
+    <string name="chk_ext_sys_mounts_reason">Magisk and KernelSU modules replace files in /system by bind-mounting modified copies from /data/adb. Found bind-mounts: %1$s. These replace stock system files with module-provided versions.</string>
+    <string name="chk_ext_sys_mounts_solution">Remove root modules or uninstall the root framework.</string>
+    <string name="chk_ext_sys_mounts_name_nd">System Bind-Mounts</string>
+    <string name="chk_ext_sys_mounts_desc_nd">No suspicious /system bind-mounts found.</string>
+    <string name="chk_ext_sys_mounts_reason_nd">No root-framework (/data/adb) sourced bind-mounts over /system, /vendor or /product found.</string>
+    <string name="chk_ext_sys_mounts_desc_error">Could not read /proc/self/mountinfo.</string>
+    <string name="chk_ext_sys_mounts_solution_error">Ensure /proc/self/mountinfo is accessible.</string>
+
+
+    <!-- LunaDetector: Check 1 - LSPosed API Property -->
+    <string name="chk_luna_lsp_prop_name">LSPosed API Property Detected</string>
+    <string name="chk_luna_lsp_prop_desc">LSPosed-specific system properties found.</string>
+    <string name="chk_luna_lsp_prop_reason">Luna-method (findlsp): __system_property_get on LSPosed API property. Found: %1$s. persist.lsp.api is set by LSPosed and contains its API version number.</string>
+    <string name="chk_luna_lsp_prop_solution">Disable or uninstall LSPosed to remove these properties.</string>
+    <string name="chk_luna_lsp_prop_name_nd">LSPosed API Property</string>
+    <string name="chk_luna_lsp_prop_desc_nd">No LSPosed-specific system properties found.</string>
+    <string name="chk_luna_lsp_prop_reason_nd">Luna-method (findlsp): None of the known LSPosed system properties (persist.lsp.api, init.svc.lspd) were found.</string>
+    <!-- LunaDetector: Check 2 - KernelSU Daemon -->
+    <string name="chk_luna_ksu_daemon_name">KernelSU Daemon Service Property</string>
+    <string name="chk_luna_ksu_daemon_desc">KernelSU daemon service properties found.</string>
+    <string name="chk_luna_ksu_daemon_reason">Luna-method (findksu): __system_property_get confirmed KernelSU daemon. Found: %1$s. init.svc.ksuud is set by the Android init system when the KernelSU userspace daemon (ksuud) is active.</string>
+    <string name="chk_luna_ksu_daemon_solution">Uninstall KernelSU via the KernelSU Manager app or flash a stock kernel.</string>
+    <string name="chk_luna_ksu_daemon_desc_nd">No KernelSU daemon service properties found.</string>
+    <string name="chk_luna_ksu_daemon_reason_nd">Luna-method (findksu): None of the KernelSU service properties (init.svc.ksuud, init.svc.ksu) were found.</string>
+    <!-- LunaDetector: Check 3 - Magisk Daemon Property -->
+    <string name="chk_luna_magisk_svc_name">Magisk Daemon Service Property</string>
+    <string name="chk_luna_magisk_svc_desc">Magisk daemon service property found.</string>
+    <string name="chk_luna_magisk_svc_reason">Luna-method (checkappnum): __system_property_get confirmed Magisk daemon. Found: %1$s. init.svc.magiskd is set by the Android init system when the Magisk daemon is running.</string>
+    <string name="chk_luna_magisk_svc_solution">Uninstall Magisk via the Magisk Manager app.</string>
+    <string name="chk_luna_magisk_svc_desc_nd">No Magisk daemon service properties found.</string>
+    <string name="chk_luna_magisk_svc_reason_nd">Luna-method (checkappnum): None of the known Magisk service properties were found.</string>
+    <!-- LunaDetector: Check 4 - Root Binaries in PATH -->
+    <string name="chk_luna_path_su_name">Root Binaries in PATH</string>
+    <string name="chk_luna_path_su_desc">Root-related binaries found in PATH directories.</string>
+    <string name="chk_luna_path_su_reason">Luna-method (psdir): Scanned getenv(PATH) directories for root binaries. Found: %1$s. Root binaries placed in PATH directories grant easy shell-level root access.</string>
+    <string name="chk_luna_path_su_solution">Remove root tools to eliminate these binaries from PATH.</string>
+    <string name="chk_luna_path_su_desc_nd">No root binaries found in PATH directories.</string>
+    <string name="chk_luna_path_su_reason_nd">Luna-method (psdir): No root-related binaries found when scanning getenv(PATH) directories.</string>
+    <!-- LunaDetector: Check 5 - APatch Processes -->
+    <string name="chk_luna_apatch_proc_name">APatch/Root Process Detected</string>
+    <string name="chk_luna_apatch_proc_desc">APatch or root framework processes found running.</string>
+    <string name="chk_luna_apatch_proc_reason">Luna-method (rustmagisk): /proc scan for APatch/root process names. Found: %1$s. apd is the APatch daemon; its presence confirms APatch is active. magiskd indicates Magisk is running.</string>
+    <string name="chk_luna_apatch_proc_solution">Uninstall APatch via the APatch Manager app, or Magisk via Magisk Manager.</string>
+    <string name="chk_luna_apatch_proc_name_nd">APatch/Root Process</string>
+    <string name="chk_luna_apatch_proc_desc_nd">No APatch or root framework processes detected.</string>
+    <string name="chk_luna_apatch_proc_reason_nd">Luna-method (rustmagisk): No APatch-related process names found in /proc.</string>
+    <!-- LunaDetector: Check 6 - Suspicious File Size -->
+    <string name="chk_luna_file_size_name">Suspicious File Size Anomaly</string>
+    <string name="chk_luna_file_size_desc">System files have unexpected sizes, indicating possible tampering.</string>
+    <string name="chk_luna_file_size_reason">Luna-method (fhma): stat() check revealed files with anomalous sizes. %1$s. Root tools may replace or append to system files, inflating their size beyond expected.</string>
+    <string name="chk_luna_file_size_solution">Restore affected system files from a stock firmware image.</string>
+    <string name="chk_luna_file_size_name_nd">File Size Anomaly</string>
+    <string name="chk_luna_file_size_desc_nd">No suspicious file size anomalies detected.</string>
+    <string name="chk_luna_file_size_reason_nd">Luna-method (fhma): Checked system files for size anomalies; none found.</string>
+    <!-- LunaDetector: Check 7 - Kernel Stat Anomaly -->
+    <string name="chk_luna_kernel_stat_name">Kernel Stat Anomaly Detected</string>
+    <string name="chk_luna_kernel_stat_desc">Kernel-level anomalies detected via /proc inspection.</string>
+    <string name="chk_luna_kernel_stat_reason">Luna-method (checksuskernel): Kernel stat anomaly checks found: %1$s. Root frameworks register UNIX sockets in /proc/net/unix and may run with elevated SELinux contexts.</string>
+    <string name="chk_luna_kernel_stat_solution">These kernel-level indicators are cleared when root frameworks are fully uninstalled.</string>
+    <string name="chk_luna_kernel_stat_name_nd">Kernel Stat Anomaly</string>
+    <string name="chk_luna_kernel_stat_desc_nd">No kernel stat anomalies detected.</string>
+    <string name="chk_luna_kernel_stat_reason_nd">Luna-method (checksuskernel): No kernel anomalies found in /proc.</string>
+    <!-- LunaDetector: Check 8 - Magisk Proc Mounts -->
+    <string name="chk_luna_magisk_mounts_name">Magisk Mount Entries Detected</string>
+    <string name="chk_luna_magisk_mounts_desc">Magisk-related entries found in /proc/self/mounts.</string>
+    <string name="chk_luna_magisk_mounts_reason">Luna-method (magiskmounts): /proc/self/mounts contains characteristic Magisk bind-mount or overlay entries. Found: %1$s. Magisk hides itself and its modules by creating bind-mounts and overlay filesystems that leave traces in the mount table.</string>
+    <string name="chk_luna_magisk_mounts_solution">Uninstall Magisk via the Magisk Manager app and reboot to restore stock mounts.</string>
+    <string name="chk_luna_magisk_mounts_name_nd">Magisk Mount Entries</string>
+    <string name="chk_luna_magisk_mounts_desc_nd">No Magisk-related mount entries found.</string>
+    <string name="chk_luna_magisk_mounts_reason_nd">Luna-method (magiskmounts): /proc/self/mounts contains no known Magisk-specific bind-mount or overlay markers.</string>
+    <!-- LunaDetector: Check 9 - Zygote Injection -->
+    <string name="chk_luna_zygote_inject_name">Zygote Injection Detected</string>
+    <string name="chk_luna_zygote_inject_desc">SELinux context indicates possible Zygote-level injection by Magisk/LSPosed.</string>
+    <string name="chk_luna_zygote_inject_reason">Luna-method (zygoteinject): SELinux context analysis found: %1$s. Magisk and LSPosed hook into Zygote to inject code into every new app process. This leaves characteristic SELinux context traces in /proc/self/attr/.</string>
+    <string name="chk_luna_zygote_inject_solution">Uninstall Magisk and LSPosed, then verify SELinux policy is restored to stock.</string>
+    <string name="chk_luna_zygote_inject_name_nd">Zygote Injection</string>
+    <string name="chk_luna_zygote_inject_desc_nd">No Zygote injection indicators found in SELinux contexts.</string>
+    <string name="chk_luna_zygote_inject_reason_nd">Luna-method (zygoteinject): /proc/self/attr/current and attr/prev show no signs of Zygote-level injection.</string>
+    <!-- LunaDetector: Check 10 - Tmpfs Mount Anomaly -->
+    <string name="chk_luna_tmpfs_mount_name">Tmpfs Mount Anomaly Detected</string>
+    <string name="chk_luna_tmpfs_mount_desc">Suspicious tmpfs mounts detected on system mount points.</string>
+    <string name="chk_luna_tmpfs_mount_reason">Native-Test-method (tmpfsmount): Anomalies found on /mnt/obb or /mnt/asec: %1$s. Magisk creates private tmpfs namespaces on these paths to isolate its module overlays from the global mount namespace, leaving multiple tmpfs entries for the same path.</string>
+    <string name="chk_luna_tmpfs_mount_solution">Uninstall Magisk and reboot to restore stock mount namespaces.</string>
+    <string name="chk_luna_tmpfs_mount_name_nd">Tmpfs Mount Anomaly</string>
+    <string name="chk_luna_tmpfs_mount_desc_nd">No suspicious tmpfs mount anomalies detected.</string>
+    <string name="chk_luna_tmpfs_mount_reason_nd">Native-Test-method (tmpfsmount): /mnt/obb and /mnt/asec mount entries appear normal.</string>
+    <!-- LunaDetector: Check 11 - Proc Scan -->
+    <string name="chk_luna_procscan_name">Suspicious Processes / Root Overlay Mounts</string>
+    <string name="chk_luna_procscan_desc">Root framework processes or root-linked overlayfs mounts found.</string>
+    <string name="chk_luna_procscan_reason">Luna-method (procscan): /proc/&lt;pid&gt;/cmdline and /proc/self/mountinfo revealed: %1$s. Only overlays whose lowerdir/upperdir point to root-tool paths (e.g. /data/adb, /magisk) or that cover system paths outside APEX/RRO are flagged.</string>
+    <string name="chk_luna_procscan_solution">Uninstall root frameworks and reboot.</string>
+    <string name="chk_luna_procscan_name_nd">Process / Root Overlay Scan</string>
+    <string name="chk_luna_procscan_desc_nd">No suspicious root processes or root-linked overlay mounts found.</string>
+    <string name="chk_luna_procscan_reason_nd">Luna-method (procscan): No known root process names in /proc and no root-tool-linked overlayfs entries in mountinfo.</string>
+    <!-- LunaDetector: Check 12 - Root Files -->
+    <string name="chk_luna_root_files_name">Root Binary / Framework Files Detected</string>
+    <string name="chk_luna_root_files_desc">Root-related files found on the filesystem.</string>
+    <string name="chk_luna_root_files_reason">Luna-method (roots): Root files found: %1$s.</string>
+    <string name="chk_luna_root_files_solution">Remove root tools to eliminate these files.</string>
+    <string name="chk_luna_root_files_name_nd">Root Binary / Framework Files</string>
+    <string name="chk_luna_root_files_desc_nd">No root files found in standard locations.</string>
+    <string name="chk_luna_root_files_reason_nd">Luna-method (roots): No root-related files found in common paths.</string>
+    <!-- LunaDetector: Check 13 - Kernel Version -->
+    <string name="chk_luna_kernel_version_name">Custom / Rooted Kernel Detected</string>
+    <string name="chk_luna_kernel_version_desc">Kernel version or boot parameters indicate a custom/modified kernel.</string>
+    <string name="chk_luna_kernel_version_reason">Luna-method (kernels): %1$s. A custom kernel (e.g. KernelSU-patched) is required for kernel-level rooting.</string>
+    <string name="chk_luna_kernel_version_solution">Restore the stock kernel via Fastboot or supported recovery.</string>
+    <string name="chk_luna_kernel_version_name_nd">Kernel Version Check</string>
+    <string name="chk_luna_kernel_version_desc_nd">Kernel version appears standard.</string>
+    <string name="chk_luna_kernel_version_reason_nd">Luna-method (kernels): /proc/version contains no custom-kernel indicators.</string>
+    <!-- LunaDetector: Check 14 - Attestation File -->
+    <string name="chk_luna_attestation_file_name">Root Attestation File Detected</string>
+    <string name="chk_luna_attestation_file_desc">Root attestation test file found at /data/local/tmp/attestation.</string>
+    <string name="chk_luna_attestation_file_reason">Luna-method (findauth): access(/data/local/tmp/attestation) succeeded. Root tools create this file as an authorization/attestation marker.</string>
+    <string name="chk_luna_attestation_file_solution">Remove the file with root: `rm /data/local/tmp/attestation`.</string>
+    <string name="chk_luna_attestation_file_name_nd">Root Attestation File</string>
+    <string name="chk_luna_attestation_file_desc_nd">No root attestation file found.</string>
+    <string name="chk_luna_attestation_file_reason_nd">Luna-method (findauth): /data/local/tmp/attestation does not exist.</string>
+    <!-- LunaDetector: Check 15 - Evil Modules -->
+    <string name="chk_luna_evil_modules_name">Root Native Modules Detected</string>
+    <string name="chk_luna_evil_modules_desc">Known root framework native libraries detected.</string>
+    <string name="chk_luna_evil_modules_reason">Luna-method (getEvilModules): Found: %1$s. libmagiskinit.so / libzygisk.so / liblspd.so are core root-framework components.</string>
+    <string name="chk_luna_evil_modules_solution">Uninstall the associated root framework.</string>
+    <string name="chk_luna_evil_modules_name_nd">Root Native Modules</string>
+    <string name="chk_luna_evil_modules_desc_nd">No known root native module files detected.</string>
+    <string name="chk_luna_evil_modules_reason_nd">Luna-method (getEvilModules): No known root native libraries found.</string>
+    <!-- LunaDetector: Check 16 - Installed Root Apps -->
+    <string name="chk_luna_root_apps_name">Root Management Apps Detected</string>
+    <string name="chk_luna_root_apps_desc">Known root manager or hook framework apps are installed.</string>
+    <string name="chk_luna_root_apps_reason">Luna-method (getapps): Installed root packages: %1$s.</string>
+    <string name="chk_luna_root_apps_solution">Uninstall these applications to remove root indicators.</string>
+    <string name="chk_luna_root_apps_name_nd">Root Management Apps</string>
+    <string name="chk_luna_root_apps_desc_nd">No known root management apps detected.</string>
+    <string name="chk_luna_root_apps_reason_nd">Luna-method (getapps): No known root manager or hook framework packages installed.</string>
+    <!-- LunaDetector: Check 17 - Accessibility Services -->
+    <string name="chk_luna_accessibility_svc_name">Automation Tool in Accessibility Services</string>
+    <string name="chk_luna_accessibility_svc_desc">Known root-automation tools are active as accessibility services.</string>
+    <string name="chk_luna_accessibility_svc_reason">Luna-method (findapply): Found suspicious accessibility services: %1$s. Auto.js and similar tools use accessibility APIs for root-based automation.</string>
+    <string name="chk_luna_accessibility_svc_solution">Disable the listed accessibility services in Settings.</string>
+    <string name="chk_luna_accessibility_svc_name_nd">Accessibility Service Check</string>
+    <string name="chk_luna_accessibility_svc_desc_nd">No suspicious accessibility services detected.</string>
+    <string name="chk_luna_accessibility_svc_reason_nd">Luna-method (findapply): No known automation tools found in enabled accessibility services.</string>
+    <!-- LunaDetector: Check 18 - Bootloader Unlocked -->
+    <string name="chk_luna_bootloader_name">Bootloader Unlocked</string>
+    <string name="chk_luna_bootloader_desc">System properties indicate an unlocked bootloader.</string>
+    <string name="chk_luna_bootloader_reason">Luna-method (findbootbl): %1$s. An unlocked bootloader is a prerequisite for flashing root frameworks.</string>
+    <string name="chk_luna_bootloader_solution">Re-lock the bootloader via the manufacturer\'s official procedure.</string>
+    <string name="chk_luna_bootloader_name_nd">Bootloader Status</string>
+    <string name="chk_luna_bootloader_desc_nd">Bootloader appears to be locked.</string>
+    <string name="chk_luna_bootloader_reason_nd">Luna-method (findbootbl): Boot properties indicate a locked, verified bootloader.</string>
+    <!-- LunaDetector: Check 19 - Vold Isolation -->
+    <string name="chk_luna_vold_isolation_name">Vold Data Isolation Disabled</string>
+    <string name="chk_luna_vold_isolation_desc">persist.sys.vold_app_data_isolation is set to 0 (disabled).</string>
+    <string name="chk_luna_vold_isolation_reason">Luna-method (checknum): persist.sys.vold_app_data_isolation=0. Root tools disable vold app data isolation to gain cross-app storage access.</string>
+    <string name="chk_luna_vold_isolation_solution">Re-enable storage data isolation; uninstall root tools that modify this property.</string>
+    <string name="chk_luna_vold_isolation_name_nd">Vold Data Isolation</string>
+    <string name="chk_luna_vold_isolation_desc_nd">Vold data isolation property is not disabled.</string>
+    <string name="chk_luna_vold_isolation_reason_nd">Luna-method (checknum): persist.sys.vold_app_data_isolation=%1$s. Not disabled by root tools.</string>
+    <!-- LunaDetector: Check 20 - Native Library Scan -->
+    <string name="chk_luna_scanlib_name">Root Native Libraries in App Dirs</string>
+    <string name="chk_luna_scanlib_desc">Root framework native libraries found in installed app native-library directories.</string>
+    <string name="chk_luna_scanlib_reason">Luna-method (scanlib): Found suspicious modules: %1$s.</string>
+    <string name="chk_luna_scanlib_solution">Uninstall the associated app / root framework.</string>
+    <string name="chk_luna_scanlib_name_nd">Native Library Scan</string>
+    <string name="chk_luna_scanlib_desc_nd">No root native libraries found in any installed app directory.</string>
+    <string name="chk_luna_scanlib_reason_nd">Luna-method (scanlib): No known root .so files found in nativeLibraryDir of any app.</string>
+    <!-- LunaDetector: Check 21 - Sensitive Packages -->
+    <string name="chk_luna_sensitive_pkgs_name">Root-Hiding / Bypass Apps Detected</string>
+    <string name="chk_luna_sensitive_pkgs_desc">Apps designed to hide root presence or bypass detection are installed.</string>
+    <string name="chk_luna_sensitive_pkgs_reason">Luna-method (wNxM8s/K0ajGz): Found packages: %1$s. HideMyAppList and TaiChi conceal root-manager packages from app-level detection.</string>
+    <string name="chk_luna_sensitive_pkgs_solution">Uninstall these apps.</string>
+    <string name="chk_luna_sensitive_pkgs_name_nd">Root-Hiding / Bypass Apps</string>
+    <string name="chk_luna_sensitive_pkgs_desc_nd">No root-hiding apps detected.</string>
+    <string name="chk_luna_sensitive_pkgs_reason_nd">Luna-method (wNxM8s/K0ajGz): No known root-hiding packages installed.</string>
+    <!-- LunaDetector: Check 22 - MAC Address Anomaly -->
+    <string name="chk_luna_mac_anomaly_name">MAC Address Anomaly (Zero MAC)</string>
+    <string name="chk_luna_mac_anomaly_desc">Network interface has a zero MAC address, indicating possible root spoofing.</string>
+    <string name="chk_luna_mac_anomaly_reason">Luna-method (magiskmac): %1$s. Magisk or root modules may suppress the MAC address to bypass device fingerprinting.</string>
+    <string name="chk_luna_mac_anomaly_solution">Investigate whether a Magisk module is suppressing MAC addresses.</string>
+    <string name="chk_luna_mac_anomaly_name_nd">MAC Address Check</string>
+    <string name="chk_luna_mac_anomaly_desc_nd">No zero MAC address anomalies detected.</string>
+    <string name="chk_luna_mac_anomaly_reason_nd">Luna-method (magiskmac): All readable network interfaces have non-zero MAC addresses.</string>
+
+
+    <!-- RevenyInspiredDetector: Check 1 - Custom ROM -->
+    <string name="chk_reveny_custom_rom_name">Custom ROM Detected</string>
+    <string name="chk_reveny_custom_rom_desc">A custom ROM (e.g. LineageOS) was detected on this device.</string>
+    <string name="chk_reveny_custom_rom_reason">Custom ROM indicators found: %1$s. Custom ROMs may have relaxed security policies and often ship with root access enabled.</string>
+    <string name="chk_reveny_custom_rom_solution">Flash the official OEM firmware via fastboot to restore a stock environment.</string>
+    <string name="chk_reveny_custom_rom_name_nd">Custom ROM</string>
+    <string name="chk_reveny_custom_rom_desc_nd">No custom ROM detected.</string>
+    <string name="chk_reveny_custom_rom_reason_nd">No known custom ROM properties or fingerprint keywords found.</string>
+    <!-- RevenyInspiredDetector: Check 2 - Custom Kernel -->
+    <string name="chk_reveny_custom_kernel_name">Custom Kernel Detected</string>
+    <string name="chk_reveny_custom_kernel_desc">A non-stock (custom) kernel was detected.</string>
+    <string name="chk_reveny_custom_kernel_reason">Custom kernel indicators in /proc/version: %1$s. Custom kernels may have security patches removed or extra capabilities enabled.</string>
+    <string name="chk_reveny_custom_kernel_solution">Flash the OEM stock kernel/boot image to restore an official kernel.</string>
+    <string name="chk_reveny_custom_kernel_name_nd">Custom Kernel</string>
+    <string name="chk_reveny_custom_kernel_desc_nd">No custom kernel indicators found.</string>
+    <string name="chk_reveny_custom_kernel_reason_nd">The kernel banner does not contain known custom-kernel strings.</string>
+    <!-- RevenyInspiredDetector: Check 3 - Resetprop -->
+    <string name="chk_reveny_resetprop_name">Resetprop Detected</string>
+    <string name="chk_reveny_resetprop_desc">The resetprop tool was found on this device.</string>
+    <string name="chk_reveny_resetprop_reason">resetprop is a Magisk utility that can modify Android system properties at runtime without leaving traces in the normal property service. Found at: %1$s.</string>
+    <string name="chk_reveny_resetprop_solution">Uninstall Magisk via the Magisk Manager app or flash a stock boot image.</string>
+    <string name="chk_reveny_resetprop_name_nd">Resetprop</string>
+    <string name="chk_reveny_resetprop_desc_nd">Resetprop tool not found.</string>
+    <string name="chk_reveny_resetprop_reason_nd">No resetprop binary was detected at known Magisk paths.</string>
+    <!-- RevenyInspiredDetector: Check 4 - Debug Fingerprint -->
+    <string name="chk_reveny_debug_fp_name">Debug Fingerprint Detected</string>
+    <string name="chk_reveny_debug_fp_desc">The device is running a userdebug or eng build.</string>
+    <string name="chk_reveny_debug_fp_reason">Build type \'%1$s\' is a debug variant. Debug builds have ADB root, relaxed SELinux, and may expose sensitive system interfaces. Fingerprint: %2$s.</string>
+    <string name="chk_reveny_debug_fp_solution">Use a production (\'user\') build for proper security hardening.</string>
+    <string name="chk_reveny_debug_fp_name_nd">Debug Fingerprint</string>
+    <string name="chk_reveny_debug_fp_desc_nd">No debug fingerprint detected.</string>
+    <string name="chk_reveny_debug_fp_reason_nd">Build type is \'%1$s\', which is a production build.</string>
+    <!-- RevenyInspiredDetector: Check 5 - Hide My Applist -->
+    <string name="chk_reveny_hma_name">Hide My Applist Detected</string>
+    <string name="chk_reveny_hma_desc">Hide My Applist framework detected.</string>
+    <string name="chk_reveny_hma_reason">Hide My Applist (HMA) is an Xposed/LSPosed module that intercepts PackageManager calls to hide installed apps from other applications. Indicators: %1$s.</string>
+    <string name="chk_reveny_hma_solution">Disable or uninstall the Hide My Applist module via LSPosed Manager.</string>
+    <string name="chk_reveny_hma_name_nd">Hide My Applist</string>
+    <string name="chk_reveny_hma_desc_nd">Hide My Applist not detected.</string>
+    <string name="chk_reveny_hma_reason_nd">No Hide My Applist packages or sockets were found.</string>
+    <!-- RevenyInspiredDetector: Check 6 - Mount Inconsistency -->
+    <string name="chk_reveny_mount_inc_name">Mount Inconsistency Detected</string>
+    <string name="chk_reveny_mount_inc_desc">Mount table inconsistency detected — possible umount-based hiding.</string>
+    <string name="chk_reveny_mount_inc_reason">Mounts visible in /proc/self/mountinfo but absent from /proc/mounts suggest a process has called umount() to hide root-related bind mounts from simpler mount file parsers. Suspicious paths: %1$s.</string>
+    <string name="chk_reveny_mount_inc_solution">This is a strong indicator of Magisk or a similar framework using mount namespace manipulation. Uninstall the root framework.</string>
+    <string name="chk_reveny_mount_inc_name_nd">Mount Inconsistency</string>
+    <string name="chk_reveny_mount_inc_desc_nd">No mount table inconsistency detected.</string>
+    <string name="chk_reveny_mount_inc_reason_nd">/proc/mounts and /proc/self/mountinfo are consistent.</string>
+    <string name="chk_reveny_mount_inc_desc_error">Mount inconsistency check could not be completed.</string>
+    <string name="chk_reveny_mount_inc_reason_error">Failed to read /proc/mounts or /proc/self/mountinfo.</string>
+    <!-- RevenyInspiredDetector: Check 7 - Addon.d -->
+    <string name="chk_reveny_addon_d_name">Addon.d / install-recovery.sh Detected</string>
+    <string name="chk_reveny_addon_d_desc">OTA persistence scripts found in the system partition.</string>
+    <string name="chk_reveny_addon_d_reason">addon.d scripts and install-recovery.sh are used by custom ROMs and rooting frameworks to survive OTA updates by re-applying patches after a system update. Indicators: %1$s.</string>
+    <string name="chk_reveny_addon_d_solution">These files indicate a modified system. Flash an official OEM ROM to remove them.</string>
+    <string name="chk_reveny_addon_d_name_nd">Addon.d / install-recovery.sh</string>
+    <string name="chk_reveny_addon_d_desc_nd">No addon.d scripts or install-recovery.sh found.</string>
+    <string name="chk_reveny_addon_d_reason_nd">No OTA persistence scripts were detected in the system partition.</string>
+    <!-- RevenyInspiredDetector: Check 8 - System Apps Absence -->
+    <string name="chk_reveny_sys_apps_name">System Apps Hidden</string>
+    <string name="chk_reveny_sys_apps_desc">Abnormally few system apps visible — app-list hiding likely active.</string>
+    <string name="chk_reveny_sys_apps_reason">Only %1$d system app(s) returned by PackageManager. Normal Android devices expose 50+ system apps. This strongly indicates an app-list hiding framework (e.g. Hide My Applist) is intercepting queries.</string>
+    <string name="chk_reveny_sys_apps_solution">Disable the app-list hiding module via LSPosed Manager.</string>
+    <string name="chk_reveny_sys_apps_name_nd">System Apps Visibility</string>
+    <string name="chk_reveny_sys_apps_desc_nd">System apps appear normally visible.</string>
+    <string name="chk_reveny_sys_apps_reason_nd">%1$d system apps returned by PackageManager — within normal range.</string>
+    <string name="chk_reveny_sys_apps_desc_error">Could not query system app list.</string>
+    <string name="chk_reveny_sys_apps_reason_error">PackageManager query failed.</string>
+    <!-- RevenyInspiredDetector: Check 9 - Vendor SEPolicy -->
+    <string name="chk_reveny_vendor_sep_name_notfound">Vendor SEPolicy Lineage Check</string>
+    <string name="chk_reveny_vendor_sep_desc_notfound">vendor_sepolicy.cil not found or not accessible.</string>
+    <string name="chk_reveny_vendor_sep_reason_notfound">The vendor SELinux policy file was not present or not readable.</string>
+    <string name="chk_reveny_vendor_sep_name">LineageOS SEPolicy Detected</string>
+    <string name="chk_reveny_vendor_sep_desc">vendor_sepolicy.cil contains LineageOS-specific entries.</string>
+    <string name="chk_reveny_vendor_sep_reason">The vendor SELinux policy file contains custom ROM policy entries: %1$s. This confirms a custom ROM build.</string>
+    <string name="chk_reveny_vendor_sep_solution">Flash an official OEM ROM to restore the original SELinux policy.</string>
+    <string name="chk_reveny_vendor_sep_name_nd">Vendor SEPolicy Lineage Check</string>
+    <string name="chk_reveny_vendor_sep_desc_nd">No LineageOS entries in vendor_sepolicy.cil.</string>
+    <string name="chk_reveny_vendor_sep_reason_nd">The vendor SELinux policy does not contain known custom ROM entries.</string>
+    <string name="chk_reveny_vendor_sep_desc_error">Could not read vendor_sepolicy.cil.</string>
+    <string name="chk_reveny_vendor_sep_reason_error">Permission denied or I/O error reading the SELinux policy file.</string>
+    <!-- RevenyInspiredDetector: Check 10 - Framework Patch -->
+    <string name="chk_reveny_fw_patch_name_noaccess">Framework Patch Check</string>
+    <string name="chk_reveny_fw_patch_desc_noaccess">/system/framework not accessible.</string>
+    <string name="chk_reveny_fw_patch_reason_noaccess">The framework directory could not be read.</string>
+    <string name="chk_reveny_fw_patch_desc_empty">No files found in /system/framework.</string>
+    <string name="chk_reveny_fw_patch_reason_empty">The framework directory appears empty.</string>
+    <string name="chk_reveny_fw_patch_name">Framework Patch Detected</string>
+    <string name="chk_reveny_fw_patch_desc">System framework may have been patched.</string>
+    <string name="chk_reveny_fw_patch_reason">Evidence of framework modification: %1$s. Xposed / LSPosed work by patching the Android runtime framework (services.jar, framework.jar) to allow hooking.</string>
+    <string name="chk_reveny_fw_patch_solution">Remove the Xposed framework and restore the original framework files by flashing a stock ROM.</string>
+    <string name="chk_reveny_fw_patch_name_nd">Framework Patch</string>
+    <string name="chk_reveny_fw_patch_desc_nd">No framework patch indicators found.</string>
+    <string name="chk_reveny_fw_patch_reason_nd">No suspicious files or modification time anomalies in /system/framework.</string>
+    <string name="chk_reveny_fw_patch_desc_error">Could not complete framework patch check.</string>
+    <string name="chk_reveny_fw_patch_reason_error">Permission denied or I/O error reading /system/framework.</string>
+
+
+    <!-- RuruInspiredDetector: Check 1 - Dual/Work Profile -->
+    <string name="chk_ruru_dual_profile_name">Dual / Work Profile Detected</string>
+    <string name="chk_ruru_dual_profile_desc">App is running in a clone/dual-space or work profile.</string>
+    <string name="chk_ruru_dual_profile_reason">The app\'s filesDir is \'%1$s\', which starts with /data/user but not /data/user/0. This indicates the app is running in a secondary user, device-clone space, or Android work profile rather than the primary user space.</string>
+    <string name="chk_ruru_dual_profile_solution">This is expected in dual-space or work-profile scenarios. Verify this is the intended execution environment.</string>
+    <string name="chk_ruru_dual_profile_name_nd">Dual / Work Profile</string>
+    <string name="chk_ruru_dual_profile_desc_nd">Running in the primary user space (no dual/work profile detected).</string>
+    <string name="chk_ruru_dual_profile_reason_nd">filesDir=\'%1$s\' starts with /data/user/0, indicating the primary user.</string>
+    <!-- RuruInspiredDetector: Check 2 - XPrivacyLua -->
+    <string name="chk_ruru_xprivacy_name">XPrivacyLua Data Directory Detected</string>
+    <string name="chk_ruru_xprivacy_desc">XPrivacyLua data directory found at /data/system/xlua.</string>
+    <string name="chk_ruru_xprivacy_reason">XPrivacyLua is an Xposed module that fakes or restricts privacy-sensitive data returned to apps. Its presence at /data/system/xlua strongly indicates an active Xposed/LSPosed environment with privacy hooking.</string>
+    <string name="chk_ruru_xprivacy_solution">Disable or remove the XPrivacyLua module via LSPosed Manager.</string>
+    <string name="chk_ruru_xprivacy_name_nd">XPrivacyLua Data Directory</string>
+    <string name="chk_ruru_xprivacy_desc_nd">XPrivacyLua data directory not found.</string>
+    <string name="chk_ruru_xprivacy_reason_nd">No XPrivacyLua data directory detected at /data/system/xlua.</string>
+    <!-- RuruInspiredDetector: Check 3 - Xposed Edge -->
+    <string name="chk_ruru_xedge_name">Xposed Edge Data Directory Detected</string>
+    <string name="chk_ruru_xedge_desc">Xposed Edge data directory found at /data/system/xedge.</string>
+    <string name="chk_ruru_xedge_reason">Xposed Edge is an Xposed module for advanced edge-gesture customization. Its data directory at /data/system/xedge indicates an active Xposed framework.</string>
+    <string name="chk_ruru_xedge_solution">Disable the Xposed Edge module if not intentionally installed.</string>
+    <string name="chk_ruru_xedge_name_nd">Xposed Edge Data Directory</string>
+    <string name="chk_ruru_xedge_desc_nd">Xposed Edge data directory not found.</string>
+    <string name="chk_ruru_xedge_reason_nd">No Xposed Edge data directory detected at /data/system/xedge.</string>
+    <!-- RuruInspiredDetector: Check 4 - Riru Clipboard -->
+    <string name="chk_ruru_riru_clip_name">Riru Clipboard Directory Detected</string>
+    <string name="chk_ruru_riru_clip_desc">Riru Clipboard module data directory found at /data/misc/clipboard.</string>
+    <string name="chk_ruru_riru_clip_reason">The Riru Clipboard Zygisk module leaves its data at /data/misc/clipboard. This directory indicates Riru or a related Zygisk module is (or was) installed.</string>
+    <string name="chk_ruru_riru_clip_solution">Remove or disable the Riru Clipboard module if not intentionally installed.</string>
+    <string name="chk_ruru_riru_clip_name_nd">Riru Clipboard Directory</string>
+    <string name="chk_ruru_riru_clip_desc_nd">Riru Clipboard data directory not found.</string>
+    <string name="chk_ruru_riru_clip_reason_nd">No Riru Clipboard directory found at /data/misc/clipboard.</string>
+    <!-- RuruInspiredDetector: Check 5 - Privacy Space -->
+    <string name="chk_ruru_privacy_space_name">Privacy Space Data Directory Detected</string>
+    <string name="chk_ruru_privacy_space_desc">Privacy Space (cn.geektang.privacyspace) data directory found.</string>
+    <string name="chk_ruru_privacy_space_reason">Privacy Space is an Xposed module that hides installed packages by intercepting PackageManager APIs. Its data directory at /data/system/cn.geektang.privacyspace confirms it is installed and likely active.</string>
+    <string name="chk_ruru_privacy_space_solution">Disable or remove the Privacy Space module via LSPosed Manager.</string>
+    <string name="chk_ruru_privacy_space_name_nd">Privacy Space Data Directory</string>
+    <string name="chk_ruru_privacy_space_desc_nd">Privacy Space data directory not found.</string>
+    <string name="chk_ruru_privacy_space_reason_nd">No Privacy Space directory found at /data/system/cn.geektang.privacyspace.</string>
+    <!-- RuruInspiredDetector: Check 6 - HMA Old Version -->
+    <string name="chk_ruru_hma_old_name">HMA (Old Version) Data Directory Detected</string>
+    <string name="chk_ruru_hma_old_desc">Hide My Applist old-version data directory found at /data/misc/hide_my_applist.</string>
+    <string name="chk_ruru_hma_old_reason">Older versions of the Hide My Applist Xposed module stored configuration data in /data/misc/hide_my_applist. The presence of this directory strongly suggests HMA was or is installed.</string>
+    <string name="chk_ruru_hma_old_solution">Uninstall Hide My Applist and clean up residual data.</string>
+    <string name="chk_ruru_hma_old_name_nd">HMA (Old Version) Data Directory</string>
+    <string name="chk_ruru_hma_old_desc_nd">HMA old-version data directory not found.</string>
+    <string name="chk_ruru_hma_old_reason_nd">No old-version HMA directory found at /data/misc/hide_my_applist.</string>
+    <!-- RuruInspiredDetector: Check 7 - PM Cross-Method -->
+    <string name="chk_ruru_pm_cross_name_error">PM Cross-Method Anomaly</string>
+    <string name="chk_ruru_pm_cross_desc_error">Could not run `pm list packages` shell command.</string>
+    <string name="chk_ruru_pm_cross_reason_error">The shell command `pm list packages` was unavailable or returned empty results. Cannot compare results against the PackageManager API.</string>
+    <string name="chk_ruru_pm_cross_solution_error">Ensure the app has permission to execute shell commands.</string>
+    <string name="chk_ruru_pm_cross_name">PM Cross-Method Anomaly Detected</string>
+    <string name="chk_ruru_pm_cross_desc">PackageManager API is hiding packages visible via shell.</string>
+    <string name="chk_ruru_pm_cross_reason">The following packages appear in `pm list packages` shell output but are invisible to getInstalledPackages() API, indicating a PackageManager hook (e.g. HideMyApplist) is filtering API results. Hidden packages: %1$s.</string>
+    <string name="chk_ruru_pm_cross_solution">Disable any Xposed/LSPosed module that hooks PackageManager (e.g. HideMyApplist, Privacy Space).</string>
+    <string name="chk_ruru_pm_cross_name_nd">PM Cross-Method Anomaly</string>
+    <string name="chk_ruru_pm_cross_desc_nd">No discrepancy found between shell pm and PackageManager API.</string>
+    <string name="chk_ruru_pm_cross_reason_nd">Shell `pm list packages` and getInstalledPackages() API return consistent results for the checked package list.</string>
+    <!-- RuruInspiredDetector: Check 8 - Xposed Module Metadata -->
+    <string name="chk_ruru_xposed_meta_name">Xposed Modules Detected via Metadata</string>
+    <string name="chk_ruru_xposed_meta_desc">Apps with Xposed module metadata found.</string>
+    <string name="chk_ruru_xposed_meta_reason">The following installed apps declare \'xposedminversion\' or \'xposeddescription\' metadata keys, identifying them as Xposed modules: %1$s.</string>
+    <string name="chk_ruru_xposed_meta_solution">Disable or uninstall identified Xposed modules via LSPosed Manager.</string>
+    <string name="chk_ruru_xposed_meta_name_nd">Xposed Module Metadata Scan</string>
+    <string name="chk_ruru_xposed_meta_desc_nd">No apps with Xposed module metadata found.</string>
+    <string name="chk_ruru_xposed_meta_reason_nd">No installed app declares \'xposedminversion\' or \'xposeddescription\' metadata.</string>
+    <!-- RuruInspiredDetector: Check 9 - LSPatch AppComponentFactory -->
+    <string name="chk_ruru_lspatch_name_skip">LSPatch via AppComponentFactory</string>
+    <string name="chk_ruru_lspatch_desc_skip">Check requires API 28+; skipped on this device.</string>
+    <string name="chk_ruru_lspatch_reason_skip">The appComponentFactory attribute is only available on Android 9 (API 28)+.</string>
+    <string name="chk_ruru_lspatch_name">LSPatch via AppComponentFactory Detected</string>
+    <string name="chk_ruru_lspatch_desc">Apps patched with LSPatch detected via appComponentFactory.</string>
+    <string name="chk_ruru_lspatch_reason">The following apps have an appComponentFactory attribute containing \'lsposed\' or \'lspatch\', indicating they were patched using LSPatch (an Xposed implementation that embeds the framework into APKs directly): %1$s.</string>
+    <string name="chk_ruru_lspatch_solution">Replace LSPatch-embedded APKs with original versions from official sources.</string>
+    <string name="chk_ruru_lspatch_name_nd">LSPatch via AppComponentFactory</string>
+    <string name="chk_ruru_lspatch_desc_nd">No LSPatch-patched apps detected via appComponentFactory.</string>
+    <string name="chk_ruru_lspatch_reason_nd">No app\'s appComponentFactory attribute contains \'lsposed\' or \'lspatch\'.</string>
+    <!-- RuruInspiredDetector: Check 10 - Account List -->
+    <string name="chk_ruru_account_name">Account List Anomaly</string>
+    <string name="chk_ruru_account_desc">Device accounts found via AccountManager.</string>
+    <string name="chk_ruru_account_reason">AccountManager reports %1$d account(s) on this device. Some privacy-invasive apps or frameworks register fake accounts. Accounts: %2$s.</string>
+    <string name="chk_ruru_account_solution">Review listed accounts and remove any suspicious ones via device Settings → Accounts.</string>
+    <string name="chk_ruru_account_desc_nd">No device accounts found in AccountManager.</string>
+    <string name="chk_ruru_account_reason_nd">AccountManager returned no accounts.</string>
+    <!-- RuruInspiredDetector: Check 11 - VPN Connection -->
+    <string name="chk_ruru_vpn_name">VPN Connection Detected</string>
+    <string name="chk_ruru_vpn_desc">An active VPN or proxy connection was detected.</string>
+    <string name="chk_ruru_vpn_reason">A VPN or proxy connection is active on this device. VPNs can be used to intercept network traffic or route it through third-party servers. Indicators: %1$s.</string>
+    <string name="chk_ruru_vpn_solution">Disconnect any VPN or proxy if it is not intentionally configured.</string>
+    <string name="chk_ruru_vpn_name_nd">VPN Connection</string>
+    <string name="chk_ruru_vpn_desc_nd">No VPN or proxy connection detected.</string>
+    <string name="chk_ruru_vpn_reason_nd">No VPN network interfaces (tun0/ppp0), TYPE_VPN connectivity, or http.proxyHost system property were found.</string>
+    <!-- RuruInspiredDetector: Check 12 - Accessibility Services -->
+    <string name="chk_ruru_a11y_name">Accessibility Services Active</string>
+    <string name="chk_ruru_a11y_desc">One or more accessibility services are currently enabled.</string>
+    <string name="chk_ruru_a11y_reason">Accessibility services have broad system access and can read screen contents, simulate taps, and intercept input events. This may pose a security concern if unknown services are active. AccessibilityManager.isEnabled=%1$s, Services: %2$s.</string>
+    <string name="chk_ruru_a11y_solution">Review enabled accessibility services in Settings → Accessibility and disable any you do not recognize.</string>
+    <string name="chk_ruru_a11y_name_nd">Accessibility Services</string>
+    <string name="chk_ruru_a11y_desc_nd">No accessibility services are currently active.</string>
+    <string name="chk_ruru_a11y_reason_nd">AccessibilityManager.isEnabled=false and no enabled accessibility services found.</string>
+    <!-- RuruInspiredDetector: Check 13 - PM API Discrepancy -->
+    <string name="chk_ruru_pm_api_name">Package Manager API Discrepancy Detected</string>
+    <string name="chk_ruru_pm_api_desc">PackageManager APIs return inconsistent results for the same packages.</string>
+    <string name="chk_ruru_pm_api_reason">Discrepancies found between getApplicationInfo and sundry PM APIs (getPackageUid / getInstallSourceInfo / getLaunchIntentForPackage). This is the hallmark signature of an incomplete PackageManager hook (e.g. HideMyApplist): it intercepts some APIs but misses others. Discrepancies: %1$s.</string>
+    <string name="chk_ruru_pm_api_solution">Disable any Xposed/LSPosed modules that hook PackageManager.</string>
+    <string name="chk_ruru_pm_api_name_nd">Package Manager API Discrepancy</string>
+    <string name="chk_ruru_pm_api_desc_nd">PackageManager APIs return consistent results.</string>
+    <string name="chk_ruru_pm_api_reason_nd">getApplicationInfo and sundry PM APIs (getPackageUid, getInstallSourceInfo, getLaunchIntentForPackage) agree on visibility for all checked packages.</string>
+
+
+    <!-- Shared error detail format strings -->
+    <string name="err_detail_failed">Failed: %1$s</string>
+    <string name="err_detail_failed_read">Failed to read %1$s: %2$s</string>
+    <string name="err_detail_error">Error: %1$s</string>
+    <string name="err_detail_query_failed">%1$s query failed: %2$s</string>
+
+</resources>

@@ -1,0 +1,5 @@
+<resources>
+    <!-- Neutral NoActionBar theme — light/dark status bar icons are managed
+         by enableEdgeToEdge() in MainActivity at runtime -->
+    <style name="Theme.AnyCheck" parent="android:Theme.Material.NoActionBar" />
+</resources>
