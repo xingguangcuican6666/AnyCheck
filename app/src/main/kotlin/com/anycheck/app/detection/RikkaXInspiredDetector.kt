@@ -1,11 +1,13 @@
 package com.anycheck.app.detection
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import com.anycheck.app.R
+import java.io.File
 
 /**
- * Detection checks inspired by the RikkaX DeviceCompatibility library
+ * Detection checks using the RikkaX DeviceCompatibility library approach
  * (https://github.com/RikkaApps/RikkaX/tree/master/compatibility).
  *
  * RikkaX uses `android.os.SystemProperties` and `Build.*` fields to identify OEM
@@ -13,7 +15,7 @@ import com.anycheck.app.R
  * — to detect OEM-specific root-access settings, custom ROMs, and manufacturer
  * security indicators that are not covered by the other detector modules.
  *
- * Checks (8 total):
+ * Checks (10 total):
  *  1. MIUI root-access setting  (persist.sys.root_access)
  *  2. LineageOS / CyanogenMod ROM  (ro.lineage.version / ro.cm.version)
  *  3. OEM bootloader unlock flag  (sys.oem_unlock_allowed)
@@ -22,6 +24,8 @@ import com.anycheck.app.R
  *  6. Flyme / Meizu OS  (Build.FINGERPRINT / Build.DISPLAY)
  *  7. ColorOS / OxygenOS / OnePlus ROM  (ro.build.version.opporom / ro.oxygen.version)
  *  8. MIUI HyperOS / MIUI EU props  (ro.miui.ui.version.name + ro.miui.region)
+ *  9. Seccomp status  (/proc/self/status → Seccomp: field)
+ * 10. Core crack / Lucky Patcher PM integrity check
  */
 class RikkaXInspiredDetector(private val context: Context) {
 
@@ -33,7 +37,9 @@ class RikkaXInspiredDetector(private val context: Context) {
         checkHuaweiEmuiProps(),
         checkFlymeDevice(),
         checkColorOsOnePlusRom(),
-        checkMiuiHyperOsRegion()
+        checkMiuiHyperOsRegion(),
+        checkSeccompStatus(),
+        checkCoreCrack()
     )
 
     // ----------------------------------------------------------------
@@ -279,13 +285,13 @@ class RikkaXInspiredDetector(private val context: Context) {
             } else {
                 DetectionResult(
                     id = "rikkax_emui_props",
-                    name = context.getString(R.string.chk_rikkax_emui_name_info, romLabel.ifEmpty { Build.MANUFACTURER }),
+                    name = context.getString(R.string.chk_rikkax_emui_name_pass, romLabel.ifEmpty { Build.MANUFACTURER }),
                     category = DetectionCategory.ENVIRONMENT,
-                    status = DetectionStatus.DETECTED,
+                    status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.LOW,
-                    description = context.getString(R.string.chk_rikkax_emui_desc_info),
-                    detailedReason = context.getString(R.string.chk_rikkax_emui_reason_info, romLabel.ifEmpty { Build.MANUFACTURER }),
-                    solution = context.getString(R.string.chk_rikkax_emui_solution_info),
+                    description = context.getString(R.string.chk_rikkax_emui_desc_pass),
+                    detailedReason = context.getString(R.string.chk_rikkax_emui_reason_pass, romLabel.ifEmpty { Build.MANUFACTURER }),
+                    solution = context.getString(R.string.chk_no_action_needed),
                     technicalDetail = "ro.build.version.emui=$emuiVersion ro.build.version.hmos=$hmosVersion"
                 )
             }
@@ -329,13 +335,13 @@ class RikkaXInspiredDetector(private val context: Context) {
         return if (isFlyme) {
             DetectionResult(
                 id = "rikkax_flyme_device",
-                name = context.getString(R.string.chk_rikkax_flyme_name),
+                name = context.getString(R.string.chk_rikkax_flyme_name_pass),
                 category = DetectionCategory.ENVIRONMENT,
-                status = DetectionStatus.DETECTED,
+                status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.LOW,
-                description = context.getString(R.string.chk_rikkax_flyme_desc),
-                detailedReason = context.getString(R.string.chk_rikkax_flyme_reason, flymeVersion.ifEmpty { display }),
-                solution = context.getString(R.string.chk_rikkax_flyme_solution),
+                description = context.getString(R.string.chk_rikkax_flyme_desc_pass),
+                detailedReason = context.getString(R.string.chk_rikkax_flyme_reason_pass, flymeVersion.ifEmpty { display }),
+                solution = context.getString(R.string.chk_no_action_needed),
                 technicalDetail = "Build.MANUFACTURER=$manufacturer Build.DISPLAY=$display flymeVersion=$flymeVersion"
             )
         } else {
@@ -382,13 +388,13 @@ class RikkaXInspiredDetector(private val context: Context) {
         return if (detectedVersion.isNotEmpty() || manufacturerMatch || oplusBrand) {
             DetectionResult(
                 id = "rikkax_color_os",
-                name = context.getString(R.string.chk_rikkax_color_os_name, romLabel.ifEmpty { Build.MANUFACTURER }),
+                name = context.getString(R.string.chk_rikkax_color_os_name_pass, romLabel.ifEmpty { Build.MANUFACTURER }),
                 category = DetectionCategory.ENVIRONMENT,
-                status = DetectionStatus.DETECTED,
+                status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.LOW,
-                description = context.getString(R.string.chk_rikkax_color_os_desc),
-                detailedReason = context.getString(R.string.chk_rikkax_color_os_reason, romLabel.ifEmpty { Build.MANUFACTURER }),
-                solution = context.getString(R.string.chk_rikkax_color_os_solution),
+                description = context.getString(R.string.chk_rikkax_color_os_desc_pass),
+                detailedReason = context.getString(R.string.chk_rikkax_color_os_reason_pass, romLabel.ifEmpty { Build.MANUFACTURER }),
+                solution = context.getString(R.string.chk_no_action_needed),
                 technicalDetail = "ro.build.version.opporom=$colorOsVersion ro.oxygen.version=$oxygenVersion Build.MANUFACTURER=${Build.MANUFACTURER}"
             )
         } else {
@@ -461,14 +467,169 @@ class RikkaXInspiredDetector(private val context: Context) {
         } else {
             DetectionResult(
                 id = "rikkax_miui_region",
-                name = context.getString(R.string.chk_rikkax_miui_region_name_official, romLabel),
+                name = context.getString(R.string.chk_rikkax_miui_region_name_pass, romLabel),
                 category = DetectionCategory.ENVIRONMENT,
-                status = DetectionStatus.DETECTED,
+                status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.LOW,
-                description = context.getString(R.string.chk_rikkax_miui_region_desc_official),
-                detailedReason = context.getString(R.string.chk_rikkax_miui_region_reason_official, romLabel, miuiRegion.ifEmpty { "CN/GLOBAL" }),
-                solution = context.getString(R.string.chk_rikkax_miui_region_solution_official),
+                description = context.getString(R.string.chk_rikkax_miui_region_desc_pass),
+                detailedReason = context.getString(R.string.chk_rikkax_miui_region_reason_pass, romLabel, miuiRegion.ifEmpty { "CN/GLOBAL" }),
+                solution = context.getString(R.string.chk_no_action_needed),
                 technicalDetail = "ro.miui.ui.version.name=$miuiVersion ro.miui.region=$miuiRegion ro.mi.os.version.name=$hyperOsVer"
+            )
+        }
+    }
+
+    // ----------------------------------------------------------------
+    // Check 9: Seccomp status
+    // /proc/self/status contains a "Seccomp:" line.
+    //   0 = disabled (anomalous: kernel does not enforce Seccomp)
+    //   1 = strict mode (rare on normal Android processes)
+    //   2 = filter mode (normal for Android 5.0+ processes)
+    // A value of 0 indicates a kernel that has Seccomp disabled or stripped,
+    // which is associated with modified/insecure kernels used by some root
+    // solutions to weaken process isolation.
+    // ----------------------------------------------------------------
+    private fun checkSeccompStatus(): DetectionResult {
+        return try {
+            val statusText = File("/proc/self/status").readText()
+            val seccompLine = statusText.lines().firstOrNull { it.trimStart().startsWith("Seccomp:") }
+            val seccompValue = seccompLine?.substringAfter(":")?.trim()?.toIntOrNull()
+
+            when (seccompValue) {
+                0 -> DetectionResult(
+                    id = "rikkax_seccomp",
+                    name = context.getString(R.string.chk_rikkax_seccomp_name_zero),
+                    category = DetectionCategory.SYSTEM_INTEGRITY,
+                    status = DetectionStatus.DETECTED,
+                    riskLevel = RiskLevel.HIGH,
+                    description = context.getString(R.string.chk_rikkax_seccomp_desc_zero),
+                    detailedReason = context.getString(R.string.chk_rikkax_seccomp_reason_zero),
+                    solution = context.getString(R.string.chk_rikkax_seccomp_solution_zero),
+                    technicalDetail = "Seccomp=$seccompValue (from /proc/self/status)"
+                )
+                null -> DetectionResult(
+                    id = "rikkax_seccomp",
+                    name = context.getString(R.string.chk_rikkax_seccomp_name_missing),
+                    category = DetectionCategory.SYSTEM_INTEGRITY,
+                    status = DetectionStatus.ERROR,
+                    riskLevel = RiskLevel.MEDIUM,
+                    description = context.getString(R.string.chk_rikkax_seccomp_desc_missing),
+                    detailedReason = context.getString(R.string.chk_rikkax_seccomp_reason_missing),
+                    solution = context.getString(R.string.chk_rikkax_seccomp_solution_missing),
+                    technicalDetail = "Seccomp line not found in /proc/self/status"
+                )
+                else -> DetectionResult(
+                    id = "rikkax_seccomp",
+                    name = context.getString(R.string.chk_rikkax_seccomp_name_nd),
+                    category = DetectionCategory.SYSTEM_INTEGRITY,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.HIGH,
+                    description = context.getString(R.string.chk_rikkax_seccomp_desc_nd, seccompValue),
+                    detailedReason = context.getString(R.string.chk_rikkax_seccomp_reason_nd, seccompValue),
+                    solution = context.getString(R.string.chk_no_action_needed),
+                    technicalDetail = "Seccomp=$seccompValue (from /proc/self/status)"
+                )
+            }
+        } catch (e: Exception) {
+            DetectionResult(
+                id = "rikkax_seccomp",
+                name = context.getString(R.string.chk_rikkax_seccomp_name_error),
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.ERROR,
+                riskLevel = RiskLevel.MEDIUM,
+                description = context.getString(R.string.chk_rikkax_seccomp_desc_error),
+                detailedReason = context.getString(R.string.chk_rikkax_seccomp_reason_error),
+                solution = context.getString(R.string.chk_rikkax_seccomp_solution_error),
+                technicalDetail = context.getString(R.string.err_detail_error, e.message ?: "unknown")
+            )
+        }
+    }
+
+    // ----------------------------------------------------------------
+    // Check 10: Core crack / Lucky Patcher PackageManager integrity
+    // "Core crack" (核心破解) patches the Android framework
+    // (PackageManagerService) to bypass APK signature verification, allowing
+    // apps with mismatched or forged signatures to be installed. Lucky Patcher
+    // is the most common tool that enables this.
+    //
+    // Detection approach:
+    //  a) Lucky Patcher billing-bypass packages (injected fake Google billing)
+    //  b) System-level Lucky Patcher artifacts (files/dirs patched into /system)
+    //  c) Non-system apps holding android.permission.INSTALL_PACKAGES — a
+    //     permission that should only be granted to system apps; its presence
+    //     on a non-system app is a strong PM tampering indicator
+    // ----------------------------------------------------------------
+    private fun checkCoreCrack(): DetectionResult {
+        // Lucky Patcher billing-intercept / core-crack helper packages
+        val coreCrackPkgs = listOf(
+            "cc.luckypatcher",
+            "com.luckypatcher",
+            "cc.meditato.luckypatcher",
+            "com.forpda.lp",
+            "cc.happylife.luckypatcher"
+        )
+
+        // Files that indicate Lucky Patcher has patched the system framework
+        val coreCrackFiles = listOf(
+            "/system/app/LuckyPatcher",
+            "/system/priv-app/LuckyPatcher",
+            "/system/app/LuckyPatcher.apk",
+            "/system/priv-app/LuckyPatcher.apk",
+            "/data/system/lp_install.log",
+            "/data/system/lp_backup"
+        )
+
+        val foundPkgs  = coreCrackPkgs.filter  { packageExists(it) }
+        val foundFiles = coreCrackFiles.filter { File(it).exists() }
+
+        // PM permission anomaly: a non-system app that holds
+        // android.permission.INSTALL_PACKAGES is a strong indicator that the
+        // PackageManager has been tampered to grant install-bypass permissions.
+        val pmAnomalyPkgs = mutableListOf<String>()
+        try {
+            @Suppress("DEPRECATION")
+            context.packageManager
+                .getInstalledPackages(PackageManager.GET_PERMISSIONS)
+                .forEach { pkg ->
+                    val isSystem = (pkg.applicationInfo.flags and
+                        android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0
+                    if (!isSystem &&
+                        pkg.requestedPermissions?.contains(
+                            "android.permission.INSTALL_PACKAGES"
+                        ) == true
+                    ) {
+                        pmAnomalyPkgs.add(pkg.packageName)
+                    }
+                }
+        } catch (_: Exception) {}
+
+        val indicators = mutableListOf<String>()
+        if (foundPkgs.isNotEmpty())     indicators.add("Packages: ${foundPkgs.joinToString()}")
+        if (foundFiles.isNotEmpty())    indicators.add("Files: ${foundFiles.joinToString()}")
+        if (pmAnomalyPkgs.isNotEmpty()) indicators.add("PM anomaly (non-system INSTALL_PACKAGES): ${pmAnomalyPkgs.joinToString()}")
+
+        return if (indicators.isNotEmpty()) {
+            DetectionResult(
+                id = "rikkax_core_crack",
+                name = context.getString(R.string.chk_rikkax_core_crack_name),
+                category = DetectionCategory.ROOT_MANAGEMENT,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_rikkax_core_crack_desc),
+                detailedReason = context.getString(R.string.chk_rikkax_core_crack_reason, indicators.joinToString("; ")),
+                solution = context.getString(R.string.chk_rikkax_core_crack_solution),
+                technicalDetail = indicators.joinToString("\n")
+            )
+        } else {
+            DetectionResult(
+                id = "rikkax_core_crack",
+                name = context.getString(R.string.chk_rikkax_core_crack_name_nd),
+                category = DetectionCategory.ROOT_MANAGEMENT,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_rikkax_core_crack_desc_nd),
+                detailedReason = context.getString(R.string.chk_rikkax_core_crack_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
             )
         }
     }
@@ -479,8 +640,17 @@ class RikkaXInspiredDetector(private val context: Context) {
     // ----------------------------------------------------------------
     private fun getSystemProperty(name: String): String = try {
         val process = Runtime.getRuntime().exec(arrayOf("getprop", name))
-        process.inputStream.bufferedReader().readLine()?.trim() ?: ""
+        val result = process.inputStream.bufferedReader().readLine()?.trim() ?: ""
+        process.waitFor()
+        result
     } catch (_: Exception) {
         ""
+    }
+
+    private fun packageExists(packageName: String): Boolean = try {
+        context.packageManager.getPackageInfo(packageName, 0)
+        true
+    } catch (_: PackageManager.NameNotFoundException) {
+        false
     }
 }

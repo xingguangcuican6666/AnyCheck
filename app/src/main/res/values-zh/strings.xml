@@ -95,7 +95,7 @@
     <string name="feature_xposed">Xposed / LSPosed Hook 检测（13 项检查）</string>
     <string name="feature_advanced">高级 Root 检查（19 项检查）</string>
     <string name="feature_extra">扩展：挂载、权限、绕过模块（15 项检查）</string>
-    <string name="feature_rikkax">RikkaX 启发：OEM 系统属性检查（8 项检查）</string>
+    <string name="feature_rikkax">RikkaX 检测：OEM 系统属性检查（10 项检查）</string>
 
     <!-- 其他 -->
     <string name="app_description">AnyCheck 使用多种检测向量检测 Root 管理框架（Magisk、KernelSU、APatch）。</string>
@@ -148,7 +148,7 @@
     <string name="progress_rootbeer">RootBeerFresh 检查完成</string>
     <string name="progress_ruru">Ruru 检查完成</string>
     <string name="progress_integrity">系统完整性检查完成</string>
-    <string name="progress_rikkax">RikkaX 启发检查完成</string>
+    <string name="progress_rikkax">RikkaX 检查完成</string>
     <string name="progress_format">%1$s（%2$d/%3$d）</string>
 
     <!-- 通用检查字符串 -->
@@ -1545,6 +1545,9 @@
     <string name="chk_rikkax_flyme_desc">设备被识别为运行 Flyme OS（魅族）。</string>
     <string name="chk_rikkax_flyme_reason">Build.FINGERPRINT 或 Build.DISPLAY 包含"Flyme"标识符（%1$s），与 RikkaX DeviceCompatibility 库的 isFlyme() 检测方法一致。魅族 Flyme OS 是一款具有自己的应用商店和权限模型的专有 Android ROM。</string>
     <string name="chk_rikkax_flyme_solution">标准 Flyme 版本无需任何操作。如果存在 Root 或解锁指标，请查看其他检查项。</string>
+    <string name="chk_rikkax_flyme_name_pass">Flyme OS（魅族）– 官方版本</string>
+    <string name="chk_rikkax_flyme_desc_pass">设备正在运行官方 Flyme OS（魅族），OS 本身不构成安全威胁。</string>
+    <string name="chk_rikkax_flyme_reason_pass">版本标识 %1$s 确认此设备为运行 Flyme OS 的魅族设备。这是官方魅族 ROM，本身不带来额外安全风险。如需了解 Root 或 Bootloader 状态，请查看其他检查项。</string>
     <string name="chk_rikkax_flyme_name_nd">Flyme / 魅族 OS</string>
     <string name="chk_rikkax_flyme_desc_nd">未检测到 Flyme OS 指标；设备不是魅族设备。</string>
     <string name="chk_rikkax_flyme_reason_nd">Build.MANUFACTURER、Build.FINGERPRINT 和 Build.DISPLAY 均不包含"Flyme"或"Meizu"标记，且 ro.flyme.version 为空。</string>
@@ -1554,6 +1557,9 @@
     <string name="chk_rikkax_color_os_desc">设备被识别为运行 ColorOS 或 OxygenOS（OPPO/Realme/OnePlus）。</string>
     <string name="chk_rikkax_color_os_reason">ro.build.version.opporom 或 ro.oxygen.version 将此设备识别为运行 %1$s。这些是 BBK 电子（OPPO/Realme/OnePlus）的专有 ROM。虽然标准版本需要正常的 Bootloader 解锁才能获取 Root，但某些地区版本可能具有不同的安全默认设置。</string>
     <string name="chk_rikkax_color_os_solution">标准用户版本无需任何操作。请查看其他检查项以了解此设备特有的 Bootloader 解锁或 Root 指标。</string>
+    <string name="chk_rikkax_color_os_name_pass">%1$s – 官方版本</string>
+    <string name="chk_rikkax_color_os_desc_pass">设备正在运行官方 OPPO/Realme/OnePlus ROM，OS 本身不构成安全威胁。</string>
+    <string name="chk_rikkax_color_os_reason_pass">ROM 识别为 %1$s。这是官方厂商 ROM，本身不带来额外安全风险。如需了解 Bootloader 解锁或 Root 指标，请查看其他检查项。</string>
     <string name="chk_rikkax_color_os_name_nd">ColorOS / OxygenOS / 一加 ROM</string>
     <string name="chk_rikkax_color_os_desc_nd">未检测到 ColorOS 或 OxygenOS 属性。</string>
     <string name="chk_rikkax_color_os_reason_nd">ro.build.version.opporom 和 ro.oxygen.version 均为空；Build.MANUFACTURER 不是 OPPO、Realme 或 OnePlus。</string>
@@ -1570,6 +1576,40 @@
     <string name="chk_rikkax_miui_region_desc_official">设备正在运行官方小米 MIUI 或 HyperOS ROM。</string>
     <string name="chk_rikkax_miui_region_reason_official">设备报告 %1$s，地区为 %2$s（官方小米地区）。ROM 似乎是官方小米版本。请查看 MIUI Root 访问检查以了解 Root 状态。</string>
     <string name="chk_rikkax_miui_region_solution_official">此检查无需任何操作。请参阅 MIUI Root 访问检查以了解 Root 授予状态。</string>
+    <string name="chk_rikkax_miui_region_name_pass">%1$s – 官方版本</string>
+    <string name="chk_rikkax_miui_region_desc_pass">设备正在运行官方小米 MIUI 或 HyperOS ROM，OS 本身不构成安全威胁。</string>
+    <string name="chk_rikkax_miui_region_reason_pass">设备报告 %1$s，地区为 %2$s（官方小米地区）。ROM 是官方小米版本，本身不带来额外安全风险。请参阅 MIUI Root 访问检查以了解 Root 授予状态。</string>
+
+    <!-- RikkaXInspiredDetector：检查 9 – Seccomp 状态 -->
+    <string name="chk_rikkax_seccomp_name_zero">Seccomp 已禁用（内核异常）</string>
+    <string name="chk_rikkax_seccomp_desc_zero">/proc/self/status 中 Seccomp=0，内核未执行系统调用过滤。</string>
+    <string name="chk_rikkax_seccomp_reason_zero">/proc/self/status 中 Seccomp 字段为 0，意味着内核不支持或已禁用安全计算（Seccomp）机制。在 Android 5.0+ 上，所有应用进程应在 Seccomp 过滤模式（值=2）下运行。值为 0 表示内核已被裁剪或修改，移除了 Seccomp 支持——这是某些 Root 方案所附带的旧版或不安全自定义内核的常见特征。这会削弱进程隔离和系统调用过滤能力。</string>
+    <string name="chk_rikkax_seccomp_solution_zero">不要使用禁用 Seccomp 的自定义内核。请重刷官方内核或支持 Seccomp 过滤模式的内核。如果正在使用 Root 框架，请确认内核编译时包含了 Seccomp 支持（CONFIG_SECCOMP_FILTER）。</string>
+    <string name="chk_rikkax_seccomp_name_nd">Seccomp 已启用</string>
+    <string name="chk_rikkax_seccomp_desc_nd">Seccomp 处于激活状态（值=%1$d），进程系统调用过滤正在执行。</string>
+    <string name="chk_rikkax_seccomp_reason_nd">/proc/self/status 中 Seccomp=%1$d。值 2（过滤模式）是 Android 5.0+ 的标准配置。值 1（严格模式）不常见但有效。Seccomp 运行正常，内核正在按预期对每个进程执行系统调用过滤。</string>
+    <string name="chk_rikkax_seccomp_name_missing">Seccomp 字段缺失</string>
+    <string name="chk_rikkax_seccomp_desc_missing">在 /proc/self/status 中未找到 Seccomp 字段。</string>
+    <string name="chk_rikkax_seccomp_reason_missing">预计 /proc/self/status 中应存在 Seccomp 行，但未找到。这可能表明内核版本较旧（Linux 3.5 以前，Seccomp 之前的版本），或修改后的内核删除了该状态字段。无法确认 Seccomp 是否处于激活状态。</string>
+    <string name="chk_rikkax_seccomp_solution_missing">确认内核版本支持 Seccomp（Linux 3.5+）。如果运行自定义内核，请检查 CONFIG_SECCOMP 和 CONFIG_SECCOMP_FILTER 是否已启用。</string>
+    <string name="chk_rikkax_seccomp_name_error">Seccomp 状态检查错误</string>
+    <string name="chk_rikkax_seccomp_desc_error">无法读取 /proc/self/status 以检查 Seccomp 状态。</string>
+    <string name="chk_rikkax_seccomp_reason_error">读取 /proc/self/status 时发生异常。该文件通常对当前进程始终可读，此错误属于异常情况。</string>
+    <string name="chk_rikkax_seccomp_solution_error">重试检测。如果错误持续存在，设备可能对 /proc 文件系统有异常限制。</string>
+
+    <!-- RikkaXInspiredDetector：检查 10 – 核心破解 / 包管理器完整性 -->
+    <string name="chk_rikkax_core_crack_name">检测到核心破解 / 包管理器完整性受损</string>
+    <string name="chk_rikkax_core_crack_desc">发现核心破解（Lucky Patcher 框架补丁）或包管理器签名绕过证据。</string>
+    <string name="chk_rikkax_core_crack_reason">核心破解通过修补 Android 框架（PackageManagerService）来绕过 APK 签名验证，使签名不匹配或伪造的应用得以安装。检测到以下指标：%1$s。</string>
+    <string name="chk_rikkax_core_crack_solution">卸载 Lucky Patcher 及其相关的计费绕过软件包。如果系统框架文件已被修补，请重刷官方固件。检查所有已安装的非系统应用中是否有持有 android.permission.INSTALL_PACKAGES 权限的应用。</string>
+    <string name="chk_rikkax_core_crack_name_nd">核心破解 / 包管理器完整性</string>
+    <string name="chk_rikkax_core_crack_desc_nd">未检测到核心破解或包管理器完整性异常。</string>
+    <string name="chk_rikkax_core_crack_reason_nd">未发现 Lucky Patcher 计费绕过软件包、系统级 Lucky Patcher 文件，以及持有 android.permission.INSTALL_PACKAGES 权限的非系统应用。</string>
+
+    <!-- RikkaXInspiredDetector：EMUI 通过字符串 -->
+    <string name="chk_rikkax_emui_name_pass">%1$s – 官方版本</string>
+    <string name="chk_rikkax_emui_desc_pass">设备正在运行官方 EMUI 或 HarmonyOS（用户版本），OS 本身不构成安全威胁。</string>
+    <string name="chk_rikkax_emui_reason_pass">ROM 识别为 %1$s（用户版本类型）。这是官方华为/荣耀 ROM，本身不带来额外安全风险。如需了解 Root 或 Bootloader 状态，请查看其他检查项。</string>
 
     <!-- Shared error detail format strings -->
     <string name="err_detail_failed">失败：%1$s</string>
