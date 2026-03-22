@@ -933,4 +933,13 @@
     <string name="chk_adv_kern_mods_solution">Remove or unload the suspicious kernel modules and reboot.</string>
     <string name="chk_adv_kern_mods_solution_error">Check /proc/modules manually for suspicious entries.</string>
 
+    <string name="no_action_required">No action required.</string>
+    <string name="chk_adv_rw_sys_name_nd">System Partition Mount</string>
+    <string name="chk_adv_dev_opts_name_nd">Developer Options</string>
+    <string name="chk_adv_adb_name_nd">USB Debugging</string>
+    <string name="chk_adv_frida_proc_name_nd">Frida Process Check</string>
+    <string name="chk_adv_inj_libs_name_nd">Injected Libraries Check</string>
+    <string name="chk_adv_kern_mods_name_nd">Root Kernel Modules Check</string>
+    <string name="chk_adv_mgsk_mods_name_nd">Magisk Modules Check</string>
+
 </resources>

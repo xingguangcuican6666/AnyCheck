@@ -934,4 +934,13 @@
     <string name="chk_adv_kern_mods_solution">移除或卸载可疑内核模块并重启。</string>
     <string name="chk_adv_kern_mods_solution_error">手动检查 /proc/modules 中的可疑条目。</string>
 
+    <string name="no_action_required">无需采取任何行动。</string>
+    <string name="chk_adv_rw_sys_name_nd">系统分区挂载</string>
+    <string name="chk_adv_dev_opts_name_nd">开发者选项</string>
+    <string name="chk_adv_adb_name_nd">USB 调试</string>
+    <string name="chk_adv_frida_proc_name_nd">Frida 进程检查</string>
+    <string name="chk_adv_inj_libs_name_nd">注入库文件检查</string>
+    <string name="chk_adv_kern_mods_name_nd">Root 内核模块检查</string>
+    <string name="chk_adv_mgsk_mods_name_nd">Magisk 模块检查</string>
+
 </resources>

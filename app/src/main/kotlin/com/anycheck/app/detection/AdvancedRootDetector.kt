@@ -271,7 +271,7 @@ class AdvancedRootDetector(private val context: Context) {
             } else {
                 DetectionResult(
                     id = "developer_options",
-                    name = "Developer Options",
+                    name = context.getString(R.string.chk_adv_dev_opts_name_nd),
                     category = DetectionCategory.ADB_DEBUG,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.MEDIUM,
@@ -283,7 +283,7 @@ class AdvancedRootDetector(private val context: Context) {
         } catch (e: Exception) {
             DetectionResult(
                 id = "developer_options",
-                name = "Developer Options",
+                name = context.getString(R.string.chk_adv_dev_opts_name_nd),
                 category = DetectionCategory.ADB_DEBUG,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
@@ -316,7 +316,7 @@ class AdvancedRootDetector(private val context: Context) {
             } else {
                 DetectionResult(
                     id = "usb_debugging",
-                    name = "USB Debugging",
+                    name = context.getString(R.string.chk_adv_adb_name_nd),
                     category = DetectionCategory.ADB_DEBUG,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.HIGH,
@@ -328,7 +328,7 @@ class AdvancedRootDetector(private val context: Context) {
         } catch (e: Exception) {
             DetectionResult(
                 id = "usb_debugging",
-                name = "USB Debugging",
+                name = context.getString(R.string.chk_adv_adb_name_nd),
                 category = DetectionCategory.ADB_DEBUG,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
@@ -373,7 +373,7 @@ class AdvancedRootDetector(private val context: Context) {
             } else {
                 DetectionResult(
                     id = "frida_process",
-                    name = "Frida Process",
+                    name = context.getString(R.string.chk_adv_frida_proc_name_nd),
                     category = DetectionCategory.FRIDA,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
@@ -385,7 +385,7 @@ class AdvancedRootDetector(private val context: Context) {
         } catch (e: Exception) {
             DetectionResult(
                 id = "frida_process",
-                name = "Frida Process",
+                name = context.getString(R.string.chk_adv_frida_proc_name_nd),
                 category = DetectionCategory.FRIDA,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
@@ -664,7 +664,7 @@ class AdvancedRootDetector(private val context: Context) {
             } else {
                 DetectionResult(
                     id = "injected_libs",
-                    name = "Injected Libraries",
+                    name = context.getString(R.string.chk_adv_inj_libs_name_nd),
                     category = DetectionCategory.ROOT_MANAGEMENT,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
@@ -676,7 +676,7 @@ class AdvancedRootDetector(private val context: Context) {
         } catch (e: Exception) {
             DetectionResult(
                 id = "injected_libs",
-                name = "Injected Libraries",
+                name = context.getString(R.string.chk_adv_inj_libs_name_nd),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
@@ -884,7 +884,7 @@ class AdvancedRootDetector(private val context: Context) {
             } else {
                 DetectionResult(
                     id = "kernel_modules",
-                    name = "Root Kernel Modules",
+                    name = context.getString(R.string.chk_adv_kern_mods_name_nd),
                     category = DetectionCategory.KERNELSU,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
@@ -896,7 +896,7 @@ class AdvancedRootDetector(private val context: Context) {
         } catch (e: Exception) {
             DetectionResult(
                 id = "kernel_modules",
-                name = "Root Kernel Modules",
+                name = context.getString(R.string.chk_adv_kern_mods_name_nd),
                 category = DetectionCategory.KERNELSU,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
