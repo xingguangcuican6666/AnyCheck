@@ -1018,7 +1018,7 @@
     <!-- ExtraRootDetector: Check 8 - Test-Keys Build -->
     <string name="chk_ext_test_keys_name">检测到测试密钥构建</string>
     <string name="chk_ext_test_keys_desc">设备运行的是测试密钥签名的构建。</string>
-    <string name="chk_ext_test_keys_reason">ro.build.tags=%1$s。生产（零售）Android 构建使用发布密钥签名并报告 'release-keys'。'test-keys' 表示构建使用 Android 公开已知的 AOSP 测试密钥签名，这是自定义 ROM（LineageOS、AOSP 构建）和开发者镜像的典型特征，此类构建通常具有 Root 访问权限或较弱的安全策略。</string>
+    <string name="chk_ext_test_keys_reason">ro.build.tags=%1$s。生产（零售）Android 构建使用发布密钥签名并报告 \'release-keys\'。\'test-keys\' 表示构建使用 Android 公开已知的 AOSP 测试密钥签名，这是自定义 ROM（LineageOS、AOSP 构建）和开发者镜像的典型特征，此类构建通常具有 Root 访问权限或较弱的安全策略。</string>
     <string name="chk_ext_test_keys_solution">请使用 OEM 提供的、经发布密钥签名的官方 ROM。</string>
     <string name="chk_ext_test_keys_name_nd">构建签名密钥</string>
     <string name="chk_ext_test_keys_desc_nd">构建使用发布密钥签名。</string>
@@ -1045,7 +1045,7 @@
     <string name="chk_ext_wireless_adb_name">ADB Wi-Fi 调试已激活</string>
     <string name="chk_ext_wireless_adb_desc">ADB Wi-Fi 调试端口正在监听。</string>
     <string name="chk_ext_wireless_adb_reason">端口 %1$s 处于 LISTEN 状态。端口 5555 是 ADB Wi-Fi 调试的默认端口。同一网络上的任何设备都可以连接并发出 ADB 命令，包括安装/卸载应用，以及（在调试构建上）获取 shell 访问权限。</string>
-    <string name="chk_ext_wireless_adb_solution">通过 'adb disconnect' 或 设置 → 无线调试 → 关闭 来禁用。</string>
+    <string name="chk_ext_wireless_adb_solution">通过 \'adb disconnect\' 或 设置 → 无线调试 → 关闭 来禁用。</string>
     <string name="chk_ext_wireless_adb_name_nd">ADB Wi-Fi 调试</string>
     <string name="chk_ext_wireless_adb_desc_nd">未检测到 ADB Wi-Fi 端口监听。</string>
     <string name="chk_ext_wireless_adb_reason_nd">端口 5555/5037 不处于 LISTEN 状态。</string>
@@ -1061,7 +1061,7 @@
     <string name="chk_ext_su_suid_name">检测到 SUID su 二进制文件</string>
     <string name="chk_ext_su_suid_desc">发现 SUID root su 二进制文件。</string>
     <string name="chk_ext_su_suid_reason">SUID 二进制文件：%1$s。SUID root su 二进制文件可被任何用户执行以获取 root 权限，这是 Unix/Android 上的经典授权 Root 机制。</string>
-    <string name="chk_ext_su_suid_solution">删除 su 二进制文件或撤销其 SUID 位：'chmod 755 /system/bin/su'</string>
+    <string name="chk_ext_su_suid_solution">删除 su 二进制文件或撤销其 SUID 位：\'chmod 755 /system/bin/su\'</string>
     <string name="chk_ext_su_suid_name_nd">SUID su 二进制文件</string>
     <string name="chk_ext_su_suid_desc_nd">未检测到 SUID su 二进制文件。</string>
     <string name="chk_ext_su_suid_reason_nd">在常见路径上未发现 SUID root su 二进制文件。</string>
@@ -1287,11 +1287,11 @@
     <!-- RevenyInspiredDetector: Check 4 - Debug Fingerprint -->
     <string name="chk_reveny_debug_fp_name">检测到调试指纹</string>
     <string name="chk_reveny_debug_fp_desc">设备正在运行 userdebug 或 eng 构建。</string>
-    <string name="chk_reveny_debug_fp_reason">构建类型 '%1$s' 是调试变体。调试构建具有 ADB root 权限、宽松的 SELinux 策略，可能暴露敏感的系统接口。指纹：%2$s。</string>
-    <string name="chk_reveny_debug_fp_solution">请使用生产版（'user'）构建以获得适当的安全加固。</string>
+    <string name="chk_reveny_debug_fp_reason">构建类型 \'%1$s\' 是调试变体。调试构建具有 ADB root 权限、宽松的 SELinux 策略，可能暴露敏感的系统接口。指纹：%2$s。</string>
+    <string name="chk_reveny_debug_fp_solution">请使用生产版（\'user\'）构建以获得适当的安全加固。</string>
     <string name="chk_reveny_debug_fp_name_nd">调试指纹</string>
     <string name="chk_reveny_debug_fp_desc_nd">未检测到调试指纹。</string>
-    <string name="chk_reveny_debug_fp_reason_nd">构建类型为 '%1$s'，这是生产版构建。</string>
+    <string name="chk_reveny_debug_fp_reason_nd">构建类型为 \'%1$s\'，这是生产版构建。</string>
     <!-- RevenyInspiredDetector: Check 5 - Hide My Applist -->
     <string name="chk_reveny_hma_name">检测到 Hide My Applist</string>
     <string name="chk_reveny_hma_desc">检测到 Hide My Applist 框架。</string>
@@ -1361,11 +1361,11 @@
     <!-- RuruInspiredDetector: Check 1 - Dual/Work Profile -->
     <string name="chk_ruru_dual_profile_name">检测到双开 / 工作资料</string>
     <string name="chk_ruru_dual_profile_desc">应用正在克隆/双开空间或工作资料中运行。</string>
-    <string name="chk_ruru_dual_profile_reason">应用的 filesDir 为 '%1$s'，以 /data/user 开头但不以 /data/user/0 开头。这表明应用正在辅助用户、设备克隆空间或 Android 工作资料中运行，而非主用户空间。</string>
+    <string name="chk_ruru_dual_profile_reason">应用的 filesDir 为 \'%1$s\'，以 /data/user 开头但不以 /data/user/0 开头。这表明应用正在辅助用户、设备克隆空间或 Android 工作资料中运行，而非主用户空间。</string>
     <string name="chk_ruru_dual_profile_solution">这在双开空间或工作资料场景中是正常的。请验证这是预期的运行环境。</string>
     <string name="chk_ruru_dual_profile_name_nd">双开 / 工作资料</string>
     <string name="chk_ruru_dual_profile_desc_nd">在主用户空间中运行（未检测到双开/工作资料）。</string>
-    <string name="chk_ruru_dual_profile_reason_nd">filesDir='%1$s' 以 /data/user/0 开头，表明这是主用户。</string>
+    <string name="chk_ruru_dual_profile_reason_nd">filesDir=\'%1$s\' 以 /data/user/0 开头，表明这是主用户。</string>
     <!-- RuruInspiredDetector: Check 2 - XPrivacyLua -->
     <string name="chk_ruru_xprivacy_name">检测到 XPrivacyLua 数据目录</string>
     <string name="chk_ruru_xprivacy_desc">在 /data/system/xlua 发现 XPrivacyLua 数据目录。</string>
@@ -1421,22 +1421,22 @@
     <!-- RuruInspiredDetector: Check 8 - Xposed Module Metadata -->
     <string name="chk_ruru_xposed_meta_name">通过元数据检测到 Xposed 模块</string>
     <string name="chk_ruru_xposed_meta_desc">发现具有 Xposed 模块元数据的应用。</string>
-    <string name="chk_ruru_xposed_meta_reason">以下已安装应用声明了 'xposedminversion' 或 'xposeddescription' 元数据键，将其标识为 Xposed 模块：%1$s。</string>
+    <string name="chk_ruru_xposed_meta_reason">以下已安装应用声明了 \'xposedminversion\' 或 \'xposeddescription\' 元数据键，将其标识为 Xposed 模块：%1$s。</string>
     <string name="chk_ruru_xposed_meta_solution">通过 LSPosed Manager 禁用或卸载已识别的 Xposed 模块。</string>
     <string name="chk_ruru_xposed_meta_name_nd">Xposed 模块元数据扫描</string>
     <string name="chk_ruru_xposed_meta_desc_nd">未发现具有 Xposed 模块元数据的应用。</string>
-    <string name="chk_ruru_xposed_meta_reason_nd">没有已安装应用声明 'xposedminversion' 或 'xposeddescription' 元数据。</string>
+    <string name="chk_ruru_xposed_meta_reason_nd">没有已安装应用声明 \'xposedminversion\' 或 \'xposeddescription\' 元数据。</string>
     <!-- RuruInspiredDetector: Check 9 - LSPatch AppComponentFactory -->
     <string name="chk_ruru_lspatch_name_skip">通过 AppComponentFactory 检测 LSPatch</string>
     <string name="chk_ruru_lspatch_desc_skip">检查需要 API 28+；已在此设备上跳过。</string>
     <string name="chk_ruru_lspatch_reason_skip">appComponentFactory 属性仅在 Android 9 (API 28)+ 上可用。</string>
     <string name="chk_ruru_lspatch_name">通过 AppComponentFactory 检测到 LSPatch</string>
     <string name="chk_ruru_lspatch_desc">通过 appComponentFactory 检测到使用 LSPatch 修补的应用。</string>
-    <string name="chk_ruru_lspatch_reason">以下应用的 appComponentFactory 属性包含 'lsposed' 或 'lspatch'，表明它们使用 LSPatch（一种将框架直接嵌入 APK 的 Xposed 实现）进行了修补：%1$s。</string>
+    <string name="chk_ruru_lspatch_reason">以下应用的 appComponentFactory 属性包含 \'lsposed\' 或 \'lspatch\'，表明它们使用 LSPatch（一种将框架直接嵌入 APK 的 Xposed 实现）进行了修补：%1$s。</string>
     <string name="chk_ruru_lspatch_solution">将 LSPatch 嵌入的 APK 替换为官方来源的原始版本。</string>
     <string name="chk_ruru_lspatch_name_nd">通过 AppComponentFactory 检测 LSPatch</string>
     <string name="chk_ruru_lspatch_desc_nd">未通过 appComponentFactory 检测到 LSPatch 修补的应用。</string>
-    <string name="chk_ruru_lspatch_reason_nd">没有应用的 appComponentFactory 属性包含 'lsposed' 或 'lspatch'。</string>
+    <string name="chk_ruru_lspatch_reason_nd">没有应用的 appComponentFactory 属性包含 \'lsposed\' 或 \'lspatch\'。</string>
     <!-- RuruInspiredDetector: Check 10 - Account List -->
     <string name="chk_ruru_account_name">账户列表异常</string>
     <string name="chk_ruru_account_desc">通过 AccountManager 发现设备账户。</string>

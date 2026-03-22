@@ -840,8 +840,8 @@
 
     <string name="chk_adv_frida_port_name">Frida Default Port Open</string>
     <string name="chk_adv_frida_port_name_nd">Frida Default Port Check</string>
-    <string name="chk_adv_frida_port_desc">Frida's default port (27042) is open on this device.</string>
-    <string name="chk_adv_frida_port_desc_nd">Frida's default port is not open.</string>
+    <string name="chk_adv_frida_port_desc">Frida\'s default port (27042) is open on this device.</string>
+    <string name="chk_adv_frida_port_desc_nd">Frida\'s default port is not open.</string>
     <string name="chk_adv_frida_port_reason">Port 27042 is open — this is the default Frida server port.</string>
     <string name="chk_adv_frida_port_reason_nd">Port 27042 is not open.</string>
     <string name="chk_adv_frida_port_solution">Kill frida-server and remove it from the device.</string>
@@ -1221,7 +1221,7 @@
     <string name="chk_luna_bootloader_name">Bootloader Unlocked</string>
     <string name="chk_luna_bootloader_desc">System properties indicate an unlocked bootloader.</string>
     <string name="chk_luna_bootloader_reason">Luna-method (findbootbl): %1$s. An unlocked bootloader is a prerequisite for flashing root frameworks.</string>
-    <string name="chk_luna_bootloader_solution">Re-lock the bootloader via the manufacturer's official procedure.</string>
+    <string name="chk_luna_bootloader_solution">Re-lock the bootloader via the manufacturer\'s official procedure.</string>
     <string name="chk_luna_bootloader_name_nd">Bootloader Status</string>
     <string name="chk_luna_bootloader_desc_nd">Bootloader appears to be locked.</string>
     <string name="chk_luna_bootloader_reason_nd">Luna-method (findbootbl): Boot properties indicate a locked, verified bootloader.</string>
@@ -1286,11 +1286,11 @@
     <!-- RevenyInspiredDetector: Check 4 - Debug Fingerprint -->
     <string name="chk_reveny_debug_fp_name">Debug Fingerprint Detected</string>
     <string name="chk_reveny_debug_fp_desc">The device is running a userdebug or eng build.</string>
-    <string name="chk_reveny_debug_fp_reason">Build type '%1$s' is a debug variant. Debug builds have ADB root, relaxed SELinux, and may expose sensitive system interfaces. Fingerprint: %2$s.</string>
-    <string name="chk_reveny_debug_fp_solution">Use a production ('user') build for proper security hardening.</string>
+    <string name="chk_reveny_debug_fp_reason">Build type \'%1$s\' is a debug variant. Debug builds have ADB root, relaxed SELinux, and may expose sensitive system interfaces. Fingerprint: %2$s.</string>
+    <string name="chk_reveny_debug_fp_solution">Use a production (\'user\') build for proper security hardening.</string>
     <string name="chk_reveny_debug_fp_name_nd">Debug Fingerprint</string>
     <string name="chk_reveny_debug_fp_desc_nd">No debug fingerprint detected.</string>
-    <string name="chk_reveny_debug_fp_reason_nd">Build type is '%1$s', which is a production build.</string>
+    <string name="chk_reveny_debug_fp_reason_nd">Build type is \'%1$s\', which is a production build.</string>
     <!-- RevenyInspiredDetector: Check 5 - Hide My Applist -->
     <string name="chk_reveny_hma_name">Hide My Applist Detected</string>
     <string name="chk_reveny_hma_desc">Hide My Applist framework detected.</string>
@@ -1360,11 +1360,11 @@
     <!-- RuruInspiredDetector: Check 1 - Dual/Work Profile -->
     <string name="chk_ruru_dual_profile_name">Dual / Work Profile Detected</string>
     <string name="chk_ruru_dual_profile_desc">App is running in a clone/dual-space or work profile.</string>
-    <string name="chk_ruru_dual_profile_reason">The app's filesDir is '%1$s', which starts with /data/user but not /data/user/0. This indicates the app is running in a secondary user, device-clone space, or Android work profile rather than the primary user space.</string>
+    <string name="chk_ruru_dual_profile_reason">The app\'s filesDir is \'%1$s\', which starts with /data/user but not /data/user/0. This indicates the app is running in a secondary user, device-clone space, or Android work profile rather than the primary user space.</string>
     <string name="chk_ruru_dual_profile_solution">This is expected in dual-space or work-profile scenarios. Verify this is the intended execution environment.</string>
     <string name="chk_ruru_dual_profile_name_nd">Dual / Work Profile</string>
     <string name="chk_ruru_dual_profile_desc_nd">Running in the primary user space (no dual/work profile detected).</string>
-    <string name="chk_ruru_dual_profile_reason_nd">filesDir='%1$s' starts with /data/user/0, indicating the primary user.</string>
+    <string name="chk_ruru_dual_profile_reason_nd">filesDir=\'%1$s\' starts with /data/user/0, indicating the primary user.</string>
     <!-- RuruInspiredDetector: Check 2 - XPrivacyLua -->
     <string name="chk_ruru_xprivacy_name">XPrivacyLua Data Directory Detected</string>
     <string name="chk_ruru_xprivacy_desc">XPrivacyLua data directory found at /data/system/xlua.</string>
@@ -1420,22 +1420,22 @@
     <!-- RuruInspiredDetector: Check 8 - Xposed Module Metadata -->
     <string name="chk_ruru_xposed_meta_name">Xposed Modules Detected via Metadata</string>
     <string name="chk_ruru_xposed_meta_desc">Apps with Xposed module metadata found.</string>
-    <string name="chk_ruru_xposed_meta_reason">The following installed apps declare 'xposedminversion' or 'xposeddescription' metadata keys, identifying them as Xposed modules: %1$s.</string>
+    <string name="chk_ruru_xposed_meta_reason">The following installed apps declare \'xposedminversion\' or \'xposeddescription\' metadata keys, identifying them as Xposed modules: %1$s.</string>
     <string name="chk_ruru_xposed_meta_solution">Disable or uninstall identified Xposed modules via LSPosed Manager.</string>
     <string name="chk_ruru_xposed_meta_name_nd">Xposed Module Metadata Scan</string>
     <string name="chk_ruru_xposed_meta_desc_nd">No apps with Xposed module metadata found.</string>
-    <string name="chk_ruru_xposed_meta_reason_nd">No installed app declares 'xposedminversion' or 'xposeddescription' metadata.</string>
+    <string name="chk_ruru_xposed_meta_reason_nd">No installed app declares \'xposedminversion\' or \'xposeddescription\' metadata.</string>
     <!-- RuruInspiredDetector: Check 9 - LSPatch AppComponentFactory -->
     <string name="chk_ruru_lspatch_name_skip">LSPatch via AppComponentFactory</string>
     <string name="chk_ruru_lspatch_desc_skip">Check requires API 28+; skipped on this device.</string>
     <string name="chk_ruru_lspatch_reason_skip">The appComponentFactory attribute is only available on Android 9 (API 28)+.</string>
     <string name="chk_ruru_lspatch_name">LSPatch via AppComponentFactory Detected</string>
     <string name="chk_ruru_lspatch_desc">Apps patched with LSPatch detected via appComponentFactory.</string>
-    <string name="chk_ruru_lspatch_reason">The following apps have an appComponentFactory attribute containing 'lsposed' or 'lspatch', indicating they were patched using LSPatch (an Xposed implementation that embeds the framework into APKs directly): %1$s.</string>
+    <string name="chk_ruru_lspatch_reason">The following apps have an appComponentFactory attribute containing \'lsposed\' or \'lspatch\', indicating they were patched using LSPatch (an Xposed implementation that embeds the framework into APKs directly): %1$s.</string>
     <string name="chk_ruru_lspatch_solution">Replace LSPatch-embedded APKs with original versions from official sources.</string>
     <string name="chk_ruru_lspatch_name_nd">LSPatch via AppComponentFactory</string>
     <string name="chk_ruru_lspatch_desc_nd">No LSPatch-patched apps detected via appComponentFactory.</string>
-    <string name="chk_ruru_lspatch_reason_nd">No app's appComponentFactory attribute contains 'lsposed' or 'lspatch'.</string>
+    <string name="chk_ruru_lspatch_reason_nd">No app\'s appComponentFactory attribute contains \'lsposed\' or \'lspatch\'.</string>
     <!-- RuruInspiredDetector: Check 10 - Account List -->
     <string name="chk_ruru_account_name">Account List Anomaly</string>
     <string name="chk_ruru_account_desc">Device accounts found via AccountManager.</string>
