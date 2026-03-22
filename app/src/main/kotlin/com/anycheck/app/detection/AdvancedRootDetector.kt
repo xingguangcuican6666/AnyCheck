@@ -564,9 +564,14 @@ class AdvancedRootDetector(private val context: Context) {
         }
     }
 
-    /** Check 13: Emulator / virtual machine detection */
+    /** Check 13: Emulator / virtual machine detection (score-based multi-factor analysis) */
     private fun checkEmulatorDetection(): DetectionResult {
-        val indicators = mutableListOf<String>()
+        // Each indicator contributes a weighted score.
+        // Detection is triggered only when the total score reaches the threshold,
+        // preventing false positives from any single weak signal.
+        data class ScoredIndicator(val score: Int, val detail: String)
+
+        val scored = mutableListOf<ScoredIndicator>()
 
         val hardware = Build.HARDWARE.lowercase()
         val product = Build.PRODUCT.lowercase()
@@ -574,23 +579,79 @@ class AdvancedRootDetector(private val context: Context) {
         val fingerprint = Build.FINGERPRINT.lowercase()
         val model = Build.MODEL.lowercase()
         val brand = Build.BRAND.lowercase()
+        val device = Build.DEVICE.lowercase()
+        val board = Build.BOARD.lowercase()
+        val buildUser = Build.USER.lowercase()
+        val buildHost = Build.HOST.lowercase()
 
-        val emulatorHardware = listOf("goldfish", "ranchu", "vbox86", "vbox")
-        val emulatorProducts = listOf("sdk_gphone", "sdk_gphone_x86", "vbox86", "emulator", "genymotion")
+        // --- Hardware name (score 5: extremely strong signal) ---
+        if (hardware == "goldfish" || hardware == "ranchu") {
+            scored.add(ScoredIndicator(5, "hardware=$hardware"))
+        } else if (hardware.contains("vbox86") || hardware.contains("vbox")) {
+            scored.add(ScoredIndicator(5, "hardware=$hardware"))
+        }
 
-        emulatorHardware.forEach { h -> if (hardware.contains(h)) indicators.add("hardware=$hardware") }
-        emulatorProducts.forEach { p -> if (product.contains(p) && indicators.none { it.startsWith("product=") }) indicators.add("product=$product") }
+        // --- Board name (score 4: strong signal) ---
+        if (board == "goldfish" || board == "ranchu") {
+            scored.add(ScoredIndicator(4, "board=$board"))
+        }
 
-        if (manufacturer == "genymotion") indicators.add("manufacturer=genymotion")
-        if (brand == "generic" || brand.startsWith("unknown")) indicators.add("brand=$brand")
-        if (fingerprint.contains("generic") || fingerprint.contains("sdk_gphone")) indicators.add("fingerprint has generic/sdk_gphone")
-        if (model.contains("sdk") || model.contains("emulator")) indicators.add("model=$model")
+        // --- Product name (score 4: strong signal) ---
+        val emulatorProducts = listOf("sdk_gphone", "sdk_gphone_x86", "sdk_x86", "vbox86p", "emulator", "genymotion", "sdk")
+        if (emulatorProducts.any { product == it || product.startsWith("${it}_") || product.contains("_${it}") }) {
+            scored.add(ScoredIndicator(4, "product=$product"))
+        }
 
+        // --- Manufacturer (score 5: extremely strong signal) ---
+        if (manufacturer == "genymotion") {
+            scored.add(ScoredIndicator(5, "manufacturer=genymotion"))
+        }
+
+        // --- Build fingerprint (score 4: strong signal) ---
+        if (fingerprint.startsWith("generic") || fingerprint.contains(":sdk_gphone") ||
+            fingerprint.contains("/generic_") || fingerprint.contains("generic/sdk")
+        ) {
+            scored.add(ScoredIndicator(4, "fingerprint=$fingerprint"))
+        }
+
+        // --- Model / device name (score 3 or 4) ---
+        if (model.startsWith("android sdk built for") || model == "android sdk") {
+            scored.add(ScoredIndicator(4, "model=$model"))
+        } else if (model.contains("emulator")) {
+            scored.add(ScoredIndicator(3, "model=$model"))
+        } else if (model.contains("sdk")) {
+            scored.add(ScoredIndicator(2, "model=$model"))
+        }
+
+        // --- Device name (score 3) ---
+        if (device == "generic" || device.startsWith("generic_") || device.startsWith("emulator")) {
+            scored.add(ScoredIndicator(3, "device=$device"))
+        }
+
+        // --- Brand (score 3 if "generic", score 1 if "unknown") ---
+        if (brand == "generic") {
+            scored.add(ScoredIndicator(3, "brand=$brand"))
+        } else if (brand.startsWith("unknown")) {
+            scored.add(ScoredIndicator(1, "brand=$brand"))
+        }
+
+        // --- Build user/host typical of AOSP emulator builds (score 2) ---
+        if (buildUser.contains("android-build") || buildHost.contains("android-build")) {
+            scored.add(ScoredIndicator(2, "build_user=$buildUser"))
+        }
+
+        // --- Emulator-specific device files (score 2; kept as supporting evidence) ---
         val emulatorFiles = listOf("/dev/qemu_pipe", "/dev/goldfish_pipe", "/dev/vbox_pipe", "/dev/hvc0")
         val foundFiles = emulatorFiles.filter { File(it).exists() }
-        if (foundFiles.isNotEmpty()) indicators.add("emulator devices: ${foundFiles.joinToString(", ")}")
+        if (foundFiles.isNotEmpty()) {
+            scored.add(ScoredIndicator(2, "emulator_files=${foundFiles.joinToString(",")}"))
+        }
 
-        return if (indicators.isNotEmpty()) {
+        val totalScore = scored.sumOf { it.score }
+        val threshold = 4
+
+        return if (totalScore >= threshold) {
+            val details = scored.map { it.detail }
             DetectionResult(
                 id = "emulator",
                 name = context.getString(R.string.chk_adv_emulator_name),
@@ -598,9 +659,9 @@ class AdvancedRootDetector(private val context: Context) {
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
                 description = context.getString(R.string.chk_adv_emulator_desc),
-                detailedReason = context.getString(R.string.chk_adv_emulator_reason, indicators.joinToString("; ")),
+                detailedReason = context.getString(R.string.chk_adv_emulator_reason, totalScore, threshold, details.joinToString("; ")),
                 solution = context.getString(R.string.chk_adv_emulator_solution),
-                technicalDetail = "Indicators: ${indicators.joinToString("; ")}"
+                technicalDetail = "Score: $totalScore/$threshold. Indicators: ${details.joinToString("; ")}"
             )
         } else {
             DetectionResult(
@@ -610,7 +671,7 @@ class AdvancedRootDetector(private val context: Context) {
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
                 description = context.getString(R.string.chk_adv_emulator_desc_nd),
-                detailedReason = context.getString(R.string.chk_adv_emulator_reason_nd),
+                detailedReason = context.getString(R.string.chk_adv_emulator_reason_nd, totalScore, threshold),
                 solution = context.getString(R.string.no_action_required)
             )
         }

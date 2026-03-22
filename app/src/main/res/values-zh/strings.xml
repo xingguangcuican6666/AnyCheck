@@ -882,8 +882,8 @@
     <string name="chk_adv_emulator_name_nd">模拟器检查</string>
     <string name="chk_adv_emulator_desc">此设备疑似在模拟器中运行。</string>
     <string name="chk_adv_emulator_desc_nd">未检测到模拟器指标。</string>
-    <string name="chk_adv_emulator_reason">模拟器指标：%1$s</string>
-    <string name="chk_adv_emulator_reason_nd">未发现与模拟器相关的属性或文件。</string>
+    <string name="chk_adv_emulator_reason">模拟器评分：%1$d/%2$d。命中指标：%3$s</string>
+    <string name="chk_adv_emulator_reason_nd">模拟器评分：%1$d/%2$d。未发现显著的模拟器特征。</string>
     <string name="chk_adv_emulator_solution">在物理设备上运行应用，而非模拟器。</string>
 
     <string name="chk_adv_inj_libs_name">检测到注入的库文件</string>
