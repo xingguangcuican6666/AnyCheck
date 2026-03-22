@@ -17,6 +17,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material3.Card
@@ -121,6 +123,34 @@ fun AboutScreen(
             ) {
                 Text(
                     text = stringResource(R.string.about_app_description),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            // Author & repository card
+            AboutCard(
+                icon = Icons.Default.Person,
+                title = stringResource(R.string.about_author_title)
+            ) {
+                DetectionMethodRow(
+                    stringResource(R.string.about_author_github_label),
+                    stringResource(R.string.about_author_github_value)
+                )
+                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                DetectionMethodRow(
+                    stringResource(R.string.about_author_repo_label),
+                    stringResource(R.string.about_author_repo_value)
+                )
+            }
+
+            // Philosophy card
+            AboutCard(
+                icon = Icons.Default.Lightbulb,
+                title = stringResource(R.string.about_philosophy_title)
+            ) {
+                Text(
+                    text = stringResource(R.string.about_philosophy_content),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

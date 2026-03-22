@@ -125,6 +125,13 @@
     <string name="about_method_integrity_count">多项检查</string>
     <string name="about_risk_levels">风险等级说明</string>
     <string name="about_risk_note">注：仅有中等及以下风险项被检出时，总结处显示「可能存在 Root」而非「检测到 Root 框架」。</string>
+    <string name="about_author_title">作者与仓库</string>
+    <string name="about_author_github_label">GitHub</string>
+    <string name="about_author_github_value">xingguangcuican6666</string>
+    <string name="about_author_repo_label">仓库</string>
+    <string name="about_author_repo_value">xingguangcuican6666/AnyCheck</string>
+    <string name="about_philosophy_title">设计理念</string>
+    <string name="about_philosophy_content">与市面上某些「检测到了！」却拿不出任何证据和细节的工具截然不同，AnyCheck 的核心理念是：发现问题，就必须说清楚问题在哪里、为何构成风险，以及如何加以解决。那种一声令下、有罪推定、不给任何解释的检测方式，不过是制造焦虑、混淆视听罢了。本工具或许尚未覆盖所有检测场景，但每一项结论背后都有据可查、有因可循——让使用者真正看得懂、做得到。</string>
 
     <!-- 进度消息 -->
     <string name="progress_init">正在初始化检查\u2026</string>

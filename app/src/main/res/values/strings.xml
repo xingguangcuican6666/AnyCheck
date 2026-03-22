@@ -124,6 +124,13 @@
     <string name="about_method_integrity_count">Multiple checks</string>
     <string name="about_risk_levels">Risk Levels</string>
     <string name="about_risk_note">Note: When only MEDIUM or lower risk items are detected, the summary shows \u201cRoot May Possibly Exist\u201d instead of \u201cRoot Framework Detected\u201d.</string>
+    <string name="about_author_title">Author &amp; Repository</string>
+    <string name="about_author_github_label">GitHub</string>
+    <string name="about_author_github_value">xingguangcuican6666</string>
+    <string name="about_author_repo_label">Repository</string>
+    <string name="about_author_repo_value">xingguangcuican6666/AnyCheck</string>
+    <string name="about_philosophy_title">Our Philosophy</string>
+    <string name="about_philosophy_content">Unlike certain tools that simply shout \u201cDetected!\u201d without providing any evidence, context, or explanation, AnyCheck is built on a different principle: if something is found, you deserve to know exactly what it is, why it matters, and how to fix it. The habit of issuing an authoritative verdict with zero supporting detail is nothing more than fearmongering dressed up as security. AnyCheck may not yet cover every possible detection scenario, but every result it delivers comes with clear reasoning and actionable guidance\u2014so you can actually understand what was found and do something about it.</string>
 
     <!-- Progress messages -->
     <string name="progress_init">Initializing checks\u2026</string>
