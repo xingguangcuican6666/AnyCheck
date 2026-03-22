@@ -85,6 +85,7 @@
     <string name="filter_apatch_count">APatch (%1$d)</string>
     <string name="filter_su_count">SU Binary (%1$d)</string>
     <string name="filter_xposed_count">Xposed (%1$d)</string>
+    <string name="filter_environment_count">Environment (%1$d)</string>
 
     <!-- Idle screen feature list -->
     <string name="feature_magisk">Magisk detection (17 checks)</string>

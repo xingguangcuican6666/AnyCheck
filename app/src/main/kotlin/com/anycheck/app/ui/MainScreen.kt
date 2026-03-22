@@ -79,7 +79,7 @@ import com.anycheck.app.ui.theme.RiskMediumDark
 import kotlinx.coroutines.launch
 
 enum class ResultFilter {
-    ALL, DETECTED, MAGISK, KERNELSU, APATCH, SU, XPOSED
+    ALL, DETECTED, MAGISK, KERNELSU, APATCH, SU, XPOSED, ENVIRONMENT
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -344,6 +344,7 @@ private fun ResultsScreen(
             ResultFilter.APATCH -> summary.results.filter { it.category == DetectionCategory.APATCH }
             ResultFilter.SU -> summary.results.filter { it.category == DetectionCategory.SU_BINARY }
             ResultFilter.XPOSED -> summary.results.filter { it.category == DetectionCategory.XPOSED }
+            ResultFilter.ENVIRONMENT -> summary.results.filter { it.category == DetectionCategory.ENVIRONMENT }
         }
     }
 
@@ -380,6 +381,7 @@ private fun ResultsScreen(
                         ResultFilter.APATCH -> summary.results.count { it.category == DetectionCategory.APATCH }
                         ResultFilter.SU -> summary.results.count { it.category == DetectionCategory.SU_BINARY }
                         ResultFilter.XPOSED -> summary.results.count { it.category == DetectionCategory.XPOSED }
+                        ResultFilter.ENVIRONMENT -> summary.results.count { it.category == DetectionCategory.ENVIRONMENT }
                     }
                     val label = when (filter) {
                         ResultFilter.ALL -> stringResource(R.string.filter_all_count, count)
@@ -389,6 +391,7 @@ private fun ResultsScreen(
                         ResultFilter.APATCH -> stringResource(R.string.filter_apatch_count, count)
                         ResultFilter.SU -> stringResource(R.string.filter_su_count, count)
                         ResultFilter.XPOSED -> stringResource(R.string.filter_xposed_count, count)
+                        ResultFilter.ENVIRONMENT -> stringResource(R.string.filter_environment_count, count)
                     }
                     FilterChip(
                         selected = activeFilter == filter,
@@ -403,7 +406,10 @@ private fun ResultsScreen(
         items(filteredResults, key = { it.id }) { result ->
             DetectionResultCard(
                 result = result,
-                expanded = expandedMap.getOrDefault(result.id, result.status == DetectionStatus.DETECTED),
+                expanded = expandedMap.getOrDefault(
+                    result.id,
+                    result.status == DetectionStatus.DETECTED || result.id == "emulator"
+                ),
                 onExpandedChange = { expanded -> expandedMap[result.id] = expanded },
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
