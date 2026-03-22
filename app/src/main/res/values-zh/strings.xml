@@ -1084,4 +1084,179 @@
     <string name="chk_ext_sys_mounts_desc_error">无法读取 /proc/self/mountinfo。</string>
     <string name="chk_ext_sys_mounts_solution_error">请确保 /proc/self/mountinfo 可访问。</string>
 
+
+    <!-- LunaDetector: Check 1 - LSPosed API Property -->
+    <string name="chk_luna_lsp_prop_name">检测到 LSPosed API 属性</string>
+    <string name="chk_luna_lsp_prop_desc">发现 LSPosed 特有的系统属性。</string>
+    <string name="chk_luna_lsp_prop_reason">Luna 方法 (findlsp)：对 LSPosed API 属性执行 __system_property_get。发现：%1$s。persist.lsp.api 由 LSPosed 设置，包含其 API 版本号。</string>
+    <string name="chk_luna_lsp_prop_solution">禁用或卸载 LSPosed 以移除这些属性。</string>
+    <string name="chk_luna_lsp_prop_name_nd">LSPosed API 属性</string>
+    <string name="chk_luna_lsp_prop_desc_nd">未发现 LSPosed 特有的系统属性。</string>
+    <string name="chk_luna_lsp_prop_reason_nd">Luna 方法 (findlsp)：未发现已知的 LSPosed 系统属性（persist.lsp.api、init.svc.lspd）。</string>
+    <!-- LunaDetector: Check 2 - KernelSU Daemon -->
+    <string name="chk_luna_ksu_daemon_name">KernelSU 守护进程服务属性</string>
+    <string name="chk_luna_ksu_daemon_desc">发现 KernelSU 守护进程服务属性。</string>
+    <string name="chk_luna_ksu_daemon_reason">Luna 方法 (findksu)：__system_property_get 确认了 KernelSU 守护进程。发现：%1$s。当 KernelSU 用户空间守护进程（ksuud）活跃时，Android init 系统会设置 init.svc.ksuud。</string>
+    <string name="chk_luna_ksu_daemon_solution">通过 KernelSU Manager 应用卸载 KernelSU，或刷入原厂内核。</string>
+    <string name="chk_luna_ksu_daemon_desc_nd">未发现 KernelSU 守护进程服务属性。</string>
+    <string name="chk_luna_ksu_daemon_reason_nd">Luna 方法 (findksu)：未发现 KernelSU 服务属性（init.svc.ksuud、init.svc.ksu）。</string>
+    <!-- LunaDetector: Check 3 - Magisk Daemon Property -->
+    <string name="chk_luna_magisk_svc_name">Magisk 守护进程服务属性</string>
+    <string name="chk_luna_magisk_svc_desc">发现 Magisk 守护进程服务属性。</string>
+    <string name="chk_luna_magisk_svc_reason">Luna 方法 (checkappnum)：__system_property_get 确认了 Magisk 守护进程。发现：%1$s。当 Magisk 守护进程运行时，Android init 系统会设置 init.svc.magiskd。</string>
+    <string name="chk_luna_magisk_svc_solution">通过 Magisk Manager 应用卸载 Magisk。</string>
+    <string name="chk_luna_magisk_svc_desc_nd">未发现 Magisk 守护进程服务属性。</string>
+    <string name="chk_luna_magisk_svc_reason_nd">Luna 方法 (checkappnum)：未发现已知的 Magisk 服务属性。</string>
+    <!-- LunaDetector: Check 4 - Root Binaries in PATH -->
+    <string name="chk_luna_path_su_name">PATH 目录中发现 Root 二进制文件</string>
+    <string name="chk_luna_path_su_desc">在 PATH 目录中发现与 Root 相关的二进制文件。</string>
+    <string name="chk_luna_path_su_reason">Luna 方法 (psdir)：扫描 getenv(PATH) 目录中的 root 二进制文件。发现：%1$s。放置在 PATH 目录中的 root 二进制文件可方便地在 shell 层面获取 root 权限。</string>
+    <string name="chk_luna_path_su_solution">移除 root 工具以消除 PATH 中的这些二进制文件。</string>
+    <string name="chk_luna_path_su_desc_nd">在 PATH 目录中未发现 root 二进制文件。</string>
+    <string name="chk_luna_path_su_reason_nd">Luna 方法 (psdir)：扫描 getenv(PATH) 目录时未发现与 root 相关的二进制文件。</string>
+    <!-- LunaDetector: Check 5 - APatch Processes -->
+    <string name="chk_luna_apatch_proc_name">检测到 APatch/Root 进程</string>
+    <string name="chk_luna_apatch_proc_desc">发现 APatch 或 root 框架进程正在运行。</string>
+    <string name="chk_luna_apatch_proc_reason">Luna 方法 (rustmagisk)：扫描 /proc 以查找 APatch/root 进程名称。发现：%1$s。apd 是 APatch 守护进程，其存在确认 APatch 处于活跃状态；magiskd 表明 Magisk 正在运行。</string>
+    <string name="chk_luna_apatch_proc_solution">通过 APatch Manager 应用卸载 APatch，或通过 Magisk Manager 卸载 Magisk。</string>
+    <string name="chk_luna_apatch_proc_name_nd">APatch/Root 进程</string>
+    <string name="chk_luna_apatch_proc_desc_nd">未检测到 APatch 或 root 框架进程。</string>
+    <string name="chk_luna_apatch_proc_reason_nd">Luna 方法 (rustmagisk)：在 /proc 中未发现与 APatch 相关的进程名称。</string>
+    <!-- LunaDetector: Check 6 - Suspicious File Size -->
+    <string name="chk_luna_file_size_name">可疑的文件大小异常</string>
+    <string name="chk_luna_file_size_desc">系统文件具有意外大小，可能表明存在篡改。</string>
+    <string name="chk_luna_file_size_reason">Luna 方法 (fhma)：stat() 检查发现文件大小异常。%1$s。Root 工具可能替换或追加内容至系统文件，导致文件大小超出预期。</string>
+    <string name="chk_luna_file_size_solution">从原厂固件镜像还原受影响的系统文件。</string>
+    <string name="chk_luna_file_size_name_nd">文件大小异常</string>
+    <string name="chk_luna_file_size_desc_nd">未检测到可疑的文件大小异常。</string>
+    <string name="chk_luna_file_size_reason_nd">Luna 方法 (fhma)：已检查系统文件大小异常，未发现异常。</string>
+    <!-- LunaDetector: Check 7 - Kernel Stat Anomaly -->
+    <string name="chk_luna_kernel_stat_name">检测到内核统计异常</string>
+    <string name="chk_luna_kernel_stat_desc">通过 /proc 检查发现内核级异常。</string>
+    <string name="chk_luna_kernel_stat_reason">Luna 方法 (checksuskernel)：内核统计异常检查发现：%1$s。Root 框架在 /proc/net/unix 中注册 UNIX 套接字，并可能以提升的 SELinux 上下文运行。</string>
+    <string name="chk_luna_kernel_stat_solution">完全卸载 root 框架后，这些内核级指标将被清除。</string>
+    <string name="chk_luna_kernel_stat_name_nd">内核统计异常</string>
+    <string name="chk_luna_kernel_stat_desc_nd">未检测到内核统计异常。</string>
+    <string name="chk_luna_kernel_stat_reason_nd">Luna 方法 (checksuskernel)：在 /proc 中未发现内核异常。</string>
+    <!-- LunaDetector: Check 8 - Magisk Proc Mounts -->
+    <string name="chk_luna_magisk_mounts_name">检测到 Magisk 挂载条目</string>
+    <string name="chk_luna_magisk_mounts_desc">在 /proc/self/mounts 中发现与 Magisk 相关的条目。</string>
+    <string name="chk_luna_magisk_mounts_reason">Luna 方法 (magiskmounts)：/proc/self/mounts 包含 Magisk 绑定挂载或叠加文件系统特征条目。发现：%1$s。Magisk 通过创建绑定挂载和叠加文件系统来隐藏自身及其模块，在挂载表中留下痕迹。</string>
+    <string name="chk_luna_magisk_mounts_solution">通过 Magisk Manager 应用卸载 Magisk 并重启以恢复原厂挂载。</string>
+    <string name="chk_luna_magisk_mounts_name_nd">Magisk 挂载条目</string>
+    <string name="chk_luna_magisk_mounts_desc_nd">未发现与 Magisk 相关的挂载条目。</string>
+    <string name="chk_luna_magisk_mounts_reason_nd">Luna 方法 (magiskmounts)：/proc/self/mounts 中不包含已知的 Magisk 特有绑定挂载或叠加文件系统标记。</string>
+    <!-- LunaDetector: Check 9 - Zygote Injection -->
+    <string name="chk_luna_zygote_inject_name">检测到 Zygote 注入</string>
+    <string name="chk_luna_zygote_inject_desc">SELinux 上下文表明可能存在 Magisk/LSPosed 的 Zygote 级注入。</string>
+    <string name="chk_luna_zygote_inject_reason">Luna 方法 (zygoteinject)：SELinux 上下文分析发现：%1$s。Magisk 和 LSPosed 钩入 Zygote 以向每个新应用进程注入代码，这会在 /proc/self/attr/ 中留下特征性 SELinux 上下文痕迹。</string>
+    <string name="chk_luna_zygote_inject_solution">卸载 Magisk 和 LSPosed，然后验证 SELinux 策略已恢复到原厂状态。</string>
+    <string name="chk_luna_zygote_inject_name_nd">Zygote 注入</string>
+    <string name="chk_luna_zygote_inject_desc_nd">在 SELinux 上下文中未发现 Zygote 注入指标。</string>
+    <string name="chk_luna_zygote_inject_reason_nd">Luna 方法 (zygoteinject)：/proc/self/attr/current 和 attr/prev 未显示 Zygote 级注入迹象。</string>
+    <!-- LunaDetector: Check 10 - Tmpfs Mount Anomaly -->
+    <string name="chk_luna_tmpfs_mount_name">检测到 Tmpfs 挂载异常</string>
+    <string name="chk_luna_tmpfs_mount_desc">在系统挂载点上检测到可疑的 tmpfs 挂载。</string>
+    <string name="chk_luna_tmpfs_mount_reason">Native-Test 方法 (tmpfsmount)：在 /mnt/obb 或 /mnt/asec 上发现异常：%1$s。Magisk 在这些路径上创建私有 tmpfs 命名空间以隔离其模块叠加层，导致同一路径出现多个 tmpfs 条目。</string>
+    <string name="chk_luna_tmpfs_mount_solution">卸载 Magisk 并重启以恢复原厂挂载命名空间。</string>
+    <string name="chk_luna_tmpfs_mount_name_nd">Tmpfs 挂载异常</string>
+    <string name="chk_luna_tmpfs_mount_desc_nd">未检测到可疑的 tmpfs 挂载异常。</string>
+    <string name="chk_luna_tmpfs_mount_reason_nd">Native-Test 方法 (tmpfsmount)：/mnt/obb 和 /mnt/asec 挂载条目显示正常。</string>
+    <!-- LunaDetector: Check 11 - Proc Scan -->
+    <string name="chk_luna_procscan_name">可疑进程 / Root 叠加挂载</string>
+    <string name="chk_luna_procscan_desc">发现 root 框架进程或与 root 相关的 overlayfs 挂载。</string>
+    <string name="chk_luna_procscan_reason">Luna 方法 (procscan)：/proc/&lt;pid&gt;/cmdline 和 /proc/self/mountinfo 揭示：%1$s。仅标记 lowerdir/upperdir 指向 root 工具路径（如 /data/adb、/magisk）或覆盖 APEX/RRO 以外系统路径的叠加层。</string>
+    <string name="chk_luna_procscan_solution">卸载 root 框架并重启。</string>
+    <string name="chk_luna_procscan_name_nd">进程 / Root 叠加层扫描</string>
+    <string name="chk_luna_procscan_desc_nd">未发现可疑的 root 进程或与 root 相关的叠加挂载。</string>
+    <string name="chk_luna_procscan_reason_nd">Luna 方法 (procscan)：/proc 中无已知 root 进程名称，mountinfo 中无与 root 工具关联的 overlayfs 条目。</string>
+    <!-- LunaDetector: Check 12 - Root Files -->
+    <string name="chk_luna_root_files_name">检测到 Root 二进制文件 / 框架文件</string>
+    <string name="chk_luna_root_files_desc">在文件系统上发现与 root 相关的文件。</string>
+    <string name="chk_luna_root_files_reason">Luna 方法 (roots)：发现的 root 文件：%1$s。</string>
+    <string name="chk_luna_root_files_solution">移除 root 工具以消除这些文件。</string>
+    <string name="chk_luna_root_files_name_nd">Root 二进制文件 / 框架文件</string>
+    <string name="chk_luna_root_files_desc_nd">在标准位置未发现 root 文件。</string>
+    <string name="chk_luna_root_files_reason_nd">Luna 方法 (roots)：在常见路径中未发现与 root 相关的文件。</string>
+    <!-- LunaDetector: Check 13 - Kernel Version -->
+    <string name="chk_luna_kernel_version_name">检测到自定义 / 已 Root 的内核</string>
+    <string name="chk_luna_kernel_version_desc">内核版本或启动参数表明存在自定义/修改的内核。</string>
+    <string name="chk_luna_kernel_version_reason">Luna 方法 (kernels)：%1$s。内核级 root（如 KernelSU 修补）需要自定义内核。</string>
+    <string name="chk_luna_kernel_version_solution">通过 Fastboot 或支持的恢复模式恢复原厂内核。</string>
+    <string name="chk_luna_kernel_version_name_nd">内核版本检查</string>
+    <string name="chk_luna_kernel_version_desc_nd">内核版本显示为标准版本。</string>
+    <string name="chk_luna_kernel_version_reason_nd">Luna 方法 (kernels)：/proc/version 中不包含自定义内核指标。</string>
+    <!-- LunaDetector: Check 14 - Attestation File -->
+    <string name="chk_luna_attestation_file_name">检测到 Root 认证文件</string>
+    <string name="chk_luna_attestation_file_desc">在 /data/local/tmp/attestation 发现 root 认证测试文件。</string>
+    <string name="chk_luna_attestation_file_reason">Luna 方法 (findauth)：access(/data/local/tmp/attestation) 成功。Root 工具创建此文件作为授权/认证标记。</string>
+    <string name="chk_luna_attestation_file_solution">使用 root 权限删除该文件：`rm /data/local/tmp/attestation`。</string>
+    <string name="chk_luna_attestation_file_name_nd">Root 认证文件</string>
+    <string name="chk_luna_attestation_file_desc_nd">未发现 root 认证文件。</string>
+    <string name="chk_luna_attestation_file_reason_nd">Luna 方法 (findauth)：/data/local/tmp/attestation 不存在。</string>
+    <!-- LunaDetector: Check 15 - Evil Modules -->
+    <string name="chk_luna_evil_modules_name">检测到 Root 原生模块</string>
+    <string name="chk_luna_evil_modules_desc">检测到已知的 root 框架原生库。</string>
+    <string name="chk_luna_evil_modules_reason">Luna 方法 (getEvilModules)：发现：%1$s。libmagiskinit.so / libzygisk.so / liblspd.so 是核心 root 框架组件。</string>
+    <string name="chk_luna_evil_modules_solution">卸载相关的 root 框架。</string>
+    <string name="chk_luna_evil_modules_name_nd">Root 原生模块</string>
+    <string name="chk_luna_evil_modules_desc_nd">未检测到已知的 root 原生模块文件。</string>
+    <string name="chk_luna_evil_modules_reason_nd">Luna 方法 (getEvilModules)：未发现已知的 root 原生库。</string>
+    <!-- LunaDetector: Check 16 - Installed Root Apps -->
+    <string name="chk_luna_root_apps_name">检测到 Root 管理应用</string>
+    <string name="chk_luna_root_apps_desc">已安装已知的 root 管理器或钩子框架应用。</string>
+    <string name="chk_luna_root_apps_reason">Luna 方法 (getapps)：已安装的 root 软件包：%1$s。</string>
+    <string name="chk_luna_root_apps_solution">卸载这些应用以移除 root 指标。</string>
+    <string name="chk_luna_root_apps_name_nd">Root 管理应用</string>
+    <string name="chk_luna_root_apps_desc_nd">未检测到已知的 root 管理应用。</string>
+    <string name="chk_luna_root_apps_reason_nd">Luna 方法 (getapps)：未安装已知的 root 管理器或钩子框架软件包。</string>
+    <!-- LunaDetector: Check 17 - Accessibility Services -->
+    <string name="chk_luna_accessibility_svc_name">无障碍服务中发现自动化工具</string>
+    <string name="chk_luna_accessibility_svc_desc">已知的 root 自动化工具作为无障碍服务处于活跃状态。</string>
+    <string name="chk_luna_accessibility_svc_reason">Luna 方法 (findapply)：发现可疑的无障碍服务：%1$s。Auto.js 及类似工具使用无障碍 API 进行基于 root 的自动化操作。</string>
+    <string name="chk_luna_accessibility_svc_solution">在设置中禁用列出的无障碍服务。</string>
+    <string name="chk_luna_accessibility_svc_name_nd">无障碍服务检查</string>
+    <string name="chk_luna_accessibility_svc_desc_nd">未检测到可疑的无障碍服务。</string>
+    <string name="chk_luna_accessibility_svc_reason_nd">Luna 方法 (findapply)：在已启用的无障碍服务中未发现已知的自动化工具。</string>
+    <!-- LunaDetector: Check 18 - Bootloader Unlocked -->
+    <string name="chk_luna_bootloader_name">Bootloader 已解锁</string>
+    <string name="chk_luna_bootloader_desc">系统属性表明 bootloader 已解锁。</string>
+    <string name="chk_luna_bootloader_reason">Luna 方法 (findbootbl)：%1$s。解锁的 bootloader 是刷入 root 框架的前提条件。</string>
+    <string name="chk_luna_bootloader_solution">通过制造商的官方程序重新锁定 bootloader。</string>
+    <string name="chk_luna_bootloader_name_nd">Bootloader 状态</string>
+    <string name="chk_luna_bootloader_desc_nd">Bootloader 似乎已锁定。</string>
+    <string name="chk_luna_bootloader_reason_nd">Luna 方法 (findbootbl)：启动属性表明 bootloader 已锁定并经过验证。</string>
+    <!-- LunaDetector: Check 19 - Vold Isolation -->
+    <string name="chk_luna_vold_isolation_name">Vold 数据隔离已禁用</string>
+    <string name="chk_luna_vold_isolation_desc">persist.sys.vold_app_data_isolation 被设置为 0（已禁用）。</string>
+    <string name="chk_luna_vold_isolation_reason">Luna 方法 (checknum)：persist.sys.vold_app_data_isolation=0。Root 工具禁用 vold 应用数据隔离以获取跨应用存储访问权限。</string>
+    <string name="chk_luna_vold_isolation_solution">重新启用存储数据隔离；卸载修改此属性的 root 工具。</string>
+    <string name="chk_luna_vold_isolation_name_nd">Vold 数据隔离</string>
+    <string name="chk_luna_vold_isolation_desc_nd">Vold 数据隔离属性未被禁用。</string>
+    <string name="chk_luna_vold_isolation_reason_nd">Luna 方法 (checknum)：persist.sys.vold_app_data_isolation=%1$s。未被 root 工具禁用。</string>
+    <!-- LunaDetector: Check 20 - Native Library Scan -->
+    <string name="chk_luna_scanlib_name">应用目录中发现 Root 原生库</string>
+    <string name="chk_luna_scanlib_desc">在已安装应用的原生库目录中发现 root 框架原生库。</string>
+    <string name="chk_luna_scanlib_reason">Luna 方法 (scanlib)：发现可疑模块：%1$s。</string>
+    <string name="chk_luna_scanlib_solution">卸载相关应用 / root 框架。</string>
+    <string name="chk_luna_scanlib_name_nd">原生库扫描</string>
+    <string name="chk_luna_scanlib_desc_nd">在任何已安装应用目录中均未发现 root 原生库。</string>
+    <string name="chk_luna_scanlib_reason_nd">Luna 方法 (scanlib)：在任何应用的 nativeLibraryDir 中均未发现已知的 root .so 文件。</string>
+    <!-- LunaDetector: Check 21 - Sensitive Packages -->
+    <string name="chk_luna_sensitive_pkgs_name">检测到 Root 隐藏 / 绕过应用</string>
+    <string name="chk_luna_sensitive_pkgs_desc">已安装旨在隐藏 root 状态或绕过检测的应用。</string>
+    <string name="chk_luna_sensitive_pkgs_reason">Luna 方法 (wNxM8s/K0ajGz)：发现软件包：%1$s。HideMyAppList 和 TaiChi 可在应用层面隐藏 root 管理器软件包。</string>
+    <string name="chk_luna_sensitive_pkgs_solution">卸载这些应用。</string>
+    <string name="chk_luna_sensitive_pkgs_name_nd">Root 隐藏 / 绕过应用</string>
+    <string name="chk_luna_sensitive_pkgs_desc_nd">未检测到 root 隐藏应用。</string>
+    <string name="chk_luna_sensitive_pkgs_reason_nd">Luna 方法 (wNxM8s/K0ajGz)：未安装已知的 root 隐藏软件包。</string>
+    <!-- LunaDetector: Check 22 - MAC Address Anomaly -->
+    <string name="chk_luna_mac_anomaly_name">MAC 地址异常（零 MAC）</string>
+    <string name="chk_luna_mac_anomaly_desc">网络接口具有零 MAC 地址，表明可能存在 root 欺骗。</string>
+    <string name="chk_luna_mac_anomaly_reason">Luna 方法 (magiskmac)：%1$s。Magisk 或 root 模块可能抑制 MAC 地址以绕过设备指纹识别。</string>
+    <string name="chk_luna_mac_anomaly_solution">调查是否有 Magisk 模块在抑制 MAC 地址。</string>
+    <string name="chk_luna_mac_anomaly_name_nd">MAC 地址检查</string>
+    <string name="chk_luna_mac_anomaly_desc_nd">未检测到零 MAC 地址异常。</string>
+    <string name="chk_luna_mac_anomaly_reason_nd">Luna 方法 (magiskmac)：所有可读的网络接口均具有非零 MAC 地址。</string>
+
 </resources>

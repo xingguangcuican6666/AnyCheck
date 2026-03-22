@@ -1083,4 +1083,179 @@
     <string name="chk_ext_sys_mounts_desc_error">Could not read /proc/self/mountinfo.</string>
     <string name="chk_ext_sys_mounts_solution_error">Ensure /proc/self/mountinfo is accessible.</string>
 
+
+    <!-- LunaDetector: Check 1 - LSPosed API Property -->
+    <string name="chk_luna_lsp_prop_name">LSPosed API Property Detected</string>
+    <string name="chk_luna_lsp_prop_desc">LSPosed-specific system properties found.</string>
+    <string name="chk_luna_lsp_prop_reason">Luna-method (findlsp): __system_property_get on LSPosed API property. Found: %1$s. persist.lsp.api is set by LSPosed and contains its API version number.</string>
+    <string name="chk_luna_lsp_prop_solution">Disable or uninstall LSPosed to remove these properties.</string>
+    <string name="chk_luna_lsp_prop_name_nd">LSPosed API Property</string>
+    <string name="chk_luna_lsp_prop_desc_nd">No LSPosed-specific system properties found.</string>
+    <string name="chk_luna_lsp_prop_reason_nd">Luna-method (findlsp): None of the known LSPosed system properties (persist.lsp.api, init.svc.lspd) were found.</string>
+    <!-- LunaDetector: Check 2 - KernelSU Daemon -->
+    <string name="chk_luna_ksu_daemon_name">KernelSU Daemon Service Property</string>
+    <string name="chk_luna_ksu_daemon_desc">KernelSU daemon service properties found.</string>
+    <string name="chk_luna_ksu_daemon_reason">Luna-method (findksu): __system_property_get confirmed KernelSU daemon. Found: %1$s. init.svc.ksuud is set by the Android init system when the KernelSU userspace daemon (ksuud) is active.</string>
+    <string name="chk_luna_ksu_daemon_solution">Uninstall KernelSU via the KernelSU Manager app or flash a stock kernel.</string>
+    <string name="chk_luna_ksu_daemon_desc_nd">No KernelSU daemon service properties found.</string>
+    <string name="chk_luna_ksu_daemon_reason_nd">Luna-method (findksu): None of the KernelSU service properties (init.svc.ksuud, init.svc.ksu) were found.</string>
+    <!-- LunaDetector: Check 3 - Magisk Daemon Property -->
+    <string name="chk_luna_magisk_svc_name">Magisk Daemon Service Property</string>
+    <string name="chk_luna_magisk_svc_desc">Magisk daemon service property found.</string>
+    <string name="chk_luna_magisk_svc_reason">Luna-method (checkappnum): __system_property_get confirmed Magisk daemon. Found: %1$s. init.svc.magiskd is set by the Android init system when the Magisk daemon is running.</string>
+    <string name="chk_luna_magisk_svc_solution">Uninstall Magisk via the Magisk Manager app.</string>
+    <string name="chk_luna_magisk_svc_desc_nd">No Magisk daemon service properties found.</string>
+    <string name="chk_luna_magisk_svc_reason_nd">Luna-method (checkappnum): None of the known Magisk service properties were found.</string>
+    <!-- LunaDetector: Check 4 - Root Binaries in PATH -->
+    <string name="chk_luna_path_su_name">Root Binaries in PATH</string>
+    <string name="chk_luna_path_su_desc">Root-related binaries found in PATH directories.</string>
+    <string name="chk_luna_path_su_reason">Luna-method (psdir): Scanned getenv(PATH) directories for root binaries. Found: %1$s. Root binaries placed in PATH directories grant easy shell-level root access.</string>
+    <string name="chk_luna_path_su_solution">Remove root tools to eliminate these binaries from PATH.</string>
+    <string name="chk_luna_path_su_desc_nd">No root binaries found in PATH directories.</string>
+    <string name="chk_luna_path_su_reason_nd">Luna-method (psdir): No root-related binaries found when scanning getenv(PATH) directories.</string>
+    <!-- LunaDetector: Check 5 - APatch Processes -->
+    <string name="chk_luna_apatch_proc_name">APatch/Root Process Detected</string>
+    <string name="chk_luna_apatch_proc_desc">APatch or root framework processes found running.</string>
+    <string name="chk_luna_apatch_proc_reason">Luna-method (rustmagisk): /proc scan for APatch/root process names. Found: %1$s. apd is the APatch daemon; its presence confirms APatch is active. magiskd indicates Magisk is running.</string>
+    <string name="chk_luna_apatch_proc_solution">Uninstall APatch via the APatch Manager app, or Magisk via Magisk Manager.</string>
+    <string name="chk_luna_apatch_proc_name_nd">APatch/Root Process</string>
+    <string name="chk_luna_apatch_proc_desc_nd">No APatch or root framework processes detected.</string>
+    <string name="chk_luna_apatch_proc_reason_nd">Luna-method (rustmagisk): No APatch-related process names found in /proc.</string>
+    <!-- LunaDetector: Check 6 - Suspicious File Size -->
+    <string name="chk_luna_file_size_name">Suspicious File Size Anomaly</string>
+    <string name="chk_luna_file_size_desc">System files have unexpected sizes, indicating possible tampering.</string>
+    <string name="chk_luna_file_size_reason">Luna-method (fhma): stat() check revealed files with anomalous sizes. %1$s. Root tools may replace or append to system files, inflating their size beyond expected.</string>
+    <string name="chk_luna_file_size_solution">Restore affected system files from a stock firmware image.</string>
+    <string name="chk_luna_file_size_name_nd">File Size Anomaly</string>
+    <string name="chk_luna_file_size_desc_nd">No suspicious file size anomalies detected.</string>
+    <string name="chk_luna_file_size_reason_nd">Luna-method (fhma): Checked system files for size anomalies; none found.</string>
+    <!-- LunaDetector: Check 7 - Kernel Stat Anomaly -->
+    <string name="chk_luna_kernel_stat_name">Kernel Stat Anomaly Detected</string>
+    <string name="chk_luna_kernel_stat_desc">Kernel-level anomalies detected via /proc inspection.</string>
+    <string name="chk_luna_kernel_stat_reason">Luna-method (checksuskernel): Kernel stat anomaly checks found: %1$s. Root frameworks register UNIX sockets in /proc/net/unix and may run with elevated SELinux contexts.</string>
+    <string name="chk_luna_kernel_stat_solution">These kernel-level indicators are cleared when root frameworks are fully uninstalled.</string>
+    <string name="chk_luna_kernel_stat_name_nd">Kernel Stat Anomaly</string>
+    <string name="chk_luna_kernel_stat_desc_nd">No kernel stat anomalies detected.</string>
+    <string name="chk_luna_kernel_stat_reason_nd">Luna-method (checksuskernel): No kernel anomalies found in /proc.</string>
+    <!-- LunaDetector: Check 8 - Magisk Proc Mounts -->
+    <string name="chk_luna_magisk_mounts_name">Magisk Mount Entries Detected</string>
+    <string name="chk_luna_magisk_mounts_desc">Magisk-related entries found in /proc/self/mounts.</string>
+    <string name="chk_luna_magisk_mounts_reason">Luna-method (magiskmounts): /proc/self/mounts contains characteristic Magisk bind-mount or overlay entries. Found: %1$s. Magisk hides itself and its modules by creating bind-mounts and overlay filesystems that leave traces in the mount table.</string>
+    <string name="chk_luna_magisk_mounts_solution">Uninstall Magisk via the Magisk Manager app and reboot to restore stock mounts.</string>
+    <string name="chk_luna_magisk_mounts_name_nd">Magisk Mount Entries</string>
+    <string name="chk_luna_magisk_mounts_desc_nd">No Magisk-related mount entries found.</string>
+    <string name="chk_luna_magisk_mounts_reason_nd">Luna-method (magiskmounts): /proc/self/mounts contains no known Magisk-specific bind-mount or overlay markers.</string>
+    <!-- LunaDetector: Check 9 - Zygote Injection -->
+    <string name="chk_luna_zygote_inject_name">Zygote Injection Detected</string>
+    <string name="chk_luna_zygote_inject_desc">SELinux context indicates possible Zygote-level injection by Magisk/LSPosed.</string>
+    <string name="chk_luna_zygote_inject_reason">Luna-method (zygoteinject): SELinux context analysis found: %1$s. Magisk and LSPosed hook into Zygote to inject code into every new app process. This leaves characteristic SELinux context traces in /proc/self/attr/.</string>
+    <string name="chk_luna_zygote_inject_solution">Uninstall Magisk and LSPosed, then verify SELinux policy is restored to stock.</string>
+    <string name="chk_luna_zygote_inject_name_nd">Zygote Injection</string>
+    <string name="chk_luna_zygote_inject_desc_nd">No Zygote injection indicators found in SELinux contexts.</string>
+    <string name="chk_luna_zygote_inject_reason_nd">Luna-method (zygoteinject): /proc/self/attr/current and attr/prev show no signs of Zygote-level injection.</string>
+    <!-- LunaDetector: Check 10 - Tmpfs Mount Anomaly -->
+    <string name="chk_luna_tmpfs_mount_name">Tmpfs Mount Anomaly Detected</string>
+    <string name="chk_luna_tmpfs_mount_desc">Suspicious tmpfs mounts detected on system mount points.</string>
+    <string name="chk_luna_tmpfs_mount_reason">Native-Test-method (tmpfsmount): Anomalies found on /mnt/obb or /mnt/asec: %1$s. Magisk creates private tmpfs namespaces on these paths to isolate its module overlays from the global mount namespace, leaving multiple tmpfs entries for the same path.</string>
+    <string name="chk_luna_tmpfs_mount_solution">Uninstall Magisk and reboot to restore stock mount namespaces.</string>
+    <string name="chk_luna_tmpfs_mount_name_nd">Tmpfs Mount Anomaly</string>
+    <string name="chk_luna_tmpfs_mount_desc_nd">No suspicious tmpfs mount anomalies detected.</string>
+    <string name="chk_luna_tmpfs_mount_reason_nd">Native-Test-method (tmpfsmount): /mnt/obb and /mnt/asec mount entries appear normal.</string>
+    <!-- LunaDetector: Check 11 - Proc Scan -->
+    <string name="chk_luna_procscan_name">Suspicious Processes / Root Overlay Mounts</string>
+    <string name="chk_luna_procscan_desc">Root framework processes or root-linked overlayfs mounts found.</string>
+    <string name="chk_luna_procscan_reason">Luna-method (procscan): /proc/&lt;pid&gt;/cmdline and /proc/self/mountinfo revealed: %1$s. Only overlays whose lowerdir/upperdir point to root-tool paths (e.g. /data/adb, /magisk) or that cover system paths outside APEX/RRO are flagged.</string>
+    <string name="chk_luna_procscan_solution">Uninstall root frameworks and reboot.</string>
+    <string name="chk_luna_procscan_name_nd">Process / Root Overlay Scan</string>
+    <string name="chk_luna_procscan_desc_nd">No suspicious root processes or root-linked overlay mounts found.</string>
+    <string name="chk_luna_procscan_reason_nd">Luna-method (procscan): No known root process names in /proc and no root-tool-linked overlayfs entries in mountinfo.</string>
+    <!-- LunaDetector: Check 12 - Root Files -->
+    <string name="chk_luna_root_files_name">Root Binary / Framework Files Detected</string>
+    <string name="chk_luna_root_files_desc">Root-related files found on the filesystem.</string>
+    <string name="chk_luna_root_files_reason">Luna-method (roots): Root files found: %1$s.</string>
+    <string name="chk_luna_root_files_solution">Remove root tools to eliminate these files.</string>
+    <string name="chk_luna_root_files_name_nd">Root Binary / Framework Files</string>
+    <string name="chk_luna_root_files_desc_nd">No root files found in standard locations.</string>
+    <string name="chk_luna_root_files_reason_nd">Luna-method (roots): No root-related files found in common paths.</string>
+    <!-- LunaDetector: Check 13 - Kernel Version -->
+    <string name="chk_luna_kernel_version_name">Custom / Rooted Kernel Detected</string>
+    <string name="chk_luna_kernel_version_desc">Kernel version or boot parameters indicate a custom/modified kernel.</string>
+    <string name="chk_luna_kernel_version_reason">Luna-method (kernels): %1$s. A custom kernel (e.g. KernelSU-patched) is required for kernel-level rooting.</string>
+    <string name="chk_luna_kernel_version_solution">Restore the stock kernel via Fastboot or supported recovery.</string>
+    <string name="chk_luna_kernel_version_name_nd">Kernel Version Check</string>
+    <string name="chk_luna_kernel_version_desc_nd">Kernel version appears standard.</string>
+    <string name="chk_luna_kernel_version_reason_nd">Luna-method (kernels): /proc/version contains no custom-kernel indicators.</string>
+    <!-- LunaDetector: Check 14 - Attestation File -->
+    <string name="chk_luna_attestation_file_name">Root Attestation File Detected</string>
+    <string name="chk_luna_attestation_file_desc">Root attestation test file found at /data/local/tmp/attestation.</string>
+    <string name="chk_luna_attestation_file_reason">Luna-method (findauth): access(/data/local/tmp/attestation) succeeded. Root tools create this file as an authorization/attestation marker.</string>
+    <string name="chk_luna_attestation_file_solution">Remove the file with root: `rm /data/local/tmp/attestation`.</string>
+    <string name="chk_luna_attestation_file_name_nd">Root Attestation File</string>
+    <string name="chk_luna_attestation_file_desc_nd">No root attestation file found.</string>
+    <string name="chk_luna_attestation_file_reason_nd">Luna-method (findauth): /data/local/tmp/attestation does not exist.</string>
+    <!-- LunaDetector: Check 15 - Evil Modules -->
+    <string name="chk_luna_evil_modules_name">Root Native Modules Detected</string>
+    <string name="chk_luna_evil_modules_desc">Known root framework native libraries detected.</string>
+    <string name="chk_luna_evil_modules_reason">Luna-method (getEvilModules): Found: %1$s. libmagiskinit.so / libzygisk.so / liblspd.so are core root-framework components.</string>
+    <string name="chk_luna_evil_modules_solution">Uninstall the associated root framework.</string>
+    <string name="chk_luna_evil_modules_name_nd">Root Native Modules</string>
+    <string name="chk_luna_evil_modules_desc_nd">No known root native module files detected.</string>
+    <string name="chk_luna_evil_modules_reason_nd">Luna-method (getEvilModules): No known root native libraries found.</string>
+    <!-- LunaDetector: Check 16 - Installed Root Apps -->
+    <string name="chk_luna_root_apps_name">Root Management Apps Detected</string>
+    <string name="chk_luna_root_apps_desc">Known root manager or hook framework apps are installed.</string>
+    <string name="chk_luna_root_apps_reason">Luna-method (getapps): Installed root packages: %1$s.</string>
+    <string name="chk_luna_root_apps_solution">Uninstall these applications to remove root indicators.</string>
+    <string name="chk_luna_root_apps_name_nd">Root Management Apps</string>
+    <string name="chk_luna_root_apps_desc_nd">No known root management apps detected.</string>
+    <string name="chk_luna_root_apps_reason_nd">Luna-method (getapps): No known root manager or hook framework packages installed.</string>
+    <!-- LunaDetector: Check 17 - Accessibility Services -->
+    <string name="chk_luna_accessibility_svc_name">Automation Tool in Accessibility Services</string>
+    <string name="chk_luna_accessibility_svc_desc">Known root-automation tools are active as accessibility services.</string>
+    <string name="chk_luna_accessibility_svc_reason">Luna-method (findapply): Found suspicious accessibility services: %1$s. Auto.js and similar tools use accessibility APIs for root-based automation.</string>
+    <string name="chk_luna_accessibility_svc_solution">Disable the listed accessibility services in Settings.</string>
+    <string name="chk_luna_accessibility_svc_name_nd">Accessibility Service Check</string>
+    <string name="chk_luna_accessibility_svc_desc_nd">No suspicious accessibility services detected.</string>
+    <string name="chk_luna_accessibility_svc_reason_nd">Luna-method (findapply): No known automation tools found in enabled accessibility services.</string>
+    <!-- LunaDetector: Check 18 - Bootloader Unlocked -->
+    <string name="chk_luna_bootloader_name">Bootloader Unlocked</string>
+    <string name="chk_luna_bootloader_desc">System properties indicate an unlocked bootloader.</string>
+    <string name="chk_luna_bootloader_reason">Luna-method (findbootbl): %1$s. An unlocked bootloader is a prerequisite for flashing root frameworks.</string>
+    <string name="chk_luna_bootloader_solution">Re-lock the bootloader via the manufacturer's official procedure.</string>
+    <string name="chk_luna_bootloader_name_nd">Bootloader Status</string>
+    <string name="chk_luna_bootloader_desc_nd">Bootloader appears to be locked.</string>
+    <string name="chk_luna_bootloader_reason_nd">Luna-method (findbootbl): Boot properties indicate a locked, verified bootloader.</string>
+    <!-- LunaDetector: Check 19 - Vold Isolation -->
+    <string name="chk_luna_vold_isolation_name">Vold Data Isolation Disabled</string>
+    <string name="chk_luna_vold_isolation_desc">persist.sys.vold_app_data_isolation is set to 0 (disabled).</string>
+    <string name="chk_luna_vold_isolation_reason">Luna-method (checknum): persist.sys.vold_app_data_isolation=0. Root tools disable vold app data isolation to gain cross-app storage access.</string>
+    <string name="chk_luna_vold_isolation_solution">Re-enable storage data isolation; uninstall root tools that modify this property.</string>
+    <string name="chk_luna_vold_isolation_name_nd">Vold Data Isolation</string>
+    <string name="chk_luna_vold_isolation_desc_nd">Vold data isolation property is not disabled.</string>
+    <string name="chk_luna_vold_isolation_reason_nd">Luna-method (checknum): persist.sys.vold_app_data_isolation=%1$s. Not disabled by root tools.</string>
+    <!-- LunaDetector: Check 20 - Native Library Scan -->
+    <string name="chk_luna_scanlib_name">Root Native Libraries in App Dirs</string>
+    <string name="chk_luna_scanlib_desc">Root framework native libraries found in installed app native-library directories.</string>
+    <string name="chk_luna_scanlib_reason">Luna-method (scanlib): Found suspicious modules: %1$s.</string>
+    <string name="chk_luna_scanlib_solution">Uninstall the associated app / root framework.</string>
+    <string name="chk_luna_scanlib_name_nd">Native Library Scan</string>
+    <string name="chk_luna_scanlib_desc_nd">No root native libraries found in any installed app directory.</string>
+    <string name="chk_luna_scanlib_reason_nd">Luna-method (scanlib): No known root .so files found in nativeLibraryDir of any app.</string>
+    <!-- LunaDetector: Check 21 - Sensitive Packages -->
+    <string name="chk_luna_sensitive_pkgs_name">Root-Hiding / Bypass Apps Detected</string>
+    <string name="chk_luna_sensitive_pkgs_desc">Apps designed to hide root presence or bypass detection are installed.</string>
+    <string name="chk_luna_sensitive_pkgs_reason">Luna-method (wNxM8s/K0ajGz): Found packages: %1$s. HideMyAppList and TaiChi conceal root-manager packages from app-level detection.</string>
+    <string name="chk_luna_sensitive_pkgs_solution">Uninstall these apps.</string>
+    <string name="chk_luna_sensitive_pkgs_name_nd">Root-Hiding / Bypass Apps</string>
+    <string name="chk_luna_sensitive_pkgs_desc_nd">No root-hiding apps detected.</string>
+    <string name="chk_luna_sensitive_pkgs_reason_nd">Luna-method (wNxM8s/K0ajGz): No known root-hiding packages installed.</string>
+    <!-- LunaDetector: Check 22 - MAC Address Anomaly -->
+    <string name="chk_luna_mac_anomaly_name">MAC Address Anomaly (Zero MAC)</string>
+    <string name="chk_luna_mac_anomaly_desc">Network interface has a zero MAC address, indicating possible root spoofing.</string>
+    <string name="chk_luna_mac_anomaly_reason">Luna-method (magiskmac): %1$s. Magisk or root modules may suppress the MAC address to bypass device fingerprinting.</string>
+    <string name="chk_luna_mac_anomaly_solution">Investigate whether a Magisk module is suppressing MAC addresses.</string>
+    <string name="chk_luna_mac_anomaly_name_nd">MAC Address Check</string>
+    <string name="chk_luna_mac_anomaly_desc_nd">No zero MAC address anomalies detected.</string>
+    <string name="chk_luna_mac_anomaly_reason_nd">Luna-method (magiskmac): All readable network interfaces have non-zero MAC addresses.</string>
+
 </resources>

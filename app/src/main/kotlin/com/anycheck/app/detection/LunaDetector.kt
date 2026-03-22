@@ -90,28 +90,25 @@ class LunaDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "luna_lsp_prop",
-                name = "LSPosed API Property Detected",
+                name = context.getString(R.string.chk_luna_lsp_prop_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "LSPosed-specific system properties found.",
-                detailedReason = "Luna-method (findlsp): __system_property_get on LSPosed API property. " +
-                    "Found: ${found.joinToString(", ")}. " +
-                    "persist.lsp.api is set by LSPosed and contains its API version number.",
-                solution = "Disable or uninstall LSPosed to remove these properties.",
+                description = context.getString(R.string.chk_luna_lsp_prop_desc),
+                detailedReason = context.getString(R.string.chk_luna_lsp_prop_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_luna_lsp_prop_solution),
                 technicalDetail = "Props: ${found.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "luna_lsp_prop",
-                name = "LSPosed API Property",
+                name = context.getString(R.string.chk_luna_lsp_prop_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No LSPosed-specific system properties found.",
-                detailedReason = "Luna-method (findlsp): None of the known LSPosed system properties " +
-                    "(persist.lsp.api, init.svc.lspd) were found.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_luna_lsp_prop_desc_nd),
+                detailedReason = context.getString(R.string.chk_luna_lsp_prop_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -135,29 +132,25 @@ class LunaDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "luna_ksu_daemon",
-                name = "KernelSU Daemon Service Property",
+                name = context.getString(R.string.chk_luna_ksu_daemon_name),
                 category = DetectionCategory.KERNELSU,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "KernelSU daemon service properties found.",
-                detailedReason = "Luna-method (findksu): __system_property_get confirmed KernelSU daemon. " +
-                    "Found: ${found.joinToString(", ")}. " +
-                    "init.svc.ksuud is set by the Android init system when the KernelSU " +
-                    "userspace daemon (ksuud) is active.",
-                solution = "Uninstall KernelSU via the KernelSU Manager app or flash a stock kernel.",
+                description = context.getString(R.string.chk_luna_ksu_daemon_desc),
+                detailedReason = context.getString(R.string.chk_luna_ksu_daemon_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_luna_ksu_daemon_solution),
                 technicalDetail = "Service props: ${found.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "luna_ksu_daemon",
-                name = "KernelSU Daemon Service Property",
+                name = context.getString(R.string.chk_luna_ksu_daemon_name),
                 category = DetectionCategory.KERNELSU,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No KernelSU daemon service properties found.",
-                detailedReason = "Luna-method (findksu): None of the KernelSU service properties " +
-                    "(init.svc.ksuud, init.svc.ksu) were found.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_luna_ksu_daemon_desc_nd),
+                detailedReason = context.getString(R.string.chk_luna_ksu_daemon_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -180,27 +173,25 @@ class LunaDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "luna_magisk_svc_prop",
-                name = "Magisk Daemon Service Property",
+                name = context.getString(R.string.chk_luna_magisk_svc_name),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Magisk daemon service property found.",
-                detailedReason = "Luna-method (checkappnum): __system_property_get confirmed Magisk daemon. " +
-                    "Found: ${found.joinToString(", ")}. " +
-                    "init.svc.magiskd is set by the Android init system when the Magisk daemon is running.",
-                solution = "Uninstall Magisk via the Magisk Manager app.",
+                description = context.getString(R.string.chk_luna_magisk_svc_desc),
+                detailedReason = context.getString(R.string.chk_luna_magisk_svc_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_luna_magisk_svc_solution),
                 technicalDetail = "Service props: ${found.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "luna_magisk_svc_prop",
-                name = "Magisk Daemon Service Property",
+                name = context.getString(R.string.chk_luna_magisk_svc_name),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No Magisk daemon service properties found.",
-                detailedReason = "Luna-method (checkappnum): None of the known Magisk service properties were found.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_luna_magisk_svc_desc_nd),
+                detailedReason = context.getString(R.string.chk_luna_magisk_svc_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -225,28 +216,25 @@ class LunaDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "luna_path_su",
-                name = "Root Binaries in PATH",
+                name = context.getString(R.string.chk_luna_path_su_name),
                 category = DetectionCategory.SU_BINARY,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Root-related binaries found in PATH directories.",
-                detailedReason = "Luna-method (psdir): Scanned getenv(PATH) directories for root binaries. " +
-                    "Found: ${found.joinToString(", ")}. " +
-                    "Root binaries placed in PATH directories grant easy shell-level root access.",
-                solution = "Remove root tools to eliminate these binaries from PATH.",
+                description = context.getString(R.string.chk_luna_path_su_desc),
+                detailedReason = context.getString(R.string.chk_luna_path_su_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_luna_path_su_solution),
                 technicalDetail = "Found in PATH: ${found.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "luna_path_su",
-                name = "Root Binaries in PATH",
+                name = context.getString(R.string.chk_luna_path_su_name),
                 category = DetectionCategory.SU_BINARY,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No root binaries found in PATH directories.",
-                detailedReason = "Luna-method (psdir): No root-related binaries found when scanning " +
-                    "getenv(PATH) directories.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_luna_path_su_desc_nd),
+                detailedReason = context.getString(R.string.chk_luna_path_su_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -289,28 +277,25 @@ class LunaDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "luna_apatch_proc",
-                name = "APatch/Root Process Detected",
+                name = context.getString(R.string.chk_luna_apatch_proc_name),
                 category = DetectionCategory.APATCH,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "APatch or root framework processes found running.",
-                detailedReason = "Luna-method (rustmagisk): /proc scan for APatch/root process names. " +
-                    "Found: ${found.joinToString(", ")}. " +
-                    "apd is the APatch daemon; its presence confirms APatch is active. " +
-                    "magiskd indicates Magisk is running.",
-                solution = "Uninstall APatch via the APatch Manager app, or Magisk via Magisk Manager.",
+                description = context.getString(R.string.chk_luna_apatch_proc_desc),
+                detailedReason = context.getString(R.string.chk_luna_apatch_proc_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_luna_apatch_proc_solution),
                 technicalDetail = "Processes: ${found.joinToString("; ")}; total procs scanned: $procCount"
             )
         } else {
             DetectionResult(
                 id = "luna_apatch_proc",
-                name = "APatch/Root Process",
+                name = context.getString(R.string.chk_luna_apatch_proc_name_nd),
                 category = DetectionCategory.APATCH,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No APatch or root framework processes detected.",
-                detailedReason = "Luna-method (rustmagisk): No APatch-related process names found in /proc.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_luna_apatch_proc_desc_nd),
+                detailedReason = context.getString(R.string.chk_luna_apatch_proc_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -343,27 +328,25 @@ class LunaDetector(private val context: Context) {
         return if (suspicious.isNotEmpty()) {
             DetectionResult(
                 id = "luna_file_size",
-                name = "Suspicious File Size Anomaly",
+                name = context.getString(R.string.chk_luna_file_size_name),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "System files have unexpected sizes, indicating possible tampering.",
-                detailedReason = "Luna-method (fhma): stat() check revealed files with anomalous sizes. " +
-                    "${suspicious.joinToString("; ")}. " +
-                    "Root tools may replace or append to system files, inflating their size beyond expected.",
-                solution = "Restore affected system files from a stock firmware image.",
+                description = context.getString(R.string.chk_luna_file_size_desc),
+                detailedReason = context.getString(R.string.chk_luna_file_size_reason, suspicious.joinToString("; ")),
+                solution = context.getString(R.string.chk_luna_file_size_solution),
                 technicalDetail = suspicious.joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "luna_file_size",
-                name = "File Size Anomaly",
+                name = context.getString(R.string.chk_luna_file_size_name_nd),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "No suspicious file size anomalies detected.",
-                detailedReason = "Luna-method (fhma): Checked system files for size anomalies; none found.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_luna_file_size_desc_nd),
+                detailedReason = context.getString(R.string.chk_luna_file_size_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -406,28 +389,25 @@ class LunaDetector(private val context: Context) {
         return if (suspicious.isNotEmpty()) {
             DetectionResult(
                 id = "luna_kernel_stat",
-                name = "Kernel Stat Anomaly Detected",
+                name = context.getString(R.string.chk_luna_kernel_stat_name),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Kernel-level anomalies detected via /proc inspection.",
-                detailedReason = "Luna-method (checksuskernel): Kernel stat anomaly checks found: " +
-                    "${suspicious.joinToString("; ")}. " +
-                    "Root frameworks register UNIX sockets in /proc/net/unix and may run with " +
-                    "elevated SELinux contexts.",
-                solution = "These kernel-level indicators are cleared when root frameworks are fully uninstalled.",
+                description = context.getString(R.string.chk_luna_kernel_stat_desc),
+                detailedReason = context.getString(R.string.chk_luna_kernel_stat_reason, suspicious.joinToString("; ")),
+                solution = context.getString(R.string.chk_luna_kernel_stat_solution),
                 technicalDetail = suspicious.joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "luna_kernel_stat",
-                name = "Kernel Stat Anomaly",
+                name = context.getString(R.string.chk_luna_kernel_stat_name_nd),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No kernel stat anomalies detected.",
-                detailedReason = "Luna-method (checksuskernel): No kernel anomalies found in /proc.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_luna_kernel_stat_desc_nd),
+                detailedReason = context.getString(R.string.chk_luna_kernel_stat_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -471,30 +451,25 @@ class LunaDetector(private val context: Context) {
         return if (suspicious.isNotEmpty()) {
             DetectionResult(
                 id = "luna_magisk_mounts",
-                name = "Magisk Mount Entries Detected",
+                name = context.getString(R.string.chk_luna_magisk_mounts_name),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Magisk-related entries found in /proc/self/mounts.",
-                detailedReason = "Luna-method (magiskmounts): /proc/self/mounts contains characteristic " +
-                    "Magisk bind-mount or overlay entries. " +
-                    "Found: ${suspicious.joinToString("; ")}. " +
-                    "Magisk hides itself and its modules by creating bind-mounts and overlay filesystems " +
-                    "that leave traces in the mount table.",
-                solution = "Uninstall Magisk via the Magisk Manager app and reboot to restore stock mounts.",
+                description = context.getString(R.string.chk_luna_magisk_mounts_desc),
+                detailedReason = context.getString(R.string.chk_luna_magisk_mounts_reason, suspicious.joinToString("; ")),
+                solution = context.getString(R.string.chk_luna_magisk_mounts_solution),
                 technicalDetail = suspicious.joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "luna_magisk_mounts",
-                name = "Magisk Mount Entries",
+                name = context.getString(R.string.chk_luna_magisk_mounts_name_nd),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No Magisk-related mount entries found.",
-                detailedReason = "Luna-method (magiskmounts): /proc/self/mounts contains no known " +
-                    "Magisk-specific bind-mount or overlay markers.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_luna_magisk_mounts_desc_nd),
+                detailedReason = context.getString(R.string.chk_luna_magisk_mounts_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -538,29 +513,25 @@ class LunaDetector(private val context: Context) {
         return if (suspicious.isNotEmpty()) {
             DetectionResult(
                 id = "luna_zygote_inject",
-                name = "Zygote Injection Detected",
+                name = context.getString(R.string.chk_luna_zygote_inject_name),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "SELinux context indicates possible Zygote-level injection by Magisk/LSPosed.",
-                detailedReason = "Luna-method (zygoteinject): SELinux context analysis found: " +
-                    "${suspicious.joinToString("; ")}. " +
-                    "Magisk and LSPosed hook into Zygote to inject code into every new app process. " +
-                    "This leaves characteristic SELinux context traces in /proc/self/attr/.",
-                solution = "Uninstall Magisk and LSPosed, then verify SELinux policy is restored to stock.",
+                description = context.getString(R.string.chk_luna_zygote_inject_desc),
+                detailedReason = context.getString(R.string.chk_luna_zygote_inject_reason, suspicious.joinToString("; ")),
+                solution = context.getString(R.string.chk_luna_zygote_inject_solution),
                 technicalDetail = suspicious.joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "luna_zygote_inject",
-                name = "Zygote Injection",
+                name = context.getString(R.string.chk_luna_zygote_inject_name_nd),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No Zygote injection indicators found in SELinux contexts.",
-                detailedReason = "Luna-method (zygoteinject): /proc/self/attr/current and attr/prev " +
-                    "show no signs of Zygote-level injection.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_luna_zygote_inject_desc_nd),
+                detailedReason = context.getString(R.string.chk_luna_zygote_inject_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -613,29 +584,25 @@ class LunaDetector(private val context: Context) {
         return if (suspicious.isNotEmpty()) {
             DetectionResult(
                 id = "luna_tmpfs_mount",
-                name = "Tmpfs Mount Anomaly Detected",
+                name = context.getString(R.string.chk_luna_tmpfs_mount_name),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Suspicious tmpfs mounts detected on system mount points.",
-                detailedReason = "Native-Test-method (tmpfsmount): Anomalies found on /mnt/obb or /mnt/asec: " +
-                    "${suspicious.joinToString("; ")}. " +
-                    "Magisk creates private tmpfs namespaces on these paths to isolate its module overlays " +
-                    "from the global mount namespace, leaving multiple tmpfs entries for the same path.",
-                solution = "Uninstall Magisk and reboot to restore stock mount namespaces.",
+                description = context.getString(R.string.chk_luna_tmpfs_mount_desc),
+                detailedReason = context.getString(R.string.chk_luna_tmpfs_mount_reason, suspicious.joinToString("; ")),
+                solution = context.getString(R.string.chk_luna_tmpfs_mount_solution),
                 technicalDetail = suspicious.joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "luna_tmpfs_mount",
-                name = "Tmpfs Mount Anomaly",
+                name = context.getString(R.string.chk_luna_tmpfs_mount_name_nd),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No suspicious tmpfs mount anomalies detected.",
-                detailedReason = "Native-Test-method (tmpfsmount): /mnt/obb and /mnt/asec mount entries " +
-                    "appear normal.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_luna_tmpfs_mount_desc_nd),
+                detailedReason = context.getString(R.string.chk_luna_tmpfs_mount_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -697,29 +664,25 @@ class LunaDetector(private val context: Context) {
         return if (all.isNotEmpty()) {
             DetectionResult(
                 id = "luna_procscan",
-                name = "Suspicious Processes / Root Overlay Mounts",
+                name = context.getString(R.string.chk_luna_procscan_name),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "Root framework processes or root-linked overlayfs mounts found.",
-                detailedReason = "Luna-method (procscan): /proc/<pid>/cmdline and /proc/self/mountinfo " +
-                    "revealed: ${all.joinToString(", ")}. " +
-                    "Only overlays whose lowerdir/upperdir point to root-tool paths (e.g. /data/adb, /magisk) " +
-                    "or that cover system paths outside APEX/RRO are flagged.",
-                solution = "Uninstall root frameworks and reboot.",
+                description = context.getString(R.string.chk_luna_procscan_desc),
+                detailedReason = context.getString(R.string.chk_luna_procscan_reason, all.joinToString(", ")),
+                solution = context.getString(R.string.chk_luna_procscan_solution),
                 technicalDetail = all.joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "luna_procscan",
-                name = "Process / Root Overlay Scan",
+                name = context.getString(R.string.chk_luna_procscan_name_nd),
                 category = DetectionCategory.MAGISK,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No suspicious root processes or root-linked overlay mounts found.",
-                detailedReason = "Luna-method (procscan): No known root process names in /proc and no " +
-                    "root-tool-linked overlayfs entries in mountinfo.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_luna_procscan_desc_nd),
+                detailedReason = context.getString(R.string.chk_luna_procscan_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -821,25 +784,25 @@ class LunaDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "luna_root_files",
-                name = "Root Binary / Framework Files Detected",
+                name = context.getString(R.string.chk_luna_root_files_name),
                 category = DetectionCategory.SU_BINARY,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Root-related files found on the filesystem.",
-                detailedReason = "Luna-method (roots): Root files found: ${found.joinToString(", ")}.",
-                solution = "Remove root tools to eliminate these files.",
+                description = context.getString(R.string.chk_luna_root_files_desc),
+                detailedReason = context.getString(R.string.chk_luna_root_files_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_luna_root_files_solution),
                 technicalDetail = found.joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "luna_root_files",
-                name = "Root Binary / Framework Files",
+                name = context.getString(R.string.chk_luna_root_files_name_nd),
                 category = DetectionCategory.SU_BINARY,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No root files found in standard locations.",
-                detailedReason = "Luna-method (roots): No root-related files found in common paths.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_luna_root_files_desc_nd),
+                detailedReason = context.getString(R.string.chk_luna_root_files_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -881,26 +844,25 @@ class LunaDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "luna_kernel_version",
-                name = "Custom / Rooted Kernel Detected",
+                name = context.getString(R.string.chk_luna_kernel_version_name),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Kernel version or boot parameters indicate a custom/modified kernel.",
-                detailedReason = "Luna-method (kernels): ${found.joinToString("; ")}. " +
-                    "A custom kernel (e.g. KernelSU-patched) is required for kernel-level rooting.",
-                solution = "Restore the stock kernel via Fastboot or supported recovery.",
+                description = context.getString(R.string.chk_luna_kernel_version_desc),
+                detailedReason = context.getString(R.string.chk_luna_kernel_version_reason, found.joinToString("; ")),
+                solution = context.getString(R.string.chk_luna_kernel_version_solution),
                 technicalDetail = found.joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "luna_kernel_version",
-                name = "Kernel Version Check",
+                name = context.getString(R.string.chk_luna_kernel_version_name_nd),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Kernel version appears standard.",
-                detailedReason = "Luna-method (kernels): /proc/version contains no custom-kernel indicators.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_luna_kernel_version_desc_nd),
+                detailedReason = context.getString(R.string.chk_luna_kernel_version_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -917,26 +879,25 @@ class LunaDetector(private val context: Context) {
         return if (exists) {
             DetectionResult(
                 id = "luna_attestation_file",
-                name = "Root Attestation File Detected",
+                name = context.getString(R.string.chk_luna_attestation_file_name),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Root attestation test file found at $path.",
-                detailedReason = "Luna-method (findauth): access($path) succeeded. " +
-                    "Root tools create this file as an authorization/attestation marker.",
-                solution = "Remove the file with root: `rm $path`.",
+                description = context.getString(R.string.chk_luna_attestation_file_desc),
+                detailedReason = context.getString(R.string.chk_luna_attestation_file_reason),
+                solution = context.getString(R.string.chk_luna_attestation_file_solution),
                 technicalDetail = "File exists: $path"
             )
         } else {
             DetectionResult(
                 id = "luna_attestation_file",
-                name = "Root Attestation File",
+                name = context.getString(R.string.chk_luna_attestation_file_name_nd),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No root attestation file found.",
-                detailedReason = "Luna-method (findauth): $path does not exist.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_luna_attestation_file_desc_nd),
+                detailedReason = context.getString(R.string.chk_luna_attestation_file_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -987,26 +948,25 @@ class LunaDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "luna_evil_modules",
-                name = "Root Native Modules Detected",
+                name = context.getString(R.string.chk_luna_evil_modules_name),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Known root framework native libraries detected.",
-                detailedReason = "Luna-method (getEvilModules): Found: ${found.joinToString(", ")}. " +
-                    "libmagiskinit.so / libzygisk.so / liblspd.so are core root-framework components.",
-                solution = "Uninstall the associated root framework.",
+                description = context.getString(R.string.chk_luna_evil_modules_desc),
+                detailedReason = context.getString(R.string.chk_luna_evil_modules_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_luna_evil_modules_solution),
                 technicalDetail = found.joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "luna_evil_modules",
-                name = "Root Native Modules",
+                name = context.getString(R.string.chk_luna_evil_modules_name_nd),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No known root native module files detected.",
-                detailedReason = "Luna-method (getEvilModules): No known root native libraries found.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_luna_evil_modules_desc_nd),
+                detailedReason = context.getString(R.string.chk_luna_evil_modules_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -1043,25 +1003,25 @@ class LunaDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "luna_root_apps",
-                name = "Root Management Apps Detected",
+                name = context.getString(R.string.chk_luna_root_apps_name),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Known root manager or hook framework apps are installed.",
-                detailedReason = "Luna-method (getapps): Installed root packages: ${found.joinToString(", ")}.",
-                solution = "Uninstall these applications to remove root indicators.",
+                description = context.getString(R.string.chk_luna_root_apps_desc),
+                detailedReason = context.getString(R.string.chk_luna_root_apps_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_luna_root_apps_solution),
                 technicalDetail = found.joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "luna_root_apps",
-                name = "Root Management Apps",
+                name = context.getString(R.string.chk_luna_root_apps_name_nd),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No known root management apps detected.",
-                detailedReason = "Luna-method (getapps): No known root manager or hook framework packages installed.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_luna_root_apps_desc_nd),
+                detailedReason = context.getString(R.string.chk_luna_root_apps_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -1096,27 +1056,25 @@ class LunaDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "luna_accessibility_svc",
-                name = "Automation Tool in Accessibility Services",
+                name = context.getString(R.string.chk_luna_accessibility_svc_name),
                 category = DetectionCategory.ENVIRONMENT,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "Known root-automation tools are active as accessibility services.",
-                detailedReason = "Luna-method (findapply): Found suspicious accessibility services: " +
-                    "${found.joinToString(", ")}. " +
-                    "Auto.js and similar tools use accessibility APIs for root-based automation.",
-                solution = "Disable the listed accessibility services in Settings.",
+                description = context.getString(R.string.chk_luna_accessibility_svc_desc),
+                detailedReason = context.getString(R.string.chk_luna_accessibility_svc_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_luna_accessibility_svc_solution),
                 technicalDetail = found.joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "luna_accessibility_svc",
-                name = "Accessibility Service Check",
+                name = context.getString(R.string.chk_luna_accessibility_svc_name_nd),
                 category = DetectionCategory.ENVIRONMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "No suspicious accessibility services detected.",
-                detailedReason = "Luna-method (findapply): No known automation tools found in enabled accessibility services.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_luna_accessibility_svc_desc_nd),
+                detailedReason = context.getString(R.string.chk_luna_accessibility_svc_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -1145,26 +1103,25 @@ class LunaDetector(private val context: Context) {
         return if (indicators.isNotEmpty()) {
             DetectionResult(
                 id = "luna_bootloader",
-                name = "Bootloader Unlocked",
+                name = context.getString(R.string.chk_luna_bootloader_name),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "System properties indicate an unlocked bootloader.",
-                detailedReason = "Luna-method (findbootbl): ${indicators.joinToString("; ")}. " +
-                    "An unlocked bootloader is a prerequisite for flashing root frameworks.",
-                solution = "Re-lock the bootloader via the manufacturer's official procedure.",
+                description = context.getString(R.string.chk_luna_bootloader_desc),
+                detailedReason = context.getString(R.string.chk_luna_bootloader_reason, indicators.joinToString("; ")),
+                solution = context.getString(R.string.chk_luna_bootloader_solution),
                 technicalDetail = indicators.joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "luna_bootloader",
-                name = "Bootloader Status",
+                name = context.getString(R.string.chk_luna_bootloader_name_nd),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Bootloader appears to be locked.",
-                detailedReason = "Luna-method (findbootbl): Boot properties indicate a locked, verified bootloader.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_luna_bootloader_desc_nd),
+                detailedReason = context.getString(R.string.chk_luna_bootloader_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -1181,27 +1138,25 @@ class LunaDetector(private val context: Context) {
         return if (disabled) {
             DetectionResult(
                 id = "luna_vold_isolation",
-                name = "Vold Data Isolation Disabled",
+                name = context.getString(R.string.chk_luna_vold_isolation_name),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "persist.sys.vold_app_data_isolation is set to 0 (disabled).",
-                detailedReason = "Luna-method (checknum): persist.sys.vold_app_data_isolation=0. " +
-                    "Root tools disable vold app data isolation to gain cross-app storage access.",
-                solution = "Re-enable storage data isolation; uninstall root tools that modify this property.",
+                description = context.getString(R.string.chk_luna_vold_isolation_desc),
+                detailedReason = context.getString(R.string.chk_luna_vold_isolation_reason),
+                solution = context.getString(R.string.chk_luna_vold_isolation_solution),
                 technicalDetail = "persist.sys.vold_app_data_isolation=$prop"
             )
         } else {
             DetectionResult(
                 id = "luna_vold_isolation",
-                name = "Vold Data Isolation",
+                name = context.getString(R.string.chk_luna_vold_isolation_name_nd),
                 category = DetectionCategory.SYSTEM_INTEGRITY,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "Vold data isolation property is not disabled.",
-                detailedReason = "Luna-method (checknum): persist.sys.vold_app_data_isolation=" +
-                    prop.ifEmpty { "(not set)" } + ". Not disabled by root tools.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_luna_vold_isolation_desc_nd),
+                detailedReason = context.getString(R.string.chk_luna_vold_isolation_reason_nd, prop.ifEmpty { "(not set)" }),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -1237,25 +1192,25 @@ class LunaDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "luna_scanlib",
-                name = "Root Native Libraries in App Dirs",
+                name = context.getString(R.string.chk_luna_scanlib_name),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "Root framework native libraries found in installed app native-library directories.",
-                detailedReason = "Luna-method (scanlib): Found suspicious modules: ${found.joinToString(", ")}.",
-                solution = "Uninstall the associated app / root framework.",
+                description = context.getString(R.string.chk_luna_scanlib_desc),
+                detailedReason = context.getString(R.string.chk_luna_scanlib_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_luna_scanlib_solution),
                 technicalDetail = found.joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "luna_scanlib",
-                name = "Native Library Scan",
+                name = context.getString(R.string.chk_luna_scanlib_name_nd),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
-                description = "No root native libraries found in any installed app directory.",
-                detailedReason = "Luna-method (scanlib): No known root .so files found in nativeLibraryDir of any app.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_luna_scanlib_desc_nd),
+                detailedReason = context.getString(R.string.chk_luna_scanlib_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -1280,26 +1235,25 @@ class LunaDetector(private val context: Context) {
         return if (found.isNotEmpty()) {
             DetectionResult(
                 id = "luna_sensitive_pkgs",
-                name = "Root-Hiding / Bypass Apps Detected",
+                name = context.getString(R.string.chk_luna_sensitive_pkgs_name),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Apps designed to hide root presence or bypass detection are installed.",
-                detailedReason = "Luna-method (wNxM8s/K0ajGz): Found packages: ${found.joinToString(", ")}. " +
-                    "HideMyAppList and TaiChi conceal root-manager packages from app-level detection.",
-                solution = "Uninstall these apps.",
+                description = context.getString(R.string.chk_luna_sensitive_pkgs_desc),
+                detailedReason = context.getString(R.string.chk_luna_sensitive_pkgs_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_luna_sensitive_pkgs_solution),
                 technicalDetail = found.joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "luna_sensitive_pkgs",
-                name = "Root-Hiding / Bypass Apps",
+                name = context.getString(R.string.chk_luna_sensitive_pkgs_name_nd),
                 category = DetectionCategory.ROOT_MANAGEMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No root-hiding apps detected.",
-                detailedReason = "Luna-method (wNxM8s/K0ajGz): No known root-hiding packages installed.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_luna_sensitive_pkgs_desc_nd),
+                detailedReason = context.getString(R.string.chk_luna_sensitive_pkgs_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -1330,26 +1284,25 @@ class LunaDetector(private val context: Context) {
         return if (suspicious.isNotEmpty()) {
             DetectionResult(
                 id = "luna_mac_anomaly",
-                name = "MAC Address Anomaly (Zero MAC)",
+                name = context.getString(R.string.chk_luna_mac_anomaly_name),
                 category = DetectionCategory.NETWORK,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "Network interface has a zero MAC address, indicating possible root spoofing.",
-                detailedReason = "Luna-method (magiskmac): ${suspicious.joinToString("; ")}. " +
-                    "Magisk or root modules may suppress the MAC address to bypass device fingerprinting.",
-                solution = "Investigate whether a Magisk module is suppressing MAC addresses.",
+                description = context.getString(R.string.chk_luna_mac_anomaly_desc),
+                detailedReason = context.getString(R.string.chk_luna_mac_anomaly_reason, suspicious.joinToString("; ")),
+                solution = context.getString(R.string.chk_luna_mac_anomaly_solution),
                 technicalDetail = suspicious.joinToString("; ")
             )
         } else {
             DetectionResult(
                 id = "luna_mac_anomaly",
-                name = "MAC Address Check",
+                name = context.getString(R.string.chk_luna_mac_anomaly_name_nd),
                 category = DetectionCategory.NETWORK,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "No zero MAC address anomalies detected.",
-                detailedReason = "Luna-method (magiskmac): All readable network interfaces have non-zero MAC addresses.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_luna_mac_anomaly_desc_nd),
+                detailedReason = context.getString(R.string.chk_luna_mac_anomaly_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
