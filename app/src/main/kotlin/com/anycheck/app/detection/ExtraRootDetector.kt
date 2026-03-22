@@ -93,7 +93,7 @@ class ExtraRootDetector(private val context: Context) {
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
                 description = context.getString(R.string.chk_ext_ldpreload_desc_error),
-                detailedReason = "Failed to read /proc/self/environ: ${e.message}",
+                detailedReason = context.getString(R.string.err_detail_failed_read, "/proc/self/environ", e.message ?: ""),
                 solution = context.getString(R.string.chk_ext_ldpreload_solution_error)
             )
         }
@@ -152,7 +152,7 @@ class ExtraRootDetector(private val context: Context) {
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
                 description = context.getString(R.string.chk_ext_caps_desc_error),
-                detailedReason = "Failed: ${e.message}",
+                detailedReason = context.getString(R.string.err_detail_failed, e.message ?: ""),
                 solution = context.getString(R.string.chk_ext_caps_solution_error)
             )
         }
@@ -220,7 +220,7 @@ class ExtraRootDetector(private val context: Context) {
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
                 description = context.getString(R.string.chk_ext_overlay_desc_error),
-                detailedReason = "Failed: ${e.message}",
+                detailedReason = context.getString(R.string.err_detail_failed, e.message ?: ""),
                 solution = context.getString(R.string.chk_ext_overlay_solution_error)
             )
         }
@@ -268,7 +268,7 @@ class ExtraRootDetector(private val context: Context) {
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
                 description = context.getString(R.string.chk_ext_sbin_tmpfs_desc_error),
-                detailedReason = "Failed: ${e.message}",
+                detailedReason = context.getString(R.string.err_detail_failed, e.message ?: ""),
                 solution = context.getString(R.string.chk_ext_sbin_tmpfs_solution_error)
             )
         }
@@ -343,7 +343,7 @@ class ExtraRootDetector(private val context: Context) {
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
                 description = context.getString(R.string.chk_ext_priv_proc_desc_error),
-                detailedReason = "Failed: ${e.message}",
+                detailedReason = context.getString(R.string.err_detail_failed, e.message ?: ""),
                 solution = context.getString(R.string.chk_ext_priv_proc_solution_error)
             )
         }
@@ -455,7 +455,7 @@ class ExtraRootDetector(private val context: Context) {
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
                 description = context.getString(R.string.chk_ext_sec_patch_desc_error),
-                detailedReason = "Error: ${e.message}",
+                detailedReason = context.getString(R.string.err_detail_error, e.message ?: ""),
                 solution = context.getString(R.string.chk_ext_sec_patch_solution_error)
             )
         }
@@ -598,7 +598,7 @@ class ExtraRootDetector(private val context: Context) {
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
                 description = context.getString(R.string.chk_ext_mock_loc_desc_error),
-                detailedReason = "Settings query failed: ${e.message}",
+                detailedReason = context.getString(R.string.err_detail_query_failed, "Settings", e.message ?: ""),
                 solution = context.getString(R.string.chk_ext_mock_loc_solution_error)
             )
         }
@@ -871,7 +871,7 @@ class ExtraRootDetector(private val context: Context) {
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
                 description = context.getString(R.string.chk_ext_sys_mounts_desc_error),
-                detailedReason = "Failed: ${e.message}",
+                detailedReason = context.getString(R.string.err_detail_failed, e.message ?: ""),
                 solution = context.getString(R.string.chk_ext_sys_mounts_solution_error)
             )
         }

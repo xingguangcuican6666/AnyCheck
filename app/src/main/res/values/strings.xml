@@ -1356,4 +1356,123 @@
     <string name="chk_reveny_fw_patch_desc_error">Could not complete framework patch check.</string>
     <string name="chk_reveny_fw_patch_reason_error">Permission denied or I/O error reading /system/framework.</string>
 
+
+    <!-- RuruInspiredDetector: Check 1 - Dual/Work Profile -->
+    <string name="chk_ruru_dual_profile_name">Dual / Work Profile Detected</string>
+    <string name="chk_ruru_dual_profile_desc">App is running in a clone/dual-space or work profile.</string>
+    <string name="chk_ruru_dual_profile_reason">The app's filesDir is '%1$s', which starts with /data/user but not /data/user/0. This indicates the app is running in a secondary user, device-clone space, or Android work profile rather than the primary user space.</string>
+    <string name="chk_ruru_dual_profile_solution">This is expected in dual-space or work-profile scenarios. Verify this is the intended execution environment.</string>
+    <string name="chk_ruru_dual_profile_name_nd">Dual / Work Profile</string>
+    <string name="chk_ruru_dual_profile_desc_nd">Running in the primary user space (no dual/work profile detected).</string>
+    <string name="chk_ruru_dual_profile_reason_nd">filesDir='%1$s' starts with /data/user/0, indicating the primary user.</string>
+    <!-- RuruInspiredDetector: Check 2 - XPrivacyLua -->
+    <string name="chk_ruru_xprivacy_name">XPrivacyLua Data Directory Detected</string>
+    <string name="chk_ruru_xprivacy_desc">XPrivacyLua data directory found at /data/system/xlua.</string>
+    <string name="chk_ruru_xprivacy_reason">XPrivacyLua is an Xposed module that fakes or restricts privacy-sensitive data returned to apps. Its presence at /data/system/xlua strongly indicates an active Xposed/LSPosed environment with privacy hooking.</string>
+    <string name="chk_ruru_xprivacy_solution">Disable or remove the XPrivacyLua module via LSPosed Manager.</string>
+    <string name="chk_ruru_xprivacy_name_nd">XPrivacyLua Data Directory</string>
+    <string name="chk_ruru_xprivacy_desc_nd">XPrivacyLua data directory not found.</string>
+    <string name="chk_ruru_xprivacy_reason_nd">No XPrivacyLua data directory detected at /data/system/xlua.</string>
+    <!-- RuruInspiredDetector: Check 3 - Xposed Edge -->
+    <string name="chk_ruru_xedge_name">Xposed Edge Data Directory Detected</string>
+    <string name="chk_ruru_xedge_desc">Xposed Edge data directory found at /data/system/xedge.</string>
+    <string name="chk_ruru_xedge_reason">Xposed Edge is an Xposed module for advanced edge-gesture customization. Its data directory at /data/system/xedge indicates an active Xposed framework.</string>
+    <string name="chk_ruru_xedge_solution">Disable the Xposed Edge module if not intentionally installed.</string>
+    <string name="chk_ruru_xedge_name_nd">Xposed Edge Data Directory</string>
+    <string name="chk_ruru_xedge_desc_nd">Xposed Edge data directory not found.</string>
+    <string name="chk_ruru_xedge_reason_nd">No Xposed Edge data directory detected at /data/system/xedge.</string>
+    <!-- RuruInspiredDetector: Check 4 - Riru Clipboard -->
+    <string name="chk_ruru_riru_clip_name">Riru Clipboard Directory Detected</string>
+    <string name="chk_ruru_riru_clip_desc">Riru Clipboard module data directory found at /data/misc/clipboard.</string>
+    <string name="chk_ruru_riru_clip_reason">The Riru Clipboard Zygisk module leaves its data at /data/misc/clipboard. This directory indicates Riru or a related Zygisk module is (or was) installed.</string>
+    <string name="chk_ruru_riru_clip_solution">Remove or disable the Riru Clipboard module if not intentionally installed.</string>
+    <string name="chk_ruru_riru_clip_name_nd">Riru Clipboard Directory</string>
+    <string name="chk_ruru_riru_clip_desc_nd">Riru Clipboard data directory not found.</string>
+    <string name="chk_ruru_riru_clip_reason_nd">No Riru Clipboard directory found at /data/misc/clipboard.</string>
+    <!-- RuruInspiredDetector: Check 5 - Privacy Space -->
+    <string name="chk_ruru_privacy_space_name">Privacy Space Data Directory Detected</string>
+    <string name="chk_ruru_privacy_space_desc">Privacy Space (cn.geektang.privacyspace) data directory found.</string>
+    <string name="chk_ruru_privacy_space_reason">Privacy Space is an Xposed module that hides installed packages by intercepting PackageManager APIs. Its data directory at /data/system/cn.geektang.privacyspace confirms it is installed and likely active.</string>
+    <string name="chk_ruru_privacy_space_solution">Disable or remove the Privacy Space module via LSPosed Manager.</string>
+    <string name="chk_ruru_privacy_space_name_nd">Privacy Space Data Directory</string>
+    <string name="chk_ruru_privacy_space_desc_nd">Privacy Space data directory not found.</string>
+    <string name="chk_ruru_privacy_space_reason_nd">No Privacy Space directory found at /data/system/cn.geektang.privacyspace.</string>
+    <!-- RuruInspiredDetector: Check 6 - HMA Old Version -->
+    <string name="chk_ruru_hma_old_name">HMA (Old Version) Data Directory Detected</string>
+    <string name="chk_ruru_hma_old_desc">Hide My Applist old-version data directory found at /data/misc/hide_my_applist.</string>
+    <string name="chk_ruru_hma_old_reason">Older versions of the Hide My Applist Xposed module stored configuration data in /data/misc/hide_my_applist. The presence of this directory strongly suggests HMA was or is installed.</string>
+    <string name="chk_ruru_hma_old_solution">Uninstall Hide My Applist and clean up residual data.</string>
+    <string name="chk_ruru_hma_old_name_nd">HMA (Old Version) Data Directory</string>
+    <string name="chk_ruru_hma_old_desc_nd">HMA old-version data directory not found.</string>
+    <string name="chk_ruru_hma_old_reason_nd">No old-version HMA directory found at /data/misc/hide_my_applist.</string>
+    <!-- RuruInspiredDetector: Check 7 - PM Cross-Method -->
+    <string name="chk_ruru_pm_cross_name_error">PM Cross-Method Anomaly</string>
+    <string name="chk_ruru_pm_cross_desc_error">Could not run `pm list packages` shell command.</string>
+    <string name="chk_ruru_pm_cross_reason_error">The shell command `pm list packages` was unavailable or returned empty results. Cannot compare results against the PackageManager API.</string>
+    <string name="chk_ruru_pm_cross_solution_error">Ensure the app has permission to execute shell commands.</string>
+    <string name="chk_ruru_pm_cross_name">PM Cross-Method Anomaly Detected</string>
+    <string name="chk_ruru_pm_cross_desc">PackageManager API is hiding packages visible via shell.</string>
+    <string name="chk_ruru_pm_cross_reason">The following packages appear in `pm list packages` shell output but are invisible to getInstalledPackages() API, indicating a PackageManager hook (e.g. HideMyApplist) is filtering API results. Hidden packages: %1$s.</string>
+    <string name="chk_ruru_pm_cross_solution">Disable any Xposed/LSPosed module that hooks PackageManager (e.g. HideMyApplist, Privacy Space).</string>
+    <string name="chk_ruru_pm_cross_name_nd">PM Cross-Method Anomaly</string>
+    <string name="chk_ruru_pm_cross_desc_nd">No discrepancy found between shell pm and PackageManager API.</string>
+    <string name="chk_ruru_pm_cross_reason_nd">Shell `pm list packages` and getInstalledPackages() API return consistent results for the checked package list.</string>
+    <!-- RuruInspiredDetector: Check 8 - Xposed Module Metadata -->
+    <string name="chk_ruru_xposed_meta_name">Xposed Modules Detected via Metadata</string>
+    <string name="chk_ruru_xposed_meta_desc">Apps with Xposed module metadata found.</string>
+    <string name="chk_ruru_xposed_meta_reason">The following installed apps declare 'xposedminversion' or 'xposeddescription' metadata keys, identifying them as Xposed modules: %1$s.</string>
+    <string name="chk_ruru_xposed_meta_solution">Disable or uninstall identified Xposed modules via LSPosed Manager.</string>
+    <string name="chk_ruru_xposed_meta_name_nd">Xposed Module Metadata Scan</string>
+    <string name="chk_ruru_xposed_meta_desc_nd">No apps with Xposed module metadata found.</string>
+    <string name="chk_ruru_xposed_meta_reason_nd">No installed app declares 'xposedminversion' or 'xposeddescription' metadata.</string>
+    <!-- RuruInspiredDetector: Check 9 - LSPatch AppComponentFactory -->
+    <string name="chk_ruru_lspatch_name_skip">LSPatch via AppComponentFactory</string>
+    <string name="chk_ruru_lspatch_desc_skip">Check requires API 28+; skipped on this device.</string>
+    <string name="chk_ruru_lspatch_reason_skip">The appComponentFactory attribute is only available on Android 9 (API 28)+.</string>
+    <string name="chk_ruru_lspatch_name">LSPatch via AppComponentFactory Detected</string>
+    <string name="chk_ruru_lspatch_desc">Apps patched with LSPatch detected via appComponentFactory.</string>
+    <string name="chk_ruru_lspatch_reason">The following apps have an appComponentFactory attribute containing 'lsposed' or 'lspatch', indicating they were patched using LSPatch (an Xposed implementation that embeds the framework into APKs directly): %1$s.</string>
+    <string name="chk_ruru_lspatch_solution">Replace LSPatch-embedded APKs with original versions from official sources.</string>
+    <string name="chk_ruru_lspatch_name_nd">LSPatch via AppComponentFactory</string>
+    <string name="chk_ruru_lspatch_desc_nd">No LSPatch-patched apps detected via appComponentFactory.</string>
+    <string name="chk_ruru_lspatch_reason_nd">No app's appComponentFactory attribute contains 'lsposed' or 'lspatch'.</string>
+    <!-- RuruInspiredDetector: Check 10 - Account List -->
+    <string name="chk_ruru_account_name">Account List Anomaly</string>
+    <string name="chk_ruru_account_desc">Device accounts found via AccountManager.</string>
+    <string name="chk_ruru_account_reason">AccountManager reports %1$d account(s) on this device. Some privacy-invasive apps or frameworks register fake accounts. Accounts: %2$s.</string>
+    <string name="chk_ruru_account_solution">Review listed accounts and remove any suspicious ones via device Settings → Accounts.</string>
+    <string name="chk_ruru_account_desc_nd">No device accounts found in AccountManager.</string>
+    <string name="chk_ruru_account_reason_nd">AccountManager returned no accounts.</string>
+    <!-- RuruInspiredDetector: Check 11 - VPN Connection -->
+    <string name="chk_ruru_vpn_name">VPN Connection Detected</string>
+    <string name="chk_ruru_vpn_desc">An active VPN or proxy connection was detected.</string>
+    <string name="chk_ruru_vpn_reason">A VPN or proxy connection is active on this device. VPNs can be used to intercept network traffic or route it through third-party servers. Indicators: %1$s.</string>
+    <string name="chk_ruru_vpn_solution">Disconnect any VPN or proxy if it is not intentionally configured.</string>
+    <string name="chk_ruru_vpn_name_nd">VPN Connection</string>
+    <string name="chk_ruru_vpn_desc_nd">No VPN or proxy connection detected.</string>
+    <string name="chk_ruru_vpn_reason_nd">No VPN network interfaces (tun0/ppp0), TYPE_VPN connectivity, or http.proxyHost system property were found.</string>
+    <!-- RuruInspiredDetector: Check 12 - Accessibility Services -->
+    <string name="chk_ruru_a11y_name">Accessibility Services Active</string>
+    <string name="chk_ruru_a11y_desc">One or more accessibility services are currently enabled.</string>
+    <string name="chk_ruru_a11y_reason">Accessibility services have broad system access and can read screen contents, simulate taps, and intercept input events. This may pose a security concern if unknown services are active. AccessibilityManager.isEnabled=%1$s, Services: %2$s.</string>
+    <string name="chk_ruru_a11y_solution">Review enabled accessibility services in Settings → Accessibility and disable any you do not recognize.</string>
+    <string name="chk_ruru_a11y_name_nd">Accessibility Services</string>
+    <string name="chk_ruru_a11y_desc_nd">No accessibility services are currently active.</string>
+    <string name="chk_ruru_a11y_reason_nd">AccessibilityManager.isEnabled=false and no enabled accessibility services found.</string>
+    <!-- RuruInspiredDetector: Check 13 - PM API Discrepancy -->
+    <string name="chk_ruru_pm_api_name">Package Manager API Discrepancy Detected</string>
+    <string name="chk_ruru_pm_api_desc">PackageManager APIs return inconsistent results for the same packages.</string>
+    <string name="chk_ruru_pm_api_reason">Discrepancies found between getApplicationInfo and sundry PM APIs (getPackageUid / getInstallSourceInfo / getLaunchIntentForPackage). This is the hallmark signature of an incomplete PackageManager hook (e.g. HideMyApplist): it intercepts some APIs but misses others. Discrepancies: %1$s.</string>
+    <string name="chk_ruru_pm_api_solution">Disable any Xposed/LSPosed modules that hook PackageManager.</string>
+    <string name="chk_ruru_pm_api_name_nd">Package Manager API Discrepancy</string>
+    <string name="chk_ruru_pm_api_desc_nd">PackageManager APIs return consistent results.</string>
+    <string name="chk_ruru_pm_api_reason_nd">getApplicationInfo and sundry PM APIs (getPackageUid, getInstallSourceInfo, getLaunchIntentForPackage) agree on visibility for all checked packages.</string>
+
+
+    <!-- Shared error detail format strings -->
+    <string name="err_detail_failed">Failed: %1$s</string>
+    <string name="err_detail_failed_read">Failed to read %1$s: %2$s</string>
+    <string name="err_detail_error">Error: %1$s</string>
+    <string name="err_detail_query_failed">%1$s query failed: %2$s</string>
+
 </resources>

@@ -117,7 +117,7 @@ class AdvancedRootDetector(private val context: Context) {
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
                 description = context.getString(R.string.chk_adv_rw_sys_desc_error),
-                detailedReason = "Failed: ${e.message}",
+                detailedReason = context.getString(R.string.err_detail_failed, e.message ?: ""),
                 solution = context.getString(R.string.chk_adv_rw_sys_solution_error)
             )
         }
@@ -288,7 +288,7 @@ class AdvancedRootDetector(private val context: Context) {
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
                 description = context.getString(R.string.chk_adv_dev_opts_desc_error),
-                detailedReason = "Settings query failed: ${e.message}",
+                detailedReason = context.getString(R.string.err_detail_query_failed, "Settings", e.message ?: ""),
                 solution = context.getString(R.string.chk_adv_dev_opts_solution_error)
             )
         }
@@ -333,7 +333,7 @@ class AdvancedRootDetector(private val context: Context) {
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
                 description = context.getString(R.string.chk_adv_adb_desc_error),
-                detailedReason = "Settings query failed: ${e.message}",
+                detailedReason = context.getString(R.string.err_detail_query_failed, "Settings", e.message ?: ""),
                 solution = context.getString(R.string.chk_adv_adb_solution_error)
             )
         }
@@ -390,7 +390,7 @@ class AdvancedRootDetector(private val context: Context) {
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
                 description = context.getString(R.string.chk_adv_frida_proc_desc_error),
-                detailedReason = "Process enumeration failed: ${e.message}",
+                detailedReason = context.getString(R.string.err_detail_query_failed, "Process enumeration", e.message ?: ""),
                 solution = context.getString(R.string.chk_adv_frida_proc_solution_error)
             )
         }
@@ -681,7 +681,7 @@ class AdvancedRootDetector(private val context: Context) {
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
                 description = context.getString(R.string.chk_adv_inj_libs_desc_error),
-                detailedReason = "Failed to read /proc/self/maps: ${e.message}",
+                detailedReason = context.getString(R.string.err_detail_failed_read, "/proc/self/maps", e.message ?: ""),
                 solution = context.getString(R.string.chk_adv_inj_libs_solution_error)
             )
         }
@@ -725,7 +725,7 @@ class AdvancedRootDetector(private val context: Context) {
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
                 description = context.getString(R.string.chk_adv_zygisk_sock_desc_error),
-                detailedReason = "Failed: ${e.message}",
+                detailedReason = context.getString(R.string.err_detail_failed, e.message ?: ""),
                 solution = context.getString(R.string.chk_adv_zygisk_sock_solution_error)
             )
         }
@@ -814,7 +814,7 @@ class AdvancedRootDetector(private val context: Context) {
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
                 description = context.getString(R.string.chk_adv_debugger_desc_error),
-                detailedReason = "Status read failed: ${e.message}",
+                detailedReason = context.getString(R.string.err_detail_query_failed, "Status read", e.message ?: ""),
                 solution = context.getString(R.string.chk_adv_debugger_solution_error)
             )
         }
@@ -901,7 +901,7 @@ class AdvancedRootDetector(private val context: Context) {
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.CRITICAL,
                 description = context.getString(R.string.chk_adv_kern_mods_desc_error),
-                detailedReason = "Failed: ${e.message}",
+                detailedReason = context.getString(R.string.err_detail_failed, e.message ?: ""),
                 solution = context.getString(R.string.chk_adv_kern_mods_solution_error)
             )
         }

@@ -1357,4 +1357,123 @@
     <string name="chk_reveny_fw_patch_desc_error">无法完成框架补丁检查。</string>
     <string name="chk_reveny_fw_patch_reason_error">读取 /system/framework 时权限被拒绝或发生 I/O 错误。</string>
 
+
+    <!-- RuruInspiredDetector: Check 1 - Dual/Work Profile -->
+    <string name="chk_ruru_dual_profile_name">检测到双开 / 工作资料</string>
+    <string name="chk_ruru_dual_profile_desc">应用正在克隆/双开空间或工作资料中运行。</string>
+    <string name="chk_ruru_dual_profile_reason">应用的 filesDir 为 '%1$s'，以 /data/user 开头但不以 /data/user/0 开头。这表明应用正在辅助用户、设备克隆空间或 Android 工作资料中运行，而非主用户空间。</string>
+    <string name="chk_ruru_dual_profile_solution">这在双开空间或工作资料场景中是正常的。请验证这是预期的运行环境。</string>
+    <string name="chk_ruru_dual_profile_name_nd">双开 / 工作资料</string>
+    <string name="chk_ruru_dual_profile_desc_nd">在主用户空间中运行（未检测到双开/工作资料）。</string>
+    <string name="chk_ruru_dual_profile_reason_nd">filesDir='%1$s' 以 /data/user/0 开头，表明这是主用户。</string>
+    <!-- RuruInspiredDetector: Check 2 - XPrivacyLua -->
+    <string name="chk_ruru_xprivacy_name">检测到 XPrivacyLua 数据目录</string>
+    <string name="chk_ruru_xprivacy_desc">在 /data/system/xlua 发现 XPrivacyLua 数据目录。</string>
+    <string name="chk_ruru_xprivacy_reason">XPrivacyLua 是一个 Xposed 模块，用于伪造或限制返回给应用的隐私敏感数据。其在 /data/system/xlua 的存在强烈表明存在具有隐私钩子的活跃 Xposed/LSPosed 环境。</string>
+    <string name="chk_ruru_xprivacy_solution">通过 LSPosed Manager 禁用或移除 XPrivacyLua 模块。</string>
+    <string name="chk_ruru_xprivacy_name_nd">XPrivacyLua 数据目录</string>
+    <string name="chk_ruru_xprivacy_desc_nd">未发现 XPrivacyLua 数据目录。</string>
+    <string name="chk_ruru_xprivacy_reason_nd">在 /data/system/xlua 未检测到 XPrivacyLua 数据目录。</string>
+    <!-- RuruInspiredDetector: Check 3 - Xposed Edge -->
+    <string name="chk_ruru_xedge_name">检测到 Xposed Edge 数据目录</string>
+    <string name="chk_ruru_xedge_desc">在 /data/system/xedge 发现 Xposed Edge 数据目录。</string>
+    <string name="chk_ruru_xedge_reason">Xposed Edge 是一个用于高级边缘手势自定义的 Xposed 模块。其在 /data/system/xedge 的数据目录表明存在活跃的 Xposed 框架。</string>
+    <string name="chk_ruru_xedge_solution">如非有意安装，请禁用 Xposed Edge 模块。</string>
+    <string name="chk_ruru_xedge_name_nd">Xposed Edge 数据目录</string>
+    <string name="chk_ruru_xedge_desc_nd">未发现 Xposed Edge 数据目录。</string>
+    <string name="chk_ruru_xedge_reason_nd">在 /data/system/xedge 未检测到 Xposed Edge 数据目录。</string>
+    <!-- RuruInspiredDetector: Check 4 - Riru Clipboard -->
+    <string name="chk_ruru_riru_clip_name">检测到 Riru 剪贴板目录</string>
+    <string name="chk_ruru_riru_clip_desc">在 /data/misc/clipboard 发现 Riru 剪贴板模块数据目录。</string>
+    <string name="chk_ruru_riru_clip_reason">Riru 剪贴板 Zygisk 模块将其数据保留在 /data/misc/clipboard。该目录表明 Riru 或相关 Zygisk 模块已（或曾经）安装。</string>
+    <string name="chk_ruru_riru_clip_solution">如非有意安装，请移除或禁用 Riru 剪贴板模块。</string>
+    <string name="chk_ruru_riru_clip_name_nd">Riru 剪贴板目录</string>
+    <string name="chk_ruru_riru_clip_desc_nd">未发现 Riru 剪贴板数据目录。</string>
+    <string name="chk_ruru_riru_clip_reason_nd">在 /data/misc/clipboard 未发现 Riru 剪贴板目录。</string>
+    <!-- RuruInspiredDetector: Check 5 - Privacy Space -->
+    <string name="chk_ruru_privacy_space_name">检测到 Privacy Space 数据目录</string>
+    <string name="chk_ruru_privacy_space_desc">发现 Privacy Space (cn.geektang.privacyspace) 数据目录。</string>
+    <string name="chk_ruru_privacy_space_reason">Privacy Space 是一个通过拦截 PackageManager API 来隐藏已安装软件包的 Xposed 模块。其在 /data/system/cn.geektang.privacyspace 的数据目录确认其已安装且可能处于活跃状态。</string>
+    <string name="chk_ruru_privacy_space_solution">通过 LSPosed Manager 禁用或移除 Privacy Space 模块。</string>
+    <string name="chk_ruru_privacy_space_name_nd">Privacy Space 数据目录</string>
+    <string name="chk_ruru_privacy_space_desc_nd">未发现 Privacy Space 数据目录。</string>
+    <string name="chk_ruru_privacy_space_reason_nd">在 /data/system/cn.geektang.privacyspace 未发现 Privacy Space 目录。</string>
+    <!-- RuruInspiredDetector: Check 6 - HMA Old Version -->
+    <string name="chk_ruru_hma_old_name">检测到 HMA（旧版）数据目录</string>
+    <string name="chk_ruru_hma_old_desc">在 /data/misc/hide_my_applist 发现 Hide My Applist 旧版数据目录。</string>
+    <string name="chk_ruru_hma_old_reason">旧版 Hide My Applist Xposed 模块将配置数据存储在 /data/misc/hide_my_applist。该目录的存在强烈表明 HMA 曾经或正在安装。</string>
+    <string name="chk_ruru_hma_old_solution">卸载 Hide My Applist 并清理残留数据。</string>
+    <string name="chk_ruru_hma_old_name_nd">HMA（旧版）数据目录</string>
+    <string name="chk_ruru_hma_old_desc_nd">未发现 HMA 旧版数据目录。</string>
+    <string name="chk_ruru_hma_old_reason_nd">在 /data/misc/hide_my_applist 未发现旧版 HMA 目录。</string>
+    <!-- RuruInspiredDetector: Check 7 - PM Cross-Method -->
+    <string name="chk_ruru_pm_cross_name_error">PM 交叉方法异常</string>
+    <string name="chk_ruru_pm_cross_desc_error">无法运行 `pm list packages` shell 命令。</string>
+    <string name="chk_ruru_pm_cross_reason_error">shell 命令 `pm list packages` 不可用或返回了空结果。无法与 PackageManager API 结果进行比较。</string>
+    <string name="chk_ruru_pm_cross_solution_error">确保应用有权限执行 shell 命令。</string>
+    <string name="chk_ruru_pm_cross_name">检测到 PM 交叉方法异常</string>
+    <string name="chk_ruru_pm_cross_desc">PackageManager API 隐藏了通过 shell 可见的软件包。</string>
+    <string name="chk_ruru_pm_cross_reason">以下软件包出现在 `pm list packages` shell 输出中，但对 getInstalledPackages() API 不可见，表明 PackageManager 钩子（如 HideMyApplist）正在过滤 API 结果。隐藏的软件包：%1$s。</string>
+    <string name="chk_ruru_pm_cross_solution">禁用任何钩住 PackageManager 的 Xposed/LSPosed 模块（如 HideMyApplist、Privacy Space）。</string>
+    <string name="chk_ruru_pm_cross_name_nd">PM 交叉方法异常</string>
+    <string name="chk_ruru_pm_cross_desc_nd">shell pm 与 PackageManager API 之间未发现差异。</string>
+    <string name="chk_ruru_pm_cross_reason_nd">shell `pm list packages` 和 getInstalledPackages() API 对已检查软件包列表返回了一致的结果。</string>
+    <!-- RuruInspiredDetector: Check 8 - Xposed Module Metadata -->
+    <string name="chk_ruru_xposed_meta_name">通过元数据检测到 Xposed 模块</string>
+    <string name="chk_ruru_xposed_meta_desc">发现具有 Xposed 模块元数据的应用。</string>
+    <string name="chk_ruru_xposed_meta_reason">以下已安装应用声明了 'xposedminversion' 或 'xposeddescription' 元数据键，将其标识为 Xposed 模块：%1$s。</string>
+    <string name="chk_ruru_xposed_meta_solution">通过 LSPosed Manager 禁用或卸载已识别的 Xposed 模块。</string>
+    <string name="chk_ruru_xposed_meta_name_nd">Xposed 模块元数据扫描</string>
+    <string name="chk_ruru_xposed_meta_desc_nd">未发现具有 Xposed 模块元数据的应用。</string>
+    <string name="chk_ruru_xposed_meta_reason_nd">没有已安装应用声明 'xposedminversion' 或 'xposeddescription' 元数据。</string>
+    <!-- RuruInspiredDetector: Check 9 - LSPatch AppComponentFactory -->
+    <string name="chk_ruru_lspatch_name_skip">通过 AppComponentFactory 检测 LSPatch</string>
+    <string name="chk_ruru_lspatch_desc_skip">检查需要 API 28+；已在此设备上跳过。</string>
+    <string name="chk_ruru_lspatch_reason_skip">appComponentFactory 属性仅在 Android 9 (API 28)+ 上可用。</string>
+    <string name="chk_ruru_lspatch_name">通过 AppComponentFactory 检测到 LSPatch</string>
+    <string name="chk_ruru_lspatch_desc">通过 appComponentFactory 检测到使用 LSPatch 修补的应用。</string>
+    <string name="chk_ruru_lspatch_reason">以下应用的 appComponentFactory 属性包含 'lsposed' 或 'lspatch'，表明它们使用 LSPatch（一种将框架直接嵌入 APK 的 Xposed 实现）进行了修补：%1$s。</string>
+    <string name="chk_ruru_lspatch_solution">将 LSPatch 嵌入的 APK 替换为官方来源的原始版本。</string>
+    <string name="chk_ruru_lspatch_name_nd">通过 AppComponentFactory 检测 LSPatch</string>
+    <string name="chk_ruru_lspatch_desc_nd">未通过 appComponentFactory 检测到 LSPatch 修补的应用。</string>
+    <string name="chk_ruru_lspatch_reason_nd">没有应用的 appComponentFactory 属性包含 'lsposed' 或 'lspatch'。</string>
+    <!-- RuruInspiredDetector: Check 10 - Account List -->
+    <string name="chk_ruru_account_name">账户列表异常</string>
+    <string name="chk_ruru_account_desc">通过 AccountManager 发现设备账户。</string>
+    <string name="chk_ruru_account_reason">AccountManager 报告此设备上有 %1$d 个账户。某些具有隐私侵犯性的应用或框架会注册虚假账户。账户：%2$s。</string>
+    <string name="chk_ruru_account_solution">查看列出的账户，并通过设备设置 → 账户移除任何可疑账户。</string>
+    <string name="chk_ruru_account_desc_nd">AccountManager 中未发现设备账户。</string>
+    <string name="chk_ruru_account_reason_nd">AccountManager 未返回任何账户。</string>
+    <!-- RuruInspiredDetector: Check 11 - VPN Connection -->
+    <string name="chk_ruru_vpn_name">检测到 VPN 连接</string>
+    <string name="chk_ruru_vpn_desc">检测到活跃的 VPN 或代理连接。</string>
+    <string name="chk_ruru_vpn_reason">此设备上有 VPN 或代理连接处于活跃状态。VPN 可用于拦截网络流量或将其路由至第三方服务器。指标：%1$s。</string>
+    <string name="chk_ruru_vpn_solution">如果 VPN 或代理不是故意配置的，请断开连接。</string>
+    <string name="chk_ruru_vpn_name_nd">VPN 连接</string>
+    <string name="chk_ruru_vpn_desc_nd">未检测到 VPN 或代理连接。</string>
+    <string name="chk_ruru_vpn_reason_nd">未发现 VPN 网络接口（tun0/ppp0）、TYPE_VPN 连接或 http.proxyHost 系统属性。</string>
+    <!-- RuruInspiredDetector: Check 12 - Accessibility Services -->
+    <string name="chk_ruru_a11y_name">无障碍服务处于活跃状态</string>
+    <string name="chk_ruru_a11y_desc">当前启用了一个或多个无障碍服务。</string>
+    <string name="chk_ruru_a11y_reason">无障碍服务具有广泛的系统访问权限，可以读取屏幕内容、模拟点击并拦截输入事件。如果存在未知服务处于活跃状态，这可能构成安全隐患。AccessibilityManager.isEnabled=%1$s，服务：%2$s。</string>
+    <string name="chk_ruru_a11y_solution">在设置 → 无障碍中查看已启用的无障碍服务，并禁用任何您不认识的服务。</string>
+    <string name="chk_ruru_a11y_name_nd">无障碍服务</string>
+    <string name="chk_ruru_a11y_desc_nd">当前没有无障碍服务处于活跃状态。</string>
+    <string name="chk_ruru_a11y_reason_nd">AccessibilityManager.isEnabled=false 且未发现已启用的无障碍服务。</string>
+    <!-- RuruInspiredDetector: Check 13 - PM API Discrepancy -->
+    <string name="chk_ruru_pm_api_name">检测到 PackageManager API 不一致</string>
+    <string name="chk_ruru_pm_api_desc">PackageManager API 对相同软件包返回了不一致的结果。</string>
+    <string name="chk_ruru_pm_api_reason">在 getApplicationInfo 和杂项 PM API（getPackageUid / getInstallSourceInfo / getLaunchIntentForPackage）之间发现不一致。这是不完整的 PackageManager 钩子（如 HideMyApplist）的典型特征：它拦截了某些 API 但遗漏了其他 API。不一致：%1$s。</string>
+    <string name="chk_ruru_pm_api_solution">禁用任何钩住 PackageManager 的 Xposed/LSPosed 模块。</string>
+    <string name="chk_ruru_pm_api_name_nd">PackageManager API 不一致</string>
+    <string name="chk_ruru_pm_api_desc_nd">PackageManager API 返回了一致的结果。</string>
+    <string name="chk_ruru_pm_api_reason_nd">getApplicationInfo 和杂项 PM API（getPackageUid、getInstallSourceInfo、getLaunchIntentForPackage）对所有已检查的软件包的可见性达成一致。</string>
+
+
+    <!-- Shared error detail format strings -->
+    <string name="err_detail_failed">失败：%1$s</string>
+    <string name="err_detail_failed_read">读取 %1$s 失败：%2$s</string>
+    <string name="err_detail_error">错误：%1$s</string>
+    <string name="err_detail_query_failed">%1$s 查询失败：%2$s</string>
+
 </resources>

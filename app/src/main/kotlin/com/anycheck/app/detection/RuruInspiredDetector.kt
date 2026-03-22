@@ -60,28 +60,25 @@ class RuruInspiredDetector(private val context: Context) {
         return if (isDual) {
             DetectionResult(
                 id = "ruru_dual_work_profile",
-                name = "Dual / Work Profile Detected",
+                name = context.getString(R.string.chk_ruru_dual_profile_name),
                 category = DetectionCategory.ENVIRONMENT,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "App is running in a clone/dual-space or work profile.",
-                detailedReason = "The app's filesDir is '$filesDir', which starts with /data/user " +
-                    "but not /data/user/0. This indicates the app is running in a secondary " +
-                    "user, device-clone space, or Android work profile rather than the primary user space.",
-                solution = "This is expected in dual-space or work-profile scenarios. " +
-                    "Verify this is the intended execution environment.",
+                description = context.getString(R.string.chk_ruru_dual_profile_desc),
+                detailedReason = context.getString(R.string.chk_ruru_dual_profile_reason, filesDir),
+                solution = context.getString(R.string.chk_ruru_dual_profile_solution),
                 technicalDetail = "filesDir=$filesDir"
             )
         } else {
             DetectionResult(
                 id = "ruru_dual_work_profile",
-                name = "Dual / Work Profile",
+                name = context.getString(R.string.chk_ruru_dual_profile_name_nd),
                 category = DetectionCategory.ENVIRONMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "Running in the primary user space (no dual/work profile detected).",
-                detailedReason = "filesDir='$filesDir' starts with /data/user/0, indicating the primary user.",
-                solution = "No action required.",
+                description = context.getString(R.string.chk_ruru_dual_profile_desc_nd),
+                detailedReason = context.getString(R.string.chk_ruru_dual_profile_reason_nd, filesDir),
+                solution = context.getString(R.string.no_action_required),
                 technicalDetail = "filesDir=$filesDir"
             )
         }
@@ -97,27 +94,25 @@ class RuruInspiredDetector(private val context: Context) {
         return if (exists) {
             DetectionResult(
                 id = "ruru_xprivacylua_file",
-                name = "XPrivacyLua Data Directory Detected",
+                name = context.getString(R.string.chk_ruru_xprivacy_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "XPrivacyLua data directory found at $path.",
-                detailedReason = "XPrivacyLua is an Xposed module that fakes or restricts " +
-                    "privacy-sensitive data returned to apps. Its presence at $path strongly " +
-                    "indicates an active Xposed/LSPosed environment with privacy hooking.",
-                solution = "Disable or remove the XPrivacyLua module via LSPosed Manager.",
+                description = context.getString(R.string.chk_ruru_xprivacy_desc),
+                detailedReason = context.getString(R.string.chk_ruru_xprivacy_reason),
+                solution = context.getString(R.string.chk_ruru_xprivacy_solution),
                 technicalDetail = "Path exists: $path"
             )
         } else {
             DetectionResult(
                 id = "ruru_xprivacylua_file",
-                name = "XPrivacyLua Data Directory",
+                name = context.getString(R.string.chk_ruru_xprivacy_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "XPrivacyLua data directory not found.",
-                detailedReason = "No XPrivacyLua data directory detected at $path.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_ruru_xprivacy_desc_nd),
+                detailedReason = context.getString(R.string.chk_ruru_xprivacy_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -132,26 +127,25 @@ class RuruInspiredDetector(private val context: Context) {
         return if (exists) {
             DetectionResult(
                 id = "ruru_xposed_edge_file",
-                name = "Xposed Edge Data Directory Detected",
+                name = context.getString(R.string.chk_ruru_xedge_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "Xposed Edge data directory found at $path.",
-                detailedReason = "Xposed Edge is an Xposed module for advanced edge-gesture " +
-                    "customization. Its data directory at $path indicates an active Xposed framework.",
-                solution = "Disable the Xposed Edge module if not intentionally installed.",
+                description = context.getString(R.string.chk_ruru_xedge_desc),
+                detailedReason = context.getString(R.string.chk_ruru_xedge_reason),
+                solution = context.getString(R.string.chk_ruru_xedge_solution),
                 technicalDetail = "Path exists: $path"
             )
         } else {
             DetectionResult(
                 id = "ruru_xposed_edge_file",
-                name = "Xposed Edge Data Directory",
+                name = context.getString(R.string.chk_ruru_xedge_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "Xposed Edge data directory not found.",
-                detailedReason = "No Xposed Edge data directory detected at $path.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_ruru_xedge_desc_nd),
+                detailedReason = context.getString(R.string.chk_ruru_xedge_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -166,26 +160,25 @@ class RuruInspiredDetector(private val context: Context) {
         return if (exists) {
             DetectionResult(
                 id = "ruru_riru_clipboard_file",
-                name = "Riru Clipboard Directory Detected",
+                name = context.getString(R.string.chk_ruru_riru_clip_name),
                 category = DetectionCategory.ENVIRONMENT,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "Riru Clipboard module data directory found at $path.",
-                detailedReason = "The Riru Clipboard Zygisk module leaves its data at $path. " +
-                    "This directory indicates Riru or a related Zygisk module is (or was) installed.",
-                solution = "Remove or disable the Riru Clipboard module if not intentionally installed.",
+                description = context.getString(R.string.chk_ruru_riru_clip_desc),
+                detailedReason = context.getString(R.string.chk_ruru_riru_clip_reason),
+                solution = context.getString(R.string.chk_ruru_riru_clip_solution),
                 technicalDetail = "Path exists: $path"
             )
         } else {
             DetectionResult(
                 id = "ruru_riru_clipboard_file",
-                name = "Riru Clipboard Directory",
+                name = context.getString(R.string.chk_ruru_riru_clip_name_nd),
                 category = DetectionCategory.ENVIRONMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "Riru Clipboard data directory not found.",
-                detailedReason = "No Riru Clipboard directory found at $path.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_ruru_riru_clip_desc_nd),
+                detailedReason = context.getString(R.string.chk_ruru_riru_clip_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -200,27 +193,25 @@ class RuruInspiredDetector(private val context: Context) {
         return if (exists) {
             DetectionResult(
                 id = "ruru_privacy_space_file",
-                name = "Privacy Space Data Directory Detected",
+                name = context.getString(R.string.chk_ruru_privacy_space_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Privacy Space (cn.geektang.privacyspace) data directory found.",
-                detailedReason = "Privacy Space is an Xposed module that hides installed packages " +
-                    "by intercepting PackageManager APIs. Its data directory at $path confirms " +
-                    "it is installed and likely active.",
-                solution = "Disable or remove the Privacy Space module via LSPosed Manager.",
+                description = context.getString(R.string.chk_ruru_privacy_space_desc),
+                detailedReason = context.getString(R.string.chk_ruru_privacy_space_reason),
+                solution = context.getString(R.string.chk_ruru_privacy_space_solution),
                 technicalDetail = "Path exists: $path"
             )
         } else {
             DetectionResult(
                 id = "ruru_privacy_space_file",
-                name = "Privacy Space Data Directory",
+                name = context.getString(R.string.chk_ruru_privacy_space_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Privacy Space data directory not found.",
-                detailedReason = "No Privacy Space directory found at $path.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_ruru_privacy_space_desc_nd),
+                detailedReason = context.getString(R.string.chk_ruru_privacy_space_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -235,27 +226,25 @@ class RuruInspiredDetector(private val context: Context) {
         return if (exists) {
             DetectionResult(
                 id = "ruru_hma_old_file",
-                name = "HMA (Old Version) Data Directory Detected",
+                name = context.getString(R.string.chk_ruru_hma_old_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Hide My Applist old-version data directory found at $path.",
-                detailedReason = "Older versions of the Hide My Applist Xposed module stored " +
-                    "configuration data in $path. The presence of this directory strongly " +
-                    "suggests HMA was or is installed.",
-                solution = "Uninstall Hide My Applist and clean up residual data.",
+                description = context.getString(R.string.chk_ruru_hma_old_desc),
+                detailedReason = context.getString(R.string.chk_ruru_hma_old_reason),
+                solution = context.getString(R.string.chk_ruru_hma_old_solution),
                 technicalDetail = "Path exists: $path"
             )
         } else {
             DetectionResult(
                 id = "ruru_hma_old_file",
-                name = "HMA (Old Version) Data Directory",
+                name = context.getString(R.string.chk_ruru_hma_old_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "HMA old-version data directory not found.",
-                detailedReason = "No old-version HMA directory found at $path.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_ruru_hma_old_desc_nd),
+                detailedReason = context.getString(R.string.chk_ruru_hma_old_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -306,14 +295,13 @@ class RuruInspiredDetector(private val context: Context) {
         if (shellPackages == null) {
             return DetectionResult(
                 id = "ruru_pm_cross_method",
-                name = "PM Cross-Method Anomaly",
+                name = context.getString(R.string.chk_ruru_pm_cross_name_error),
                 category = DetectionCategory.ENVIRONMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Could not run `pm list packages` shell command.",
-                detailedReason = "The shell command `pm list packages` was unavailable or returned empty results. " +
-                    "Cannot compare results against the PackageManager API.",
-                solution = "Ensure the app has permission to execute shell commands.",
+                description = context.getString(R.string.chk_ruru_pm_cross_desc_error),
+                detailedReason = context.getString(R.string.chk_ruru_pm_cross_reason_error),
+                solution = context.getString(R.string.chk_ruru_pm_cross_solution_error),
                 technicalDetail = "pm list packages returned null or empty"
             )
         }
@@ -336,30 +324,26 @@ class RuruInspiredDetector(private val context: Context) {
         return if (discrepancies.isNotEmpty()) {
             DetectionResult(
                 id = "ruru_pm_cross_method",
-                name = "PM Cross-Method Anomaly Detected",
+                name = context.getString(R.string.chk_ruru_pm_cross_name),
                 category = DetectionCategory.ENVIRONMENT,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "PackageManager API is hiding packages visible via shell.",
-                detailedReason = "The following packages appear in `pm list packages` shell output " +
-                    "but are invisible to getInstalledPackages() API, indicating a " +
-                    "PackageManager hook (e.g. HideMyApplist) is filtering API results. " +
-                    "Hidden packages: ${discrepancies.joinToString(", ")}.",
-                solution = "Disable any Xposed/LSPosed module that hooks PackageManager (e.g. HideMyApplist, Privacy Space).",
+                description = context.getString(R.string.chk_ruru_pm_cross_desc),
+                detailedReason = context.getString(R.string.chk_ruru_pm_cross_reason, discrepancies.joinToString(", ")),
+                solution = context.getString(R.string.chk_ruru_pm_cross_solution),
                 technicalDetail = "Hidden from API: ${discrepancies.joinToString("; ")}; " +
                     "Found via API: ${foundViaApi.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "ruru_pm_cross_method",
-                name = "PM Cross-Method Anomaly",
+                name = context.getString(R.string.chk_ruru_pm_cross_name_nd),
                 category = DetectionCategory.ENVIRONMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No discrepancy found between shell pm and PackageManager API.",
-                detailedReason = "Shell `pm list packages` and getInstalledPackages() API return " +
-                    "consistent results for the checked package list.",
-                solution = "No action required.",
+                description = context.getString(R.string.chk_ruru_pm_cross_desc_nd),
+                detailedReason = context.getString(R.string.chk_ruru_pm_cross_reason_nd),
+                solution = context.getString(R.string.no_action_required),
                 technicalDetail = "Shell packages checked: ${suspiciousPackages.size}; " +
                     "API packages total: ${apiPackages.size}"
             )
@@ -391,27 +375,25 @@ class RuruInspiredDetector(private val context: Context) {
         return if (foundModules.isNotEmpty()) {
             DetectionResult(
                 id = "ruru_xposed_module_metadata",
-                name = "Xposed Modules Detected via Metadata",
+                name = context.getString(R.string.chk_ruru_xposed_meta_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Apps with Xposed module metadata found.",
-                detailedReason = "The following installed apps declare 'xposedminversion' or " +
-                    "'xposeddescription' metadata keys, identifying them as Xposed modules: " +
-                    foundModules.joinToString(", ") + ".",
-                solution = "Disable or uninstall identified Xposed modules via LSPosed Manager.",
+                description = context.getString(R.string.chk_ruru_xposed_meta_desc),
+                detailedReason = context.getString(R.string.chk_ruru_xposed_meta_reason, foundModules.joinToString(", ")),
+                solution = context.getString(R.string.chk_ruru_xposed_meta_solution),
                 technicalDetail = "Modules: ${foundModules.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "ruru_xposed_module_metadata",
-                name = "Xposed Module Metadata Scan",
+                name = context.getString(R.string.chk_ruru_xposed_meta_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No apps with Xposed module metadata found.",
-                detailedReason = "No installed app declares 'xposedminversion' or 'xposeddescription' metadata.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_ruru_xposed_meta_desc_nd),
+                detailedReason = context.getString(R.string.chk_ruru_xposed_meta_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -425,13 +407,13 @@ class RuruInspiredDetector(private val context: Context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
             return DetectionResult(
                 id = "ruru_lspatch_component_factory",
-                name = "LSPatch via AppComponentFactory",
+                name = context.getString(R.string.chk_ruru_lspatch_name_skip),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Check requires API 28+; skipped on this device.",
-                detailedReason = "The appComponentFactory attribute is only available on Android 9 (API 28)+.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_ruru_lspatch_desc_skip),
+                detailedReason = context.getString(R.string.chk_ruru_lspatch_reason_skip),
+                solution = context.getString(R.string.no_action_required)
             )
         }
 
@@ -456,28 +438,25 @@ class RuruInspiredDetector(private val context: Context) {
         return if (foundApps.isNotEmpty()) {
             DetectionResult(
                 id = "ruru_lspatch_component_factory",
-                name = "LSPatch via AppComponentFactory Detected",
+                name = context.getString(R.string.chk_ruru_lspatch_name),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "Apps patched with LSPatch detected via appComponentFactory.",
-                detailedReason = "The following apps have an appComponentFactory attribute containing " +
-                    "'lsposed' or 'lspatch', indicating they were patched using LSPatch (an " +
-                    "Xposed implementation that embeds the framework into APKs directly): " +
-                    foundApps.joinToString(", ") + ".",
-                solution = "Replace LSPatch-embedded APKs with original versions from official sources.",
+                description = context.getString(R.string.chk_ruru_lspatch_desc),
+                detailedReason = context.getString(R.string.chk_ruru_lspatch_reason, foundApps.joinToString(", ")),
+                solution = context.getString(R.string.chk_ruru_lspatch_solution),
                 technicalDetail = "LSPatch apps: ${foundApps.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "ruru_lspatch_component_factory",
-                name = "LSPatch via AppComponentFactory",
+                name = context.getString(R.string.chk_ruru_lspatch_name_nd),
                 category = DetectionCategory.XPOSED,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "No LSPatch-patched apps detected via appComponentFactory.",
-                detailedReason = "No app's appComponentFactory attribute contains 'lsposed' or 'lspatch'.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_ruru_lspatch_desc_nd),
+                detailedReason = context.getString(R.string.chk_ruru_lspatch_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -498,27 +477,25 @@ class RuruInspiredDetector(private val context: Context) {
         return if (accountList.isNotEmpty()) {
             DetectionResult(
                 id = "ruru_account_list",
-                name = "Account List Anomaly",
+                name = context.getString(R.string.chk_ruru_account_name),
                 category = DetectionCategory.ENVIRONMENT,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.INFO,
-                description = "Device accounts found via AccountManager.",
-                detailedReason = "AccountManager reports ${accountList.size} account(s) on this device. " +
-                    "Some privacy-invasive apps or frameworks register fake accounts. " +
-                    "Accounts: ${accountList.joinToString(", ")}.",
-                solution = "Review listed accounts and remove any suspicious ones via device Settings → Accounts.",
+                description = context.getString(R.string.chk_ruru_account_desc),
+                detailedReason = context.getString(R.string.chk_ruru_account_reason, accountList.size, accountList.joinToString(", ")),
+                solution = context.getString(R.string.chk_ruru_account_solution),
                 technicalDetail = "Accounts: ${accountList.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "ruru_account_list",
-                name = "Account List Anomaly",
+                name = context.getString(R.string.chk_ruru_account_name),
                 category = DetectionCategory.ENVIRONMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.INFO,
-                description = "No device accounts found in AccountManager.",
-                detailedReason = "AccountManager returned no accounts.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_ruru_account_desc_nd),
+                detailedReason = context.getString(R.string.chk_ruru_account_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -566,28 +543,25 @@ class RuruInspiredDetector(private val context: Context) {
         return if (vpnActive) {
             DetectionResult(
                 id = "ruru_vpn_connection",
-                name = "VPN Connection Detected",
+                name = context.getString(R.string.chk_ruru_vpn_name),
                 category = DetectionCategory.NETWORK,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "An active VPN or proxy connection was detected.",
-                detailedReason = "A VPN or proxy connection is active on this device. " +
-                    "VPNs can be used to intercept network traffic or route it through " +
-                    "third-party servers. Indicators: ${indicators.joinToString(", ")}.",
-                solution = "Disconnect any VPN or proxy if it is not intentionally configured.",
+                description = context.getString(R.string.chk_ruru_vpn_desc),
+                detailedReason = context.getString(R.string.chk_ruru_vpn_reason, indicators.joinToString(", ")),
+                solution = context.getString(R.string.chk_ruru_vpn_solution),
                 technicalDetail = "VPN indicators: ${indicators.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "ruru_vpn_connection",
-                name = "VPN Connection",
+                name = context.getString(R.string.chk_ruru_vpn_name_nd),
                 category = DetectionCategory.NETWORK,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "No VPN or proxy connection detected.",
-                detailedReason = "No VPN network interfaces (tun0/ppp0), TYPE_VPN connectivity, " +
-                    "or http.proxyHost system property were found.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_ruru_vpn_desc_nd),
+                detailedReason = context.getString(R.string.chk_ruru_vpn_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -639,30 +613,25 @@ class RuruInspiredDetector(private val context: Context) {
         return if (accessibilityEnabled || serviceNames.isNotEmpty()) {
             DetectionResult(
                 id = "ruru_accessibility_services",
-                name = "Accessibility Services Active",
+                name = context.getString(R.string.chk_ruru_a11y_name),
                 category = DetectionCategory.ENVIRONMENT,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "One or more accessibility services are currently enabled.",
-                detailedReason = "Accessibility services have broad system access and can read screen " +
-                    "contents, simulate taps, and intercept input events. This may pose a " +
-                    "security concern if unknown services are active. " +
-                    "AccessibilityManager.isEnabled=$accessibilityEnabled, " +
-                    "Services: ${if (serviceNames.isEmpty()) "(none listed)" else serviceNames.joinToString(", ")}.",
-                solution = "Review enabled accessibility services in Settings → Accessibility and " +
-                    "disable any you do not recognize.",
+                description = context.getString(R.string.chk_ruru_a11y_desc),
+                detailedReason = context.getString(R.string.chk_ruru_a11y_reason, accessibilityEnabled.toString(), if (serviceNames.isEmpty()) "(none listed)" else serviceNames.joinToString(", ")),
+                solution = context.getString(R.string.chk_ruru_a11y_solution),
                 technicalDetail = "isEnabled=$accessibilityEnabled; services=${serviceNames.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "ruru_accessibility_services",
-                name = "Accessibility Services",
+                name = context.getString(R.string.chk_ruru_a11y_name_nd),
                 category = DetectionCategory.ENVIRONMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.MEDIUM,
-                description = "No accessibility services are currently active.",
-                detailedReason = "AccessibilityManager.isEnabled=false and no enabled accessibility services found.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_ruru_a11y_desc_nd),
+                detailedReason = context.getString(R.string.chk_ruru_a11y_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
@@ -733,31 +702,25 @@ class RuruInspiredDetector(private val context: Context) {
         return if (discrepancies.isNotEmpty()) {
             DetectionResult(
                 id = "ruru_pm_api_discrepancy",
-                name = "Package Manager API Discrepancy Detected",
+                name = context.getString(R.string.chk_ruru_pm_api_name),
                 category = DetectionCategory.ENVIRONMENT,
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "PackageManager APIs return inconsistent results for the same packages.",
-                detailedReason = "Discrepancies found between getApplicationInfo and sundry PM APIs " +
-                    "(getPackageUid / getInstallSourceInfo / getLaunchIntentForPackage). " +
-                    "This is the hallmark signature of an incomplete PackageManager hook " +
-                    "(e.g. HideMyApplist): it intercepts some APIs but misses others. " +
-                    "Discrepancies: ${discrepancies.joinToString(", ")}.",
-                solution = "Disable any Xposed/LSPosed modules that hook PackageManager.",
+                description = context.getString(R.string.chk_ruru_pm_api_desc),
+                detailedReason = context.getString(R.string.chk_ruru_pm_api_reason, discrepancies.joinToString(", ")),
+                solution = context.getString(R.string.chk_ruru_pm_api_solution),
                 technicalDetail = "Discrepancies: ${discrepancies.joinToString("; ")}"
             )
         } else {
             DetectionResult(
                 id = "ruru_pm_api_discrepancy",
-                name = "Package Manager API Discrepancy",
+                name = context.getString(R.string.chk_ruru_pm_api_name_nd),
                 category = DetectionCategory.ENVIRONMENT,
                 status = DetectionStatus.NOT_DETECTED,
                 riskLevel = RiskLevel.HIGH,
-                description = "PackageManager APIs return consistent results.",
-                detailedReason = "getApplicationInfo and sundry PM APIs (getPackageUid, " +
-                    "getInstallSourceInfo, getLaunchIntentForPackage) agree on visibility " +
-                    "for all checked packages.",
-                solution = "No action required."
+                description = context.getString(R.string.chk_ruru_pm_api_desc_nd),
+                detailedReason = context.getString(R.string.chk_ruru_pm_api_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }
