@@ -4,6 +4,7 @@ import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context
 import android.content.pm.PackageManager
 import android.view.accessibility.AccessibilityManager
+import com.anycheck.app.R
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader

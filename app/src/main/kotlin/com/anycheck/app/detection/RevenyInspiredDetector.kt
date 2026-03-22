@@ -3,6 +3,7 @@ package com.anycheck.app.detection
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import com.anycheck.app.R
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader

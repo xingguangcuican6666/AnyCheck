@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.os.Build
+import com.anycheck.app.R
 import android.provider.Settings
 import android.view.accessibility.AccessibilityManager
 import java.io.BufferedReader
