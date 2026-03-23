@@ -23,6 +23,19 @@
 #define LOG_TAG "anycheck_native"
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
 
+// __NR_fstatat is not always defined in Android NDK headers; define per-arch.
+#ifndef __NR_fstatat
+#  if defined(__aarch64__)
+#    define __NR_fstatat 79
+#  elif defined(__arm__)
+#    define __NR_fstatat 327
+#  elif defined(__x86_64__)
+#    define __NR_fstatat 262
+#  elif defined(__i386__)
+#    define __NR_fstatat 300
+#  endif
+#endif
+
 // ---------------------------------------------------------------------------
 // N1 — Raw /proc/self/maps scan
 // Uses open(2)/read(2) syscalls — NOT fopen() — to resist GOT-level hooks.
