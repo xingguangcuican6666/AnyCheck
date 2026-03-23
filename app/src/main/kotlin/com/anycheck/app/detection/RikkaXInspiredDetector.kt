@@ -748,30 +748,32 @@ class RikkaXInspiredDetector(private val context: Context) {
             indicators.add("Sub-G: LP data directories: ${foundDirs.joinToString()}")
         }
 
-        // ── Sub-check H: Non-system app with INSTALL_PACKAGES permission ─────
-        // android.permission.INSTALL_PACKAGES is a privileged permission that
-        // should only be held by system packages.  A non-system app with this
-        // permission is a strong PM-tampering indicator.
-        val pmAnomalyPkgs = mutableListOf<String>()
+        // ── Sub-check H: Package Manager service integrity (self-permission probe) ─
+        // android.permission.INSTALL_PACKAGES is a privileged system permission.
+        // AnyCheck deliberately does NOT declare it in its manifest.
+        //
+        // On an unmodified device, checkPermission() MUST return PERMISSION_DENIED.
+        // If PackageManagerService has been patched (e.g. by CorePatch or Lucky
+        // Patcher) to grant all permissions unconditionally, checkPermission()
+        // returns PERMISSION_GRANTED — a definitive indicator of PM-service
+        // tampering.
+        //
+        // Note: Shizuku and legitimate third-party installers obtain
+        // INSTALL_PACKAGES through proper ADB-level delegation and therefore do
+        // NOT cause this check to trigger; only a patched PM service would grant
+        // an undeclared privileged permission to our app.
         try {
-            @Suppress("DEPRECATION")
-            context.packageManager
-                .getInstalledPackages(PackageManager.GET_PERMISSIONS)
-                .forEach { pkg ->
-                    val isSystem = (pkg.applicationInfo.flags and
-                        ApplicationInfo.FLAG_SYSTEM) != 0
-                    if (!isSystem &&
-                        pkg.requestedPermissions?.contains(
-                            "android.permission.INSTALL_PACKAGES"
-                        ) == true
-                    ) {
-                        pmAnomalyPkgs.add(pkg.packageName)
-                    }
-                }
+            val selfInstallCheck = context.packageManager.checkPermission(
+                "android.permission.INSTALL_PACKAGES",
+                context.packageName
+            )
+            if (selfInstallCheck == PackageManager.PERMISSION_GRANTED) {
+                indicators.add(
+                    "Sub-H: PM granted INSTALL_PACKAGES to AnyCheck without it being declared " +
+                    "— PackageManagerService permission-enforcement is compromised"
+                )
+            }
         } catch (_: Exception) {}
-        if (pmAnomalyPkgs.isNotEmpty()) {
-            indicators.add("Sub-H: Non-system INSTALL_PACKAGES: ${pmAnomalyPkgs.joinToString()}")
-        }
 
         // ── Sub-check I: Cross-package checkSignatures with known-different signers ─
         // Platform-signed packages (e.g. com.android.settings) and Google-signed
@@ -915,7 +917,7 @@ class RikkaXInspiredDetector(private val context: Context) {
                 description = context.getString(R.string.chk_rikkax_core_crack_desc_nd),
                 detailedReason = context.getString(R.string.chk_rikkax_core_crack_reason_nd),
                 solution = context.getString(R.string.chk_no_action_needed),
-                technicalDetail = "All 12 sub-checks passed (A: checkSignatures, B: cert cross-validation, C: framework mtime, D: backup files, E: billing service, F: LP/CorePatch packages/paths, G: LP data dirs, H: INSTALL_PACKAGES, I: cross-package sig test, J: GET_SIGNING_CERTIFICATES, K: APK direct cert, L: Magisk module scan)"
+                technicalDetail = "All 12 sub-checks passed (A: checkSignatures, B: cert cross-validation, C: framework mtime, D: backup files, E: billing service, F: LP/CorePatch packages/paths, G: LP data dirs, H: PM service self-permission probe, I: cross-package sig test, J: GET_SIGNING_CERTIFICATES, K: APK direct cert, L: Magisk module scan)"
             )
         }
     }
