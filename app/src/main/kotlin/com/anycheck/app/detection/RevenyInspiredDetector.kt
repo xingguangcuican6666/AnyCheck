@@ -27,6 +27,7 @@ class RevenyInspiredDetector(private val context: Context) {
         checkHideMyApplist(),
         checkHmaBinderProbe(),
         checkHmaFilterBehavior(),
+        checkHmaDataAppScan(),
         checkMountInconsistency(),
         checkAddonDOrInstallRecovery(),
         checkSystemAppsAbsence(),
@@ -867,8 +868,100 @@ class RevenyInspiredDetector(private val context: Context) {
     }
 
     // -------------------------------------------------------------------------
+    // Check 5d: HMA /data/app directory scan
+    //
+    // PackageManager hooks (HMA's shouldFilterApplication) prevent queries for
+    // HMA's own package from returning results — but they cannot remove the APK
+    // installation directory that the Android installer created in /data/app.
+    //
+    // We scan /data/app for directory entries whose names start with any of
+    // HMA's known package name strings.  A match means HMA is physically
+    // installed even if it is completely invisible to PackageManager.
+    // -------------------------------------------------------------------------
+    private fun checkHmaDataAppScan(): DetectionResult {
+        val hmaPackages = arrayOf(
+            "com.tsng.hidemyapplist",
+            "com.tsng.hidemyapplist.debug",
+            "cn.hidemyapplist"
+        )
+        val found = scanDataAppForPackages(*hmaPackages)
+
+        return if (found.isNotEmpty()) {
+            DetectionResult(
+                id = "reveny_hma_data_app_scan",
+                name = context.getString(R.string.chk_reveny_hma_data_app_name),
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_reveny_hma_data_app_desc),
+                detailedReason = context.getString(
+                    R.string.chk_reveny_hma_data_app_reason,
+                    found.joinToString("; ")
+                ),
+                solution = context.getString(R.string.chk_reveny_hma_data_app_solution),
+                technicalDetail = found.joinToString("\n")
+            )
+        } else {
+            DetectionResult(
+                id = "reveny_hma_data_app_scan",
+                name = context.getString(R.string.chk_reveny_hma_data_app_name_nd),
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_reveny_hma_data_app_desc_nd),
+                detailedReason = context.getString(R.string.chk_reveny_hma_data_app_reason_nd),
+                solution = context.getString(R.string.no_action_required)
+            )
+        }
+    }
+
+    // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
+
+    /**
+     * Scans /data/app for installed package directories matching any of the
+     * given package name prefixes.  This bypasses PackageManager hooks (e.g.
+     * HMA's shouldFilterApplication) because we read the file-system directly.
+     *
+     * Android 9+ layout:  /data/app/~~RANDOM==/PACKAGE-RANDOM==/base.apk
+     * Android 7–8 layout: /data/app/PACKAGE-N/base.apk
+     *
+     * Returns a list of matching install-directory paths.
+     */
+    private fun scanDataAppForPackages(vararg packages: String): List<String> {
+        val found = mutableListOf<String>()
+        try {
+            val dataApp = File("/data/app")
+            val outerEntries = dataApp.listFiles() ?: return found
+            for (outer in outerEntries) {
+                if (!outer.isDirectory) continue
+                val outerName = outer.name
+                // Android 7–8 flat layout: entry is directly the package install dir
+                for (pkg in packages) {
+                    if (outerName == pkg || outerName.startsWith("$pkg-")) {
+                        found.add(outer.path)
+                    }
+                }
+                // Android 9+ double-encoded layout: outer dir is ~~RANDOM==
+                if (outerName.startsWith("~~")) {
+                    try {
+                        val innerEntries = outer.listFiles() ?: continue
+                        for (inner in innerEntries) {
+                            if (!inner.isDirectory) continue
+                            for (pkg in packages) {
+                                if (inner.name == pkg || inner.name.startsWith("$pkg-")) {
+                                    found.add(inner.path)
+                                }
+                            }
+                        }
+                    } catch (_: Exception) {}
+                }
+            }
+        } catch (_: Exception) {}
+        return found
+    }
+
     private fun readProp(key: String): String? {
         return try {
             val process = Runtime.getRuntime().exec(arrayOf("getprop", key))

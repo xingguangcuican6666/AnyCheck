@@ -778,6 +778,24 @@
     <string name="chk_lspd_process_reason_nd">No process named \'lspd\' was found in /proc.</string>
     <string name="chk_lspd_process_solution">Uninstall LSPosed via its manager app and reboot to stop the daemon.</string>
 
+    <!-- XposedDetector: Check 24 — /data/app scan for LSPosed / HMA -->
+    <string name="chk_data_app_scan_name">Hook/Hide Framework Detected via /data/app Scan</string>
+    <string name="chk_data_app_scan_name_nd">/data/app Package Directory Scan</string>
+    <string name="chk_data_app_scan_desc">An LSPosed, EdXposed, or Hide My Applist install directory was found directly in /data/app, bypassing PackageManager hooks.</string>
+    <string name="chk_data_app_scan_desc_nd">No known hook or hide-framework package directories found in /data/app.</string>
+    <string name="chk_data_app_scan_reason">The Android installer places every app\'s APK under /data/app/~~RANDOM==/PACKAGE-RANDOM==/ (Android 9+) or /data/app/PACKAGE-N/ (Android 7–8). PackageManager hooks (DenyList, Shamiko, HMA) can hide a package from API queries but cannot remove its on-disk install directory. Matching entries found: %1$s.</string>
+    <string name="chk_data_app_scan_reason_nd">No directories matching known LSPosed, EdXposed, or Hide My Applist package names were found under /data/app.</string>
+    <string name="chk_data_app_scan_solution">Uninstall the detected app(s) via their own manager or via adb (pm uninstall &lt;package&gt;) and reboot.</string>
+
+    <!-- XposedDetector: Check 25 — own OAT self-state / LSPosed artefact check -->
+    <string name="chk_own_oat_name">OAT Deoptimisation Artefact Detected</string>
+    <string name="chk_own_oat_name_nd">Own OAT Integrity Check</string>
+    <string name="chk_own_oat_desc">Unexpected files or a corrupted OAT header found in this app\'s compiled-code directory, indicating hook-framework interference.</string>
+    <string name="chk_own_oat_desc_nd">This app\'s OAT directory contains only expected artefacts and the OAT magic is valid.</string>
+    <string name="chk_own_oat_reason">LSPosed and similar hook frameworks deoptimise target-app methods by removing their compiled OAT machine code, forcing the ART interpreter to execute DEX bytecode instead (where hook trampolines fire). This leaves observable artefacts: extra DEX/ODEX files in the OAT directory, a corrupted OAT header magic, or a missing base.odex alongside an existing base.vdex. Anomalies found: %1$s.</string>
+    <string name="chk_own_oat_reason_nd">This app\'s oat/ subdirectory contains only the standard artefacts (base.odex, base.vdex, optionally base.art) and the OAT file starts with the expected magic bytes (6f 61 74 0a), indicating no hook-framework deoptimisation.</string>
+    <string name="chk_own_oat_solution">Disable all LSPosed/Xposed modules that target this app, then reboot so ART recompiles the OAT file cleanly.</string>
+
 
     <!-- AdvancedRootDetector strings -->
     <string name="chk_adv_su_path_name">Su Binary Found</string>
@@ -1644,6 +1662,15 @@
     <string name="chk_reveny_hma_filter_reason">HMA hooks PackageManagerService\'s shouldFilterApplication() / filterAppAccessLPr() to silently remove packages from query results. The following anomalies were detected: %1$s. These patterns are consistent with HMA being configured to hide packages from this app.</string>
     <string name="chk_reveny_hma_filter_reason_nd">All PackageManager sanity checks passed: always-visible system packages (android, permissioncontroller, settings) are present; self-visibility via getApplicationInfo and getPackageInfo is consistent; installed package count matches installed application count within tolerance.</string>
     <string name="chk_reveny_hma_filter_solution">In the Hide My Applist app, remove this application from the scope list, or disable the HMA Xposed module entirely and reboot.</string>
+
+    <!-- RevenyInspiredDetector: Check 5d – HMA /data/app directory scan -->
+    <string name="chk_reveny_hma_data_app_name">Hide My Applist Install Directory Found</string>
+    <string name="chk_reveny_hma_data_app_name_nd">Hide My Applist /data/app Scan</string>
+    <string name="chk_reveny_hma_data_app_desc">A Hide My Applist APK install directory was found directly in /data/app, bypassing all PackageManager hooks.</string>
+    <string name="chk_reveny_hma_data_app_desc_nd">No Hide My Applist APK install directories found under /data/app.</string>
+    <string name="chk_reveny_hma_data_app_reason">The Android installer always creates a physical directory for every installed app under /data/app/~~RANDOM==/PACKAGE-RANDOM==/ (Android 9+) or /data/app/PACKAGE-N/ (Android 7–8). HMA\'s PackageManager hook can hide the package from API queries, but it cannot delete this directory. The following matching entries were found: %1$s. Their presence confirms HMA is physically installed on this device.</string>
+    <string name="chk_reveny_hma_data_app_reason_nd">No directories matching Hide My Applist package names (com.tsng.hidemyapplist, cn.hidemyapplist) were found under /data/app.</string>
+    <string name="chk_reveny_hma_data_app_solution">Uninstall Hide My Applist via its own UI or via adb (pm uninstall com.tsng.hidemyapplist) and reboot.</string>
 
     <!-- RuruInspiredDetector: Check 6b – HMA current data directory -->
     <string name="chk_ruru_hma_dir_name">Hide My Applist Data Directory Detected</string>

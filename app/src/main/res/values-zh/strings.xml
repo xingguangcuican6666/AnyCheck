@@ -779,6 +779,24 @@
     <string name="chk_lspd_process_reason_nd">在 /proc 中未发现名为 \'lspd\' 的进程。</string>
     <string name="chk_lspd_process_solution">通过其管理器应用卸载 LSPosed 并重启以停止守护进程。</string>
 
+    <!-- XposedDetector：检查 24 — /data/app 扫描 LSPosed / HMA -->
+    <string name="chk_data_app_scan_name">通过 /data/app 扫描检测到钩子/隐藏框架</string>
+    <string name="chk_data_app_scan_name_nd">/data/app 包目录扫描</string>
+    <string name="chk_data_app_scan_desc">在 /data/app 中直接发现了 LSPosed、EdXposed 或 Hide My Applist 的安装目录，绕过了 PackageManager 钩子。</string>
+    <string name="chk_data_app_scan_desc_nd">在 /data/app 中未发现已知钩子或隐藏框架的包目录。</string>
+    <string name="chk_data_app_scan_reason">Android 安装程序会在 /data/app/~~RANDOM==/PACKAGE-RANDOM==/ (Android 9+) 或 /data/app/PACKAGE-N/ (Android 7–8) 下为每个安装的应用创建物理目录。DenyList、Shamiko、HMA 等 PackageManager 钩子可以对 API 查询隐藏包，但无法删除该磁盘目录。找到以下匹配条目：%1$s。</string>
+    <string name="chk_data_app_scan_reason_nd">在 /data/app 下未发现匹配 LSPosed、EdXposed 或 Hide My Applist 包名的目录。</string>
+    <string name="chk_data_app_scan_solution">通过应用自身的管理器或 adb（pm uninstall &lt;包名&gt;）卸载检测到的应用并重启。</string>
+
+    <!-- XposedDetector：检查 25 — 自身 OAT 状态 / LSPosed 产物检查 -->
+    <string name="chk_own_oat_name">检测到 OAT 去优化产物</string>
+    <string name="chk_own_oat_name_nd">自身 OAT 完整性检查</string>
+    <string name="chk_own_oat_desc">在此应用的编译代码目录中发现了意外文件或损坏的 OAT 头，表明存在钩子框架干扰。</string>
+    <string name="chk_own_oat_desc_nd">此应用的 OAT 目录仅包含预期产物，OAT magic 值有效。</string>
+    <string name="chk_own_oat_reason">LSPosed 及类似钩子框架通过去除 OAT 中已编译的机器码来使目标应用的方法去优化，强制 ART 解释器执行 DEX 字节码（从而触发钩子跳转器）。这会留下可观测的产物：OAT 目录中的额外 DEX/ODEX 文件、损坏的 OAT 头 magic，或 base.odex 缺失但 base.vdex 存在。检测到以下异常：%1$s。</string>
+    <string name="chk_own_oat_reason_nd">此应用的 oat/ 子目录仅包含标准产物（base.odex、base.vdex，可选 base.art），OAT 文件以预期的 magic 字节（6f 61 74 0a）开头，未检测到钩子框架去优化迹象。</string>
+    <string name="chk_own_oat_solution">禁用所有针对此应用的 LSPosed/Xposed 模块，然后重启以使 ART 重新干净编译 OAT 文件。</string>
+
 
     <!-- AdvancedRootDetector 字符串 -->
     <string name="chk_adv_su_path_name">发现 Su 二进制文件</string>

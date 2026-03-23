@@ -35,7 +35,9 @@ class XposedDetector(private val context: Context) {
         checkLSPosedFullStackTrace(),
         checkSMAPSInlineHooks(),
         checkZygiskModuleInjectionInMaps(),
-        checkLspdProcess()
+        checkLspdProcess(),
+        checkDataAppScanLSPosed(),
+        checkOwnOatLSPosedArtifacts()
     )
 
     /** Check 1: Xposed / LSPosed / EdXposed manager package names */
@@ -1286,7 +1288,211 @@ class XposedDetector(private val context: Context) {
         }
     }
 
+    /**
+     * Check 24: /data/app directory scan for LSPosed / EdXposed / HMA.
+     *
+     * DenyList / Shamiko / HMA can all hide packages from PackageManager
+     * queries, but none of them can remove the APK installation directories
+     * created by the Android installer in /data/app.  Scanning those
+     * directories gives us ground-truth evidence of package installation that
+     * bypasses all PM-level hooks.
+     *
+     * Android 9+ layout:  /data/app/~~RANDOM==/PACKAGE-RANDOM==/base.apk
+     * Android 7–8 layout: /data/app/PACKAGE-N/base.apk
+     */
+    private fun checkDataAppScanLSPosed(): DetectionResult {
+        val targets = arrayOf(
+            "org.lsposed.manager",
+            "io.github.lsposed.manager",
+            "com.lsposed.manager",
+            "org.meowcat.edxposed.manager",
+            "com.solohsu.android.edxp.manager",
+            "de.robv.android.xposed.installer",
+            // HMA is also included here so a single /data/app pass covers both
+            "com.tsng.hidemyapplist",
+            "com.tsng.hidemyapplist.debug",
+            "cn.hidemyapplist"
+        )
+        val found = scanDataAppForPackages(*targets)
+        return if (found.isNotEmpty()) {
+            DetectionResult(
+                id = "data_app_scan_lsposed",
+                name = context.getString(R.string.chk_data_app_scan_name),
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = context.getString(R.string.chk_data_app_scan_desc),
+                detailedReason = context.getString(
+                    R.string.chk_data_app_scan_reason,
+                    found.joinToString("; ")
+                ),
+                solution = context.getString(R.string.chk_data_app_scan_solution),
+                technicalDetail = found.joinToString("\n")
+            )
+        } else {
+            DetectionResult(
+                id = "data_app_scan_lsposed",
+                name = context.getString(R.string.chk_data_app_scan_name_nd),
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = context.getString(R.string.chk_data_app_scan_desc_nd),
+                detailedReason = context.getString(R.string.chk_data_app_scan_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
+            )
+        }
+    }
+
+    /**
+     * Check 25: OAT self-state — detect LSPosed artefacts in AnyCheck's own
+     * install directory.
+     *
+     * When LSPosed hooks methods in a target app it needs to deoptimise them
+     * (remove their compiled machine code so the DEX interpreter runs instead,
+     * allowing hook trampolines to fire).  To do this it writes an in-process
+     * profile hint and may drop extra DEX / ODEX / VDEX files into the target
+     * app's OAT directory.  On a clean device only `base.odex` + `base.vdex`
+     * (and optionally `base.art`) exist there.  Any unexpected extra file is a
+     * strong indicator of hook-framework interference.
+     *
+     * We also check whether our own OAT file starts with the standard ART
+     * magic bytes ("oat\n").  A modified header (e.g. zeroed or patched magic)
+     * is another indicator.
+     *
+     * The derivation path is:
+     *   applicationInfo.sourceDir
+     *     → e.g. /data/app/~~ABC==/com.anycheck.app-XYZ==/base.apk
+     *   oatDir = installDir/oat/<abi>/
+     */
+    private fun checkOwnOatLSPosedArtifacts(): DetectionResult {
+        val indicators = mutableListOf<String>()
+        try {
+            val sourceDir = context.applicationInfo.sourceDir
+            val installDir = File(sourceDir).parentFile
+                ?: return notDetectedOat()
+
+            // Try each ABI subdirectory that might exist
+            val abis = listOf("arm64", "arm", "x86_64", "x86")
+            for (abi in abis) {
+                val oatDir = File(installDir, "oat/$abi")
+                if (!oatDir.isDirectory) continue
+
+                val files = oatDir.listFiles() ?: continue
+                val fileNames = files.map { it.name }.toSet()
+
+                // Known-good artefacts produced by dex2oat
+                val expected = setOf("base.odex", "base.vdex", "base.art")
+                val unexpected = files.filter { it.name !in expected }
+                if (unexpected.isNotEmpty()) {
+                    indicators.add(
+                        "Unexpected files in oat/$abi: ${unexpected.joinToString { it.name }}"
+                    )
+                }
+
+                // Verify OAT magic bytes if the odex file exists
+                val odexFile = File(oatDir, "base.odex")
+                if (odexFile.exists() && odexFile.length() >= 4) {
+                    try {
+                        val magic = ByteArray(4)
+                        odexFile.inputStream().use { it.read(magic) }
+                        // Standard ART OAT magic: 'o' 'a' 't' '\n' (0x6f 0x61 0x74 0x0a)
+                        val valid = magic[0] == 0x6f.toByte() &&
+                            magic[1] == 0x61.toByte() &&
+                            magic[2] == 0x74.toByte() &&
+                            magic[3] == 0x0a.toByte()
+                        if (!valid) {
+                            indicators.add(
+                                "Unexpected OAT magic in oat/$abi/base.odex: " +
+                                    magic.joinToString("") { "%02x".format(it) }
+                            )
+                        }
+                    } catch (_: Exception) {}
+                }
+
+                // A missing odex but present vdex alone can indicate forced
+                // interpreter mode (which LSPosed uses on some Android versions)
+                if ("base.vdex" in fileNames && "base.odex" !in fileNames) {
+                    indicators.add(
+                        "oat/$abi has base.vdex but no base.odex — " +
+                            "possible forced-interpreter deoptimisation"
+                    )
+                }
+            }
+        } catch (_: Exception) {}
+
+        return if (indicators.isNotEmpty()) {
+            DetectionResult(
+                id = "own_oat_artifacts",
+                name = context.getString(R.string.chk_own_oat_name),
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_own_oat_desc),
+                detailedReason = context.getString(
+                    R.string.chk_own_oat_reason,
+                    indicators.joinToString("; ")
+                ),
+                solution = context.getString(R.string.chk_own_oat_solution),
+                technicalDetail = indicators.joinToString("\n")
+            )
+        } else {
+            notDetectedOat()
+        }
+    }
+
+    private fun notDetectedOat() = DetectionResult(
+        id = "own_oat_artifacts",
+        name = context.getString(R.string.chk_own_oat_name_nd),
+        category = DetectionCategory.XPOSED,
+        status = DetectionStatus.NOT_DETECTED,
+        riskLevel = RiskLevel.HIGH,
+        description = context.getString(R.string.chk_own_oat_desc_nd),
+        detailedReason = context.getString(R.string.chk_own_oat_reason_nd),
+        solution = context.getString(R.string.chk_no_action_needed)
+    )
+
     // ---- Utilities ----
+
+    /**
+     * Scans /data/app for installed package directories whose names match any
+     * of the supplied package name prefixes.  This reads the filesystem
+     * directly, bypassing PackageManager hooks (HMA, DenyList, Shamiko).
+     *
+     * Android 9+ layout:  /data/app/~~RANDOM==/PACKAGE-RANDOM==/
+     * Android 7–8 layout: /data/app/PACKAGE-N/
+     */
+    private fun scanDataAppForPackages(vararg packages: String): List<String> {
+        val found = mutableListOf<String>()
+        try {
+            val dataApp = File("/data/app")
+            val outerEntries = dataApp.listFiles() ?: return found
+            for (outer in outerEntries) {
+                if (!outer.isDirectory) continue
+                val outerName = outer.name
+                // Android 7–8 flat layout
+                for (pkg in packages) {
+                    if (outerName == pkg || outerName.startsWith("$pkg-")) {
+                        found.add(outer.path)
+                    }
+                }
+                // Android 9+ double-encoded layout: outer dir is ~~RANDOM==
+                if (outerName.startsWith("~~")) {
+                    try {
+                        val innerEntries = outer.listFiles() ?: continue
+                        for (inner in innerEntries) {
+                            if (!inner.isDirectory) continue
+                            for (pkg in packages) {
+                                if (inner.name == pkg || inner.name.startsWith("$pkg-")) {
+                                    found.add(inner.path)
+                                }
+                            }
+                        }
+                    } catch (_: Exception) {}
+                }
+            }
+        } catch (_: Exception) {}
+        return found
+    }
 
     private fun getSystemProperty(key: String): String {
         return try {
