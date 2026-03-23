@@ -8,9 +8,12 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <dlfcn.h>
+#include <sys/mman.h>
 #include <sys/system_properties.h>
 #include <android/log.h>
 #include <stdint.h>
+
+#include "hunter_elf.h"
 
 #define LOG_TAG "anycheck_native"
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
@@ -436,6 +439,103 @@ static std::vector<std::string> probeHMAPaths() {
         }
     }
 
+    return findings;
+}
+
+// ---------------------------------------------------------------------------
+// N10 — ELF symbol scan (Hunter-inspired)
+//
+// Uses the ElfImg class (adapted from HunterRuntime) to parse the .dynsym and
+// .symtab sections of every native library mapped into this process and search
+// for symbols belonging to known hook frameworks.
+//
+// Standard dlsym() only resolves exported symbols and is subject to GOT-level
+// interception; ElfImg reads the ELF sections directly from disk via mmap(2),
+// bypassing both restrictions.
+//
+// Targets: LSPlant, Frida (gum), Dobby, ShadowHook, Pine.
+// ---------------------------------------------------------------------------
+static std::vector<std::string> probeElfSymbols() {
+    // Known symbols exported (or left in .symtab) by hook frameworks.
+    static const char *HOOK_SYMS[] = {
+        // LSPlant (LSPosed's ART hook engine)
+        "lsplant::InitHooks",
+        "_ZN7lsplant9InitHooksEP7_JNIEnvRKNS_10InitInfoE",
+        "_ZN7lsplant4HookEP7_JNIEnvP10_jmethodIDS3_",
+        // Frida GumJS / Interceptor
+        "frida_agent_main",
+        "gum_interceptor_attach",
+        "gum_interceptor_replace",
+        "gum_module_find_export_by_name",
+        "gum_process_find_module_by_name",
+        // Dobby inline hook
+        "DobbyHook",
+        "DobbyDestroy",
+        "DobbyInstrumentRegisterVMT",
+        // ShadowHook
+        "shadowhook_hook_func_addr",
+        "shadowhook_unhook",
+        // Pine (Android ART hook)
+        "Pine_hook",
+        "PineHook",
+        nullptr
+    };
+
+    std::vector<std::string> findings;
+
+    // Collect unique SO paths from /proc/self/maps.
+    std::vector<std::string> soPaths;
+    {
+        int fd = open("/proc/self/maps", O_RDONLY | O_CLOEXEC);
+        if (fd < 0) return findings;
+        char buf[4096];
+        std::string partial;
+        ssize_t n;
+        while ((n = read(fd, buf, sizeof(buf) - 1)) > 0) {
+            buf[n] = '\0';
+            partial += buf;
+            size_t pos;
+            while ((pos = partial.find('\n')) != std::string::npos) {
+                std::string line = partial.substr(0, pos);
+                partial = partial.substr(pos + 1);
+                // Only consider executable or read-only pages with a path.
+                if (line.find("r-xp") == std::string::npos &&
+                    line.find("r--p") == std::string::npos) continue;
+                size_t sp = line.rfind(' ');
+                if (sp == std::string::npos) continue;
+                std::string path = line.substr(sp + 1);
+                if (path.size() < 4) continue;
+                // Only actual .so files on disk.
+                if (path.find(".so") == std::string::npos) continue;
+                // Deduplicate.
+                bool dup = false;
+                for (const auto &p : soPaths) { if (p == path) { dup = true; break; } }
+                if (!dup) soPaths.push_back(path);
+            }
+        }
+        close(fd);
+    }
+
+    // For each SO, use ElfImg to scan for known hook symbols.
+    for (const auto &soPath : soPaths) {
+        anycheck::elf::ElfImg img(soPath.c_str());
+        if (!img.valid()) continue;
+
+        for (int i = 0; HOOK_SYMS[i] != nullptr; ++i) {
+            AC_Elf_Addr addr = img.getSymAddress(HOOK_SYMS[i]);
+            if (addr != 0) {
+                // Extract the SO filename for the report.
+                size_t slash = soPath.rfind('/');
+                std::string soName = (slash != std::string::npos)
+                                         ? soPath.substr(slash + 1)
+                                         : soPath;
+                std::string entry = "elf_sym:" + soName + "!" + std::string(HOOK_SYMS[i]);
+                bool dup = false;
+                for (const auto &f : findings) { if (f == entry) { dup = true; break; } }
+                if (!dup) findings.push_back(entry);
+            }
+        }
+    }
     return findings;
 }
 
