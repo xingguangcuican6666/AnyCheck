@@ -591,6 +591,36 @@
     <string name="chk_broad_maps_reason_nd">No known root/hook library names were found in /proc/self/maps.</string>
     <string name="chk_broad_maps_solution">Remove the relevant root framework or module to prevent library injection.</string>
 
+    <!-- MagiskDetector: Check 23 — /proc/self/attr/prev SELinux label anomaly -->
+    <string name="chk_zygisk_prev_selinux_name">Zygisk Detected via SELinux Exec Chain</string>
+    <string name="chk_zygisk_prev_selinux_name_nd">Zygote SELinux Exec-Chain Label</string>
+    <string name="chk_zygisk_prev_selinux_desc">The SELinux label inherited from zygote\'s exec chain indicates Magisk/Zygisk modified the zygote startup.</string>
+    <string name="chk_zygisk_prev_selinux_desc_nd">The SELinux exec-chain label from /proc/self/attr/prev looks normal.</string>
+    <string name="chk_zygisk_prev_selinux_reason">Read /proc/self/attr/prev = \'%1$s\'. Normally zygote is exec\'d directly by init (u:r:init:s0), so any app process forked from zygote inherits prev=u:r:init:s0. With Magisk/Zygisk, a wrapper binary first runs under the zygote context (u:r:zygote:s0) and then exec\'s the real zygote, changing the inherited prev label. The observed label is anomalous and indicates Zygisk is present.</string>
+    <string name="chk_zygisk_prev_selinux_reason_nd">/proc/self/attr/prev = \'%1$s\'. The value is consistent with a clean zygote exec chain — zygote was started directly by init without a Magisk/Zygisk wrapper in between.</string>
+    <string name="chk_zygisk_prev_selinux_reason_error">Could not read /proc/self/attr/prev: %1$s</string>
+    <string name="chk_zygisk_prev_selinux_solution">Uninstall Magisk/Zygisk and reboot so zygote is exec\'d directly by init, restoring the normal SELinux exec-chain label.</string>
+
+    <!-- MagiskDetector: Check 24 — smaps Private_Dirty in system library relocation sections -->
+    <string name="chk_zygisk_smaps_dirty_name">Zygisk Hook Detected via smaps Dirty Pages</string>
+    <string name="chk_zygisk_smaps_dirty_name_nd">smaps Relocation-Section Dirty Pages</string>
+    <string name="chk_zygisk_smaps_dirty_desc">Private_Dirty pages were found in read-only relocation sections of system libraries, indicating Zygisk hook/unhook activity.</string>
+    <string name="chk_zygisk_smaps_dirty_desc_nd">No suspicious Private_Dirty pages found in system library relocation sections.</string>
+    <string name="chk_zygisk_smaps_dirty_reason">Found r--p pages with Private_Dirty &gt; 0 in: %1$s. Zygisk hooks system libraries (e.g. libandroid_runtime.so) by overwriting their GOT/relocation table (.data.rel.ro section). After the dynamic linker finishes, this section is remapped read-only (r--p). Zygisk\'s unhook in the forked app process writes original values back, creating private dirty pages in these otherwise clean r--p mappings — a definitive Zygisk fingerprint.</string>
+    <string name="chk_zygisk_smaps_dirty_reason_nd">All r--p pages in libandroid_runtime.so, libart.so, libdvm.so, and libnativehelper.so have Private_Dirty = 0 kB. No Zygisk hook/unhook activity detected via smaps.</string>
+    <string name="chk_zygisk_smaps_dirty_reason_error">Could not parse /proc/self/smaps: %1$s</string>
+    <string name="chk_zygisk_smaps_dirty_solution">Disable Zygisk in Magisk settings and reboot, or uninstall Magisk entirely to prevent relocation table patching.</string>
+
+    <!-- MagiskDetector: Check 25 — Magisk/Zygisk environment variable remnants -->
+    <string name="chk_magisk_env_remnants_name">Magisk Environment Variables Detected</string>
+    <string name="chk_magisk_env_remnants_name_nd">Magisk Environment Variable Remnants</string>
+    <string name="chk_magisk_env_remnants_desc">Magisk-injected environment variables were found in /proc/self/environ.</string>
+    <string name="chk_magisk_env_remnants_desc_nd">No Magisk environment variable remnants found in /proc/self/environ.</string>
+    <string name="chk_magisk_env_remnants_reason">Found in /proc/self/environ: %1$s. Magisk sets environment variables such as MAGISK_INJ_1, MAGISKTMP, and LD_PRELOAD during zygote injection. Although sanitize_environ() attempts to clean these up, the underlying stack memory may retain them. Their presence in the live environ array is a direct proof of Magisk injection.</string>
+    <string name="chk_magisk_env_remnants_reason_nd">No MAGISK_INJ_*, MAGISKTMP, or suspicious LD_PRELOAD entries were found in /proc/self/environ. The environment appears clean.</string>
+    <string name="chk_magisk_env_remnants_reason_error">Could not read /proc/self/environ: %1$s</string>
+    <string name="chk_magisk_env_remnants_solution">Uninstall Magisk and reboot. Alternatively, use Shamiko (a Magisk module) to ensure all injected environment variables are fully sanitized.</string>
+
     <!-- XposedDetector strings -->
     <string name="chk_xposed_packages_name">Xposed/LSPosed Manager Detected</string>
     <string name="chk_xposed_packages_name_nd">Xposed Manager Packages</string>

@@ -591,6 +591,36 @@
     <string name="chk_broad_maps_reason_nd">在 /proc/self/maps 中未发现已知的 root/钩子库名称。</string>
     <string name="chk_broad_maps_solution">移除相关的 root 框架或模块以防止库注入。</string>
 
+    <!-- MagiskDetector: Check 23 — /proc/self/attr/prev SELinux label anomaly -->
+    <string name="chk_zygisk_prev_selinux_name">通过 SELinux exec 链检测到 Zygisk</string>
+    <string name="chk_zygisk_prev_selinux_name_nd">Zygote SELinux exec 链标签</string>
+    <string name="chk_zygisk_prev_selinux_desc">从 zygote exec 链继承的 SELinux 标签表明 Magisk/Zygisk 修改了 zygote 启动过程。</string>
+    <string name="chk_zygisk_prev_selinux_desc_nd">/proc/self/attr/prev 中的 SELinux exec 链标签看起来正常。</string>
+    <string name="chk_zygisk_prev_selinux_reason">读取 /proc/self/attr/prev = \'%1$s\'。正常情况下，zygote 由 init（u:r:init:s0）直接 exec，因此从 zygote fork 出的任何应用进程都会继承 prev=u:r:init:s0。使用 Magisk/Zygisk 时，一个包装二进制文件首先在 zygote 上下文（u:r:zygote:s0）下运行，然后 exec 真正的 zygote，从而更改继承的 prev 标签。观测到的标签异常，表明 Zygisk 存在。</string>
+    <string name="chk_zygisk_prev_selinux_reason_nd">/proc/self/attr/prev = \'%1$s\'。该值与干净的 zygote exec 链一致——zygote 由 init 直接启动，中间没有 Magisk/Zygisk 包装器。</string>
+    <string name="chk_zygisk_prev_selinux_reason_error">无法读取 /proc/self/attr/prev：%1$s</string>
+    <string name="chk_zygisk_prev_selinux_solution">卸载 Magisk/Zygisk 并重启，使 zygote 由 init 直接 exec，恢复正常的 SELinux exec 链标签。</string>
+
+    <!-- MagiskDetector: Check 24 — smaps Private_Dirty in system library relocation sections -->
+    <string name="chk_zygisk_smaps_dirty_name">通过 smaps 脏页检测到 Zygisk 钩子</string>
+    <string name="chk_zygisk_smaps_dirty_name_nd">smaps 重定位节脏页检测</string>
+    <string name="chk_zygisk_smaps_dirty_desc">在系统库的只读重定位节中发现了私有脏页，表明存在 Zygisk 钩子/取消钩子活动。</string>
+    <string name="chk_zygisk_smaps_dirty_desc_nd">在系统库重定位节中未发现可疑的私有脏页。</string>
+    <string name="chk_zygisk_smaps_dirty_reason">在以下位置发现 Private_Dirty &gt; 0 的 r--p 页：%1$s。Zygisk 通过覆写系统库（如 libandroid_runtime.so）的 GOT/重定位表（.data.rel.ro 节）来进行钩挂。动态链接器完成后，该节被重新映射为只读（r--p）。Zygisk 在 fork 出的应用进程中的取消钩挂操作会将原始值写回，在这些本应干净的 r--p 映射中产生私有脏页——这是 Zygisk 的确定性指纹。</string>
+    <string name="chk_zygisk_smaps_dirty_reason_nd">libandroid_runtime.so、libart.so、libdvm.so 和 libnativehelper.so 中所有 r--p 页的 Private_Dirty 均为 0 kB。未通过 smaps 检测到 Zygisk 钩子/取消钩子活动。</string>
+    <string name="chk_zygisk_smaps_dirty_reason_error">无法解析 /proc/self/smaps：%1$s</string>
+    <string name="chk_zygisk_smaps_dirty_solution">在 Magisk 设置中禁用 Zygisk 并重启，或完全卸载 Magisk 以防止重定位表被修改。</string>
+
+    <!-- MagiskDetector: Check 25 — Magisk/Zygisk environment variable remnants -->
+    <string name="chk_magisk_env_remnants_name">检测到 Magisk 环境变量</string>
+    <string name="chk_magisk_env_remnants_name_nd">Magisk 环境变量残留</string>
+    <string name="chk_magisk_env_remnants_desc">在 /proc/self/environ 中发现了 Magisk 注入的环境变量。</string>
+    <string name="chk_magisk_env_remnants_desc_nd">在 /proc/self/environ 中未发现 Magisk 环境变量残留。</string>
+    <string name="chk_magisk_env_remnants_reason">在 /proc/self/environ 中发现：%1$s。Magisk 在 zygote 注入期间设置了 MAGISK_INJ_1、MAGISKTMP 和 LD_PRELOAD 等环境变量。尽管 sanitize_environ() 尝试清理这些变量，但底层栈内存可能仍保留它们。这些变量出现在实时 environ 数组中直接证明了 Magisk 注入。</string>
+    <string name="chk_magisk_env_remnants_reason_nd">在 /proc/self/environ 中未发现 MAGISK_INJ_*、MAGISKTMP 或可疑的 LD_PRELOAD 条目。环境变量看起来是干净的。</string>
+    <string name="chk_magisk_env_remnants_reason_error">无法读取 /proc/self/environ：%1$s</string>
+    <string name="chk_magisk_env_remnants_solution">卸载 Magisk 并重启。或者，使用 Shamiko（一个 Magisk 模块）确保所有注入的环境变量都被完全清除。</string>
+
     <!-- XposedDetector strings -->
     <string name="chk_xposed_packages_name">已检测到 Xposed/LSPosed 管理器</string>
     <string name="chk_xposed_packages_name_nd">Xposed 管理器软件包</string>
