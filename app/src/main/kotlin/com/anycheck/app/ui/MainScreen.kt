@@ -210,6 +210,7 @@ private fun IdleScreen(onStartDetection: () -> Unit, modifier: Modifier = Modifi
             FeatureRow(stringResource(R.string.feature_xposed))
             FeatureRow(stringResource(R.string.feature_advanced))
             FeatureRow(stringResource(R.string.feature_extra))
+            FeatureRow(stringResource(R.string.feature_rikkax))
         }
         Spacer(modifier = Modifier.height(32.dp))
         Button(

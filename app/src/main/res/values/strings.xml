@@ -94,6 +94,7 @@
     <string name="feature_xposed">Xposed / LSPosed hook detection (13 checks)</string>
     <string name="feature_advanced">Advanced root checks (19 checks)</string>
     <string name="feature_extra">Extra: mounts, capabilities, bypass modules (15 checks)</string>
+    <string name="feature_rikkax">RikkaX: OEM system-property checks (10 checks)</string>
 
     <!-- Misc -->
     <string name="app_description">AnyCheck detects root management frameworks (Magisk, KernelSU, APatch) using multiple detection vectors.</string>
@@ -146,6 +147,7 @@
     <string name="progress_rootbeer">RootBeerFresh checks complete</string>
     <string name="progress_ruru">Ruru-inspired checks complete</string>
     <string name="progress_integrity">System integrity checks complete</string>
+    <string name="progress_rikkax">RikkaX checks complete</string>
     <string name="progress_format">%1$s (%2$d/%3$d)</string>
 
     <!-- Common check strings -->
@@ -1476,6 +1478,137 @@
     <string name="chk_ruru_pm_api_desc_nd">PackageManager APIs return consistent results.</string>
     <string name="chk_ruru_pm_api_reason_nd">getApplicationInfo and sundry PM APIs (getPackageUid, getInstallSourceInfo, getLaunchIntentForPackage) agree on visibility for all checked packages.</string>
 
+    <!-- RikkaXInspiredDetector: Check 1 – MIUI Root Access -->
+    <string name="chk_rikkax_miui_root_name_nd">MIUI Root Access</string>
+    <string name="chk_rikkax_miui_root_desc_nd">Device is not running MIUI; check skipped.</string>
+    <string name="chk_rikkax_miui_root_reason_nd">The persist.sys.root_access property is only meaningful on MIUI devices. This device does not expose the MIUI version property, so the check is not applicable.</string>
+    <string name="chk_rikkax_miui_root_name_full">MIUI Root Access – Full (Apps + ADB)</string>
+    <string name="chk_rikkax_miui_root_desc_full">MIUI has granted root access to both apps and ADB (persist.sys.root_access=3).</string>
+    <string name="chk_rikkax_miui_root_reason_full">On MIUI %1$s, persist.sys.root_access is set to 3, which means the built-in MIUI root manager grants su access to all requesting apps AND ADB sessions. Any app may request and obtain full root privileges.</string>
+    <string name="chk_rikkax_miui_root_name_apps">MIUI Root Access – Apps Only</string>
+    <string name="chk_rikkax_miui_root_desc_apps">MIUI has granted root access to apps only (persist.sys.root_access=2).</string>
+    <string name="chk_rikkax_miui_root_reason_apps">On MIUI %1$s, persist.sys.root_access is set to 2, which means the built-in MIUI root manager grants su access to apps but not to ADB.</string>
+    <string name="chk_rikkax_miui_root_name_adb">MIUI Root Access – ADB Only</string>
+    <string name="chk_rikkax_miui_root_desc_adb">MIUI has granted root access to ADB only (persist.sys.root_access=1).</string>
+    <string name="chk_rikkax_miui_root_reason_adb">On MIUI %1$s, persist.sys.root_access is set to 1, which means the built-in MIUI root manager allows ADB root shells but blocks root for apps.</string>
+    <string name="chk_rikkax_miui_root_solution">Disable MIUI root access via Settings → Developer Options → Root Access, or uninstall any root-management application.</string>
+    <string name="chk_rikkax_miui_root_name_miui_nd">MIUI Root Access Disabled</string>
+    <string name="chk_rikkax_miui_root_desc_miui_nd">MIUI root access is disabled on this device.</string>
+    <string name="chk_rikkax_miui_root_reason_miui_nd">Device is running MIUI %1$s. persist.sys.root_access=%2$s (0 = disabled). No built-in MIUI root access is active.</string>
+
+    <!-- RikkaXInspiredDetector: Check 2 – LineageOS / CyanogenMod ROM -->
+    <string name="chk_rikkax_lineage_name">%1$s Custom ROM Detected</string>
+    <string name="chk_rikkax_lineage_desc">%1$s ROM properties found on this device.</string>
+    <string name="chk_rikkax_lineage_reason">Device is running %1$s %2$s (device codename: %3$s). Custom AOSP ROMs like LineageOS may ship with optional built-in root (via an su add-on), relaxed SELinux policies, or unlocked bootloader settings compared with stock firmware.</string>
+    <string name="chk_rikkax_lineage_solution">Use the official %1$s su add-on (or Magisk) only if root is intentionally required. Ensure the bootloader lock policy is understood before deploying on production devices.</string>
+    <string name="chk_rikkax_lineage_name_nd">LineageOS / CyanogenMod ROM</string>
+    <string name="chk_rikkax_lineage_desc_nd">No LineageOS or CyanogenMod ROM properties found.</string>
+    <string name="chk_rikkax_lineage_reason_nd">Neither ro.lineage.version nor ro.cm.version is set; device appears to be running stock or an unrelated custom ROM.</string>
+
+    <!-- RikkaXInspiredDetector: Check 3 – OEM Bootloader Unlock Allowed -->
+    <string name="chk_rikkax_oem_unlock_name">OEM Bootloader Unlock Enabled</string>
+    <string name="chk_rikkax_oem_unlock_desc">The OEM unlock option is currently enabled in Developer Options (sys.oem_unlock_allowed=1).</string>
+    <string name="chk_rikkax_oem_unlock_reason">sys.oem_unlock_allowed=1 indicates the OEM bootloader unlock toggle is active. While this alone does not mean the bootloader has already been unlocked, it is a prerequisite for bootloader unlocking and a prerequisite for many root frameworks. On some devices the property can only be set after the bootloader is already unlocked.</string>
+    <string name="chk_rikkax_oem_unlock_solution">If you do not intend to unlock the bootloader, disable the OEM unlock toggle in Settings → Developer Options → OEM unlocking.</string>
+    <string name="chk_rikkax_oem_unlock_name_nd">OEM Bootloader Unlock</string>
+    <string name="chk_rikkax_oem_unlock_desc_nd">OEM bootloader unlock is not enabled in Developer Options.</string>
+    <string name="chk_rikkax_oem_unlock_reason_nd">sys.oem_unlock_allowed=%1$s (not 1). The OEM unlock toggle is not active; bootloader unlock via developer settings is not configured.</string>
+
+    <!-- RikkaXInspiredDetector: Check 4 – Samsung Knox Warranty Bit -->
+    <string name="chk_rikkax_knox_name_na">Samsung Knox Warranty Check</string>
+    <string name="chk_rikkax_knox_desc_na">Check not applicable: device is not manufactured by Samsung.</string>
+    <string name="chk_rikkax_knox_reason_na">The ro.boot.warranty_bit property is Samsung-specific. Build.MANUFACTURER=%1$s, which is not Samsung; this check does not apply.</string>
+    <string name="chk_rikkax_knox_name">Samsung Knox Warranty Bit Tripped</string>
+    <string name="chk_rikkax_knox_desc">The Samsung Knox warranty counter has been tripped (ro.boot.warranty_bit=1), indicating that unofficial firmware or root has been installed.</string>
+    <string name="chk_rikkax_knox_reason">ro.boot.warranty_bit=1. Samsung permanently sets this fuse-backed bit when an unofficial ROM, custom recovery, or root tool modifies the device. The Knox warranty is invalidated and Samsung Pay / Knox-dependent apps may refuse to work. This is a strong, hardware-backed indicator that root or custom firmware has been present.</string>
+    <string name="chk_rikkax_knox_solution">The Knox warranty bit is hardware-backed and cannot be reset. If Knox-dependent features are required, the only option is device replacement or a full factory RMA with Samsung.</string>
+    <string name="chk_rikkax_knox_name_nd">Samsung Knox Warranty Bit</string>
+    <string name="chk_rikkax_knox_desc_nd">Samsung Knox warranty bit is not tripped; no evidence of unofficial firmware.</string>
+    <string name="chk_rikkax_knox_reason_nd">ro.boot.warranty_bit is 0 or unset on this Samsung device, indicating that no unofficial ROM or root installation has tripped the Knox warranty counter.</string>
+
+    <!-- RikkaXInspiredDetector: Check 5 – Huawei EMUI / HarmonyOS -->
+    <string name="chk_rikkax_emui_name_eng">Huawei EMUI/HarmonyOS Engineering Build Detected</string>
+    <string name="chk_rikkax_emui_desc_eng">Huawei/Honor device is running an engineering or userdebug build type, which enables elevated access.</string>
+    <string name="chk_rikkax_emui_reason_eng">Device is running %1$s. ro.product.build.type=%2$s. Engineering and userdebug Huawei builds ship with root access enabled by default and may have relaxed security policies.</string>
+    <string name="chk_rikkax_emui_solution">Avoid using engineering or userdebug builds on production devices. Reflash with an official Huawei user build if elevated access is unintended.</string>
+    <string name="chk_rikkax_emui_name_info">%1$s Device Detected</string>
+    <string name="chk_rikkax_emui_desc_info">Device is identified as a Huawei/Honor device running EMUI or HarmonyOS.</string>
+    <string name="chk_rikkax_emui_reason_info">ro.build.version.emui or ro.build.version.hmos identifies this device as %1$s. Huawei/Honor devices use a proprietary ROM with distinct security model. No elevated build type was detected.</string>
+    <string name="chk_rikkax_emui_solution_info">No action required for standard EMUI/HarmonyOS user builds. Review other checks for root or unlock indicators.</string>
+    <string name="chk_rikkax_emui_name_nd">Huawei EMUI / HarmonyOS</string>
+    <string name="chk_rikkax_emui_desc_nd">No EMUI or HarmonyOS properties detected; device is not a Huawei/Honor device.</string>
+    <string name="chk_rikkax_emui_reason_nd">ro.build.version.emui and ro.build.version.hmos are both empty, and Build.MANUFACTURER does not indicate Huawei or Honor.</string>
+
+    <!-- RikkaXInspiredDetector: Check 6 – Flyme / Meizu OS -->
+    <string name="chk_rikkax_flyme_name">Flyme OS (Meizu) Device Detected</string>
+    <string name="chk_rikkax_flyme_desc">Device is identified as running Flyme OS (Meizu).</string>
+    <string name="chk_rikkax_flyme_reason">Build.FINGERPRINT or Build.DISPLAY contains the "Flyme" identifier (%1$s), consistent with the detection method used by the RikkaX DeviceCompatibility library (isFlyme()). Meizu Flyme OS is a proprietary Android ROM with its own app store and permission model.</string>
+    <string name="chk_rikkax_flyme_solution">No action required for standard Flyme builds. Review other checks if root or unlock indicators are present.</string>
+    <string name="chk_rikkax_flyme_name_pass">Flyme OS (Meizu) – Official Build</string>
+    <string name="chk_rikkax_flyme_desc_pass">Device is running official Flyme OS (Meizu). No security concern from the OS itself.</string>
+    <string name="chk_rikkax_flyme_reason_pass">Build identifier %1$s confirms this is a Meizu device running Flyme OS. This is the official Meizu ROM and poses no additional security risk by itself. Review other checks for root or bootloader status.</string>
+    <string name="chk_rikkax_flyme_name_nd">Flyme / Meizu OS</string>
+    <string name="chk_rikkax_flyme_desc_nd">No Flyme OS indicators detected; device is not a Meizu device.</string>
+    <string name="chk_rikkax_flyme_reason_nd">Build.MANUFACTURER, Build.FINGERPRINT, and Build.DISPLAY contain no "Flyme" or "Meizu" markers, and ro.flyme.version is empty.</string>
+
+    <!-- RikkaXInspiredDetector: Check 7 – ColorOS / OxygenOS / OnePlus -->
+    <string name="chk_rikkax_color_os_name">%1$s ROM Detected</string>
+    <string name="chk_rikkax_color_os_desc">Device is identified as running ColorOS or OxygenOS (Oppo/Realme/OnePlus).</string>
+    <string name="chk_rikkax_color_os_reason">ro.build.version.opporom or ro.oxygen.version identifies this device as running %1$s. These are proprietary ROMs from BBK Electronics (Oppo/Realme/OnePlus). While standard builds require normal bootloader unlocking for root, some regional builds may have different security defaults.</string>
+    <string name="chk_rikkax_color_os_solution">No action required for standard user builds. Review other checks for bootloader unlock or root indicators specific to this device.</string>
+    <string name="chk_rikkax_color_os_name_pass">%1$s – Official Build</string>
+    <string name="chk_rikkax_color_os_desc_pass">Device is running an official Oppo/Realme/OnePlus ROM. No security concern from the OS itself.</string>
+    <string name="chk_rikkax_color_os_reason_pass">ROM identified as %1$s. This is the official vendor ROM and poses no additional security risk by itself. Review other checks for bootloader unlock or root indicators.</string>
+    <string name="chk_rikkax_color_os_name_nd">ColorOS / OxygenOS / OnePlus ROM</string>
+    <string name="chk_rikkax_color_os_desc_nd">No ColorOS or OxygenOS properties detected.</string>
+    <string name="chk_rikkax_color_os_reason_nd">ro.build.version.opporom and ro.oxygen.version are both empty; Build.MANUFACTURER does not indicate Oppo, Realme, or OnePlus.</string>
+
+    <!-- RikkaXInspiredDetector: Check 8 – MIUI HyperOS / MIUI EU Region -->
+    <string name="chk_rikkax_miui_region_name_nd">MIUI / HyperOS Region</string>
+    <string name="chk_rikkax_miui_region_desc_nd">Device is not running MIUI or HyperOS; region check skipped.</string>
+    <string name="chk_rikkax_miui_region_reason_nd">Neither ro.miui.ui.version.name nor ro.mi.os.version.name is set; this is not a Xiaomi/MIUI/HyperOS device.</string>
+    <string name="chk_rikkax_miui_region_name_eu">MIUI EU / Third-Party MIUI Port Detected</string>
+    <string name="chk_rikkax_miui_region_desc_eu">Device appears to be running a third-party MIUI EU ROM or a non-Xiaomi MIUI port.</string>
+    <string name="chk_rikkax_miui_region_reason_eu">Device reports %1$s with ro.miui.region=%2$s. MIUI EU is a community-maintained port that re-packages official MIUI builds without Xiaomi\'s China-region services. Such ROMs are not signed by Xiaomi and may include modified system permissions, removed telemetry, or altered root policies compared with official firmware.</string>
+    <string name="chk_rikkax_miui_region_solution_eu">Verify that the ROM source is trustworthy. Third-party MIUI ports may include unreviewed modifications. Consider flashing official Xiaomi firmware if integrity is required.</string>
+    <string name="chk_rikkax_miui_region_name_official">%1$s Official ROM Detected</string>
+    <string name="chk_rikkax_miui_region_desc_official">Device is running an official Xiaomi MIUI or HyperOS ROM.</string>
+    <string name="chk_rikkax_miui_region_reason_official">Device reports %1$s in region %2$s (official Xiaomi region). The ROM appears to be an official Xiaomi build. Review the MIUI root access check for root status.</string>
+    <string name="chk_rikkax_miui_region_solution_official">No action required for this check. Refer to the MIUI Root Access check for root grant status.</string>
+    <string name="chk_rikkax_miui_region_name_pass">%1$s – Official Build</string>
+    <string name="chk_rikkax_miui_region_desc_pass">Device is running an official Xiaomi MIUI or HyperOS ROM. No security concern from the OS itself.</string>
+    <string name="chk_rikkax_miui_region_reason_pass">Device reports %1$s in region %2$s (official Xiaomi region). The ROM appears to be an official Xiaomi build and poses no additional security risk by itself. Review the MIUI root access check for root grant status.</string>
+
+    <!-- RikkaXInspiredDetector: Check 9 – Seccomp Status -->
+    <string name="chk_rikkax_seccomp_name_zero">Seccomp Disabled (Kernel Anomaly)</string>
+    <string name="chk_rikkax_seccomp_desc_zero">Seccomp is disabled (value=0) in /proc/self/status – kernel does not enforce syscall filtering.</string>
+    <string name="chk_rikkax_seccomp_reason_zero">The Seccomp field in /proc/self/status is 0, which means the kernel does not support or has disabled the Secure Computing (Seccomp) mechanism. On Android 5.0+, all app processes should run in Seccomp filter mode (value=2). A value of 0 indicates a stripped or modified kernel that has removed Seccomp support — a common characteristic of older or insecure custom kernels shipped with some root solutions. This weakens process isolation and syscall filtering.</string>
+    <string name="chk_rikkax_seccomp_solution_zero">Do not use custom kernels that disable Seccomp. Reflash the stock kernel or a kernel that supports Seccomp filter mode. If you are using a root framework, check if your kernel build includes Seccomp support (CONFIG_SECCOMP_FILTER).</string>
+    <string name="chk_rikkax_seccomp_name_nd">Seccomp Enabled</string>
+    <string name="chk_rikkax_seccomp_desc_nd">Seccomp is active (value=%1$d). Process syscall filtering is enforced.</string>
+    <string name="chk_rikkax_seccomp_reason_nd">Seccomp=%1$d in /proc/self/status. Value 2 (filter mode) is standard on Android 5.0+. Value 1 (strict mode) is uncommon but valid. Seccomp is functioning, meaning the kernel is enforcing per-process syscall filtering as expected.</string>
+    <string name="chk_rikkax_seccomp_name_missing">Seccomp Field Missing</string>
+    <string name="chk_rikkax_seccomp_desc_missing">The Seccomp field was not found in /proc/self/status.</string>
+    <string name="chk_rikkax_seccomp_reason_missing">The Seccomp line was expected in /proc/self/status but was absent. This may indicate an old Linux kernel (pre-3.5) that predates Seccomp, or a modified kernel that strips the status field. Cannot confirm Seccomp is active.</string>
+    <string name="chk_rikkax_seccomp_solution_missing">Verify the kernel version supports Seccomp (Linux 3.5+). If running a custom kernel, check that CONFIG_SECCOMP and CONFIG_SECCOMP_FILTER are enabled.</string>
+    <string name="chk_rikkax_seccomp_name_error">Seccomp Status Check Error</string>
+    <string name="chk_rikkax_seccomp_desc_error">Could not read /proc/self/status to check Seccomp status.</string>
+    <string name="chk_rikkax_seccomp_reason_error">An exception occurred while reading /proc/self/status. This is unexpected as this file should always be readable by the current process.</string>
+    <string name="chk_rikkax_seccomp_solution_error">Retry the detection. If the error persists, the device may have unusual /proc filesystem restrictions.</string>
+
+    <!-- RikkaXInspiredDetector: Check 10 – Core Crack / PM Integrity -->
+    <string name="chk_rikkax_core_crack_name">Core Crack / PM Integrity Compromised</string>
+    <string name="chk_rikkax_core_crack_desc">Evidence of core crack (Lucky Patcher / CorePatch framework patch) or PackageManager signature-bypass detected.</string>
+    <string name="chk_rikkax_core_crack_reason">Core crack (核心破解) patches the Android framework (PackageManagerService) to bypass APK signature verification, allowing apps with mismatched or forged signatures to be installed. The following indicators were detected: %1$s.</string>
+    <string name="chk_rikkax_core_crack_solution">Remove Lucky Patcher, CorePatch, and any associated billing-bypass or signature-bypass packages. If system framework files have been patched, reflash the stock firmware. If CorePatch (an LSPosed module) is installed, disable or remove it. Review all installed apps for apps holding android.permission.INSTALL_PACKAGES that are not system packages.</string>
+    <string name="chk_rikkax_core_crack_name_nd">Core Crack / PM Integrity</string>
+    <string name="chk_rikkax_core_crack_desc_nd">No core crack or PackageManager integrity anomalies detected.</string>
+    <string name="chk_rikkax_core_crack_reason_nd">All 12 sub-checks passed: (A) pm.checkSignatures("android", ourApp) returns SIGNATURE_NO_MATCH as expected; (B) manual cert comparison is consistent with pm.checkSignatures(); (C) framework files (services.jar/odex/vdex) are not newer than the OS build date; (D) no Lucky Patcher framework backup files found; (E) Google Play billing service is not hijacked; (F) no known Lucky Patcher or CorePatch packages or system paths found; (G) no Lucky Patcher data directories found; (H) no non-system apps hold android.permission.INSTALL_PACKAGES; (I) cross-package checkSignatures between platform-signed and Google-signed packages returns SIGNATURE_NO_MATCH as expected; (J) GET_SIGNING_CERTIFICATES and GET_SIGNATURES return consistent certificate data (API 28+); (K) APK on-disk certificate matches PM-reported certificate; (L) no Lucky Patcher or CorePatch Magisk modules found under /data/adb/modules/.</string>
+
+    <!-- RikkaXInspiredDetector: EMUI pass strings -->
+    <string name="chk_rikkax_emui_name_pass">%1$s – Official Build</string>
+    <string name="chk_rikkax_emui_desc_pass">Device is running official EMUI or HarmonyOS (user build). No security concern from the OS itself.</string>
+    <string name="chk_rikkax_emui_reason_pass">ROM identified as %1$s (user build type). This is the official Huawei/Honor ROM and poses no additional security risk by itself. Review other checks for root or bootloader status.</string>
 
     <!-- Shared error detail format strings -->
     <string name="err_detail_failed">Failed: %1$s</string>
