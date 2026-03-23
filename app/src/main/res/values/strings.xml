@@ -1699,4 +1699,31 @@
     <string name="chk_native_lsposed_reason_nd">All native probes passed: no LSPosed libs in maps, no dlopen match, no exported XposedBridge symbols, no /data/misc/lspd found via stat(), native bridge property unset, no suspicious smaps dirty pages.</string>
     <string name="chk_native_lsposed_solution">Disable all LSPosed modules targeting this app and reboot.</string>
 
+    <!-- Check 28: Native ODEX self-scan -->
+    <string name="chk_native_odex_hooks_name">Hook Marker Found in Own ODEX (Native)</string>
+    <string name="chk_native_odex_hooks_name_nd">Native ODEX Self-Scan</string>
+    <string name="chk_native_odex_hooks_desc">LSPosed / hook-framework string markers were found inside this app\'s own compiled ODEX file via raw native syscall scan.</string>
+    <string name="chk_native_odex_hooks_desc_nd">No hook-framework markers found in this app\'s compiled ODEX file.</string>
+    <string name="chk_native_odex_hooks_reason">Native scan of base.odex found: %1$s. When LSPosed (via Zygisk/Riru) is active in the system, its framework strings can be embedded in an app\'s compiled OAT/ODEX artifact during ART compilation or deoptimisation. This check uses raw open(2)/read(2) syscalls to bypass any Java-level file I/O hooks, making detection reliable even when LSPosed targets this app.</string>
+    <string name="chk_native_odex_hooks_reason_nd">Native raw scan of base.odex found no LSPosed, LSPlant, EdXposed, Dobby, SandHook, or Pine string markers. The compiled ODEX artifact appears clean.</string>
+    <string name="chk_native_odex_hooks_solution">Disable LSPosed / Xposed modules targeting this app and reboot so ART recompiles the ODEX cleanly. If Dobby/Pine is present, identify and remove the injected native library.</string>
+
+    <!-- Check 29: Native inline-hook trampoline detection -->
+    <string name="chk_native_inline_hooks_name">Inline Hook Trampoline Detected (Native)</string>
+    <string name="chk_native_inline_hooks_name_nd">Native Inline Hook Detection</string>
+    <string name="chk_native_inline_hooks_desc">A hook trampoline was detected at the start of a core system function, indicating Frida, Dobby, ShadowHook, or a similar native hook framework is active.</string>
+    <string name="chk_native_inline_hooks_desc_nd">No hook trampoline patterns detected in core libc/libdl function prologues.</string>
+    <string name="chk_native_inline_hooks_reason">Native inline-hook probe found: %1$s. Inline hooking replaces the first instruction(s) of a target function with a branch trampoline (e.g. ARM64 LDR Xn, #8; BR Xn or x86-64 JMP [RIP+0]) that redirects execution to attacker-controlled code. This is used by Frida gadget, Dobby, ShadowHook, and Pine to intercept native function calls without modifying shared libraries on disk.</string>
+    <string name="chk_native_inline_hooks_reason_nd">The first bytes of open, read, write, mmap, dlopen, and dlsym match standard function-prologue patterns. No ARM64/ARM32/x86 hook trampolines detected.</string>
+    <string name="chk_native_inline_hooks_solution">Remove Frida gadget, Dobby, ShadowHook, Pine, or any other native inline-hook library injected into this process. Check for Zygisk/Riru modules that perform native function hooking.</string>
+
+    <!-- HMA native detection (Check 5e in RevenyInspiredDetector) -->
+    <string name="chk_hma_native_name">Hide My Applist Detected (Native)</string>
+    <string name="chk_hma_native_name_nd">Native Hide My Applist Detection</string>
+    <string name="chk_hma_native_desc">Hide My Applist data directories or library mappings were found via native C++ probes (stat/readdir/maps scan).</string>
+    <string name="chk_hma_native_desc_nd">No Hide My Applist data directories or library mappings found via native probes.</string>
+    <string name="chk_hma_native_reason">Native probes found HMA indicators: %1$s. These findings use raw stat(2) and readdir(3) calls that cannot be intercepted by HMA\'s Java-layer PackageManager hook. A matching /data/misc/hide_my_applist* directory (v3+ random suffix) or library mapping confirms HMA is physically present on the device.</string>
+    <string name="chk_hma_native_reason_nd">Raw stat() and readdir() scans found no HMA data directories under /data/misc/ or /data/user_de/0/, and /proc/self/maps contains no HMA library mappings.</string>
+    <string name="chk_hma_native_solution">Uninstall Hide My Applist and disable its LSPosed module, then reboot.</string>
+
 </resources>

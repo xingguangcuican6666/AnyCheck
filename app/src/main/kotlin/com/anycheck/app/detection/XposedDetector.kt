@@ -39,7 +39,9 @@ class XposedDetector(private val context: Context) {
         checkDataAppScanLSPosed(),
         checkOwnOatLSPosedArtifacts(),
         checkLSPlantNativeLib(),
-        checkNativeLSPosedDetection()
+        checkNativeLSPosedDetection(),
+        checkNativeOdexHooks(),
+        checkNativeInlineHooks()
     )
 
     /** Check 1: Xposed / LSPosed / EdXposed manager package names */
@@ -1567,6 +1569,64 @@ class XposedDetector(private val context: Context) {
                 riskLevel = RiskLevel.CRITICAL,
                 description = context.getString(R.string.chk_native_lsposed_desc_nd),
                 detailedReason = context.getString(R.string.chk_native_lsposed_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
+            )
+        }
+    }
+
+    /** Check 28: Native ODEX self-scan (bypasses Java-layer file I/O hooks) */
+    private fun checkNativeOdexHooks(): DetectionResult {
+        val findings = NativeDetector.detectOdexHooks()
+        return if (findings.isNotEmpty()) {
+            DetectionResult(
+                id = "native_odex_hooks",
+                name = context.getString(R.string.chk_native_odex_hooks_name),
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_native_odex_hooks_desc),
+                detailedReason = context.getString(R.string.chk_native_odex_hooks_reason, findings),
+                solution = context.getString(R.string.chk_native_odex_hooks_solution),
+                technicalDetail = findings
+            )
+        } else {
+            DetectionResult(
+                id = "native_odex_hooks",
+                name = context.getString(R.string.chk_native_odex_hooks_name_nd),
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_native_odex_hooks_desc_nd),
+                detailedReason = context.getString(R.string.chk_native_odex_hooks_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
+            )
+        }
+    }
+
+    /** Check 29: Native inline-hook trampoline detection */
+    private fun checkNativeInlineHooks(): DetectionResult {
+        val findings = NativeDetector.detectInlineHooks()
+        return if (findings.isNotEmpty()) {
+            DetectionResult(
+                id = "native_inline_hooks",
+                name = context.getString(R.string.chk_native_inline_hooks_name),
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = context.getString(R.string.chk_native_inline_hooks_desc),
+                detailedReason = context.getString(R.string.chk_native_inline_hooks_reason, findings),
+                solution = context.getString(R.string.chk_native_inline_hooks_solution),
+                technicalDetail = findings
+            )
+        } else {
+            DetectionResult(
+                id = "native_inline_hooks",
+                name = context.getString(R.string.chk_native_inline_hooks_name_nd),
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = context.getString(R.string.chk_native_inline_hooks_desc_nd),
+                detailedReason = context.getString(R.string.chk_native_inline_hooks_reason_nd),
                 solution = context.getString(R.string.chk_no_action_needed)
             )
         }

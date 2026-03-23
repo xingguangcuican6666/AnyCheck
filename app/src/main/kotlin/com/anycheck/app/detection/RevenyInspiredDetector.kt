@@ -28,6 +28,7 @@ class RevenyInspiredDetector(private val context: Context) {
         checkHmaBinderProbe(),
         checkHmaFilterBehavior(),
         checkHmaDataAppScan(),
+        checkHMANativeDetection(),
         checkMountInconsistency(),
         checkAddonDOrInstallRecovery(),
         checkSystemAppsAbsence(),
@@ -910,6 +911,42 @@ class RevenyInspiredDetector(private val context: Context) {
                 riskLevel = RiskLevel.HIGH,
                 description = context.getString(R.string.chk_reveny_hma_data_app_desc_nd),
                 detailedReason = context.getString(R.string.chk_reveny_hma_data_app_reason_nd),
+                solution = context.getString(R.string.no_action_required)
+            )
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Check 5e: HMA native detection
+    //
+    // Runs the native C++ HMA probe (N9) which uses raw stat(2)/opendir(3)/
+    // readdir(3) and a /proc/self/maps scan to find HMA data directories,
+    // miscellaneous files, and library mappings.  This cannot be intercepted
+    // by HMA's own Java-layer PackageManager hook.
+    // -------------------------------------------------------------------------
+    private fun checkHMANativeDetection(): DetectionResult {
+        val findings = NativeDetector.detectHMANative()
+        return if (findings.isNotEmpty()) {
+            DetectionResult(
+                id = "hma_native_detect",
+                name = context.getString(R.string.chk_hma_native_name),
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_hma_native_desc),
+                detailedReason = context.getString(R.string.chk_hma_native_reason, findings),
+                solution = context.getString(R.string.chk_hma_native_solution),
+                technicalDetail = findings
+            )
+        } else {
+            DetectionResult(
+                id = "hma_native_detect",
+                name = context.getString(R.string.chk_hma_native_name_nd),
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_hma_native_desc_nd),
+                detailedReason = context.getString(R.string.chk_hma_native_reason_nd),
                 solution = context.getString(R.string.no_action_required)
             )
         }
