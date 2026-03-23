@@ -348,18 +348,16 @@ class AdvancedRootDetector(private val context: Context) {
         val found = mutableListOf<String>()
         return try {
             val procDir = File("/proc")
-            procDir.listFiles()?.forEach { pidDir ->
-                if (pidDir.isDirectory && pidDir.name.all { it.isDigit() }) {
-                    try {
-                        val cmdline = File(pidDir, "cmdline").readText()
-                            .replace("\u0000", " ").trim()
-                        fridaProcessNames.forEach { name ->
-                            if (cmdline.contains(name, ignoreCase = true) && !found.contains(cmdline)) {
-                                found.add(cmdline.take(60))
-                            }
+            procDir.listFiles { _, name -> name.all { it.isDigit() } }?.forEach { pidDir ->
+                try {
+                    val cmdline = File(pidDir, "cmdline").readText()
+                        .replace("\u0000", " ").trim()
+                    fridaProcessNames.forEach { name ->
+                        if (cmdline.contains(name, ignoreCase = true) && !found.contains(cmdline)) {
+                            found.add(cmdline.take(60))
                         }
-                    } catch (_: Exception) {}
-                }
+                    }
+                } catch (_: Exception) {}
             }
             if (found.isNotEmpty()) {
                 DetectionResult(

@@ -36,7 +36,10 @@ class MagiskDetector(private val context: Context) {
         checkNativeBridgeInjection(),
         checkZygiskSUDaemon(),
         checkMagiskTimingLatency(),
-        checkBroaderMapsPatterns()
+        checkBroaderMapsPatterns(),
+        checkZygiskPrevSelinuxLabel(),
+        checkZygiskSmapsPrivateDirty(),
+        checkMagiskEnvRemnants()
     )
 
     /** Check 1: Known Magisk-specific files */
@@ -473,18 +476,16 @@ class MagiskDetector(private val context: Context) {
         val found = mutableListOf<String>()
         return try {
             val procDir = File("/proc")
-            procDir.listFiles()?.forEach { pidDir ->
-                if (pidDir.isDirectory && pidDir.name.all { it.isDigit() }) {
-                    try {
-                        val cmdline = File(pidDir, "cmdline").readText()
-                            .replace("\u0000", " ").trim()
-                        magiskProcessNames.forEach { name ->
-                            if (cmdline.contains(name, ignoreCase = true) && !found.contains(cmdline)) {
-                                found.add(cmdline.take(50))
-                            }
+            procDir.listFiles { _, name -> name.all { it.isDigit() } }?.forEach { pidDir ->
+                try {
+                    val cmdline = File(pidDir, "cmdline").readText()
+                        .replace("\u0000", " ").trim()
+                    magiskProcessNames.forEach { name ->
+                        if (cmdline.contains(name, ignoreCase = true) && !found.contains(cmdline)) {
+                            found.add(cmdline.take(50))
                         }
-                    } catch (_: Exception) {}
-                }
+                    }
+                } catch (_: Exception) {}
             }
             if (found.isNotEmpty()) {
                 DetectionResult(
@@ -774,8 +775,7 @@ class MagiskDetector(private val context: Context) {
 
             // Also scan other processes' SELinux contexts for magisk
             val procDir = File("/proc")
-            procDir.listFiles()?.forEach { pidDir ->
-                if (!pidDir.isDirectory || !pidDir.name.all { it.isDigit() }) return@forEach
+            procDir.listFiles { _, name -> name.all { it.isDigit() } }?.forEach { pidDir ->
                 try {
                     val ctx = File(pidDir, "attr/current").readText().trim()
                     if (magiskContexts.any { ctx.contains(it, ignoreCase = true) }) {
@@ -1000,8 +1000,7 @@ class MagiskDetector(private val context: Context) {
         val foundDaemons = mutableListOf<String>()
 
         try {
-            File("/proc").listFiles()?.forEach { pidDir ->
-                if (!pidDir.isDirectory || !pidDir.name.all { it.isDigit() }) return@forEach
+            File("/proc").listFiles { _, name -> name.all { it.isDigit() } }?.forEach { pidDir ->
                 try {
                     val cmdline = File(pidDir, "cmdline").readText()
                         .replace('\u0000', ' ').trim()
@@ -1179,6 +1178,239 @@ class MagiskDetector(private val context: Context) {
                 riskLevel = RiskLevel.CRITICAL,
                 description = context.getString(R.string.chk_broad_maps_desc_nd),
                 detailedReason = context.getString(R.string.chk_broad_maps_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
+            )
+        }
+    }
+
+    /**
+     * Check 23: /proc/self/attr/prev SELinux label anomaly.
+     *
+     * Magisk/Zygisk replaces the zygote process with a wrapper binary that first runs under
+     * the zygote SELinux context and then exec's the real zygote. This means the real zygote's
+     * "previous" SELinux label (visible in /proc/self/attr/prev) is u:r:zygote:s0 instead of
+     * the expected u:r:init:s0. Because Android app processes are forked (not exec'd) from
+     * zygote, they inherit this label, making it visible here too.
+     *
+     * Reference: https://github.com/5ec1cff/my-notes/blob/master/new-idea-detect-zygisk.md
+     */
+    private fun checkZygiskPrevSelinuxLabel(): DetectionResult {
+        return try {
+            val prev = File("/proc/self/attr/prev").readText().trim()
+            // Normal: empty string or u:r:init:s0 (zygote was exec'd by init)
+            // With Magisk/Zygisk: u:r:zygote:s0 (zygote was exec'd by Magisk wrapper)
+            val anomalous = prev.isNotEmpty() &&
+                prev != "u:r:init:s0" &&
+                !prev.contains("init") &&
+                (prev.contains("zygote") || prev.contains("magisk") || prev.contains("su"))
+            if (anomalous) {
+                DetectionResult(
+                    id = "zygisk_prev_selinux",
+                    name = context.getString(R.string.chk_zygisk_prev_selinux_name),
+                    category = DetectionCategory.MAGISK,
+                    status = DetectionStatus.DETECTED,
+                    riskLevel = RiskLevel.HIGH,
+                    description = context.getString(R.string.chk_zygisk_prev_selinux_desc),
+                    detailedReason = context.getString(R.string.chk_zygisk_prev_selinux_reason, prev),
+                    solution = context.getString(R.string.chk_zygisk_prev_selinux_solution),
+                    technicalDetail = "/proc/self/attr/prev=$prev"
+                )
+            } else {
+                DetectionResult(
+                    id = "zygisk_prev_selinux",
+                    name = context.getString(R.string.chk_zygisk_prev_selinux_name_nd),
+                    category = DetectionCategory.MAGISK,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.HIGH,
+                    description = context.getString(R.string.chk_zygisk_prev_selinux_desc_nd),
+                    detailedReason = context.getString(R.string.chk_zygisk_prev_selinux_reason_nd, prev.ifEmpty { "(empty)" }),
+                    solution = context.getString(R.string.chk_no_action_needed)
+                )
+            }
+        } catch (e: Exception) {
+            DetectionResult(
+                id = "zygisk_prev_selinux",
+                name = context.getString(R.string.chk_zygisk_prev_selinux_name_nd),
+                category = DetectionCategory.MAGISK,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_zygisk_prev_selinux_desc_nd),
+                detailedReason = context.getString(R.string.chk_zygisk_prev_selinux_reason_error, e.message ?: ""),
+                solution = context.getString(R.string.chk_no_action_needed)
+            )
+        }
+    }
+
+    /**
+     * Check 24: smaps Private_Dirty pages in system library relocation sections.
+     *
+     * Zygisk hooks system libraries such as libandroid_runtime.so by modifying their
+     * GOT/relocation tables (the .data.rel.ro section). After linking, the linker remaps
+     * this section as read-only (r--p). Zygisk's unhook writes the original values back
+     * in the forked app process, creating Private_Dirty pages in these r--p mappings.
+     *
+     * On a clean device these r--p file-backed pages should have Private_Dirty = 0.
+     * Any non-zero Private_Dirty value for targeted system libraries is a strong indicator
+     * of Zygisk hook/unhook activity.
+     *
+     * Reference: https://github.com/5ec1cff/my-notes/blob/master/new-idea-detect-zygisk.md
+     */
+    private fun checkZygiskSmapsPrivateDirty(): DetectionResult {
+        // Libraries Zygisk is known to hook (targets for detection)
+        val targetLibraries = listOf(
+            "libandroid_runtime.so",
+            "libart.so",
+            "libdvm.so",
+            "libnativehelper.so"
+        )
+        val suspiciousEntries = mutableListOf<String>()
+
+        return try {
+            val smapsContent = File("/proc/self/smaps").readText()
+            var currentPath = ""
+            var currentPerms = ""
+            for (line in smapsContent.lines()) {
+                // Map header line: address perms offset dev inode pathname
+                val headerMatch = Regex("""^[0-9a-f]+-[0-9a-f]+\s+(\S+)\s+\S+\s+\S+\s+\S+\s*(.*)$""")
+                    .matchEntire(line.trim())
+                if (headerMatch != null) {
+                    currentPerms = headerMatch.groupValues[1]
+                    currentPath = headerMatch.groupValues[2].trim()
+                    continue
+                }
+                // Only care about r--p (read-only private) pages in target system libraries
+                if (currentPerms != "r--p") continue
+                val filename = currentPath.substringAfterLast("/").lowercase()
+                val isTargetLib = targetLibraries.any { filename.startsWith(it.removeSuffix(".so")) } &&
+                    (currentPath.startsWith("/system/") || currentPath.startsWith("/apex/"))
+                if (!isTargetLib) continue
+                // Parse Private_Dirty value using a targeted regex
+                if (line.trimStart().startsWith("Private_Dirty:")) {
+                    val kb = Regex("""Private_Dirty:\s*(\d+)""").find(line)
+                        ?.groupValues?.get(1)?.toIntOrNull() ?: 0
+                    if (kb > 0) {
+                        suspiciousEntries.add("${currentPath.substringAfterLast("/")}(${kb}kB dirty)")
+                    }
+                }
+            }
+
+            if (suspiciousEntries.isNotEmpty()) {
+                DetectionResult(
+                    id = "zygisk_smaps_dirty",
+                    name = context.getString(R.string.chk_zygisk_smaps_dirty_name),
+                    category = DetectionCategory.MAGISK,
+                    status = DetectionStatus.DETECTED,
+                    riskLevel = RiskLevel.HIGH,
+                    description = context.getString(R.string.chk_zygisk_smaps_dirty_desc),
+                    detailedReason = context.getString(R.string.chk_zygisk_smaps_dirty_reason, suspiciousEntries.take(5).joinToString(", ")),
+                    solution = context.getString(R.string.chk_zygisk_smaps_dirty_solution),
+                    technicalDetail = "Dirty relocation pages: ${suspiciousEntries.take(8).joinToString("; ")}"
+                )
+            } else {
+                DetectionResult(
+                    id = "zygisk_smaps_dirty",
+                    name = context.getString(R.string.chk_zygisk_smaps_dirty_name_nd),
+                    category = DetectionCategory.MAGISK,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.HIGH,
+                    description = context.getString(R.string.chk_zygisk_smaps_dirty_desc_nd),
+                    detailedReason = context.getString(R.string.chk_zygisk_smaps_dirty_reason_nd),
+                    solution = context.getString(R.string.chk_no_action_needed)
+                )
+            }
+        } catch (e: Exception) {
+            DetectionResult(
+                id = "zygisk_smaps_dirty",
+                name = context.getString(R.string.chk_zygisk_smaps_dirty_name_nd),
+                category = DetectionCategory.MAGISK,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_zygisk_smaps_dirty_desc_nd),
+                detailedReason = context.getString(R.string.chk_zygisk_smaps_dirty_reason_error, e.message ?: ""),
+                solution = context.getString(R.string.chk_no_action_needed)
+            )
+        }
+    }
+
+    /**
+     * Check 25: Magisk/Zygisk environment variable remnants in /proc/self/environ.
+     *
+     * Magisk's sanitize_environ() removes injected env vars from the environ[] pointer array
+     * but (before Shamiko) did not zero the underlying stack memory. The /proc/self/environ
+     * pseudo-file reads the live environ array, so these leaked env vars ARE visible if
+     * sanitization was incomplete or bypassed. Even on patched versions, LD_PRELOAD pointing
+     * to a non-system path or the presence of MAGISK_INJ_1/MAGISK_TMP is a definitive signal.
+     *
+     * Reference: https://github.com/5ec1cff/my-notes/blob/master/new-idea-detect-zygisk.md
+     */
+    private fun checkMagiskEnvRemnants(): DetectionResult {
+        val magiskEnvKeys = listOf(
+            "MAGISK_INJ_",      // Magisk injection marker (MAGISK_INJ_1=1, etc.)
+            "MAGISKTMP=",       // Magisk temporary directory path
+            "MAGISK_TMP="       // Alternative key name used in some versions
+        )
+        val suspiciousLdPreload = listOf(
+            "/dev/",            // LD_PRELOAD pointing to /dev is suspicious
+            "/data/adb/",       // Magisk's adb directory
+            "magisk"            // Any magisk path in LD_PRELOAD
+        )
+        val found = mutableListOf<String>()
+
+        return try {
+            // /proc/self/environ uses NUL as separator between variables
+            val environ = File("/proc/self/environ").readBytes()
+                .toString(Charsets.ISO_8859_1)
+                .split('\u0000')
+                .filter { it.isNotEmpty() }
+
+            for (entry in environ) {
+                // Check for Magisk-specific env var keys
+                if (magiskEnvKeys.any { entry.startsWith(it, ignoreCase = true) }) {
+                    found.add(entry.take(60))
+                    continue
+                }
+                // Check for suspicious LD_PRELOAD values
+                if (entry.startsWith("LD_PRELOAD=", ignoreCase = true)) {
+                    val value = entry.substringAfter("=")
+                    if (suspiciousLdPreload.any { value.contains(it, ignoreCase = true) }) {
+                        found.add(entry.take(60))
+                    }
+                }
+            }
+
+            if (found.isNotEmpty()) {
+                DetectionResult(
+                    id = "magisk_env_remnants",
+                    name = context.getString(R.string.chk_magisk_env_remnants_name),
+                    category = DetectionCategory.MAGISK,
+                    status = DetectionStatus.DETECTED,
+                    riskLevel = RiskLevel.CRITICAL,
+                    description = context.getString(R.string.chk_magisk_env_remnants_desc),
+                    detailedReason = context.getString(R.string.chk_magisk_env_remnants_reason, found.take(5).joinToString(", ")),
+                    solution = context.getString(R.string.chk_magisk_env_remnants_solution),
+                    technicalDetail = "Env vars: ${found.take(5).joinToString("; ")}"
+                )
+            } else {
+                DetectionResult(
+                    id = "magisk_env_remnants",
+                    name = context.getString(R.string.chk_magisk_env_remnants_name_nd),
+                    category = DetectionCategory.MAGISK,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.CRITICAL,
+                    description = context.getString(R.string.chk_magisk_env_remnants_desc_nd),
+                    detailedReason = context.getString(R.string.chk_magisk_env_remnants_reason_nd),
+                    solution = context.getString(R.string.chk_no_action_needed)
+                )
+            }
+        } catch (e: Exception) {
+            DetectionResult(
+                id = "magisk_env_remnants",
+                name = context.getString(R.string.chk_magisk_env_remnants_name_nd),
+                category = DetectionCategory.MAGISK,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = context.getString(R.string.chk_magisk_env_remnants_desc_nd),
+                detailedReason = context.getString(R.string.chk_magisk_env_remnants_reason_error, e.message ?: ""),
                 solution = context.getString(R.string.chk_no_action_needed)
             )
         }

@@ -21,7 +21,8 @@ class KernelSUDetector(private val context: Context) {
         checkKernelSUMountPoints(),
         checkKernelSUProcesses(),
         checkKernelSUSyscall(),
-        checkKernelSUProps()
+        checkKernelSUProps(),
+        checkKernelSULoopDevice()
     )
 
     /** Check 1: KernelSU-specific files */
@@ -242,18 +243,16 @@ class KernelSUDetector(private val context: Context) {
         val found = mutableListOf<String>()
         return try {
             val procDir = File("/proc")
-            procDir.listFiles()?.forEach { pidDir ->
-                if (pidDir.isDirectory && pidDir.name.all { it.isDigit() }) {
-                    try {
-                        val cmdline = File(pidDir, "cmdline").readText()
-                            .replace("\u0000", " ").trim()
-                        ksuProcessNames.forEach { name ->
-                            if (cmdline.contains(name, ignoreCase = true) && !found.contains(cmdline)) {
-                                found.add(cmdline.take(50))
-                            }
+            procDir.listFiles { _, name -> name.all { it.isDigit() } }?.forEach { pidDir ->
+                try {
+                    val cmdline = File(pidDir, "cmdline").readText()
+                        .replace("\u0000", " ").trim()
+                    ksuProcessNames.forEach { name ->
+                        if (cmdline.contains(name, ignoreCase = true) && !found.contains(cmdline)) {
+                            found.add(cmdline.take(50))
                         }
-                    } catch (_: Exception) {}
-                }
+                    }
+                } catch (_: Exception) {}
             }
             if (found.isNotEmpty()) {
                 DetectionResult(
@@ -387,6 +386,83 @@ class KernelSUDetector(private val context: Context) {
                 riskLevel = RiskLevel.HIGH,
                 description = context.getString(R.string.chk_ksu_props_desc_nd),
                 detailedReason = context.getString(R.string.chk_ksu_props_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
+            )
+        }
+    }
+
+    /**
+     * Check 9: KernelSU loop device detection.
+     *
+     * KernelSU LKM mode mounts its own filesystem image via a loop device. This loop
+     * device is visible in /proc/mounts as a /dev/loop* device mounted at /data/adb
+     * or similar KSU paths. On a clean device there should be no loop device mounts
+     * at KSU-specific paths. The presence of such a mount is a strong KSU indicator.
+     *
+     * Chunqiu Detector item: "KnelsU loop device"
+     */
+    private fun checkKernelSULoopDevice(): DetectionResult {
+        val ksuMountPaths = listOf(
+            "/data/adb/ksu",
+            "/data/adb/ksud",
+            "/data/adb/modules"
+        )
+        val foundLoopMounts = mutableListOf<String>()
+        return try {
+            val mounts = File("/proc/self/mounts").readText()
+            mounts.lines().forEach { line ->
+                val parts = line.trim().split("\\s+".toRegex())
+                if (parts.size < 3) return@forEach
+                val device = parts[0]
+                val mountPoint = parts[1]
+                // A loop device (/dev/loop*) mounted at a KSU-related path is suspicious
+                if (device.startsWith("/dev/loop") &&
+                    ksuMountPaths.any { mountPoint.startsWith(it) }
+                ) {
+                    foundLoopMounts.add("$device→$mountPoint")
+                }
+            }
+            // Also check for loop devices appearing in /proc/mounts with ksu in the path
+            mounts.lines().forEach { line ->
+                if (line.contains("/dev/loop") && line.contains("ksu", ignoreCase = true) &&
+                    !foundLoopMounts.any { line.contains(it.substringBefore("→")) }
+                ) {
+                    foundLoopMounts.add(line.trim().take(80))
+                }
+            }
+            if (foundLoopMounts.isNotEmpty()) {
+                DetectionResult(
+                    id = "ksu_loop_device",
+                    name = context.getString(R.string.chk_ksu_loop_device_name),
+                    category = DetectionCategory.KERNELSU,
+                    status = DetectionStatus.DETECTED,
+                    riskLevel = RiskLevel.HIGH,
+                    description = context.getString(R.string.chk_ksu_loop_device_desc),
+                    detailedReason = context.getString(R.string.chk_ksu_loop_device_reason, foundLoopMounts.joinToString(", ")),
+                    solution = context.getString(R.string.chk_ksu_loop_device_solution),
+                    technicalDetail = "Loop mounts: ${foundLoopMounts.joinToString("; ")}"
+                )
+            } else {
+                DetectionResult(
+                    id = "ksu_loop_device",
+                    name = context.getString(R.string.chk_ksu_loop_device_name_nd),
+                    category = DetectionCategory.KERNELSU,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.HIGH,
+                    description = context.getString(R.string.chk_ksu_loop_device_desc_nd),
+                    detailedReason = context.getString(R.string.chk_ksu_loop_device_reason_nd),
+                    solution = context.getString(R.string.chk_no_action_needed)
+                )
+            }
+        } catch (e: Exception) {
+            DetectionResult(
+                id = "ksu_loop_device",
+                name = context.getString(R.string.chk_ksu_loop_device_name_nd),
+                category = DetectionCategory.KERNELSU,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_ksu_loop_device_desc_nd),
+                detailedReason = context.getString(R.string.chk_no_action_needed),
                 solution = context.getString(R.string.chk_no_action_needed)
             )
         }

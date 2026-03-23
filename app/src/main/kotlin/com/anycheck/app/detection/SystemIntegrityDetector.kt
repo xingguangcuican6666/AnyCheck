@@ -331,8 +331,8 @@ class SystemIntegrityDetector(private val context: Context) {
         val foundProcesses = mutableListOf<String>()
         return try {
             val procDir = File("/proc")
-            procDir.listFiles()?.forEach { pidDir ->
-                if (pidDir.isDirectory && pidDir.name.all { it.isDigit() }) {
+            procDir.listFiles { _, name -> name.all { it.isDigit() } }?.forEach { pidDir ->
+                run {
                     try {
                         val cmdline = File(pidDir, "cmdline")
                             .readText()

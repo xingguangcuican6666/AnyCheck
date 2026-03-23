@@ -238,6 +238,15 @@
     <string name="chk_ksu_props_reason_nd">No KernelSU-specific system properties were detected.</string>
     <string name="chk_ksu_props_solution">These properties are removed when KernelSU is uninstalled.</string>
 
+    <!-- KernelSUDetector: Check 9 — KSU loop device -->
+    <string name="chk_ksu_loop_device_name">KernelSU Loop Device Detected</string>
+    <string name="chk_ksu_loop_device_name_nd">KernelSU Loop Device Check</string>
+    <string name="chk_ksu_loop_device_desc">A loop device mounted at a KernelSU path was found, indicating KSU LKM mode is active.</string>
+    <string name="chk_ksu_loop_device_desc_nd">No KernelSU loop device mounts found.</string>
+    <string name="chk_ksu_loop_device_reason">Found loop device(s) mounted at KSU paths: %1$s. KernelSU LKM (Loadable Kernel Module) mode mounts its filesystem image via a /dev/loop* device at /data/adb paths. This is a definitive indicator that KernelSU is active in LKM mode.</string>
+    <string name="chk_ksu_loop_device_reason_nd">No /dev/loop* devices were found mounted at KernelSU-specific paths (/data/adb/ksu, /data/adb/modules). KSU loop device is not active.</string>
+    <string name="chk_ksu_loop_device_solution">Update KernelSU manager and re-patch the boot image. Use SUSFS or ZygiskNext to hide the loop device mount.</string>
+
     <!-- apatch -->
     <string name="chk_apatch_name">APatch Detected</string>
     <string name="chk_apatch_name_nd">APatch</string>
@@ -590,6 +599,36 @@
     <string name="chk_broad_maps_reason">Found in /proc/self/maps: %1$s. These are native libraries belonging to Magisk (libsu), Riru, and inline hook engines (Dobby, SandHook, Pine, Whale) used by Xposed-compatible frameworks. Their presence confirms active injection into this process.</string>
     <string name="chk_broad_maps_reason_nd">No known root/hook library names were found in /proc/self/maps.</string>
     <string name="chk_broad_maps_solution">Remove the relevant root framework or module to prevent library injection.</string>
+
+    <!-- MagiskDetector: Check 23 — /proc/self/attr/prev SELinux label anomaly -->
+    <string name="chk_zygisk_prev_selinux_name">Zygisk Detected via SELinux Exec Chain</string>
+    <string name="chk_zygisk_prev_selinux_name_nd">Zygote SELinux Exec-Chain Label</string>
+    <string name="chk_zygisk_prev_selinux_desc">The SELinux label inherited from zygote\'s exec chain indicates Magisk/Zygisk modified the zygote startup.</string>
+    <string name="chk_zygisk_prev_selinux_desc_nd">The SELinux exec-chain label from /proc/self/attr/prev looks normal.</string>
+    <string name="chk_zygisk_prev_selinux_reason">Read /proc/self/attr/prev = \'%1$s\'. Normally zygote is exec\'d directly by init (u:r:init:s0), so any app process forked from zygote inherits prev=u:r:init:s0. With Magisk/Zygisk, a wrapper binary first runs under the zygote context (u:r:zygote:s0) and then exec\'s the real zygote, changing the inherited prev label. The observed label is anomalous and indicates Zygisk is present.</string>
+    <string name="chk_zygisk_prev_selinux_reason_nd">/proc/self/attr/prev = \'%1$s\'. The value is consistent with a clean zygote exec chain — zygote was started directly by init without a Magisk/Zygisk wrapper in between.</string>
+    <string name="chk_zygisk_prev_selinux_reason_error">Could not read /proc/self/attr/prev: %1$s</string>
+    <string name="chk_zygisk_prev_selinux_solution">Uninstall Magisk/Zygisk and reboot so zygote is exec\'d directly by init, restoring the normal SELinux exec-chain label.</string>
+
+    <!-- MagiskDetector: Check 24 — smaps Private_Dirty in system library relocation sections -->
+    <string name="chk_zygisk_smaps_dirty_name">Zygisk Hook Detected via smaps Dirty Pages</string>
+    <string name="chk_zygisk_smaps_dirty_name_nd">smaps Relocation-Section Dirty Pages</string>
+    <string name="chk_zygisk_smaps_dirty_desc">Private_Dirty pages were found in read-only relocation sections of system libraries, indicating Zygisk hook/unhook activity.</string>
+    <string name="chk_zygisk_smaps_dirty_desc_nd">No suspicious Private_Dirty pages found in system library relocation sections.</string>
+    <string name="chk_zygisk_smaps_dirty_reason">Found r--p pages with Private_Dirty &gt; 0 in: %1$s. Zygisk hooks system libraries (e.g. libandroid_runtime.so) by overwriting their GOT/relocation table (.data.rel.ro section). After the dynamic linker finishes, this section is remapped read-only (r--p). Zygisk\'s unhook in the forked app process writes original values back, creating private dirty pages in these otherwise clean r--p mappings — a definitive Zygisk fingerprint.</string>
+    <string name="chk_zygisk_smaps_dirty_reason_nd">All r--p pages in libandroid_runtime.so, libart.so, libdvm.so, and libnativehelper.so have Private_Dirty = 0 kB. No Zygisk hook/unhook activity detected via smaps.</string>
+    <string name="chk_zygisk_smaps_dirty_reason_error">Could not parse /proc/self/smaps: %1$s</string>
+    <string name="chk_zygisk_smaps_dirty_solution">Disable Zygisk in Magisk settings and reboot, or uninstall Magisk entirely to prevent relocation table patching.</string>
+
+    <!-- MagiskDetector: Check 25 — Magisk/Zygisk environment variable remnants -->
+    <string name="chk_magisk_env_remnants_name">Magisk Environment Variables Detected</string>
+    <string name="chk_magisk_env_remnants_name_nd">Magisk Environment Variable Remnants</string>
+    <string name="chk_magisk_env_remnants_desc">Magisk-injected environment variables were found in /proc/self/environ.</string>
+    <string name="chk_magisk_env_remnants_desc_nd">No Magisk environment variable remnants found in /proc/self/environ.</string>
+    <string name="chk_magisk_env_remnants_reason">Found in /proc/self/environ: %1$s. Magisk sets environment variables such as MAGISK_INJ_1, MAGISKTMP, and LD_PRELOAD during zygote injection. Although sanitize_environ() attempts to clean these up, the underlying stack memory may retain them. Their presence in the live environ array is a direct proof of Magisk injection.</string>
+    <string name="chk_magisk_env_remnants_reason_nd">No MAGISK_INJ_*, MAGISKTMP, or suspicious LD_PRELOAD entries were found in /proc/self/environ. The environment appears clean.</string>
+    <string name="chk_magisk_env_remnants_reason_error">Could not read /proc/self/environ: %1$s</string>
+    <string name="chk_magisk_env_remnants_solution">Uninstall Magisk and reboot. Alternatively, use Shamiko (a Magisk module) to ensure all injected environment variables are fully sanitized.</string>
 
     <!-- XposedDetector strings -->
     <string name="chk_xposed_packages_name">Xposed/LSPosed Manager Detected</string>
@@ -1120,6 +1159,96 @@
     <string name="chk_ext_sys_mounts_reason_nd">No root-framework (/data/adb) sourced bind-mounts over /system, /vendor or /product found.</string>
     <string name="chk_ext_sys_mounts_desc_error">Could not read /proc/self/mountinfo.</string>
     <string name="chk_ext_sys_mounts_solution_error">Ensure /proc/self/mountinfo is accessible.</string>
+
+    <!-- ExtraRootDetector: Check 16 — /data/local/tmp anomalies -->
+    <string name="chk_ext_tmp_anomaly_name">/data/local/tmp Attributes Anomaly</string>
+    <string name="chk_ext_tmp_anomaly_name_nd">/data/local/tmp Attributes</string>
+    <string name="chk_ext_tmp_anomaly_desc">The /data/local/tmp directory has non-standard ownership, permissions, or inode — indicating root-related modifications.</string>
+    <string name="chk_ext_tmp_anomaly_desc_nd">/data/local/tmp attributes appear normal.</string>
+    <string name="chk_ext_tmp_anomaly_reason">Found anomalies in /data/local/tmp: %1$s. On a clean device this directory is owned by shell (uid=2000, gid=2000) with permissions 0771 and a low inode number. Ownership changed to root, wrong permissions, or a high inode number (&gt;10000, indicating past deletion) are all signs of root tool activity.</string>
+    <string name="chk_ext_tmp_anomaly_reason_nd">/data/local/tmp is owned by shell (uid=2000), has permissions 0771, and has a normal inode number. No anomalies detected.</string>
+    <string name="chk_ext_tmp_anomaly_solution">Restore default ownership and permissions: chown shell:shell /data/local/tmp &amp;&amp; chmod 771 /data/local/tmp. If the inode is large, consider recreating the directory or using SUSFS to spoof the inode value.</string>
+
+    <!-- ExtraRootDetector: Check 17 — suspicious tool files -->
+    <string name="chk_ext_tool_files_name">Suspicious Tool Artefacts Found</string>
+    <string name="chk_ext_tool_files_name_nd">Suspicious Tool Files Check</string>
+    <string name="chk_ext_tool_files_desc">Files left by known root management or tweak tools were found at high-risk paths.</string>
+    <string name="chk_ext_tool_files_desc_nd">No suspicious tool artefacts found at known paths.</string>
+    <string name="chk_ext_tool_files_reason">Found artefacts at: %1$s. These paths are associated with specific tools: Stryker tweak framework (/data/local/stryker), Luckys helper (/data/local/tmp/luckys), HyperCeiler MIUI tweak (/data/local/tmp/HyperCeiler), simpleHook (/data/local/tmp/simpleHook), mount helpers (mount_mask/mount_mark), resetprop binary (/data/local/tmp/resetprop), and others. Their presence confirms advanced modification tools have been run on this device.</string>
+    <string name="chk_ext_tool_files_reason_nd">No artefacts from known root/tweak tools were found at the monitored paths under /data/local/tmp, /data/local, and /data.</string>
+    <string name="chk_ext_tool_files_solution">Delete the identified files/directories. Review any installed Magisk/KSU modules that may be creating these artefacts and remove them if no longer needed.</string>
+
+    <!-- ExtraRootDetector: Check 18 — /debug_ramdisk mount -->
+    <string name="chk_ext_debug_ramdisk_name">/debug_ramdisk Inconsistent Mount</string>
+    <string name="chk_ext_debug_ramdisk_name_nd">/debug_ramdisk Mount Check</string>
+    <string name="chk_ext_debug_ramdisk_desc">/debug_ramdisk is still mounted, which is abnormal on a production Android device.</string>
+    <string name="chk_ext_debug_ramdisk_desc_nd">/debug_ramdisk is not mounted. No anomaly.</string>
+    <string name="chk_ext_debug_ramdisk_reason">/debug_ramdisk appears as an active mount in /proc/self/mounts. On stock Android this ramdisk path is unmounted after early init and should not be visible to apps. Its continued presence indicates either a non-standard boot image or that a root framework has left it mounted, potentially exposing kernel debug symbols or a writable root-namespace path.</string>
+    <string name="chk_ext_debug_ramdisk_reason_nd">/debug_ramdisk is not present in /proc/self/mounts. The device boot process looks normal.</string>
+    <string name="chk_ext_debug_ramdisk_solution">Run \'umount /debug_ramdisk\' as root, or use a SUSFS/ZygiskNext configuration that unmounts it during boot. Re-patching with a clean stock boot.img will also resolve this.</string>
+
+    <!-- ExtraRootDetector: Check 19 — MT Manager (mt2 folder) -->
+    <string name="chk_ext_mt_manager_name">MT Manager Artefact Detected</string>
+    <string name="chk_ext_mt_manager_name_nd">MT Manager Check</string>
+    <string name="chk_ext_mt_manager_desc">The MT Manager \'mt2\' folder was found, confirming the APK editor/file manager has been used on this device.</string>
+    <string name="chk_ext_mt_manager_desc_nd">No MT Manager mt2 folder found.</string>
+    <string name="chk_ext_mt_manager_reason">Found MT Manager directory at: %1$s. MT Manager (a popular APK editor and file manager) creates an \'mt2\' folder in the root of internal storage by default. Its presence confirms MT Manager has been run on this device, indicating potential APK patching, module injection, or other file-level tampering.</string>
+    <string name="chk_ext_mt_manager_reason_nd">No \'mt2\' directory found under /sdcard or /storage/emulated/0. MT Manager does not appear to have been used on this device.</string>
+    <string name="chk_ext_mt_manager_solution">Delete the /sdcard/mt2 directory. In MT Manager settings, change the MT2 path to a custom location or delete the directory after use.</string>
+
+    <!-- ExtraRootDetector: Check 20 — kernel -dirty suffix -->
+    <string name="chk_ext_kernel_dirty_name">Self-Compiled / Dirty Kernel Detected</string>
+    <string name="chk_ext_kernel_dirty_name_nd">Kernel Build Suffix Check</string>
+    <string name="chk_ext_kernel_dirty_desc">The kernel version string contains the \'-dirty\' suffix, indicating a locally compiled or uncommitted kernel build.</string>
+    <string name="chk_ext_kernel_dirty_desc_nd">No \'-dirty\' suffix found in the kernel version string.</string>
+    <string name="chk_ext_kernel_dirty_reason">Kernel version: \'%1$s\'. The \'-dirty\' suffix is appended by the Linux build system when the source tree contains uncommitted changes at build time. This is a reliable indicator of a third-party, self-compiled, or custom kernel — commonly used alongside custom ROMs and root setups.</string>
+    <string name="chk_ext_kernel_dirty_reason_nd">The kernel version string in /proc/version does not contain the \'-dirty\' suffix. The kernel appears to be a clean, official build.</string>
+    <string name="chk_ext_kernel_dirty_solution">Flash an official kernel or use SUSFS to spoof the kernel version string so it no longer contains the \'-dirty\' suffix.</string>
+
+    <!-- ExtraRootDetector: Check 21 — dex2oat anomaly -->
+    <string name="chk_ext_dex2oat_name">dex2oat Anomaly Detected</string>
+    <string name="chk_ext_dex2oat_name_nd">dex2oat Check</string>
+    <string name="chk_ext_dex2oat_desc">A non-standard dex2oat configuration or LSPosed dex2oat wrapper was found, indicating a hook framework is active.</string>
+    <string name="chk_ext_dex2oat_desc_nd">No dex2oat anomalies detected.</string>
+    <string name="chk_ext_dex2oat_reason">Detected: %1$s. LSPosed and some Xposed forks intercept the dex2oat compilation pipeline by placing a wrapper binary at /data/adb/lspd/dex2oat or by setting a non-standard dalvik.vm.dex2oat-filter property. These changes redirect DEX compilation through the hook framework, leaving detectable artefacts.</string>
+    <string name="chk_ext_dex2oat_reason_nd">No non-standard dex2oat-filter property or LSPosed wrapper binary was found. dex2oat pipeline appears unmodified.</string>
+    <string name="chk_ext_dex2oat_solution">Update or reinstall LSPosed. If the issue persists, wipe the Dalvik cache (wipe /data/dalvik-cache) and reboot to force a clean dex2oat recompilation.</string>
+
+    <!-- ExtraRootDetector: Check 22 — Scene port -->
+    <string name="chk_ext_scene_port_name">Scene Toolkit Detected</string>
+    <string name="chk_ext_scene_port_name_nd">Scene Toolkit Check</string>
+    <string name="chk_ext_scene_port_desc">The Scene performance toolkit app is installed or its local server port is open.</string>
+    <string name="chk_ext_scene_port_desc_nd">No Scene toolkit indicators found.</string>
+    <string name="chk_ext_scene_port_reason">Scene detected via: %1$s. Scene (com.omarea.vtools) is a system-level performance and battery management tool that runs an accessibility service and optionally a local HTTP server on well-known ports (18080, 18081). Its presence indicates advanced system modification capability on this device.</string>
+    <string name="chk_ext_scene_port_reason_nd">Scene toolkit packages (com.omarea.vtools) were not found and no listening sockets on Scene\'s known ports (18080, 18081) were detected.</string>
+    <string name="chk_ext_scene_port_solution">Disable Scene\'s accessibility service, close its local server from Scene settings, or hide Scene using HMA to prevent detection.</string>
+
+    <!-- ExtraRootDetector: Check 23 — hidden process groups -->
+    <string name="chk_ext_hidden_proc_name">Hidden Process Groups Detected</string>
+    <string name="chk_ext_hidden_proc_name_nd">Hidden Process Groups Check</string>
+    <string name="chk_ext_hidden_proc_desc">Processes with a missing thread-group leader in /proc were found, indicating deliberate process hiding.</string>
+    <string name="chk_ext_hidden_proc_desc_nd">No hidden process group anomalies found.</string>
+    <string name="chk_ext_hidden_proc_reason">Found processes whose thread-group leader (Tgid) is not visible in /proc: %1$s. Root daemon processes (LSPosed lspd, Magisk magiskd) sometimes hide their parent PID from the process table while leaving child threads visible. A Tgid that does not correspond to any /proc entry is a reliable indicator of a deliberately hidden process.</string>
+    <string name="chk_ext_hidden_proc_reason_nd">All visible /proc entries have thread-group leaders (Tgid) that are also visible in /proc. No hidden process groups detected.</string>
+    <string name="chk_ext_hidden_proc_solution">Enable a software clone (分身) in system settings to create a new process group, which can mask the anomaly. Update root frameworks that may be causing the hidden group. Use ZN-AuditPatch or SUSFS for process hiding.</string>
+
+    <!-- ExtraRootDetector: Check 24 — Netlink socket anomaly -->
+    <string name="chk_ext_netlink_name">Netlink Socket Anomaly Detected</string>
+    <string name="chk_ext_netlink_name_nd">Netlink Socket Check</string>
+    <string name="chk_ext_netlink_desc">Non-standard Netlink protocol sockets were found in /proc/net/netlink, indicating possible kernel-level root activity.</string>
+    <string name="chk_ext_netlink_desc_nd">No non-standard Netlink sockets found.</string>
+    <string name="chk_ext_netlink_reason">Found anomalies in /proc/net/netlink: %1$s. KernelSU and some Magisk variants use custom Netlink protocol families (outside the standard Android set of 0–22) to communicate between userspace and kernel modules. The presence of such sockets is a strong indicator of kernel-level root activity.</string>
+    <string name="chk_ext_netlink_reason_nd">All Netlink sockets in /proc/net/netlink use standard Android protocol numbers (0–22) with normal socket counts. No anomalous kernel IPC detected.</string>
+    <string name="chk_ext_netlink_solution">Update KernelSU or Magisk to a version that hides its Netlink channels. There is currently no reliable user-space workaround for this detection method.</string>
+
+    <!-- ExtraRootDetector: Check 25 — audit log process detection -->
+    <string name="chk_ext_audit_log_name">Root Process via Audit Log Detected</string>
+    <string name="chk_ext_audit_log_name_nd">Audit Log Process Check</string>
+    <string name="chk_ext_audit_log_desc">Root daemon SELinux contexts were found in kernel AVC audit log entries, revealing active root processes.</string>
+    <string name="chk_ext_audit_log_desc_nd">No root process indicators found in the kernel audit log.</string>
+    <string name="chk_ext_audit_log_reason">Found in kernel AVC audit log: %1$s. Root daemons (magiskd, lspd, kpatchd) leave distinctive SELinux context strings (u:r:magisk:s0, u:r:su:s0, u:r:zygisk:s0) in AVC denial records even when they hide themselves from the standard process table. The native probe reads /dev/kmsg directly using raw syscalls that bypass Java-layer hooks.</string>
+    <string name="chk_ext_audit_log_reason_nd">No suspicious SELinux contexts or root process comm= values were found in /dev/kmsg or kernel logcat entries. The audit log appears clean.</string>
+    <string name="chk_ext_audit_log_solution">Install the ZN-AuditPatch Magisk module to suppress root-related AVC log entries, or use SUSFS\'s audit log suppression feature. Alternatively, apply the Android security patch from September 2025 which addresses the audit log read vulnerability.</string>
 
 
     <!-- LunaDetector: Check 1 - LSPosed API Property -->

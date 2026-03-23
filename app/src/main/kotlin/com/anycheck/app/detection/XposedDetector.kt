@@ -1248,10 +1248,8 @@ class XposedDetector(private val context: Context) {
         val foundPids = mutableListOf<String>()
         try {
             val procDir = File("/proc")
-            procDir.listFiles()?.forEach { pidDir ->
-                if (!pidDir.isDirectory) return@forEach
+            procDir.listFiles { _, name -> name.all { it.isDigit() } }?.forEach { pidDir ->
                 val name = pidDir.name
-                if (!name.all { it.isDigit() }) return@forEach
                 try {
                     val cmdline = File(pidDir, "cmdline").readText()
                         .replace('\u0000', ' ').trim()

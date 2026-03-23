@@ -1,7 +1,10 @@
 #include <jni.h>
 #include <string>
 #include <vector>
+#include <map>
 #include <cstring>
+#include <cstdlib>
+#include <cstdio>
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -628,6 +631,252 @@ Java_com_anycheck_app_detection_NativeDetector_detectHMANativeJni(JNIEnv *env, j
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_anycheck_app_detection_NativeDetector_detectElfSymbolsJni(JNIEnv *env, jobject /* thiz */) {
     auto findings = probeElfSymbols();
+    std::string result;
+    for (size_t i = 0; i < findings.size(); ++i) {
+        if (i > 0) result += "; ";
+        result += findings[i];
+    }
+    return env->NewStringUTF(result.c_str());
+}
+
+// ---------------------------------------------------------------------------
+// N11 — Audit log process detection
+//
+// Reads kernel audit log entries (AVC SELinux denials) from /dev/kmsg in
+// non-blocking mode, or falls back to a popen("logcat -b kernel") pipe.
+// Lines that contain "type=AVC" or "avc:" with suspicious SELinux contexts
+// (u:r:magisk:s0, u:r:su:s0, u:r:zygisk:s0, etc.) are returned as findings.
+//
+// This bypasses Java logging APIs which can be hooked by LSPosed.
+// ---------------------------------------------------------------------------
+static std::vector<std::string> probeAuditLog() {
+    std::vector<std::string> findings;
+
+    // Root-related SELinux context keywords that should not normally appear
+    // in a clean Android AVC audit log.
+    static const char *ROOT_CONTEXTS[] = {
+        "u:r:magisk:", "u:r:su:", "u:r:zygisk:", "u:r:zygisk_child:",
+        "u:r:untrusted_app:", // legitimate but flag if in AVC with magisk/su tcontext
+        nullptr
+    };
+    // Suspicious comm= values seen in AVC entries on rooted devices
+    static const char *ROOT_COMMS[] = {
+        "comm=\"magiskd\"", "comm=\"magisk64\"", "comm=\"magisk32\"",
+        "comm=\"kswapd0\"",  // KSU disguise
+        "comm=\"lspd\"",     "comm=\"lsposed\"",
+        "comm=\"zygisk\"",   "comm=\"kpatchd\"",  // APatch
+        nullptr
+    };
+
+    auto parseLine = [&](const std::string &line) {
+        // Must contain "avc:" or "type=AVC" to be an audit entry
+        bool isAvc = (line.find("avc:") != std::string::npos) ||
+                     (line.find("type=AVC") != std::string::npos);
+        if (!isAvc) return;
+
+        // Check for suspicious SELinux contexts
+        for (int i = 0; ROOT_CONTEXTS[i] != nullptr; ++i) {
+            if (line.find(ROOT_CONTEXTS[i]) != std::string::npos) {
+                // Extract scontext or tcontext substring for the finding
+                std::string entry = "avc_ctx:" + std::string(ROOT_CONTEXTS[i]);
+                bool dup = false;
+                for (const auto &f : findings) { if (f == entry) { dup = true; break; } }
+                if (!dup) findings.push_back(entry);
+                break;
+            }
+        }
+        // Check for suspicious process names in AVC entries
+        for (int i = 0; ROOT_COMMS[i] != nullptr; ++i) {
+            if (line.find(ROOT_COMMS[i]) != std::string::npos) {
+                std::string entry = "avc_comm:" + std::string(ROOT_COMMS[i]);
+                bool dup = false;
+                for (const auto &f : findings) { if (f == entry) { dup = true; break; } }
+                if (!dup) findings.push_back(entry);
+                break;
+            }
+        }
+    };
+
+    // Strategy 1: Try to read /dev/kmsg (non-blocking; may be denied by SELinux)
+    {
+        int fd = open("/dev/kmsg", O_RDONLY | O_NONBLOCK | O_CLOEXEC);
+        if (fd >= 0) {
+            char buf[2048];
+            ssize_t n;
+            int reads = 0;
+            while ((n = read(fd, buf, sizeof(buf) - 1)) > 0 && reads < 500) {
+                buf[n] = '\0';
+                parseLine(std::string(buf, (size_t)n));
+                reads++;
+            }
+            close(fd);
+        }
+    }
+
+    // Strategy 2: logcat -b kernel (fallback; works on many devices without READ_LOGS)
+    if (findings.empty()) {
+        FILE *fp = popen("logcat -b kernel -d -t 300 2>/dev/null", "r");
+        if (fp) {
+            char line[1024];
+            int count = 0;
+            while (fgets(line, sizeof(line), fp) && count < 500) {
+                parseLine(std::string(line));
+                count++;
+            }
+            pclose(fp);
+        }
+    }
+
+    return findings;
+}
+
+// ---------------------------------------------------------------------------
+// N12 — Native dex2oat anomaly probe
+//
+// Uses stat(2) to check for LSPosed dex2oat wrapper binaries.  Bypasses
+// Java-layer File.exists() hooks (e.g. via LSPosed hooking File or
+// libjavacrypto).  Also checks dalvik.vm.dex2oat-filter via
+// __system_property_get which is not interceptable at the Java level.
+// ---------------------------------------------------------------------------
+static std::vector<std::string> probeDex2oatNative() {
+    static const char *DEX2OAT_PATHS[] = {
+        "/data/adb/lspd/dex2oat",
+        "/data/adb/lspd/bin/dex2oat",
+        "/data/misc/lspd/dex2oat",
+        "/data/adb/modules/zygisk_lsposed/dex2oat",
+        "/data/adb/lspd/framework/lspd.dex",
+        "/data/adb/lspd/framework/lsp-framework.dex",
+        nullptr
+    };
+
+    std::vector<std::string> findings;
+    struct stat st;
+
+    // Check dex2oat wrapper paths via raw stat()
+    for (int i = 0; DEX2OAT_PATHS[i] != nullptr; ++i) {
+        if (stat(DEX2OAT_PATHS[i], &st) == 0) {
+            findings.push_back(std::string("dex2oat_path:") + DEX2OAT_PATHS[i]);
+        }
+    }
+
+    // Check dalvik.vm.dex2oat-filter via native property getter (bypasses Java hooks)
+    char propVal[PROP_VALUE_MAX] = {};
+    if (__system_property_get("dalvik.vm.dex2oat-filter", propVal) > 0) {
+        static const char *KNOWN[] = {
+            "speed-profile", "speed", "quicken", "space-profile", "space",
+            "everything", "verify", "interpret-only", "time", nullptr
+        };
+        bool known = false;
+        for (int i = 0; KNOWN[i] != nullptr; ++i) {
+            if (strcmp(propVal, KNOWN[i]) == 0) { known = true; break; }
+        }
+        if (!known) {
+            findings.push_back(std::string("dex2oat_filter:") + propVal);
+        }
+    }
+
+    return findings;
+}
+
+// ---------------------------------------------------------------------------
+// N13 — Native Netlink /proc/net/netlink anomaly probe
+//
+// Reads /proc/net/netlink directly using open(2)/read(2) (not Java file I/O)
+// to detect non-standard Netlink protocol families used by KernelSU and
+// other kernel-level root frameworks for userspace ↔ kernel communication.
+// ---------------------------------------------------------------------------
+static std::vector<std::string> probeNetlinkNative() {
+    // Standard Android Netlink protocol numbers (0–22)
+    static const int STD_MAX = 22;
+
+    std::vector<std::string> findings;
+    int fd = open("/proc/net/netlink", O_RDONLY | O_CLOEXEC);
+    if (fd < 0) return findings;
+
+    char buf[8192];
+    std::string content;
+    ssize_t n;
+    while ((n = read(fd, buf, sizeof(buf) - 1)) > 0) {
+        buf[n] = '\0';
+        content += buf;
+    }
+    close(fd);
+
+    // Parse lines: skip header, col[1] = protocol number
+    bool header = true;
+    size_t start = 0;
+    std::map<int,int> protoCounts;
+    while (true) {
+        size_t end = content.find('\n', start);
+        if (end == std::string::npos) break;
+        std::string line = content.substr(start, end - start);
+        start = end + 1;
+        if (header) { header = false; continue; }
+        // Tokenize
+        std::vector<std::string> parts;
+        std::string tok;
+        for (char c : line) {
+            if (c == ' ' || c == '\t') {
+                if (!tok.empty()) { parts.push_back(tok); tok.clear(); }
+            } else {
+                tok += c;
+            }
+        }
+        if (!tok.empty()) parts.push_back(tok);
+        if (parts.size() < 3) continue;
+        int proto = (int)strtol(parts[1].c_str(), nullptr, 10);
+        protoCounts[proto]++;
+    }
+
+    for (auto &kv : protoCounts) {
+        if (kv.first > STD_MAX) {
+            char tmp[64];
+            snprintf(tmp, sizeof(tmp), "netlink_proto:%d(x%d)", kv.first, kv.second);
+            findings.push_back(tmp);
+        }
+        if (kv.second > 20 && kv.first <= STD_MAX) {
+            char tmp[64];
+            snprintf(tmp, sizeof(tmp), "netlink_high_count:proto=%d,n=%d", kv.first, kv.second);
+            findings.push_back(tmp);
+        }
+    }
+    return findings;
+}
+
+// ---------------------------------------------------------------------------
+// JNI entry point — N11: Audit log process detection
+// ---------------------------------------------------------------------------
+extern "C" JNIEXPORT jstring JNICALL
+Java_com_anycheck_app_detection_NativeDetector_detectAuditLogJni(JNIEnv *env, jobject /* thiz */) {
+    auto findings = probeAuditLog();
+    std::string result;
+    for (size_t i = 0; i < findings.size(); ++i) {
+        if (i > 0) result += "; ";
+        result += findings[i];
+    }
+    return env->NewStringUTF(result.c_str());
+}
+
+// ---------------------------------------------------------------------------
+// JNI entry point — N12: Native dex2oat anomaly
+// ---------------------------------------------------------------------------
+extern "C" JNIEXPORT jstring JNICALL
+Java_com_anycheck_app_detection_NativeDetector_detectDex2oatNativeJni(JNIEnv *env, jobject /* thiz */) {
+    auto findings = probeDex2oatNative();
+    std::string result;
+    for (size_t i = 0; i < findings.size(); ++i) {
+        if (i > 0) result += "; ";
+        result += findings[i];
+    }
+    return env->NewStringUTF(result.c_str());
+}
+
+// ---------------------------------------------------------------------------
+// JNI entry point — N13: Native Netlink anomaly
+// ---------------------------------------------------------------------------
+extern "C" JNIEXPORT jstring JNICALL
+Java_com_anycheck_app_detection_NativeDetector_detectNetlinkNativeJni(JNIEnv *env, jobject /* thiz */) {
+    auto findings = probeNetlinkNative();
     std::string result;
     for (size_t i = 0; i < findings.size(); ++i) {
         if (i > 0) result += "; ";

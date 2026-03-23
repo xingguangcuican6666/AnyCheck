@@ -238,6 +238,15 @@
     <string name="chk_ksu_props_reason_nd">未检测到 KernelSU 特定系统属性。</string>
     <string name="chk_ksu_props_solution">卸载 KernelSU 时将移除这些属性。</string>
 
+    <!-- KernelSUDetector: Check 9 — KSU loop device -->
+    <string name="chk_ksu_loop_device_name">检测到 KernelSU 回环设备</string>
+    <string name="chk_ksu_loop_device_name_nd">KernelSU 回环设备检测</string>
+    <string name="chk_ksu_loop_device_desc">发现挂载在 KernelSU 路径上的回环设备，表明 KSU LKM 模式处于活动状态。</string>
+    <string name="chk_ksu_loop_device_desc_nd">未发现 KernelSU 回环设备挂载。</string>
+    <string name="chk_ksu_loop_device_reason">发现挂载在 KSU 路径上的回环设备：%1$s。KernelSU LKM（可加载内核模块）模式通过 /dev/loop* 设备将其文件系统镜像挂载到 /data/adb 路径。这是 KernelSU 以 LKM 模式运行的确定性指标。</string>
+    <string name="chk_ksu_loop_device_reason_nd">未发现挂载在 KernelSU 特定路径（/data/adb/ksu、/data/adb/modules）上的 /dev/loop* 设备。KSU 回环设备未激活。</string>
+    <string name="chk_ksu_loop_device_solution">更新 KernelSU 管理器并重新修补 boot 镜像。使用 SUSFS 或 ZygiskNext 隐藏回环设备挂载。</string>
+
     <!-- apatch -->
     <string name="chk_apatch_name">检测到 APatch</string>
     <string name="chk_apatch_name_nd">APatch</string>
@@ -590,6 +599,36 @@
     <string name="chk_broad_maps_reason">在 /proc/self/maps 中发现：%1$s。这些是属于 Magisk（libsu）、Riru 和 Xposed 兼容框架使用的内联钩子引擎（Dobby、SandHook、Pine、Whale）的原生库。其存在确认了对此进程的活动注入。</string>
     <string name="chk_broad_maps_reason_nd">在 /proc/self/maps 中未发现已知的 root/钩子库名称。</string>
     <string name="chk_broad_maps_solution">移除相关的 root 框架或模块以防止库注入。</string>
+
+    <!-- MagiskDetector: Check 23 — /proc/self/attr/prev SELinux label anomaly -->
+    <string name="chk_zygisk_prev_selinux_name">通过 SELinux exec 链检测到 Zygisk</string>
+    <string name="chk_zygisk_prev_selinux_name_nd">Zygote SELinux exec 链标签</string>
+    <string name="chk_zygisk_prev_selinux_desc">从 zygote exec 链继承的 SELinux 标签表明 Magisk/Zygisk 修改了 zygote 启动过程。</string>
+    <string name="chk_zygisk_prev_selinux_desc_nd">/proc/self/attr/prev 中的 SELinux exec 链标签看起来正常。</string>
+    <string name="chk_zygisk_prev_selinux_reason">读取 /proc/self/attr/prev = \'%1$s\'。正常情况下，zygote 由 init（u:r:init:s0）直接 exec，因此从 zygote fork 出的任何应用进程都会继承 prev=u:r:init:s0。使用 Magisk/Zygisk 时，一个包装二进制文件首先在 zygote 上下文（u:r:zygote:s0）下运行，然后 exec 真正的 zygote，从而更改继承的 prev 标签。观测到的标签异常，表明 Zygisk 存在。</string>
+    <string name="chk_zygisk_prev_selinux_reason_nd">/proc/self/attr/prev = \'%1$s\'。该值与干净的 zygote exec 链一致——zygote 由 init 直接启动，中间没有 Magisk/Zygisk 包装器。</string>
+    <string name="chk_zygisk_prev_selinux_reason_error">无法读取 /proc/self/attr/prev：%1$s</string>
+    <string name="chk_zygisk_prev_selinux_solution">卸载 Magisk/Zygisk 并重启，使 zygote 由 init 直接 exec，恢复正常的 SELinux exec 链标签。</string>
+
+    <!-- MagiskDetector: Check 24 — smaps Private_Dirty in system library relocation sections -->
+    <string name="chk_zygisk_smaps_dirty_name">通过 smaps 脏页检测到 Zygisk 钩子</string>
+    <string name="chk_zygisk_smaps_dirty_name_nd">smaps 重定位节脏页检测</string>
+    <string name="chk_zygisk_smaps_dirty_desc">在系统库的只读重定位节中发现了私有脏页，表明存在 Zygisk 钩子/取消钩子活动。</string>
+    <string name="chk_zygisk_smaps_dirty_desc_nd">在系统库重定位节中未发现可疑的私有脏页。</string>
+    <string name="chk_zygisk_smaps_dirty_reason">在以下位置发现 Private_Dirty &gt; 0 的 r--p 页：%1$s。Zygisk 通过覆写系统库（如 libandroid_runtime.so）的 GOT/重定位表（.data.rel.ro 节）来进行钩挂。动态链接器完成后，该节被重新映射为只读（r--p）。Zygisk 在 fork 出的应用进程中的取消钩挂操作会将原始值写回，在这些本应干净的 r--p 映射中产生私有脏页——这是 Zygisk 的确定性指纹。</string>
+    <string name="chk_zygisk_smaps_dirty_reason_nd">libandroid_runtime.so、libart.so、libdvm.so 和 libnativehelper.so 中所有 r--p 页的 Private_Dirty 均为 0 kB。未通过 smaps 检测到 Zygisk 钩子/取消钩子活动。</string>
+    <string name="chk_zygisk_smaps_dirty_reason_error">无法解析 /proc/self/smaps：%1$s</string>
+    <string name="chk_zygisk_smaps_dirty_solution">在 Magisk 设置中禁用 Zygisk 并重启，或完全卸载 Magisk 以防止重定位表被修改。</string>
+
+    <!-- MagiskDetector: Check 25 — Magisk/Zygisk environment variable remnants -->
+    <string name="chk_magisk_env_remnants_name">检测到 Magisk 环境变量</string>
+    <string name="chk_magisk_env_remnants_name_nd">Magisk 环境变量残留</string>
+    <string name="chk_magisk_env_remnants_desc">在 /proc/self/environ 中发现了 Magisk 注入的环境变量。</string>
+    <string name="chk_magisk_env_remnants_desc_nd">在 /proc/self/environ 中未发现 Magisk 环境变量残留。</string>
+    <string name="chk_magisk_env_remnants_reason">在 /proc/self/environ 中发现：%1$s。Magisk 在 zygote 注入期间设置了 MAGISK_INJ_1、MAGISKTMP 和 LD_PRELOAD 等环境变量。尽管 sanitize_environ() 尝试清理这些变量，但底层栈内存可能仍保留它们。这些变量出现在实时 environ 数组中直接证明了 Magisk 注入。</string>
+    <string name="chk_magisk_env_remnants_reason_nd">在 /proc/self/environ 中未发现 MAGISK_INJ_*、MAGISKTMP 或可疑的 LD_PRELOAD 条目。环境变量看起来是干净的。</string>
+    <string name="chk_magisk_env_remnants_reason_error">无法读取 /proc/self/environ：%1$s</string>
+    <string name="chk_magisk_env_remnants_solution">卸载 Magisk 并重启。或者，使用 Shamiko（一个 Magisk 模块）确保所有注入的环境变量都被完全清除。</string>
 
     <!-- XposedDetector strings -->
     <string name="chk_xposed_packages_name">已检测到 Xposed/LSPosed 管理器</string>
@@ -1111,6 +1150,96 @@
     <string name="chk_ext_sys_mounts_reason_nd">未发现来自 Root 框架（/data/adb）对 /system、/vendor 或 /product 的绑定挂载。</string>
     <string name="chk_ext_sys_mounts_desc_error">无法读取 /proc/self/mountinfo。</string>
     <string name="chk_ext_sys_mounts_solution_error">请确保 /proc/self/mountinfo 可访问。</string>
+
+    <!-- ExtraRootDetector: Check 16 — /data/local/tmp anomalies -->
+    <string name="chk_ext_tmp_anomaly_name">/data/local/tmp 属性异常</string>
+    <string name="chk_ext_tmp_anomaly_name_nd">/data/local/tmp 属性检测</string>
+    <string name="chk_ext_tmp_anomaly_desc">/data/local/tmp 目录存在非标准所有者、权限或 inode，表明存在 Root 相关修改。</string>
+    <string name="chk_ext_tmp_anomaly_desc_nd">/data/local/tmp 属性看起来正常。</string>
+    <string name="chk_ext_tmp_anomaly_reason">在 /data/local/tmp 中发现异常：%1$s。在干净的设备上，该目录由 shell（uid=2000，gid=2000）所有，权限为 0771，且 inode 编号较小。所有者变为 root、权限错误或 inode 编号过大（&gt;10000，表明曾被删除）都是 Root 工具活动的迹象。</string>
+    <string name="chk_ext_tmp_anomaly_reason_nd">/data/local/tmp 由 shell（uid=2000）所有，权限为 0771，inode 编号正常。未检测到异常。</string>
+    <string name="chk_ext_tmp_anomaly_solution">恢复默认所有者和权限：chown shell:shell /data/local/tmp &amp;&amp; chmod 771 /data/local/tmp。如果 inode 编号较大，考虑重新创建目录或使用 SUSFS 伪装 inode 值。</string>
+
+    <!-- ExtraRootDetector: Check 17 — suspicious tool files -->
+    <string name="chk_ext_tool_files_name">发现可疑工具遗留文件</string>
+    <string name="chk_ext_tool_files_name_nd">可疑工具文件检测</string>
+    <string name="chk_ext_tool_files_desc">在高风险路径发现已知 Root 管理或调整工具遗留的文件。</string>
+    <string name="chk_ext_tool_files_desc_nd">在已知路径未发现可疑工具遗留文件。</string>
+    <string name="chk_ext_tool_files_reason">在以下位置发现遗留文件：%1$s。这些路径与特定工具相关：Stryker 调整框架（/data/local/stryker）、Luckys 辅助文件（/data/local/tmp/luckys）、HyperCeiler MIUI 调整（/data/local/tmp/HyperCeiler）、simpleHook（/data/local/tmp/simpleHook）、挂载辅助文件（mount_mask/mount_mark）、resetprop 二进制文件（/data/local/tmp/resetprop）等。其存在确认此设备上运行过高级修改工具。</string>
+    <string name="chk_ext_tool_files_reason_nd">在 /data/local/tmp、/data/local 和 /data 下的监控路径中未发现已知 Root/调整工具的遗留文件。</string>
+    <string name="chk_ext_tool_files_solution">删除已识别的文件/目录。检查可能创建这些遗留文件的已安装 Magisk/KSU 模块，如不再需要则将其删除。</string>
+
+    <!-- ExtraRootDetector: Check 18 — /debug_ramdisk mount -->
+    <string name="chk_ext_debug_ramdisk_name">/debug_ramdisk 挂载异常</string>
+    <string name="chk_ext_debug_ramdisk_name_nd">/debug_ramdisk 挂载检测</string>
+    <string name="chk_ext_debug_ramdisk_desc">/debug_ramdisk 仍处于挂载状态，这在正式 Android 设备上是不正常的。</string>
+    <string name="chk_ext_debug_ramdisk_desc_nd">/debug_ramdisk 未挂载，无异常。</string>
+    <string name="chk_ext_debug_ramdisk_reason">/debug_ramdisk 在 /proc/self/mounts 中显示为活动挂载点。在正版 Android 上，该 ramdisk 路径在早期 init 后会被卸载，应用不应看到它。它的持续存在表明设备使用了非标准 boot 镜像，或 Root 框架故意保留了挂载，可能暴露内核调试符号或在 root 命名空间中提供可写路径。</string>
+    <string name="chk_ext_debug_ramdisk_reason_nd">/proc/self/mounts 中不存在 /debug_ramdisk。设备启动过程看起来正常。</string>
+    <string name="chk_ext_debug_ramdisk_solution">以 root 身份运行 \'umount /debug_ramdisk\'，或使用在启动时卸载它的 SUSFS/ZygiskNext 配置。使用干净的原厂 boot.img 重新修补也可解决此问题。</string>
+
+    <!-- ExtraRootDetector: Check 19 — MT Manager (mt2 folder) -->
+    <string name="chk_ext_mt_manager_name">检测到 MT 管理器遗留文件</string>
+    <string name="chk_ext_mt_manager_name_nd">MT 管理器检测</string>
+    <string name="chk_ext_mt_manager_desc">发现 MT 管理器的 \'mt2\' 文件夹，确认此设备上使用过该 APK 编辑器/文件管理器。</string>
+    <string name="chk_ext_mt_manager_desc_nd">未发现 MT 管理器 mt2 文件夹。</string>
+    <string name="chk_ext_mt_manager_reason">在以下位置发现 MT 管理器目录：%1$s。MT 管理器（一款流行的 APK 编辑器和文件管理器）默认在内部存储根目录创建 \'mt2\' 文件夹。其存在确认此设备上运行过 MT 管理器，表明可能存在 APK 修补、模块注入或其他文件级篡改行为。</string>
+    <string name="chk_ext_mt_manager_reason_nd">在 /sdcard 或 /storage/emulated/0 下未发现 \'mt2\' 目录。此设备上似乎未使用过 MT 管理器。</string>
+    <string name="chk_ext_mt_manager_solution">删除 /sdcard/mt2 目录。在 MT 管理器设置中，将 MT2 路径更改为自定义位置，或在使用后删除该目录。</string>
+
+    <!-- ExtraRootDetector: Check 20 — kernel -dirty suffix -->
+    <string name="chk_ext_kernel_dirty_name">检测到自编译/Dirty 内核</string>
+    <string name="chk_ext_kernel_dirty_name_nd">内核构建后缀检测</string>
+    <string name="chk_ext_kernel_dirty_desc">内核版本字符串包含 \'-dirty\' 后缀，表明使用了本地编译或存在未提交更改的内核构建。</string>
+    <string name="chk_ext_kernel_dirty_desc_nd">内核版本字符串中未发现 \'-dirty\' 后缀。</string>
+    <string name="chk_ext_kernel_dirty_reason">内核版本：\'%1$s\'。当源码树在编译时存在未提交更改，Linux 构建系统会在内核版本后追加 \'-dirty\' 后缀。这是第三方、自编译或定制内核的可靠指标——通常与定制 ROM 和 Root 设置配合使用。</string>
+    <string name="chk_ext_kernel_dirty_reason_nd">/proc/version 中的内核版本字符串不包含 \'-dirty\' 后缀。内核似乎是干净的官方构建。</string>
+    <string name="chk_ext_kernel_dirty_solution">刷入官方内核，或使用 SUSFS 伪装内核版本字符串，使其不再包含 \'-dirty\' 后缀。</string>
+
+    <!-- ExtraRootDetector: Check 21 — dex2oat anomaly -->
+    <string name="chk_ext_dex2oat_name">检测到 dex2oat 异常</string>
+    <string name="chk_ext_dex2oat_name_nd">dex2oat 检测</string>
+    <string name="chk_ext_dex2oat_desc">发现非标准 dex2oat 配置或 LSPosed dex2oat 包装器，表明 Hook 框架处于活动状态。</string>
+    <string name="chk_ext_dex2oat_desc_nd">未检测到 dex2oat 异常。</string>
+    <string name="chk_ext_dex2oat_reason">检测到：%1$s。LSPosed 和一些 Xposed 分支通过在 /data/adb/lspd/dex2oat 放置包装器二进制文件或设置非标准 dalvik.vm.dex2oat-filter 属性来拦截 dex2oat 编译流程。这些更改将 DEX 编译重定向到 Hook 框架，留下可检测的遗留文件。</string>
+    <string name="chk_ext_dex2oat_reason_nd">未发现非标准 dex2oat-filter 属性或 LSPosed 包装器二进制文件。dex2oat 编译流程看起来未被修改。</string>
+    <string name="chk_ext_dex2oat_solution">更新或重新安装 LSPosed。如果问题持续存在，清除 Dalvik 缓存（清空 /data/dalvik-cache）并重启以强制进行干净的 dex2oat 重新编译。</string>
+
+    <!-- ExtraRootDetector: Check 22 — Scene port -->
+    <string name="chk_ext_scene_port_name">检测到 Scene 工具箱</string>
+    <string name="chk_ext_scene_port_name_nd">Scene 工具箱检测</string>
+    <string name="chk_ext_scene_port_desc">Scene 性能工具箱应用已安装或其本地服务器端口处于开放状态。</string>
+    <string name="chk_ext_scene_port_desc_nd">未发现 Scene 工具箱指标。</string>
+    <string name="chk_ext_scene_port_reason">通过以下方式检测到 Scene：%1$s。Scene（com.omarea.vtools）是一款系统级性能和电池管理工具，运行无障碍服务并可选地在已知端口（18080、18081）上运行本地 HTTP 服务器。其存在表明此设备具有高级系统修改能力。</string>
+    <string name="chk_ext_scene_port_reason_nd">未发现 Scene 工具箱软件包（com.omarea.vtools），也未检测到 Scene 已知端口（18080、18081）上的监听套接字。</string>
+    <string name="chk_ext_scene_port_solution">禁用 Scene 的无障碍服务，在 Scene 设置中关闭其本地服务器，或使用 HMA 隐藏 Scene 以防止检测。</string>
+
+    <!-- ExtraRootDetector: Check 23 — hidden process groups -->
+    <string name="chk_ext_hidden_proc_name">检测到隐藏进程组</string>
+    <string name="chk_ext_hidden_proc_name_nd">隐藏进程组检测</string>
+    <string name="chk_ext_hidden_proc_desc">在 /proc 中发现线程组领导者缺失的进程，表明存在刻意的进程隐藏。</string>
+    <string name="chk_ext_hidden_proc_desc_nd">未发现隐藏进程组异常。</string>
+    <string name="chk_ext_hidden_proc_reason">发现线程组领导者（Tgid）在 /proc 中不可见的进程：%1$s。Root 守护进程（LSPosed lspd、Magisk magiskd）有时会从进程表中隐藏其父 PID，同时保留子线程可见。Tgid 不对应任何 /proc 条目是刻意隐藏进程的可靠指标。</string>
+    <string name="chk_ext_hidden_proc_reason_nd">所有可见的 /proc 条目的线程组领导者（Tgid）在 /proc 中也可见。未检测到隐藏进程组。</string>
+    <string name="chk_ext_hidden_proc_solution">在系统设置中开启软件分身（多开）以创建新的进程组，可掩盖此异常。更新可能导致隐藏组的 Root 框架。使用 ZN-AuditPatch 或 SUSFS 进行进程隐藏。</string>
+
+    <!-- ExtraRootDetector: Check 24 — Netlink socket anomaly -->
+    <string name="chk_ext_netlink_name">检测到 Netlink 套接字异常</string>
+    <string name="chk_ext_netlink_name_nd">Netlink 套接字检测</string>
+    <string name="chk_ext_netlink_desc">在 /proc/net/netlink 中发现非标准 Netlink 协议套接字，可能表明存在内核级 Root 活动。</string>
+    <string name="chk_ext_netlink_desc_nd">未发现非标准 Netlink 套接字。</string>
+    <string name="chk_ext_netlink_reason">在 /proc/net/netlink 中发现异常：%1$s。KernelSU 和一些 Magisk 变体使用自定义 Netlink 协议族（超出标准 Android 集合 0–22 的范围）在用户空间和内核模块之间通信。此类套接字的存在是内核级 Root 活动的强烈指标。</string>
+    <string name="chk_ext_netlink_reason_nd">/proc/net/netlink 中的所有 Netlink 套接字均使用标准 Android 协议编号（0–22），套接字数量正常。未检测到异常内核 IPC。</string>
+    <string name="chk_ext_netlink_solution">将 KernelSU 或 Magisk 更新到能够隐藏其 Netlink 通道的版本。目前此检测方法没有可靠的用户空间解决方案。</string>
+
+    <!-- ExtraRootDetector: Check 25 — audit log process detection -->
+    <string name="chk_ext_audit_log_name">通过审计日志检测到 Root 进程</string>
+    <string name="chk_ext_audit_log_name_nd">审计日志进程检测</string>
+    <string name="chk_ext_audit_log_desc">在内核 AVC 审计日志条目中发现 Root 守护进程的 SELinux 上下文，揭示了活跃的 Root 进程。</string>
+    <string name="chk_ext_audit_log_desc_nd">在内核审计日志中未发现 Root 进程指标。</string>
+    <string name="chk_ext_audit_log_reason">在内核 AVC 审计日志中发现：%1$s。Root 守护进程（magiskd、lspd、kpatchd）即使从标准进程表中隐藏自身，也会在 AVC 拒绝记录中留下独特的 SELinux 上下文字符串（u:r:magisk:s0、u:r:su:s0、u:r:zygisk:s0）。原生探针使用绕过 Java 层 Hook 的原始系统调用直接读取 /dev/kmsg。</string>
+    <string name="chk_ext_audit_log_reason_nd">在 /dev/kmsg 或内核 logcat 条目中未发现可疑的 SELinux 上下文或 Root 进程 comm= 值。审计日志看起来是干净的。</string>
+    <string name="chk_ext_audit_log_solution">安装 ZN-AuditPatch Magisk 模块以抑制与 Root 相关的 AVC 日志条目，或使用 SUSFS 的审计日志抑制功能。或者，应用 2025 年 9 月的 Android 安全更新，该更新修复了审计日志读取漏洞。</string>
 
 
     <!-- LunaDetector: Check 1 - LSPosed API Property -->

@@ -37,7 +37,17 @@ class ExtraRootDetector(private val context: Context) {
         checkBusyBoxInstalled(),
         checkSuBinarySuid(),
         checkShamikoZygiskAssist(),
-        checkHiddenSystemBindMounts()
+        checkHiddenSystemBindMounts(),
+        checkDataLocalTmpAnomalies(),
+        checkSuspiciousToolFiles(),
+        checkDebugRamdiskMount(),
+        checkMtManagerFiles(),
+        checkKernelDirtySuffix(),
+        checkDex2oatAnomaly(),
+        checkScenePortOccupied(),
+        checkHiddenProcessGroups(),
+        checkNetlinkSocketAnomaly(),
+        checkAuditLogProcesses()
     )
 
     // ----------------------------------------------------------------
@@ -874,6 +884,697 @@ class ExtraRootDetector(private val context: Context) {
                 description = context.getString(R.string.chk_ext_sys_mounts_desc_error),
                 detailedReason = context.getString(R.string.err_detail_failed, e.message ?: ""),
                 solution = context.getString(R.string.chk_ext_sys_mounts_solution_error)
+            )
+        }
+    }
+
+    // ---- Utilities ----
+
+    /**
+     * Check 16: /data/local/tmp directory anomalies.
+     *
+     * On a clean Android device /data/local/tmp is owned by shell (uid=2000, gid=2000)
+     * with permissions 0771. Root frameworks (KSU, Magisk) or tool chains sometimes change
+     * the ownership to root or alter permissions. The inode number also tells a story:
+     * if it's very large (>10000) the directory was likely deleted and recreated (SUSFS
+     * may spoof this; a legitimate new device will have small inode numbers).
+     *
+     * Inspired by Chunqiu Detector items "Suspicious Surroundings (a/b/c)" and "Futile hide".
+     */
+    private fun checkDataLocalTmpAnomalies(): DetectionResult {
+        val tmpDir = "/data/local/tmp"
+        val anomalies = mutableListOf<String>()
+        return try {
+            val process = Runtime.getRuntime().exec(arrayOf("stat", "-c", "%u %g %a %i", tmpDir))
+            val output = BufferedReader(InputStreamReader(process.inputStream)).readLine()?.trim() ?: ""
+            process.waitFor()
+            if (output.isNotEmpty()) {
+                val parts = output.split(" ")
+                if (parts.size >= 4) {
+                    val uid = parts[0].toIntOrNull() ?: -1
+                    val gid = parts[1].toIntOrNull() ?: -1
+                    val perms = parts[2]
+                    val inode = parts[3].toLongOrNull() ?: -1L
+                    // (a) Owner should be shell (uid=2000), not root (uid=0)
+                    if (uid == 0) anomalies.add("owner=root(uid=0) expected shell(uid=2000)")
+                    // (b) Group should not be root either
+                    if (gid == 0) anomalies.add("group=root(gid=0) expected shell(gid=2000)")
+                    // (c) Permissions should be 771
+                    if (perms != "771" && perms.isNotEmpty()) anomalies.add("permissions=$perms (expected 771)")
+                    // (b) Inode > 10000 implies deletion/recreation
+                    if (inode > 10000L) anomalies.add("inode=$inode (>10000 indicates prior deletion)")
+                }
+            }
+            if (anomalies.isNotEmpty()) {
+                DetectionResult(
+                    id = "tmp_anomaly",
+                    name = context.getString(R.string.chk_ext_tmp_anomaly_name),
+                    category = DetectionCategory.SYSTEM_INTEGRITY,
+                    status = DetectionStatus.DETECTED,
+                    riskLevel = RiskLevel.MEDIUM,
+                    description = context.getString(R.string.chk_ext_tmp_anomaly_desc),
+                    detailedReason = context.getString(R.string.chk_ext_tmp_anomaly_reason, anomalies.joinToString("; ")),
+                    solution = context.getString(R.string.chk_ext_tmp_anomaly_solution),
+                    technicalDetail = "$tmpDir: ${anomalies.joinToString("; ")}"
+                )
+            } else {
+                DetectionResult(
+                    id = "tmp_anomaly",
+                    name = context.getString(R.string.chk_ext_tmp_anomaly_name_nd),
+                    category = DetectionCategory.SYSTEM_INTEGRITY,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.MEDIUM,
+                    description = context.getString(R.string.chk_ext_tmp_anomaly_desc_nd),
+                    detailedReason = context.getString(R.string.chk_ext_tmp_anomaly_reason_nd),
+                    solution = context.getString(R.string.no_action_required)
+                )
+            }
+        } catch (e: Exception) {
+            DetectionResult(
+                id = "tmp_anomaly",
+                name = context.getString(R.string.chk_ext_tmp_anomaly_name_nd),
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.MEDIUM,
+                description = context.getString(R.string.chk_ext_tmp_anomaly_desc_nd),
+                detailedReason = context.getString(R.string.err_detail_failed, e.message ?: ""),
+                solution = context.getString(R.string.no_action_required)
+            )
+        }
+    }
+
+    /**
+     * Check 17: Suspicious tool files at well-known hacking/tweaking paths.
+     *
+     * Various tools leave artefacts at predictable paths under /data/local/tmp and
+     * /data/local. The Chunqiu Detector (and similar security checks) enumerate these
+     * paths. Finding any of them is a strong signal that modification tools have been
+     * run on this device.
+     */
+    private fun checkSuspiciousToolFiles(): DetectionResult {
+        val suspiciousPaths = listOf(
+            // Stryker / tweak frameworks
+            "/data/local/stryker",
+            // Luckys helper files
+            "/data/local/tmp/luckys",
+            "/data/local/luckys",
+            // Accessibility/input hooks
+            "/data/local/tmp/input_devices",
+            // HyperCeiler MIUI tweak
+            "/data/local/tmp/HyperCeiler",
+            // simpleHook Xposed helper
+            "/data/local/tmp/simpleHook",
+            // DisabledAllGoogleServices module
+            "/data/local/tmp/DisabledAllGoogleServices",
+            // MIO framework
+            "/data/local/MIO",
+            // DNA custom framework
+            "/data/DNA",
+            // Cleaner starter scripts
+            "/data/local/tmp/cleaner_starter",
+            // ByYang tools
+            "/data/local/tmp/byyang",
+            // Mount mask/mark files (used by various Zygisk modules)
+            "/data/local/tmp/mount_mask",
+            "/data/local/tmp/mount_mark",
+            // Script temp files
+            "/data/local/tmp/scriptTMP",
+            // Horae control log (Horae scheduler)
+            "/data/local/tmp/horae_control.log",
+            // GPU/swap config files placed by performance tweaks
+            "/data/gpu_freq_table.conf",
+            "/data/swap_config.conf",
+            // resetprop binary in tmp (dropped by some Magisk modules)
+            "/data/local/tmp/resetprop",
+            // System retention & freezer (aggressive battery managers)
+            "/data/system/AppRetention",
+            "/data/system/NoActive",
+            "/data/system/Freezer",
+            // Naki folder on external storage
+            "/storage/emulated/0/Android/naki"
+        )
+        val found = suspiciousPaths.filter { File(it).exists() }
+        return if (found.isNotEmpty()) {
+            DetectionResult(
+                id = "suspicious_tool_files",
+                name = context.getString(R.string.chk_ext_tool_files_name),
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_ext_tool_files_desc),
+                detailedReason = context.getString(R.string.chk_ext_tool_files_reason, found.take(5).joinToString(", ")),
+                solution = context.getString(R.string.chk_ext_tool_files_solution),
+                technicalDetail = "Found: ${found.joinToString("; ")}"
+            )
+        } else {
+            DetectionResult(
+                id = "suspicious_tool_files",
+                name = context.getString(R.string.chk_ext_tool_files_name_nd),
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_ext_tool_files_desc_nd),
+                detailedReason = context.getString(R.string.chk_ext_tool_files_reason_nd),
+                solution = context.getString(R.string.no_action_required)
+            )
+        }
+    }
+
+    /**
+     * Check 18: /debug_ramdisk inconsistent mount.
+     *
+     * Android's boot process uses a ramdisk whose contents are available at /debug_ramdisk
+     * on non-production builds. On a stock device this path either does not exist or is
+     * unmounted after early init. If it still appears as a mount point (visible in
+     * /proc/self/mounts) the device either has a non-standard boot image or a root framework
+     * has deliberately left it mounted, which can leak kernel debug symbols or provide a
+     * writeable location in the root namespace.
+     *
+     * Chunqiu Detector item: "不一致的挂载/debug_ramdisk"
+     */
+    private fun checkDebugRamdiskMount(): DetectionResult {
+        return try {
+            val mounts = File("/proc/self/mounts").readText()
+            val debugRamdiskMounted = mounts.lines().any { line ->
+                val parts = line.trim().split("\\s+".toRegex())
+                parts.size >= 2 && parts[1] == "/debug_ramdisk"
+            }
+            if (debugRamdiskMounted) {
+                DetectionResult(
+                    id = "debug_ramdisk_mount",
+                    name = context.getString(R.string.chk_ext_debug_ramdisk_name),
+                    category = DetectionCategory.SYSTEM_INTEGRITY,
+                    status = DetectionStatus.DETECTED,
+                    riskLevel = RiskLevel.MEDIUM,
+                    description = context.getString(R.string.chk_ext_debug_ramdisk_desc),
+                    detailedReason = context.getString(R.string.chk_ext_debug_ramdisk_reason),
+                    solution = context.getString(R.string.chk_ext_debug_ramdisk_solution),
+                    technicalDetail = "/debug_ramdisk is still mounted"
+                )
+            } else {
+                DetectionResult(
+                    id = "debug_ramdisk_mount",
+                    name = context.getString(R.string.chk_ext_debug_ramdisk_name_nd),
+                    category = DetectionCategory.SYSTEM_INTEGRITY,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.MEDIUM,
+                    description = context.getString(R.string.chk_ext_debug_ramdisk_desc_nd),
+                    detailedReason = context.getString(R.string.chk_ext_debug_ramdisk_reason_nd),
+                    solution = context.getString(R.string.no_action_required)
+                )
+            }
+        } catch (e: Exception) {
+            DetectionResult(
+                id = "debug_ramdisk_mount",
+                name = context.getString(R.string.chk_ext_debug_ramdisk_name_nd),
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.MEDIUM,
+                description = context.getString(R.string.chk_ext_debug_ramdisk_desc_nd),
+                detailedReason = context.getString(R.string.err_detail_failed, e.message ?: ""),
+                solution = context.getString(R.string.no_action_required)
+            )
+        }
+    }
+
+    /**
+     * Check 19: MT Manager artefacts (MT2 folder).
+     *
+     * MT Manager (a popular Android file manager / APK editor) creates an "mt2" folder
+     * in the root of internal storage by default. When this folder exists it confirms
+     * MT Manager has been run on the device, which is a strong indicator that APK
+     * patching, module injection, or other tampering may have occurred.
+     *
+     * Chunqiu Detector item: "MT管理器(MT2文件夹)/异常文件"
+     */
+    private fun checkMtManagerFiles(): DetectionResult {
+        val mtPaths = listOf(
+            "/sdcard/mt2",
+            "/storage/emulated/0/mt2"
+        )
+        val found = mtPaths.filter { File(it).exists() }
+        return if (found.isNotEmpty()) {
+            DetectionResult(
+                id = "mt_manager_files",
+                name = context.getString(R.string.chk_ext_mt_manager_name),
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.MEDIUM,
+                description = context.getString(R.string.chk_ext_mt_manager_desc),
+                detailedReason = context.getString(R.string.chk_ext_mt_manager_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_ext_mt_manager_solution),
+                technicalDetail = "MT2 paths found: ${found.joinToString("; ")}"
+            )
+        } else {
+            DetectionResult(
+                id = "mt_manager_files",
+                name = context.getString(R.string.chk_ext_mt_manager_name_nd),
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.MEDIUM,
+                description = context.getString(R.string.chk_ext_mt_manager_desc_nd),
+                detailedReason = context.getString(R.string.chk_ext_mt_manager_reason_nd),
+                solution = context.getString(R.string.no_action_required)
+            )
+        }
+    }
+
+    /**
+     * Check 20: Kernel version with -dirty suffix.
+     *
+     * When a kernel is compiled locally (outside of an official build system) the
+     * build system appends "-dirty" to the kernel version string if there are any
+     * uncommitted git changes. This suffix in /proc/version is a reliable indicator
+     * of a third-party or self-compiled kernel, which is commonly used alongside
+     * custom ROMs and root setups.
+     *
+     * Chunqiu Detector item: "第三方ROM/自编译内核"
+     */
+    private fun checkKernelDirtySuffix(): DetectionResult {
+        return try {
+            val version = File("/proc/version").readText().trim()
+            val isDirty = version.contains("-dirty", ignoreCase = true)
+            if (isDirty) {
+                DetectionResult(
+                    id = "kernel_dirty",
+                    name = context.getString(R.string.chk_ext_kernel_dirty_name),
+                    category = DetectionCategory.SYSTEM_INTEGRITY,
+                    status = DetectionStatus.DETECTED,
+                    riskLevel = RiskLevel.MEDIUM,
+                    description = context.getString(R.string.chk_ext_kernel_dirty_desc),
+                    detailedReason = context.getString(R.string.chk_ext_kernel_dirty_reason, version.take(120)),
+                    solution = context.getString(R.string.chk_ext_kernel_dirty_solution),
+                    technicalDetail = "Kernel: ${version.take(120)}"
+                )
+            } else {
+                DetectionResult(
+                    id = "kernel_dirty",
+                    name = context.getString(R.string.chk_ext_kernel_dirty_name_nd),
+                    category = DetectionCategory.SYSTEM_INTEGRITY,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.MEDIUM,
+                    description = context.getString(R.string.chk_ext_kernel_dirty_desc_nd),
+                    detailedReason = context.getString(R.string.chk_ext_kernel_dirty_reason_nd),
+                    solution = context.getString(R.string.no_action_required)
+                )
+            }
+        } catch (e: Exception) {
+            DetectionResult(
+                id = "kernel_dirty",
+                name = context.getString(R.string.chk_ext_kernel_dirty_name_nd),
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.MEDIUM,
+                description = context.getString(R.string.chk_ext_kernel_dirty_desc_nd),
+                detailedReason = context.getString(R.string.err_detail_failed, e.message ?: ""),
+                solution = context.getString(R.string.no_action_required)
+            )
+        }
+    }
+
+    /**
+     * Check 21: dex2oat anomaly detection.
+     *
+     * LSPosed and some Xposed forks inject code by creating a custom dex2oat compiler filter
+     * or leaving behind residual .odex/.oat artefacts in unexpected locations. Additionally,
+     * LSPosed rewrites the dex2oat binary path in system properties so that its own wrapper
+     * is called instead. Detecting a non-standard dex2oat path or the presence of LSPosed
+     * dex2oat helper files is a reliable hook-framework indicator.
+     *
+     * Chunqiu Detector item: "Miscellaneous Check（a）" — dex2oat (LSP problem)
+     */
+    private fun checkDex2oatAnomaly(): DetectionResult {
+        val anomalies = mutableListOf<String>()
+        return try {
+            // Check 1: non-standard compiler filter
+            val dex2oatFilter = getSystemProperty("dalvik.vm.dex2oat-filter")
+            val knownFilters = setOf("speed-profile", "speed", "quicken", "space-profile", "space",
+                "everything", "verify", "interpret-only", "time", "")
+            if (dex2oatFilter.isNotEmpty() && dex2oatFilter !in knownFilters) {
+                anomalies.add("dalvik.vm.dex2oat-filter=$dex2oatFilter (non-standard)")
+            }
+            // Check 2: LSPosed dex2oat wrapper files
+            val lspDex2oatPaths = listOf(
+                "/data/adb/lspd/dex2oat",
+                "/data/adb/lspd/bin/dex2oat",
+                "/data/misc/lspd/dex2oat",
+                "/data/adb/modules/zygisk_lsposed/dex2oat"
+            )
+            lspDex2oatPaths.filter { File(it).exists() }.forEach { anomalies.add("LSPosed dex2oat wrapper: $it") }
+            // Check 3: lspd dex2oat mapping in /proc/self/maps
+            try {
+                val maps = File("/proc/self/maps").readText()
+                if (maps.contains("lspd") && maps.contains("dex2oat", ignoreCase = true)) {
+                    anomalies.add("lspd dex2oat mapping in /proc/self/maps")
+                }
+            } catch (_: Exception) {}
+            // Check 4: native stat() probe (bypasses Java-layer File.exists() hooks)
+            val nativeFindings = NativeDetector.detectDex2oatNative()
+            if (nativeFindings.isNotEmpty()) {
+                nativeFindings.split("; ").filter { it.isNotEmpty() }.forEach { anomalies.add("native: $it") }
+            }
+
+            if (anomalies.isNotEmpty()) {
+                DetectionResult(
+                    id = "dex2oat_anomaly",
+                    name = context.getString(R.string.chk_ext_dex2oat_name),
+                    category = DetectionCategory.XPOSED,
+                    status = DetectionStatus.DETECTED,
+                    riskLevel = RiskLevel.HIGH,
+                    description = context.getString(R.string.chk_ext_dex2oat_desc),
+                    detailedReason = context.getString(R.string.chk_ext_dex2oat_reason, anomalies.joinToString("; ")),
+                    solution = context.getString(R.string.chk_ext_dex2oat_solution),
+                    technicalDetail = anomalies.joinToString("; ")
+                )
+            } else {
+                DetectionResult(
+                    id = "dex2oat_anomaly",
+                    name = context.getString(R.string.chk_ext_dex2oat_name_nd),
+                    category = DetectionCategory.XPOSED,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.HIGH,
+                    description = context.getString(R.string.chk_ext_dex2oat_desc_nd),
+                    detailedReason = context.getString(R.string.chk_ext_dex2oat_reason_nd),
+                    solution = context.getString(R.string.no_action_required)
+                )
+            }
+        } catch (e: Exception) {
+            DetectionResult(
+                id = "dex2oat_anomaly",
+                name = context.getString(R.string.chk_ext_dex2oat_name_nd),
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_ext_dex2oat_desc_nd),
+                detailedReason = context.getString(R.string.err_detail_failed, e.message ?: ""),
+                solution = context.getString(R.string.no_action_required)
+            )
+        }
+    }
+
+    /**
+     * Check 22: Scene toolkit port occupancy detection.
+     *
+     * Scene (一个场景/Fkscene) is a popular Android performance/battery tweaking app
+     * that runs an accessibility service and a local HTTP server on a fixed port (typically
+     * 18080 or 18081). Detecting its package name or an open socket at these ports
+     * indicates Scene is running.
+     *
+     * Chunqiu Detector item: "检测到Scene端口占用"
+     */
+    private fun checkScenePortOccupied(): DetectionResult {
+        val scenePackages = listOf("com.omarea.vtools", "com.omarea.scene", "com.omarea.vtools.pro")
+        val foundPkgs = scenePackages.filter { packageExists(it) }
+        val scenePorts = listOf(18080, 18081, 9999)
+        val openPorts = mutableListOf<Int>()
+        return try {
+            listOf("/proc/net/tcp", "/proc/net/tcp6").forEach { tcpFile ->
+                try {
+                    File(tcpFile).readLines().drop(1).forEach { line ->
+                        val parts = line.trim().split("\\s+".toRegex())
+                        if (parts.size >= 4 && parts[3] == "0A") {
+                            val portHex = parts[1].substringAfterLast(":")
+                            val port = portHex.toIntOrNull(16) ?: return@forEach
+                            if (port in scenePorts) openPorts.add(port)
+                        }
+                    }
+                } catch (_: Exception) {}
+            }
+            val detected = foundPkgs.isNotEmpty() || openPorts.isNotEmpty()
+            if (detected) {
+                val indicators = mutableListOf<String>()
+                if (foundPkgs.isNotEmpty()) indicators.add("packages: ${foundPkgs.joinToString(", ")}")
+                if (openPorts.isNotEmpty()) indicators.add("ports: ${openPorts.joinToString(", ")}")
+                DetectionResult(
+                    id = "scene_port",
+                    name = context.getString(R.string.chk_ext_scene_port_name),
+                    category = DetectionCategory.SYSTEM_INTEGRITY,
+                    status = DetectionStatus.DETECTED,
+                    riskLevel = RiskLevel.LOW,
+                    description = context.getString(R.string.chk_ext_scene_port_desc),
+                    detailedReason = context.getString(R.string.chk_ext_scene_port_reason, indicators.joinToString("; ")),
+                    solution = context.getString(R.string.chk_ext_scene_port_solution),
+                    technicalDetail = indicators.joinToString("; ")
+                )
+            } else {
+                DetectionResult(
+                    id = "scene_port",
+                    name = context.getString(R.string.chk_ext_scene_port_name_nd),
+                    category = DetectionCategory.SYSTEM_INTEGRITY,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.LOW,
+                    description = context.getString(R.string.chk_ext_scene_port_desc_nd),
+                    detailedReason = context.getString(R.string.chk_ext_scene_port_reason_nd),
+                    solution = context.getString(R.string.no_action_required)
+                )
+            }
+        } catch (e: Exception) {
+            DetectionResult(
+                id = "scene_port",
+                name = context.getString(R.string.chk_ext_scene_port_name_nd),
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.LOW,
+                description = context.getString(R.string.chk_ext_scene_port_desc_nd),
+                detailedReason = context.getString(R.string.err_detail_failed, e.message ?: ""),
+                solution = context.getString(R.string.no_action_required)
+            )
+        }
+    }
+
+    /**
+     * Check 23: Hidden process group detection.
+     *
+     * Some root-related processes hide from the normal process list but leave traces
+     * in /proc. By reading /proc directly and looking for PIDs whose thread-group leader
+     * (Tgid) is not itself visible as a /proc entry, we can expose hidden processes.
+     *
+     * Chunqiu Detector item: "异常进程" / "异常进程组"
+     */
+    private fun checkHiddenProcessGroups(): DetectionResult {
+        val suspiciousProcs = mutableListOf<String>()
+        return try {
+            val procDir = File("/proc")
+            val pidDirs = procDir.listFiles { _, name ->
+                name.all { c -> c.isDigit() }
+            } ?: emptyArray()
+            val allPids = pidDirs.map { it.name.toInt() }.toSet()
+            pidDirs.forEach { pidDir ->
+                try {
+                    val statusFile = File(pidDir, "status")
+                    if (!statusFile.exists()) return@forEach
+                    val statusText = statusFile.readText()
+                    val name = statusText.lines().firstOrNull { it.startsWith("Name:") }
+                        ?.removePrefix("Name:")?.trim() ?: return@forEach
+                    val tgid = statusText.lines().firstOrNull { it.startsWith("Tgid:") }
+                        ?.removePrefix("Tgid:")?.trim()?.toIntOrNull() ?: return@forEach
+                    val pid = pidDir.name.toInt()
+                    if (tgid != pid && tgid !in allPids) {
+                        suspiciousProcs.add("$name(pid=$pid,tgid=$tgid missing)")
+                    }
+                } catch (_: Exception) {}
+            }
+            if (suspiciousProcs.isNotEmpty()) {
+                DetectionResult(
+                    id = "hidden_process_groups",
+                    name = context.getString(R.string.chk_ext_hidden_proc_name),
+                    category = DetectionCategory.ROOT_MANAGEMENT,
+                    status = DetectionStatus.DETECTED,
+                    riskLevel = RiskLevel.HIGH,
+                    description = context.getString(R.string.chk_ext_hidden_proc_desc),
+                    detailedReason = context.getString(R.string.chk_ext_hidden_proc_reason, suspiciousProcs.take(5).joinToString(", ")),
+                    solution = context.getString(R.string.chk_ext_hidden_proc_solution),
+                    technicalDetail = "Hidden groups: ${suspiciousProcs.take(10).joinToString("; ")}"
+                )
+            } else {
+                DetectionResult(
+                    id = "hidden_process_groups",
+                    name = context.getString(R.string.chk_ext_hidden_proc_name_nd),
+                    category = DetectionCategory.ROOT_MANAGEMENT,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.HIGH,
+                    description = context.getString(R.string.chk_ext_hidden_proc_desc_nd),
+                    detailedReason = context.getString(R.string.chk_ext_hidden_proc_reason_nd),
+                    solution = context.getString(R.string.no_action_required)
+                )
+            }
+        } catch (e: Exception) {
+            DetectionResult(
+                id = "hidden_process_groups",
+                name = context.getString(R.string.chk_ext_hidden_proc_name_nd),
+                category = DetectionCategory.ROOT_MANAGEMENT,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_ext_hidden_proc_desc_nd),
+                detailedReason = context.getString(R.string.err_detail_failed, e.message ?: ""),
+                solution = context.getString(R.string.no_action_required)
+            )
+        }
+    }
+
+    /**
+     * Check 24: Netlink socket anomaly detection.
+     *
+     * KernelSU communicates with the kernel via Netlink sockets using custom protocol
+     * families. Listing /proc/net/netlink for non-standard protocol numbers (outside
+     * the known Android set) signals kernel-level root activity.
+     *
+     * Chunqiu Detector item: "Netlink socket anomaly"
+     */
+    private fun checkNetlinkSocketAnomaly(): DetectionResult {
+        val standardProtos = setOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22)
+        val anomalies = mutableListOf<String>()
+        return try {
+            val netlinkFile = File("/proc/net/netlink")
+            if (netlinkFile.exists()) {
+                val lines = netlinkFile.readLines().drop(1)
+                val protoCounts = mutableMapOf<Int, Int>()
+                lines.forEach { line ->
+                    val parts = line.trim().split("\\s+".toRegex())
+                    if (parts.size >= 3) {
+                        val proto = parts[1].toIntOrNull() ?: return@forEach
+                        protoCounts[proto] = (protoCounts[proto] ?: 0) + 1
+                    }
+                }
+                protoCounts.forEach { (proto, count) ->
+                    if (proto !in standardProtos) {
+                        anomalies.add("non-standard netlink proto=$proto (${count} socket(s))")
+                    }
+                }
+                protoCounts.forEach { (proto, count) ->
+                    if (count > 20 && proto in standardProtos) {
+                        anomalies.add("high socket count: proto=$proto count=$count")
+                    }
+                }
+            }
+            // Also run native probe (uses raw read(2) syscalls, harder to hook)
+            val nativeFindings = NativeDetector.detectNetlinkNative()
+            if (nativeFindings.isNotEmpty()) {
+                nativeFindings.split("; ").filter { it.isNotEmpty() }.forEach { f ->
+                    val entry = "native: $f"
+                    if (!anomalies.contains(entry)) anomalies.add(entry)
+                }
+            }
+            if (anomalies.isNotEmpty()) {
+                DetectionResult(
+                    id = "netlink_anomaly",
+                    name = context.getString(R.string.chk_ext_netlink_name),
+                    category = DetectionCategory.SYSTEM_INTEGRITY,
+                    status = DetectionStatus.DETECTED,
+                    riskLevel = RiskLevel.MEDIUM,
+                    description = context.getString(R.string.chk_ext_netlink_desc),
+                    detailedReason = context.getString(R.string.chk_ext_netlink_reason, anomalies.joinToString("; ")),
+                    solution = context.getString(R.string.chk_ext_netlink_solution),
+                    technicalDetail = anomalies.joinToString("; ")
+                )
+            } else {
+                DetectionResult(
+                    id = "netlink_anomaly",
+                    name = context.getString(R.string.chk_ext_netlink_name_nd),
+                    category = DetectionCategory.SYSTEM_INTEGRITY,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.MEDIUM,
+                    description = context.getString(R.string.chk_ext_netlink_desc_nd),
+                    detailedReason = context.getString(R.string.chk_ext_netlink_reason_nd),
+                    solution = context.getString(R.string.no_action_required)
+                )
+            }
+        } catch (e: Exception) {
+            DetectionResult(
+                id = "netlink_anomaly",
+                name = context.getString(R.string.chk_ext_netlink_name_nd),
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.MEDIUM,
+                description = context.getString(R.string.chk_ext_netlink_desc_nd),
+                detailedReason = context.getString(R.string.err_detail_failed, e.message ?: ""),
+                solution = context.getString(R.string.no_action_required)
+            )
+        }
+    }
+
+    /**
+     * Check 25: Audit log process detection.
+     *
+     * Reads kernel SELinux audit log entries (AVC denials) from /dev/kmsg via the
+     * native layer (raw open/read syscalls that bypass Java-layer hooks).  Root
+     * daemon processes (magiskd, lspd, kpatchd) leave distinctive SELinux context
+     * strings in AVC denials even when hidden from the process table.
+     *
+     * The article references "审计日志漏洞读取(avc)" — ZN-AuditPatch and SUSFS
+     * are the typical countermeasures.
+     *
+     * Chunqiu Detector item: "ROOT进程" (via audit log)
+     */
+    private fun checkAuditLogProcesses(): DetectionResult {
+        val findings = mutableListOf<String>()
+        return try {
+            // Strategy 1: native /dev/kmsg + logcat probe (bypasses Java hooks)
+            val nativeResult = NativeDetector.detectAuditLog()
+            if (nativeResult.isNotEmpty()) {
+                nativeResult.split("; ").filter { it.isNotEmpty() }.forEach { findings.add(it) }
+            }
+            // Strategy 2: Java-level logcat -b kernel fallback (broader compatibility)
+            if (findings.isEmpty()) {
+                try {
+                    val proc = Runtime.getRuntime().exec(arrayOf("logcat", "-b", "kernel", "-d", "-t", "200"))
+                    val reader = BufferedReader(InputStreamReader(proc.inputStream))
+                    val rootContexts = listOf("u:r:magisk:", "u:r:su:", "u:r:zygisk:")
+                    val rootComms = listOf("magiskd", "magisk64", "magisk32", "lspd", "kpatchd")
+                    var line: String?
+                    var count = 0
+                    while (reader.readLine().also { line = it } != null && count < 500) {
+                        val l = line ?: break
+                        if (l.contains("avc:") || l.contains("type=AVC")) {
+                            rootContexts.forEach { ctx ->
+                                if (l.contains(ctx)) findings.add("avc_ctx:$ctx")
+                            }
+                            rootComms.forEach { comm ->
+                                if (l.contains("comm=\"$comm\"")) findings.add("avc_comm:$comm")
+                            }
+                        }
+                        count++
+                    }
+                    reader.close()
+                    proc.destroy()
+                } catch (_: Exception) {}
+            }
+
+            if (findings.isNotEmpty()) {
+                val deduped = findings.distinct()
+                DetectionResult(
+                    id = "audit_log_root_process",
+                    name = context.getString(R.string.chk_ext_audit_log_name),
+                    category = DetectionCategory.ROOT_MANAGEMENT,
+                    status = DetectionStatus.DETECTED,
+                    riskLevel = RiskLevel.HIGH,
+                    description = context.getString(R.string.chk_ext_audit_log_desc),
+                    detailedReason = context.getString(R.string.chk_ext_audit_log_reason, deduped.take(5).joinToString("; ")),
+                    solution = context.getString(R.string.chk_ext_audit_log_solution),
+                    technicalDetail = deduped.take(10).joinToString("; ")
+                )
+            } else {
+                DetectionResult(
+                    id = "audit_log_root_process",
+                    name = context.getString(R.string.chk_ext_audit_log_name_nd),
+                    category = DetectionCategory.ROOT_MANAGEMENT,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.HIGH,
+                    description = context.getString(R.string.chk_ext_audit_log_desc_nd),
+                    detailedReason = context.getString(R.string.chk_ext_audit_log_reason_nd),
+                    solution = context.getString(R.string.no_action_required)
+                )
+            }
+        } catch (e: Exception) {
+            DetectionResult(
+                id = "audit_log_root_process",
+                name = context.getString(R.string.chk_ext_audit_log_name_nd),
+                category = DetectionCategory.ROOT_MANAGEMENT,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_ext_audit_log_desc_nd),
+                detailedReason = context.getString(R.string.err_detail_failed, e.message ?: ""),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }

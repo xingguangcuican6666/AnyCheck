@@ -94,9 +94,57 @@ object NativeDetector {
         }
     }
 
+    /**
+     * Reads kernel audit log entries (AVC SELinux denials) from /dev/kmsg in
+     * non-blocking mode, or falls back to a logcat -b kernel pipe.  Parses
+     * lines for suspicious SELinux contexts (u:r:magisk:s0, u:r:su:s0, …) and
+     * root-related comm= values that reveal root daemon activity.
+     *
+     * This is the native backend for audit log process detection (Check 25).
+     */
+    fun detectAuditLog(): String {
+        if (!libraryLoaded) return ""
+        return try {
+            detectAuditLogJni()
+        } catch (_: Throwable) {
+            ""
+        }
+    }
+
+    /**
+     * Uses stat(2) in native code to check for LSPosed dex2oat wrapper binaries
+     * and __system_property_get for non-standard dex2oat-filter values.
+     * More reliable than Java File.exists() which can be hooked by LSPosed.
+     */
+    fun detectDex2oatNative(): String {
+        if (!libraryLoaded) return ""
+        return try {
+            detectDex2oatNativeJni()
+        } catch (_: Throwable) {
+            ""
+        }
+    }
+
+    /**
+     * Reads /proc/net/netlink directly via open(2)/read(2) syscalls to detect
+     * non-standard Netlink protocol families used by kernel-level root frameworks
+     * (KernelSU, APatch) for userspace ↔ kernel IPC.
+     */
+    fun detectNetlinkNative(): String {
+        if (!libraryLoaded) return ""
+        return try {
+            detectNetlinkNativeJni()
+        } catch (_: Throwable) {
+            ""
+        }
+    }
+
     private external fun detectLSPosedJni(): String
     private external fun detectOdexHooksJni(): String
     private external fun detectInlineHooksJni(): String
     private external fun detectHMANativeJni(): String
     private external fun detectElfSymbolsJni(): String
+    private external fun detectAuditLogJni(): String
+    private external fun detectDex2oatNativeJni(): String
+    private external fun detectNetlinkNativeJni(): String
 }
