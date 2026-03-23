@@ -1617,4 +1617,15 @@
     <string name="err_detail_error">错误：%1$s</string>
     <string name="err_detail_query_failed">%1$s 查询失败：%2$s</string>
 
+    <!-- AdvancedRootDetector：检查 20 – Root 管理器 Intent 探针 -->
+    <string name="chk_adv_intent_probe_name">检测到隐藏的 Root 管理器（Intent 探针）</string>
+    <string name="chk_adv_intent_probe_name_hidden">检测到使用应用隐藏的 Root 管理器</string>
+    <string name="chk_adv_intent_probe_name_nd">Root 管理器 Intent 探针</string>
+    <string name="chk_adv_intent_probe_desc">通过 Intent 探针计时检测到对常规包查询不可见的 Root 管理器包。</string>
+    <string name="chk_adv_intent_probe_desc_hidden">Root 管理器疑似已安装并正在主动隐藏自身（正在使用应用隐藏 / DenyList）。</string>
+    <string name="chk_adv_intent_probe_desc_nd">通过 Intent 探针计时分析未检测到隐藏的 Root 管理器。</string>
+    <string name="chk_adv_intent_probe_reason">通过 Intent 探针检测到 Root 管理器：%1$s。向每个已知 Root 管理器包中不存在的 Activity 发送了定时显式组件 Intent。在干净设备上，系统会立即拒绝该 Intent，因为该包对 PackageManagerService 来说是未知的。响应明显变慢表明该包已在 PMS 中注册——即使常规 getPackageInfo() 查询返回 NameNotFoundException，说明该包已安装，这是使用应用隐藏（Magisk DenyList / Shamiko）的强烈指标。</string>
+    <string name="chk_adv_intent_probe_reason_nd">针对已知 Root 管理器包（Magisk、KernelSU、APatch、SuperSU 等）的所有 Intent 探针均在基准时间内返回。没有 Root 管理器包似乎对 PackageManagerService 隐藏。</string>
+    <string name="chk_adv_intent_probe_solution">禁用应用隐藏（Magisk DenyList / Shamiko / LSPosed 隐藏）或卸载 Root 管理器，然后重启并重新运行 AnyCheck。如果仍需要 Root 管理器，请将其从此应用的 DenyList 中移除。</string>
+
 </resources>

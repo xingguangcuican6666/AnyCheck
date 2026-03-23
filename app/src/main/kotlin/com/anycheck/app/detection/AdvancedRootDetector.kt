@@ -1,6 +1,9 @@
 package com.anycheck.app.detection
 
+import android.content.ActivityNotFoundException
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
@@ -34,7 +37,8 @@ class AdvancedRootDetector(private val context: Context) {
         checkMagiskModuleCount(),
         checkDebuggerAttached(),
         checkRootCloakingApps(),
-        checkKernelModules()
+        checkKernelModules(),
+        checkRootManagerIntentProbe()
     )
 
     /** Check 1: Execute `which su` to discover su in PATH */
@@ -964,6 +968,167 @@ class AdvancedRootDetector(private val context: Context) {
                 description = context.getString(R.string.chk_adv_kern_mods_desc_error),
                 detailedReason = context.getString(R.string.err_detail_failed, e.message ?: ""),
                 solution = context.getString(R.string.chk_adv_kern_mods_solution_error)
+            )
+        }
+    }
+
+    /**
+     * Check 20: Root manager intent probe — detects root managers hidden via app-hiding.
+     *
+     * Conventional package queries can be suppressed by root app-hiding tools such as
+     * Magisk's DenyList / Shamiko / LSPosed modules.  However, the Android framework's
+     * Activity resolution path through ActivityManagerService (AMS) → PackageManagerService
+     * (PMS) has a measurable timing difference depending on whether the target package is
+     * known to the system:
+     *
+     *  • Package NOT installed:  PMS finds nothing and returns almost instantly (<2 ms).
+     *  • Package INSTALLED (even if hidden): PMS must load and parse the package's activity
+     *    table before determining that the specific fake activity does not exist.  This takes
+     *    noticeably longer (typically 10–50 ms).
+     *
+     * The probe fires an explicit ComponentName intent that targets a deliberately
+     * non-existent activity class within each known root manager package.  Because the
+     * activity name is guaranteed not to exist, the call always raises
+     * ActivityNotFoundException — but the time to throw it reveals whether the package is
+     * registered with PMS.
+     *
+     * A baseline is taken against a package name that can never exist on any device
+     * (com.anycheck.__baseline_probe_package__) to isolate IPC overhead.
+     *
+     * Detection logic:
+     *   – Target time > 4× baseline AND > 8 ms absolute  → package is likely present but hidden
+     *   – startActivity() does NOT throw ActivityNotFoundException              → definitive detection
+     *
+     * If conventional package scanning missed the package but this probe fires, app-hiding
+     * is almost certainly in use.
+     */
+    private fun checkRootManagerIntentProbe(): DetectionResult {
+        // Root manager packages to probe, paired with their display names.
+        // The probe activity class is intentionally non-existent for every package.
+        val targets = listOf(
+            "com.topjohnwu.magisk"        to "Magisk",
+            "io.github.huskydg.magisk"    to "Magisk Delta",
+            "io.github.vvb2060.magisk"    to "Magisk Alpha",
+            "me.weishu.kernelsu"          to "KernelSU",
+            "com.rifsxd.ksunext"          to "KernelSU Next",
+            "me.bmax.apatch"              to "APatch",
+            "eu.chainfire.supersu"        to "SuperSU",
+            "com.noshufou.android.su"     to "Superuser"
+        )
+
+        // Suffix appended to each package name to form the fake activity class.
+        // Must not match any real activity in any of the above packages.
+        val probeActivitySuffix = ".__AnyCheckProbeActivity_nonexistent__"
+
+        // A package name that provably does not exist on any real device (used for baseline).
+        val baselinePkg = "com.anycheck.__baseline_probe_package__"
+
+        val indicators    = mutableListOf<String>()
+        val hiddenMarkers = mutableListOf<String>()
+
+        // ── Establish a baseline timing for the IPC overhead alone ───────────
+        // We run several iterations and take the average to smooth out JIT / scheduler noise.
+        val pm = context.packageManager
+        val baselineIterations = 3
+        var baselineTotalNs = 0L
+        val baselineIntent = Intent().apply {
+            component = ComponentName(baselinePkg, "$baselinePkg$probeActivitySuffix")
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        repeat(baselineIterations) {
+            val t = System.nanoTime()
+            try { context.startActivity(baselineIntent) } catch (_: Exception) {}
+            baselineTotalNs += (System.nanoTime() - t)
+        }
+        val baselineAvgNs = baselineTotalNs / baselineIterations
+
+        // ── Probe each root manager ──────────────────────────────────────────
+        targets.forEach { (pkg, displayName) ->
+            // Skip packages already visible through normal PM queries —
+            // conventional checks (MagiskDetector, KernelSUDetector, etc.) cover those.
+            if (packageExists(pkg)) return@forEach
+
+            val probeIntent = Intent().apply {
+                component = ComponentName(pkg, "$pkg$probeActivitySuffix")
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+
+            // Run several iterations and take the median to reduce noise.
+            // Only collect timing samples when probeSucceeded is false — if it succeeds
+            // we report via the probeSucceeded path and don't need timing at all.
+            val sampleList = mutableListOf<Long>()
+            var probeSucceeded = false
+            repeat(3) {
+                if (probeSucceeded) return@repeat
+                val t = System.nanoTime()
+                try {
+                    context.startActivity(probeIntent)
+                    probeSucceeded = true
+                } catch (_: ActivityNotFoundException) {
+                } catch (_: SecurityException) {
+                } catch (_: Exception) {}
+                if (!probeSucceeded) sampleList.add(System.nanoTime() - t)
+            }
+            sampleList.sort()
+            val medianNs = if (sampleList.isNotEmpty()) sampleList[sampleList.size / 2] else 0L
+            val medianMs = medianNs / 1_000_000.0
+            val ratio    = if (baselineAvgNs > 0) medianNs.toDouble() / baselineAvgNs else 0.0
+
+            when {
+                probeSucceeded -> {
+                    // The system accepted the fake-activity intent — the package is installed
+                    // and its manifest somehow matches the probe activity (extremely rare).
+                    indicators.add(
+                        "$displayName ($pkg): intent probe accepted by system " +
+                        "— package is present"
+                    )
+                }
+                ratio > 4.0 && medianMs > 8.0 -> {
+                    // Response is far slower than the baseline → PMS had to inspect the
+                    // package's activity list, meaning the package is registered with PMS
+                    // even though normal getPackageInfo() returned NameNotFoundException.
+                    hiddenMarkers.add(
+                        "$displayName ($pkg): probe took ${"%.1f".format(medianMs)} ms " +
+                        "(${"%.1f".format(ratio)}× baseline) " +
+                        "— package appears present but hidden from normal queries"
+                    )
+                }
+            }
+        }
+
+        val allIndicators = indicators + hiddenMarkers
+        return if (allIndicators.isNotEmpty()) {
+            val appHidingLikely = indicators.isEmpty() && hiddenMarkers.isNotEmpty()
+            DetectionResult(
+                id = "root_intent_probe",
+                name = if (appHidingLikely)
+                    context.getString(R.string.chk_adv_intent_probe_name_hidden)
+                else
+                    context.getString(R.string.chk_adv_intent_probe_name),
+                category = DetectionCategory.ROOT_MANAGEMENT,
+                status = DetectionStatus.DETECTED,
+                riskLevel = if (appHidingLikely) RiskLevel.HIGH else RiskLevel.CRITICAL,
+                description = if (appHidingLikely)
+                    context.getString(R.string.chk_adv_intent_probe_desc_hidden)
+                else
+                    context.getString(R.string.chk_adv_intent_probe_desc),
+                detailedReason = context.getString(
+                    R.string.chk_adv_intent_probe_reason,
+                    allIndicators.joinToString("; ")
+                ),
+                solution = context.getString(R.string.chk_adv_intent_probe_solution),
+                technicalDetail = allIndicators.joinToString("\n")
+            )
+        } else {
+            DetectionResult(
+                id = "root_intent_probe",
+                name = context.getString(R.string.chk_adv_intent_probe_name_nd),
+                category = DetectionCategory.ROOT_MANAGEMENT,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_adv_intent_probe_desc_nd),
+                detailedReason = context.getString(R.string.chk_adv_intent_probe_reason_nd),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }

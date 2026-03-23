@@ -1616,4 +1616,15 @@
     <string name="err_detail_error">Error: %1$s</string>
     <string name="err_detail_query_failed">%1$s query failed: %2$s</string>
 
+    <!-- AdvancedRootDetector: Check 20 – Root manager intent probe -->
+    <string name="chk_adv_intent_probe_name">Hidden Root Manager Detected (Intent Probe)</string>
+    <string name="chk_adv_intent_probe_name_hidden">Root Manager with App Hiding Detected</string>
+    <string name="chk_adv_intent_probe_name_nd">Root Manager Intent Probe</string>
+    <string name="chk_adv_intent_probe_desc">A root manager package that is invisible to normal package queries was detected via intent-probe timing.</string>
+    <string name="chk_adv_intent_probe_desc_hidden">A root manager appears to be installed and actively hiding itself from package queries (app-hiding / DenyList is in use).</string>
+    <string name="chk_adv_intent_probe_desc_nd">No hidden root managers detected via intent-probe timing analysis.</string>
+    <string name="chk_adv_intent_probe_reason">Root manager detected via intent probe: %1$s. A timed explicit-component intent targeting a non-existent activity within each known root manager package was fired. On a clean device the system rejects the intent almost instantly because the package is unknown to PackageManagerService. A significantly slower response indicates the package is registered with PMS — meaning it is installed even though conventional getPackageInfo() queries return NameNotFoundException, which is a strong indicator of app-hiding (Magisk DenyList / Shamiko).</string>
+    <string name="chk_adv_intent_probe_reason_nd">All intent probes against known root manager packages (Magisk, KernelSU, APatch, SuperSU, etc.) returned within baseline timing. No root manager package appears to be hidden from PackageManagerService.</string>
+    <string name="chk_adv_intent_probe_solution">Disable app-hiding (Magisk DenyList / Shamiko / LSPosed hide) or uninstall the root manager. Then reboot and re-run AnyCheck. If the root manager is still required, remove it from the DenyList for this application.</string>
+
 </resources>
