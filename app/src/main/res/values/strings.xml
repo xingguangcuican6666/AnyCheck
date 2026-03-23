@@ -238,6 +238,15 @@
     <string name="chk_ksu_props_reason_nd">No KernelSU-specific system properties were detected.</string>
     <string name="chk_ksu_props_solution">These properties are removed when KernelSU is uninstalled.</string>
 
+    <!-- KernelSUDetector: Check 9 — KSU loop device -->
+    <string name="chk_ksu_loop_device_name">KernelSU Loop Device Detected</string>
+    <string name="chk_ksu_loop_device_name_nd">KernelSU Loop Device Check</string>
+    <string name="chk_ksu_loop_device_desc">A loop device mounted at a KernelSU path was found, indicating KSU LKM mode is active.</string>
+    <string name="chk_ksu_loop_device_desc_nd">No KernelSU loop device mounts found.</string>
+    <string name="chk_ksu_loop_device_reason">Found loop device(s) mounted at KSU paths: %1$s. KernelSU LKM (Loadable Kernel Module) mode mounts its filesystem image via a /dev/loop* device at /data/adb paths. This is a definitive indicator that KernelSU is active in LKM mode.</string>
+    <string name="chk_ksu_loop_device_reason_nd">No /dev/loop* devices were found mounted at KernelSU-specific paths (/data/adb/ksu, /data/adb/modules). KSU loop device is not active.</string>
+    <string name="chk_ksu_loop_device_solution">Update KernelSU manager and re-patch the boot image. Use SUSFS or ZygiskNext to hide the loop device mount.</string>
+
     <!-- apatch -->
     <string name="chk_apatch_name">APatch Detected</string>
     <string name="chk_apatch_name_nd">APatch</string>
@@ -1150,6 +1159,51 @@
     <string name="chk_ext_sys_mounts_reason_nd">No root-framework (/data/adb) sourced bind-mounts over /system, /vendor or /product found.</string>
     <string name="chk_ext_sys_mounts_desc_error">Could not read /proc/self/mountinfo.</string>
     <string name="chk_ext_sys_mounts_solution_error">Ensure /proc/self/mountinfo is accessible.</string>
+
+    <!-- ExtraRootDetector: Check 16 — /data/local/tmp anomalies -->
+    <string name="chk_ext_tmp_anomaly_name">/data/local/tmp Attributes Anomaly</string>
+    <string name="chk_ext_tmp_anomaly_name_nd">/data/local/tmp Attributes</string>
+    <string name="chk_ext_tmp_anomaly_desc">The /data/local/tmp directory has non-standard ownership, permissions, or inode — indicating root-related modifications.</string>
+    <string name="chk_ext_tmp_anomaly_desc_nd">/data/local/tmp attributes appear normal.</string>
+    <string name="chk_ext_tmp_anomaly_reason">Found anomalies in /data/local/tmp: %1$s. On a clean device this directory is owned by shell (uid=2000, gid=2000) with permissions 0771 and a low inode number. Ownership changed to root, wrong permissions, or a high inode number (&gt;10000, indicating past deletion) are all signs of root tool activity.</string>
+    <string name="chk_ext_tmp_anomaly_reason_nd">/data/local/tmp is owned by shell (uid=2000), has permissions 0771, and has a normal inode number. No anomalies detected.</string>
+    <string name="chk_ext_tmp_anomaly_solution">Restore default ownership and permissions: chown shell:shell /data/local/tmp &amp;&amp; chmod 771 /data/local/tmp. If the inode is large, consider recreating the directory or using SUSFS to spoof the inode value.</string>
+
+    <!-- ExtraRootDetector: Check 17 — suspicious tool files -->
+    <string name="chk_ext_tool_files_name">Suspicious Tool Artefacts Found</string>
+    <string name="chk_ext_tool_files_name_nd">Suspicious Tool Files Check</string>
+    <string name="chk_ext_tool_files_desc">Files left by known root management or tweak tools were found at high-risk paths.</string>
+    <string name="chk_ext_tool_files_desc_nd">No suspicious tool artefacts found at known paths.</string>
+    <string name="chk_ext_tool_files_reason">Found artefacts at: %1$s. These paths are associated with specific tools: Stryker tweak framework (/data/local/stryker), Luckys helper (/data/local/tmp/luckys), HyperCeiler MIUI tweak (/data/local/tmp/HyperCeiler), simpleHook (/data/local/tmp/simpleHook), mount helpers (mount_mask/mount_mark), resetprop binary (/data/local/tmp/resetprop), and others. Their presence confirms advanced modification tools have been run on this device.</string>
+    <string name="chk_ext_tool_files_reason_nd">No artefacts from known root/tweak tools were found at the monitored paths under /data/local/tmp, /data/local, and /data.</string>
+    <string name="chk_ext_tool_files_solution">Delete the identified files/directories. Review any installed Magisk/KSU modules that may be creating these artefacts and remove them if no longer needed.</string>
+
+    <!-- ExtraRootDetector: Check 18 — /debug_ramdisk mount -->
+    <string name="chk_ext_debug_ramdisk_name">/debug_ramdisk Inconsistent Mount</string>
+    <string name="chk_ext_debug_ramdisk_name_nd">/debug_ramdisk Mount Check</string>
+    <string name="chk_ext_debug_ramdisk_desc">/debug_ramdisk is still mounted, which is abnormal on a production Android device.</string>
+    <string name="chk_ext_debug_ramdisk_desc_nd">/debug_ramdisk is not mounted. No anomaly.</string>
+    <string name="chk_ext_debug_ramdisk_reason">/debug_ramdisk appears as an active mount in /proc/self/mounts. On stock Android this ramdisk path is unmounted after early init and should not be visible to apps. Its continued presence indicates either a non-standard boot image or that a root framework has left it mounted, potentially exposing kernel debug symbols or a writable root-namespace path.</string>
+    <string name="chk_ext_debug_ramdisk_reason_nd">/debug_ramdisk is not present in /proc/self/mounts. The device boot process looks normal.</string>
+    <string name="chk_ext_debug_ramdisk_solution">Run \'umount /debug_ramdisk\' as root, or use a SUSFS/ZygiskNext configuration that unmounts it during boot. Re-patching with a clean stock boot.img will also resolve this.</string>
+
+    <!-- ExtraRootDetector: Check 19 — MT Manager (mt2 folder) -->
+    <string name="chk_ext_mt_manager_name">MT Manager Artefact Detected</string>
+    <string name="chk_ext_mt_manager_name_nd">MT Manager Check</string>
+    <string name="chk_ext_mt_manager_desc">The MT Manager \'mt2\' folder was found, confirming the APK editor/file manager has been used on this device.</string>
+    <string name="chk_ext_mt_manager_desc_nd">No MT Manager mt2 folder found.</string>
+    <string name="chk_ext_mt_manager_reason">Found MT Manager directory at: %1$s. MT Manager (a popular APK editor and file manager) creates an \'mt2\' folder in the root of internal storage by default. Its presence confirms MT Manager has been run on this device, indicating potential APK patching, module injection, or other file-level tampering.</string>
+    <string name="chk_ext_mt_manager_reason_nd">No \'mt2\' directory found under /sdcard or /storage/emulated/0. MT Manager does not appear to have been used on this device.</string>
+    <string name="chk_ext_mt_manager_solution">Delete the /sdcard/mt2 directory. In MT Manager settings, change the MT2 path to a custom location or delete the directory after use.</string>
+
+    <!-- ExtraRootDetector: Check 20 — kernel -dirty suffix -->
+    <string name="chk_ext_kernel_dirty_name">Self-Compiled / Dirty Kernel Detected</string>
+    <string name="chk_ext_kernel_dirty_name_nd">Kernel Build Suffix Check</string>
+    <string name="chk_ext_kernel_dirty_desc">The kernel version string contains the \'-dirty\' suffix, indicating a locally compiled or uncommitted kernel build.</string>
+    <string name="chk_ext_kernel_dirty_desc_nd">No \'-dirty\' suffix found in the kernel version string.</string>
+    <string name="chk_ext_kernel_dirty_reason">Kernel version: \'%1$s\'. The \'-dirty\' suffix is appended by the Linux build system when the source tree contains uncommitted changes at build time. This is a reliable indicator of a third-party, self-compiled, or custom kernel — commonly used alongside custom ROMs and root setups.</string>
+    <string name="chk_ext_kernel_dirty_reason_nd">The kernel version string in /proc/version does not contain the \'-dirty\' suffix. The kernel appears to be a clean, official build.</string>
+    <string name="chk_ext_kernel_dirty_solution">Flash an official kernel or use SUSFS to spoof the kernel version string so it no longer contains the \'-dirty\' suffix.</string>
 
 
     <!-- LunaDetector: Check 1 - LSPosed API Property -->

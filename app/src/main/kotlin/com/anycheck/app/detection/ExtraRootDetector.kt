@@ -37,7 +37,12 @@ class ExtraRootDetector(private val context: Context) {
         checkBusyBoxInstalled(),
         checkSuBinarySuid(),
         checkShamikoZygiskAssist(),
-        checkHiddenSystemBindMounts()
+        checkHiddenSystemBindMounts(),
+        checkDataLocalTmpAnomalies(),
+        checkSuspiciousToolFiles(),
+        checkDebugRamdiskMount(),
+        checkMtManagerFiles(),
+        checkKernelDirtySuffix()
     )
 
     // ----------------------------------------------------------------
@@ -874,6 +879,310 @@ class ExtraRootDetector(private val context: Context) {
                 description = context.getString(R.string.chk_ext_sys_mounts_desc_error),
                 detailedReason = context.getString(R.string.err_detail_failed, e.message ?: ""),
                 solution = context.getString(R.string.chk_ext_sys_mounts_solution_error)
+            )
+        }
+    }
+
+    // ---- Utilities ----
+
+    /**
+     * Check 16: /data/local/tmp directory anomalies.
+     *
+     * On a clean Android device /data/local/tmp is owned by shell (uid=2000, gid=2000)
+     * with permissions 0771. Root frameworks (KSU, Magisk) or tool chains sometimes change
+     * the ownership to root or alter permissions. The inode number also tells a story:
+     * if it's very large (>10000) the directory was likely deleted and recreated (SUSFS
+     * may spoof this; a legitimate new device will have small inode numbers).
+     *
+     * Inspired by Chunqiu Detector items "Suspicious Surroundings (a/b/c)" and "Futile hide".
+     */
+    private fun checkDataLocalTmpAnomalies(): DetectionResult {
+        val tmpDir = "/data/local/tmp"
+        val anomalies = mutableListOf<String>()
+        return try {
+            val process = Runtime.getRuntime().exec(arrayOf("stat", "-c", "%u %g %a %i", tmpDir))
+            val output = BufferedReader(InputStreamReader(process.inputStream)).readLine()?.trim() ?: ""
+            process.waitFor()
+            if (output.isNotEmpty()) {
+                val parts = output.split(" ")
+                if (parts.size >= 4) {
+                    val uid = parts[0].toIntOrNull() ?: -1
+                    val gid = parts[1].toIntOrNull() ?: -1
+                    val perms = parts[2]
+                    val inode = parts[3].toLongOrNull() ?: -1L
+                    // (a) Owner should be shell (uid=2000), not root (uid=0)
+                    if (uid == 0) anomalies.add("owner=root(uid=0) expected shell(uid=2000)")
+                    // (b) Group should not be root either
+                    if (gid == 0) anomalies.add("group=root(gid=0) expected shell(gid=2000)")
+                    // (c) Permissions should be 771
+                    if (perms != "771" && perms.isNotEmpty()) anomalies.add("permissions=$perms (expected 771)")
+                    // (b) Inode > 10000 implies deletion/recreation
+                    if (inode > 10000L) anomalies.add("inode=$inode (>10000 indicates prior deletion)")
+                }
+            }
+            if (anomalies.isNotEmpty()) {
+                DetectionResult(
+                    id = "tmp_anomaly",
+                    name = context.getString(R.string.chk_ext_tmp_anomaly_name),
+                    category = DetectionCategory.SYSTEM_INTEGRITY,
+                    status = DetectionStatus.DETECTED,
+                    riskLevel = RiskLevel.MEDIUM,
+                    description = context.getString(R.string.chk_ext_tmp_anomaly_desc),
+                    detailedReason = context.getString(R.string.chk_ext_tmp_anomaly_reason, anomalies.joinToString("; ")),
+                    solution = context.getString(R.string.chk_ext_tmp_anomaly_solution),
+                    technicalDetail = "$tmpDir: ${anomalies.joinToString("; ")}"
+                )
+            } else {
+                DetectionResult(
+                    id = "tmp_anomaly",
+                    name = context.getString(R.string.chk_ext_tmp_anomaly_name_nd),
+                    category = DetectionCategory.SYSTEM_INTEGRITY,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.MEDIUM,
+                    description = context.getString(R.string.chk_ext_tmp_anomaly_desc_nd),
+                    detailedReason = context.getString(R.string.chk_ext_tmp_anomaly_reason_nd),
+                    solution = context.getString(R.string.no_action_required)
+                )
+            }
+        } catch (e: Exception) {
+            DetectionResult(
+                id = "tmp_anomaly",
+                name = context.getString(R.string.chk_ext_tmp_anomaly_name_nd),
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.MEDIUM,
+                description = context.getString(R.string.chk_ext_tmp_anomaly_desc_nd),
+                detailedReason = context.getString(R.string.err_detail_failed, e.message ?: ""),
+                solution = context.getString(R.string.no_action_required)
+            )
+        }
+    }
+
+    /**
+     * Check 17: Suspicious tool files at well-known hacking/tweaking paths.
+     *
+     * Various tools leave artefacts at predictable paths under /data/local/tmp and
+     * /data/local. The Chunqiu Detector (and similar security checks) enumerate these
+     * paths. Finding any of them is a strong signal that modification tools have been
+     * run on this device.
+     */
+    private fun checkSuspiciousToolFiles(): DetectionResult {
+        val suspiciousPaths = listOf(
+            // Stryker / tweak frameworks
+            "/data/local/stryker",
+            // Luckys helper files
+            "/data/local/tmp/luckys",
+            "/data/local/luckys",
+            // Accessibility/input hooks
+            "/data/local/tmp/input_devices",
+            // HyperCeiler MIUI tweak
+            "/data/local/tmp/HyperCeiler",
+            // simpleHook Xposed helper
+            "/data/local/tmp/simpleHook",
+            // DisabledAllGoogleServices module
+            "/data/local/tmp/DisabledAllGoogleServices",
+            // MIO framework
+            "/data/local/MIO",
+            // DNA custom framework
+            "/data/DNA",
+            // Cleaner starter scripts
+            "/data/local/tmp/cleaner_starter",
+            // ByYang tools
+            "/data/local/tmp/byyang",
+            // Mount mask/mark files (used by various Zygisk modules)
+            "/data/local/tmp/mount_mask",
+            "/data/local/tmp/mount_mark",
+            // Script temp files
+            "/data/local/tmp/scriptTMP",
+            // Horae control log (Horae scheduler)
+            "/data/local/tmp/horae_control.log",
+            // GPU/swap config files placed by performance tweaks
+            "/data/gpu_freq_table.conf",
+            "/data/swap_config.conf",
+            // resetprop binary in tmp (dropped by some Magisk modules)
+            "/data/local/tmp/resetprop",
+            // System retention & freezer (aggressive battery managers)
+            "/data/system/AppRetention",
+            "/data/system/NoActive",
+            "/data/system/Freezer",
+            // Naki folder on external storage
+            "/storage/emulated/0/Android/naki"
+        )
+        val found = suspiciousPaths.filter { File(it).exists() }
+        return if (found.isNotEmpty()) {
+            DetectionResult(
+                id = "suspicious_tool_files",
+                name = context.getString(R.string.chk_ext_tool_files_name),
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_ext_tool_files_desc),
+                detailedReason = context.getString(R.string.chk_ext_tool_files_reason, found.take(5).joinToString(", ")),
+                solution = context.getString(R.string.chk_ext_tool_files_solution),
+                technicalDetail = "Found: ${found.joinToString("; ")}"
+            )
+        } else {
+            DetectionResult(
+                id = "suspicious_tool_files",
+                name = context.getString(R.string.chk_ext_tool_files_name_nd),
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_ext_tool_files_desc_nd),
+                detailedReason = context.getString(R.string.chk_ext_tool_files_reason_nd),
+                solution = context.getString(R.string.no_action_required)
+            )
+        }
+    }
+
+    /**
+     * Check 18: /debug_ramdisk inconsistent mount.
+     *
+     * Android's boot process uses a ramdisk whose contents are available at /debug_ramdisk
+     * on non-production builds. On a stock device this path either does not exist or is
+     * unmounted after early init. If it still appears as a mount point (visible in
+     * /proc/self/mounts) the device either has a non-standard boot image or a root framework
+     * has deliberately left it mounted, which can leak kernel debug symbols or provide a
+     * writeable location in the root namespace.
+     *
+     * Chunqiu Detector item: "不一致的挂载/debug_ramdisk"
+     */
+    private fun checkDebugRamdiskMount(): DetectionResult {
+        return try {
+            val mounts = File("/proc/self/mounts").readText()
+            val debugRamdiskMounted = mounts.lines().any { line ->
+                val parts = line.trim().split("\\s+".toRegex())
+                parts.size >= 2 && parts[1] == "/debug_ramdisk"
+            }
+            if (debugRamdiskMounted) {
+                DetectionResult(
+                    id = "debug_ramdisk_mount",
+                    name = context.getString(R.string.chk_ext_debug_ramdisk_name),
+                    category = DetectionCategory.SYSTEM_INTEGRITY,
+                    status = DetectionStatus.DETECTED,
+                    riskLevel = RiskLevel.MEDIUM,
+                    description = context.getString(R.string.chk_ext_debug_ramdisk_desc),
+                    detailedReason = context.getString(R.string.chk_ext_debug_ramdisk_reason),
+                    solution = context.getString(R.string.chk_ext_debug_ramdisk_solution),
+                    technicalDetail = "/debug_ramdisk is still mounted"
+                )
+            } else {
+                DetectionResult(
+                    id = "debug_ramdisk_mount",
+                    name = context.getString(R.string.chk_ext_debug_ramdisk_name_nd),
+                    category = DetectionCategory.SYSTEM_INTEGRITY,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.MEDIUM,
+                    description = context.getString(R.string.chk_ext_debug_ramdisk_desc_nd),
+                    detailedReason = context.getString(R.string.chk_ext_debug_ramdisk_reason_nd),
+                    solution = context.getString(R.string.no_action_required)
+                )
+            }
+        } catch (e: Exception) {
+            DetectionResult(
+                id = "debug_ramdisk_mount",
+                name = context.getString(R.string.chk_ext_debug_ramdisk_name_nd),
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.MEDIUM,
+                description = context.getString(R.string.chk_ext_debug_ramdisk_desc_nd),
+                detailedReason = context.getString(R.string.err_detail_failed, e.message ?: ""),
+                solution = context.getString(R.string.no_action_required)
+            )
+        }
+    }
+
+    /**
+     * Check 19: MT Manager artefacts (MT2 folder).
+     *
+     * MT Manager (a popular Android file manager / APK editor) creates an "mt2" folder
+     * in the root of internal storage by default. When this folder exists it confirms
+     * MT Manager has been run on the device, which is a strong indicator that APK
+     * patching, module injection, or other tampering may have occurred.
+     *
+     * Chunqiu Detector item: "MT管理器(MT2文件夹)/异常文件"
+     */
+    private fun checkMtManagerFiles(): DetectionResult {
+        val mtPaths = listOf(
+            "/sdcard/mt2",
+            "/storage/emulated/0/mt2"
+        )
+        val found = mtPaths.filter { File(it).exists() }
+        return if (found.isNotEmpty()) {
+            DetectionResult(
+                id = "mt_manager_files",
+                name = context.getString(R.string.chk_ext_mt_manager_name),
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.MEDIUM,
+                description = context.getString(R.string.chk_ext_mt_manager_desc),
+                detailedReason = context.getString(R.string.chk_ext_mt_manager_reason, found.joinToString(", ")),
+                solution = context.getString(R.string.chk_ext_mt_manager_solution),
+                technicalDetail = "MT2 paths found: ${found.joinToString("; ")}"
+            )
+        } else {
+            DetectionResult(
+                id = "mt_manager_files",
+                name = context.getString(R.string.chk_ext_mt_manager_name_nd),
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.MEDIUM,
+                description = context.getString(R.string.chk_ext_mt_manager_desc_nd),
+                detailedReason = context.getString(R.string.chk_ext_mt_manager_reason_nd),
+                solution = context.getString(R.string.no_action_required)
+            )
+        }
+    }
+
+    /**
+     * Check 20: Kernel version with -dirty suffix.
+     *
+     * When a kernel is compiled locally (outside of an official build system) the
+     * build system appends "-dirty" to the kernel version string if there are any
+     * uncommitted git changes. This suffix in /proc/version is a reliable indicator
+     * of a third-party or self-compiled kernel, which is commonly used alongside
+     * custom ROMs and root setups.
+     *
+     * Chunqiu Detector item: "第三方ROM/自编译内核"
+     */
+    private fun checkKernelDirtySuffix(): DetectionResult {
+        return try {
+            val version = File("/proc/version").readText().trim()
+            val isDirty = version.contains("-dirty", ignoreCase = true)
+            if (isDirty) {
+                DetectionResult(
+                    id = "kernel_dirty",
+                    name = context.getString(R.string.chk_ext_kernel_dirty_name),
+                    category = DetectionCategory.SYSTEM_INTEGRITY,
+                    status = DetectionStatus.DETECTED,
+                    riskLevel = RiskLevel.MEDIUM,
+                    description = context.getString(R.string.chk_ext_kernel_dirty_desc),
+                    detailedReason = context.getString(R.string.chk_ext_kernel_dirty_reason, version.take(120)),
+                    solution = context.getString(R.string.chk_ext_kernel_dirty_solution),
+                    technicalDetail = "Kernel: ${version.take(120)}"
+                )
+            } else {
+                DetectionResult(
+                    id = "kernel_dirty",
+                    name = context.getString(R.string.chk_ext_kernel_dirty_name_nd),
+                    category = DetectionCategory.SYSTEM_INTEGRITY,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.MEDIUM,
+                    description = context.getString(R.string.chk_ext_kernel_dirty_desc_nd),
+                    detailedReason = context.getString(R.string.chk_ext_kernel_dirty_reason_nd),
+                    solution = context.getString(R.string.no_action_required)
+                )
+            }
+        } catch (e: Exception) {
+            DetectionResult(
+                id = "kernel_dirty",
+                name = context.getString(R.string.chk_ext_kernel_dirty_name_nd),
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.MEDIUM,
+                description = context.getString(R.string.chk_ext_kernel_dirty_desc_nd),
+                detailedReason = context.getString(R.string.err_detail_failed, e.message ?: ""),
+                solution = context.getString(R.string.no_action_required)
             )
         }
     }

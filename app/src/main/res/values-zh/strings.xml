@@ -238,6 +238,15 @@
     <string name="chk_ksu_props_reason_nd">未检测到 KernelSU 特定系统属性。</string>
     <string name="chk_ksu_props_solution">卸载 KernelSU 时将移除这些属性。</string>
 
+    <!-- KernelSUDetector: Check 9 — KSU loop device -->
+    <string name="chk_ksu_loop_device_name">检测到 KernelSU 回环设备</string>
+    <string name="chk_ksu_loop_device_name_nd">KernelSU 回环设备检测</string>
+    <string name="chk_ksu_loop_device_desc">发现挂载在 KernelSU 路径上的回环设备，表明 KSU LKM 模式处于活动状态。</string>
+    <string name="chk_ksu_loop_device_desc_nd">未发现 KernelSU 回环设备挂载。</string>
+    <string name="chk_ksu_loop_device_reason">发现挂载在 KSU 路径上的回环设备：%1$s。KernelSU LKM（可加载内核模块）模式通过 /dev/loop* 设备将其文件系统镜像挂载到 /data/adb 路径。这是 KernelSU 以 LKM 模式运行的确定性指标。</string>
+    <string name="chk_ksu_loop_device_reason_nd">未发现挂载在 KernelSU 特定路径（/data/adb/ksu、/data/adb/modules）上的 /dev/loop* 设备。KSU 回环设备未激活。</string>
+    <string name="chk_ksu_loop_device_solution">更新 KernelSU 管理器并重新修补 boot 镜像。使用 SUSFS 或 ZygiskNext 隐藏回环设备挂载。</string>
+
     <!-- apatch -->
     <string name="chk_apatch_name">检测到 APatch</string>
     <string name="chk_apatch_name_nd">APatch</string>
@@ -1141,6 +1150,51 @@
     <string name="chk_ext_sys_mounts_reason_nd">未发现来自 Root 框架（/data/adb）对 /system、/vendor 或 /product 的绑定挂载。</string>
     <string name="chk_ext_sys_mounts_desc_error">无法读取 /proc/self/mountinfo。</string>
     <string name="chk_ext_sys_mounts_solution_error">请确保 /proc/self/mountinfo 可访问。</string>
+
+    <!-- ExtraRootDetector: Check 16 — /data/local/tmp anomalies -->
+    <string name="chk_ext_tmp_anomaly_name">/data/local/tmp 属性异常</string>
+    <string name="chk_ext_tmp_anomaly_name_nd">/data/local/tmp 属性检测</string>
+    <string name="chk_ext_tmp_anomaly_desc">/data/local/tmp 目录存在非标准所有者、权限或 inode，表明存在 Root 相关修改。</string>
+    <string name="chk_ext_tmp_anomaly_desc_nd">/data/local/tmp 属性看起来正常。</string>
+    <string name="chk_ext_tmp_anomaly_reason">在 /data/local/tmp 中发现异常：%1$s。在干净的设备上，该目录由 shell（uid=2000，gid=2000）所有，权限为 0771，且 inode 编号较小。所有者变为 root、权限错误或 inode 编号过大（&gt;10000，表明曾被删除）都是 Root 工具活动的迹象。</string>
+    <string name="chk_ext_tmp_anomaly_reason_nd">/data/local/tmp 由 shell（uid=2000）所有，权限为 0771，inode 编号正常。未检测到异常。</string>
+    <string name="chk_ext_tmp_anomaly_solution">恢复默认所有者和权限：chown shell:shell /data/local/tmp &amp;&amp; chmod 771 /data/local/tmp。如果 inode 编号较大，考虑重新创建目录或使用 SUSFS 伪装 inode 值。</string>
+
+    <!-- ExtraRootDetector: Check 17 — suspicious tool files -->
+    <string name="chk_ext_tool_files_name">发现可疑工具遗留文件</string>
+    <string name="chk_ext_tool_files_name_nd">可疑工具文件检测</string>
+    <string name="chk_ext_tool_files_desc">在高风险路径发现已知 Root 管理或调整工具遗留的文件。</string>
+    <string name="chk_ext_tool_files_desc_nd">在已知路径未发现可疑工具遗留文件。</string>
+    <string name="chk_ext_tool_files_reason">在以下位置发现遗留文件：%1$s。这些路径与特定工具相关：Stryker 调整框架（/data/local/stryker）、Luckys 辅助文件（/data/local/tmp/luckys）、HyperCeiler MIUI 调整（/data/local/tmp/HyperCeiler）、simpleHook（/data/local/tmp/simpleHook）、挂载辅助文件（mount_mask/mount_mark）、resetprop 二进制文件（/data/local/tmp/resetprop）等。其存在确认此设备上运行过高级修改工具。</string>
+    <string name="chk_ext_tool_files_reason_nd">在 /data/local/tmp、/data/local 和 /data 下的监控路径中未发现已知 Root/调整工具的遗留文件。</string>
+    <string name="chk_ext_tool_files_solution">删除已识别的文件/目录。检查可能创建这些遗留文件的已安装 Magisk/KSU 模块，如不再需要则将其删除。</string>
+
+    <!-- ExtraRootDetector: Check 18 — /debug_ramdisk mount -->
+    <string name="chk_ext_debug_ramdisk_name">/debug_ramdisk 挂载异常</string>
+    <string name="chk_ext_debug_ramdisk_name_nd">/debug_ramdisk 挂载检测</string>
+    <string name="chk_ext_debug_ramdisk_desc">/debug_ramdisk 仍处于挂载状态，这在正式 Android 设备上是不正常的。</string>
+    <string name="chk_ext_debug_ramdisk_desc_nd">/debug_ramdisk 未挂载，无异常。</string>
+    <string name="chk_ext_debug_ramdisk_reason">/debug_ramdisk 在 /proc/self/mounts 中显示为活动挂载点。在正版 Android 上，该 ramdisk 路径在早期 init 后会被卸载，应用不应看到它。它的持续存在表明设备使用了非标准 boot 镜像，或 Root 框架故意保留了挂载，可能暴露内核调试符号或在 root 命名空间中提供可写路径。</string>
+    <string name="chk_ext_debug_ramdisk_reason_nd">/proc/self/mounts 中不存在 /debug_ramdisk。设备启动过程看起来正常。</string>
+    <string name="chk_ext_debug_ramdisk_solution">以 root 身份运行 \'umount /debug_ramdisk\'，或使用在启动时卸载它的 SUSFS/ZygiskNext 配置。使用干净的原厂 boot.img 重新修补也可解决此问题。</string>
+
+    <!-- ExtraRootDetector: Check 19 — MT Manager (mt2 folder) -->
+    <string name="chk_ext_mt_manager_name">检测到 MT 管理器遗留文件</string>
+    <string name="chk_ext_mt_manager_name_nd">MT 管理器检测</string>
+    <string name="chk_ext_mt_manager_desc">发现 MT 管理器的 \'mt2\' 文件夹，确认此设备上使用过该 APK 编辑器/文件管理器。</string>
+    <string name="chk_ext_mt_manager_desc_nd">未发现 MT 管理器 mt2 文件夹。</string>
+    <string name="chk_ext_mt_manager_reason">在以下位置发现 MT 管理器目录：%1$s。MT 管理器（一款流行的 APK 编辑器和文件管理器）默认在内部存储根目录创建 \'mt2\' 文件夹。其存在确认此设备上运行过 MT 管理器，表明可能存在 APK 修补、模块注入或其他文件级篡改行为。</string>
+    <string name="chk_ext_mt_manager_reason_nd">在 /sdcard 或 /storage/emulated/0 下未发现 \'mt2\' 目录。此设备上似乎未使用过 MT 管理器。</string>
+    <string name="chk_ext_mt_manager_solution">删除 /sdcard/mt2 目录。在 MT 管理器设置中，将 MT2 路径更改为自定义位置，或在使用后删除该目录。</string>
+
+    <!-- ExtraRootDetector: Check 20 — kernel -dirty suffix -->
+    <string name="chk_ext_kernel_dirty_name">检测到自编译/Dirty 内核</string>
+    <string name="chk_ext_kernel_dirty_name_nd">内核构建后缀检测</string>
+    <string name="chk_ext_kernel_dirty_desc">内核版本字符串包含 \'-dirty\' 后缀，表明使用了本地编译或存在未提交更改的内核构建。</string>
+    <string name="chk_ext_kernel_dirty_desc_nd">内核版本字符串中未发现 \'-dirty\' 后缀。</string>
+    <string name="chk_ext_kernel_dirty_reason">内核版本：\'%1$s\'。当源码树在编译时存在未提交更改，Linux 构建系统会在内核版本后追加 \'-dirty\' 后缀。这是第三方、自编译或定制内核的可靠指标——通常与定制 ROM 和 Root 设置配合使用。</string>
+    <string name="chk_ext_kernel_dirty_reason_nd">/proc/version 中的内核版本字符串不包含 \'-dirty\' 后缀。内核似乎是干净的官方构建。</string>
+    <string name="chk_ext_kernel_dirty_solution">刷入官方内核，或使用 SUSFS 伪装内核版本字符串，使其不再包含 \'-dirty\' 后缀。</string>
 
 
     <!-- LunaDetector: Check 1 - LSPosed API Property -->
