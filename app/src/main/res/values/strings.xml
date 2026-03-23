@@ -1627,4 +1627,22 @@
     <string name="chk_adv_intent_probe_reason_nd">System launch probes against all known root manager packages (Magisk, KernelSU, APatch, SuperSU, etc.) all threw ActivityNotFoundException, confirming no root manager is installed (even in a hidden state).</string>
     <string name="chk_adv_intent_probe_solution">Disable app-hiding (Magisk DenyList / Shamiko / LSPosed hide) or uninstall the root manager. Then reboot and re-run AnyCheck. If the root manager is still required, remove it from the DenyList for this application.</string>
 
+    <!-- RevenyInspiredDetector: Check 5b – HMA Binder probe -->
+    <string name="chk_reveny_hma_binder_name">Hide My Applist Active (Binder Probe)</string>
+    <string name="chk_reveny_hma_binder_name_nd">Hide My Applist Binder Probe</string>
+    <string name="chk_reveny_hma_binder_desc">Hide My Applist service detected via its hidden Binder interface injected into PackageManagerService.</string>
+    <string name="chk_reveny_hma_binder_desc_nd">No Hide My Applist service detected via PackageManager Binder probe.</string>
+    <string name="chk_reveny_hma_binder_reason">HMA injects a hidden Binder service into the system PackageManager (android.content.pm.IPackageManager) using a custom transaction code (0x484D4144 — H-M-A-D). Sending this transaction with ACTION_GET_BINDER=1 returned a valid IHMAService Binder, confirming the HMA service is running inside system_server and actively filtering package queries for this app.</string>
+    <string name="chk_reveny_hma_binder_reason_nd">The HMAD transaction probe (0x484D4144) sent to the PackageManager Binder returned no Binder object, indicating HMA service is not active.</string>
+    <string name="chk_reveny_hma_binder_solution">Disable Hide My Applist in LSPosed module manager or uninstall the HMA app, then reboot. If HMA must remain active, remove this application from its hide list.</string>
+
+    <!-- RuruInspiredDetector: Check 6b – HMA current data directory -->
+    <string name="chk_ruru_hma_dir_name">Hide My Applist Data Directory Detected</string>
+    <string name="chk_ruru_hma_dir_name_nd">Hide My Applist Data Directory Check</string>
+    <string name="chk_ruru_hma_dir_desc">A Hide My Applist (v3+) data directory was found under /data/misc/.</string>
+    <string name="chk_ruru_hma_dir_desc_nd">No Hide My Applist data directories found under /data/misc/.</string>
+    <string name="chk_ruru_hma_dir_reason">HMA v3+ stores its configuration, logs, and filter count in a randomly-named directory at /data/misc/hide_my_applist_{16-char-random}. The following matching entries were found: %1$s. This confirms HMA has been or is currently installed and configured on this device.</string>
+    <string name="chk_ruru_hma_dir_reason_nd">No directories matching the pattern /data/misc/hide_my_applist_* were found, indicating HMA v3+ has not been installed.</string>
+    <string name="chk_ruru_hma_dir_solution">Uninstall Hide My Applist and reboot. If HMA must remain installed, remove this application from its filter list to prevent app-list hiding.</string>
+
 </resources>

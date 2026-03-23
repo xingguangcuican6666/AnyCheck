@@ -1,8 +1,10 @@
 package com.anycheck.app.detection
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.Parcel
 import com.anycheck.app.R
 import java.io.BufferedReader
 import java.io.File
@@ -23,6 +25,7 @@ class RevenyInspiredDetector(private val context: Context) {
         checkResetprop(),
         checkDebugFingerprint(),
         checkHideMyApplist(),
+        checkHmaBinderProbe(),
         checkMountInconsistency(),
         checkAddonDOrInstallRecovery(),
         checkSystemAppsAbsence(),
@@ -623,6 +626,83 @@ class RevenyInspiredDetector(private val context: Context) {
                 riskLevel = RiskLevel.HIGH,
                 description = context.getString(R.string.chk_reveny_fw_patch_desc_error),
                 detailedReason = context.getString(R.string.chk_reveny_fw_patch_reason_error),
+                solution = context.getString(R.string.no_action_required)
+            )
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Check 5b: Hide My Applist — Binder probe
+    //
+    // HMA injects a hidden Binder service into the PackageManager Binder
+    // (`android.content.pm.IPackageManager` interface).  To let its own app
+    // connect to the service running inside system_server it intercepts a
+    // specific custom transaction:
+    //
+    //   transaction code = 'H' << 24 | 'M' << 16 | 'A' << 8 | 'D'  = 0x484D4144
+    //   ACTION_GET_BINDER = 1  (written as an int to the Parcel)
+    //
+    // On a clean device PMS does not handle this transaction and the reply
+    // Parcel will contain no Binder.  If HMA is active, the reply Parcel
+    // contains a valid IHMAService Binder → HMA service confirmed.
+    // -------------------------------------------------------------------------
+    @SuppressLint("DiscouragedPrivateApi")
+    private fun checkHmaBinderProbe(): DetectionResult {
+        val detected = runCatching {
+            // ServiceManager is a hidden API; access via reflection.
+            val serviceManagerClass = Class.forName("android.os.ServiceManager")
+            val getServiceMethod = serviceManagerClass.getMethod("getService", String::class.java)
+            val pmBinder = getServiceMethod.invoke(null, "package") as? android.os.IBinder
+                ?: return DetectionResult(
+                    id = "reveny_hma_binder_probe",
+                    name = context.getString(R.string.chk_reveny_hma_binder_name_nd),
+                    category = DetectionCategory.XPOSED,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.HIGH,
+                    description = context.getString(R.string.chk_reveny_hma_binder_desc_nd),
+                    detailedReason = context.getString(R.string.chk_reveny_hma_binder_reason_nd),
+                    solution = context.getString(R.string.no_action_required)
+                )
+
+            // HMAD transaction: 'H'<<24 | 'M'<<16 | 'A'<<8 | 'D'
+            val transaction = 'H'.code shl 24 or ('M'.code shl 16) or ('A'.code shl 8) or 'D'.code
+            val data = Parcel.obtain()
+            val reply = Parcel.obtain()
+            val hmaBinder = try {
+                // IPackageManager descriptor + ACTION_GET_BINDER (=1)
+                data.writeInterfaceToken("android.content.pm.IPackageManager")
+                data.writeInt(1)
+                pmBinder.transact(transaction, data, reply, 0)
+                reply.readException()
+                reply.readStrongBinder()
+            } finally {
+                data.recycle()
+                reply.recycle()
+            }
+            hmaBinder != null
+        }.getOrElse { false }
+
+        return if (detected) {
+            DetectionResult(
+                id = "reveny_hma_binder_probe",
+                name = context.getString(R.string.chk_reveny_hma_binder_name),
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_reveny_hma_binder_desc),
+                detailedReason = context.getString(R.string.chk_reveny_hma_binder_reason),
+                solution = context.getString(R.string.chk_reveny_hma_binder_solution),
+                technicalDetail = "IHMAService Binder returned from HMAD transaction (0x484D4144) on package service"
+            )
+        } else {
+            DetectionResult(
+                id = "reveny_hma_binder_probe",
+                name = context.getString(R.string.chk_reveny_hma_binder_name_nd),
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_reveny_hma_binder_desc_nd),
+                detailedReason = context.getString(R.string.chk_reveny_hma_binder_reason_nd),
                 solution = context.getString(R.string.no_action_required)
             )
         }

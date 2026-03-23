@@ -42,6 +42,7 @@ class RuruInspiredDetector(private val context: Context) {
         checkRiruClipboardFile(),
         checkPrivacySpaceFile(),
         checkHmaOldVersionFile(),
+        checkHmaCurrentDataDir(),
         checkPmCommandVsApi(),
         checkXposedModuleMetadata(),
         checkLSPatchAppComponentFactory(),
@@ -245,6 +246,62 @@ class RuruInspiredDetector(private val context: Context) {
                 riskLevel = RiskLevel.HIGH,
                 description = context.getString(R.string.chk_ruru_hma_old_desc_nd),
                 detailedReason = context.getString(R.string.chk_ruru_hma_old_reason_nd),
+                solution = context.getString(R.string.no_action_required)
+            )
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // 6b. HMA current-version data directory (random-suffix)
+    // HMA v3+ creates /data/misc/hide_my_applist_{random_16_chars} and stores
+    // its config, logs, and filter_count inside it.  This check scans
+    // /data/misc/ for any entry beginning with "hide_my_applist_" and, for
+    // each match, checks for the known artifact files that HMA itself creates.
+    // -------------------------------------------------------------------------
+    private fun checkHmaCurrentDataDir(): DetectionResult {
+        val indicators = mutableListOf<String>()
+        try {
+            val miscDir = File("/data/misc")
+            val hmaEntries = miscDir.listFiles { f ->
+                f.name.startsWith("hide_my_applist_")
+            } ?: emptyArray()
+
+            for (entry in hmaEntries) {
+                val info = buildString {
+                    append(entry.path)
+                    // Look for well-known HMA artifacts inside each directory.
+                    val artifacts = listOf("config.json", "filter_count", "log/runtime.log", "log/old.log")
+                    val found = artifacts.filter { File(entry, it).exists() }
+                    if (found.isNotEmpty()) append(" [${found.joinToString()}]")
+                }
+                indicators.add(info)
+            }
+        } catch (_: Exception) {}
+
+        return if (indicators.isNotEmpty()) {
+            DetectionResult(
+                id = "ruru_hma_current_dir",
+                name = context.getString(R.string.chk_ruru_hma_dir_name),
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_ruru_hma_dir_desc),
+                detailedReason = context.getString(
+                    R.string.chk_ruru_hma_dir_reason,
+                    indicators.joinToString("; ")
+                ),
+                solution = context.getString(R.string.chk_ruru_hma_dir_solution),
+                technicalDetail = indicators.joinToString("\n")
+            )
+        } else {
+            DetectionResult(
+                id = "ruru_hma_current_dir",
+                name = context.getString(R.string.chk_ruru_hma_dir_name_nd),
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_ruru_hma_dir_desc_nd),
+                detailedReason = context.getString(R.string.chk_ruru_hma_dir_reason_nd),
                 solution = context.getString(R.string.no_action_required)
             )
         }

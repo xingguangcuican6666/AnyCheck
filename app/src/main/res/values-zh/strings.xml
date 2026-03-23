@@ -1628,4 +1628,22 @@
     <string name="chk_adv_intent_probe_reason_nd">对所有已知 Root 管理器包（Magisk、KernelSU、APatch、SuperSU 等）的系统启动探针均抛出了 ActivityNotFoundException，确认没有 Root 管理器安装（包括隐藏状态）。</string>
     <string name="chk_adv_intent_probe_solution">禁用应用隐藏（Magisk DenyList / Shamiko / LSPosed 隐藏）或卸载 Root 管理器，然后重启并重新运行 AnyCheck。如果仍需要 Root 管理器，请将其从此应用的 DenyList 中移除。</string>
 
+    <!-- RevenyInspiredDetector：检查 5b – HMA Binder 探针 -->
+    <string name="chk_reveny_hma_binder_name">检测到 Hide My Applist 活跃（Binder 探针）</string>
+    <string name="chk_reveny_hma_binder_name_nd">Hide My Applist Binder 探针</string>
+    <string name="chk_reveny_hma_binder_desc">通过注入到 PackageManagerService 的隐藏 Binder 接口检测到 Hide My Applist 服务。</string>
+    <string name="chk_reveny_hma_binder_desc_nd">通过 PackageManager Binder 探针未检测到 Hide My Applist 服务。</string>
+    <string name="chk_reveny_hma_binder_reason">HMA 使用自定义事务码（0x484D4144，即 H-M-A-D）向系统 PackageManager（android.content.pm.IPackageManager）注入了一个隐藏 Binder 服务。使用 ACTION_GET_BINDER=1 发送该事务后，收到了有效的 IHMAService Binder，确认 HMA 服务正在 system_server 内运行，并正在主动过滤此应用的包查询结果。</string>
+    <string name="chk_reveny_hma_binder_reason_nd">向 PackageManager Binder 发送的 HMAD 事务探针（0x484D4144）未返回任何 Binder 对象，表明 HMA 服务未处于活跃状态。</string>
+    <string name="chk_reveny_hma_binder_solution">在 LSPosed 模块管理器中禁用 Hide My Applist 或卸载 HMA 应用，然后重启。如果 HMA 必须继续运行，请将此应用从其隐藏列表中移除。</string>
+
+    <!-- RuruInspiredDetector：检查 6b – HMA 当前数据目录 -->
+    <string name="chk_ruru_hma_dir_name">检测到 Hide My Applist 数据目录</string>
+    <string name="chk_ruru_hma_dir_name_nd">Hide My Applist 数据目录检查</string>
+    <string name="chk_ruru_hma_dir_desc">在 /data/misc/ 下发现了 Hide My Applist（v3+）数据目录。</string>
+    <string name="chk_ruru_hma_dir_desc_nd">在 /data/misc/ 下未发现 Hide My Applist 数据目录。</string>
+    <string name="chk_ruru_hma_dir_reason">HMA v3+ 将其配置、日志和过滤计数存储在 /data/misc/hide_my_applist_{16位随机字符} 的随机命名目录中。以下匹配条目被发现：%1$s。这证实 HMA 曾经或目前已安装并配置在此设备上。</string>
+    <string name="chk_ruru_hma_dir_reason_nd">未发现符合 /data/misc/hide_my_applist_* 模式的目录，表明 HMA v3+ 尚未安装。</string>
+    <string name="chk_ruru_hma_dir_solution">卸载 Hide My Applist 并重启。如果 HMA 必须保留，请将此应用从其过滤列表中移除，以防止应用列表被隐藏。</string>
+
 </resources>
