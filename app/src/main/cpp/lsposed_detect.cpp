@@ -621,3 +621,17 @@ Java_com_anycheck_app_detection_NativeDetector_detectHMANativeJni(JNIEnv *env, j
     }
     return env->NewStringUTF(result.c_str());
 }
+
+// ---------------------------------------------------------------------------
+// JNI entry point — N10: ELF symbol scan (Hunter-inspired)
+// ---------------------------------------------------------------------------
+extern "C" JNIEXPORT jstring JNICALL
+Java_com_anycheck_app_detection_NativeDetector_detectElfSymbolsJni(JNIEnv *env, jobject /* thiz */) {
+    auto findings = probeElfSymbols();
+    std::string result;
+    for (size_t i = 0; i < findings.size(); ++i) {
+        if (i > 0) result += "; ";
+        result += findings[i];
+    }
+    return env->NewStringUTF(result.c_str());
+}

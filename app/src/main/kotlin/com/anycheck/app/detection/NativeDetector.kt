@@ -78,8 +78,25 @@ object NativeDetector {
         }
     }
 
+    /**
+     * Scans every native library mapped into this process by directly parsing
+     * the ELF .dynsym and .symtab sections via mmap(2) (Hunter-inspired ElfImg
+     * approach).  This bypasses standard dlsym() and GOT-level hooks.
+     * Returns a semicolon-separated list of "elf_sym:<lib>!<symbol>" findings,
+     * or an empty string if no hook-framework symbols are found.
+     */
+    fun detectElfSymbols(): String {
+        if (!libraryLoaded) return ""
+        return try {
+            detectElfSymbolsJni()
+        } catch (_: Throwable) {
+            ""
+        }
+    }
+
     private external fun detectLSPosedJni(): String
     private external fun detectOdexHooksJni(): String
     private external fun detectInlineHooksJni(): String
     private external fun detectHMANativeJni(): String
+    private external fun detectElfSymbolsJni(): String
 }

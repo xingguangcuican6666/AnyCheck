@@ -148,6 +148,7 @@
     <string name="progress_ruru">Ruru-inspired checks complete</string>
     <string name="progress_integrity">System integrity checks complete</string>
     <string name="progress_rikkax">RikkaX checks complete</string>
+    <string name="progress_hunter">Hunter/RposedBridge checks complete</string>
     <string name="progress_format">%1$s (%2$d/%3$d)</string>
 
     <!-- Common check strings -->
@@ -1725,5 +1726,42 @@
     <string name="chk_hma_native_reason">Native probes found HMA indicators: %1$s. These findings use raw stat(2) and readdir(3) calls that cannot be intercepted by HMA\'s Java-layer PackageManager hook. A matching /data/misc/hide_my_applist* directory (v3+ random suffix) or library mapping confirms HMA is physically present on the device.</string>
     <string name="chk_hma_native_reason_nd">Raw stat() and readdir() scans found no HMA data directories under /data/misc/ or /data/user_de/0/, and /proc/self/maps contains no HMA library mappings.</string>
     <string name="chk_hma_native_solution">Uninstall Hide My Applist and disable its LSPosed module, then reboot.</string>
+
+    <!-- Hunter/RposedBridge detection (HunterDetector) -->
+    <!-- Check 1: RposedBridge class presence -->
+    <string name="chk_hunter_rposed_class_name">RposedBridge Class Detected</string>
+    <string name="chk_hunter_rposed_class_name_nd">RposedBridge Class Detection</string>
+    <string name="chk_hunter_rposed_class_desc">HunterRuntime\'s RposedBridge class was found in the class loader, indicating an Xposed-compatible hook framework is injected into this process.</string>
+    <string name="chk_hunter_rposed_class_desc_nd">No RposedBridge or LSPlant bridge class found in the class loader.</string>
+    <string name="chk_hunter_rposed_class_reason">Class.forName() successfully loaded: %1$s. RposedBridge is HunterRuntime\'s Xposed-compatible API layer backed by LSPlant. Its presence means Java-layer method hooks are active in this process.</string>
+    <string name="chk_hunter_rposed_class_reason_nd">None of the known RposedBridge class names (de.robv.android.xposed.RposedBridge, io.github.lsposed.lsplant.RposedBridge) were loadable from the current class loader.</string>
+    <string name="chk_hunter_rposed_class_solution">Disable the HunterRuntime or LSPosed module targeting this app and reboot, or uninstall the framework entirely.</string>
+
+    <!-- Check 2: Hunter/RposedBridge packages -->
+    <string name="chk_hunter_packages_name">Hunter/LSPosed Manager Package Detected</string>
+    <string name="chk_hunter_packages_name_nd">Hunter/LSPosed Manager Package Detection</string>
+    <string name="chk_hunter_packages_desc">A HunterRuntime or LSPosed manager application was found installed on this device.</string>
+    <string name="chk_hunter_packages_desc_nd">No HunterRuntime or LSPosed manager packages found.</string>
+    <string name="chk_hunter_packages_reason">PackageManager returned info for hook-framework manager package(s): %1$s. These apps install and manage LSPlant-backed Xposed modules that can hook any app on the device.</string>
+    <string name="chk_hunter_packages_reason_nd">None of the known HunterRuntime or LSPosed manager package names were found via PackageManager.</string>
+    <string name="chk_hunter_packages_solution">Uninstall the HunterRuntime or LSPosed manager and all associated modules, then reboot the device.</string>
+
+    <!-- Check 3: LSPlant / Hunter system properties -->
+    <string name="chk_hunter_props_name">LSPlant/Hunter System Property Detected</string>
+    <string name="chk_hunter_props_name_nd">LSPlant/Hunter System Property Detection</string>
+    <string name="chk_hunter_props_desc">System properties specific to LSPlant or HunterRuntime were found, confirming the framework is installed.</string>
+    <string name="chk_hunter_props_desc_nd">No LSPlant or HunterRuntime system properties found.</string>
+    <string name="chk_hunter_props_reason">getprop returned non-empty values for hook-framework property/properties: %1$s. These properties are set by LSPlant or HunterRuntime init scripts and confirm the framework is active.</string>
+    <string name="chk_hunter_props_reason_nd">None of the monitored LSPlant/HunterRuntime properties (ro.lsplant.version, persist.lsplant.loaded, init.svc.hunter, persist.hunter.api) contained a value.</string>
+    <string name="chk_hunter_props_solution">Disable or uninstall LSPlant/HunterRuntime to clear these properties, then reboot.</string>
+
+    <!-- Check 4: Native ELF symbol scan (N10) -->
+    <string name="chk_hunter_elf_symbols_name">Hook Framework ELF Symbol Detected (Native)</string>
+    <string name="chk_hunter_elf_symbols_name_nd">Native ELF Symbol Scan</string>
+    <string name="chk_hunter_elf_symbols_desc">Hook framework symbols were found by directly parsing the ELF .dynsym/.symtab sections of native libraries mapped in this process, bypassing dlsym() and GOT-level hooks.</string>
+    <string name="chk_hunter_elf_symbols_desc_nd">No hook framework symbols found via direct ELF .dynsym/.symtab section parsing.</string>
+    <string name="chk_hunter_elf_symbols_reason">Hunter-inspired ElfImg scan (N10) detected: %1$s. The probe parses .dynsym and .symtab ELF sections directly from disk via mmap(2), making it resistant to GOT-level interception by LSPlant, Frida, Dobby, ShadowHook, or Pine.</string>
+    <string name="chk_hunter_elf_symbols_reason_nd">Direct ELF section parsing of all mapped .so files found no symbols belonging to LSPlant, Frida (gum), Dobby, ShadowHook, or Pine hook frameworks.</string>
+    <string name="chk_hunter_elf_symbols_solution">Remove the native hook library (liblsplant.so, libfrida-agent.so, libdobby.so, etc.) from the device. Disable the Zygisk/Riru module that injects it and reboot.</string>
 
 </resources>
