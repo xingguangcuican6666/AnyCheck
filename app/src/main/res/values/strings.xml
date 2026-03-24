@@ -1857,8 +1857,8 @@
     <string name="chk_hma_native_solution">Uninstall Hide My Applist and disable its LSPosed module, then reboot.</string>
 
     <!-- HMA whitelist detection (N14) -->
-    <string name="chk_hma_whitelist_name">HMA Whitelist Active — Packages Hidden</string>
-    <string name="chk_hma_whitelist_name_nd">HMA Whitelist Detection (fstatat)</string>
+    <string name="chk_hma_whitelist_name">HMA Active — Packages Hidden</string>
+    <string name="chk_hma_whitelist_name_nd">HMA Detection (fstatat)</string>
     <string name="chk_hma_whitelist_name_root">Root Manager Detected via Data-Dir Probe</string>
     <string name="chk_hma_whitelist_desc">Hide My Applist whitelist mode is actively hiding installed packages from this app via filesystem-level interception.</string>
     <string name="chk_hma_whitelist_desc_nd">No HMA whitelist activity detected via raw fstatat syscall probes.</string>
@@ -1870,8 +1870,8 @@
     <string name="chk_hma_whitelist_solution_root">If root access is not intended, uninstall the detected root manager(s). If root is required, ensure HMA is not configured to hide root-manager packages from this app.</string>
 
     <!-- HMA blacklist detection (N15) -->
-    <string name="chk_hma_blacklist_name">HMA Blacklist Active — Kernel Ledger Anomaly</string>
-    <string name="chk_hma_blacklist_name_nd">HMA Blacklist Detection (st_nlink)</string>
+    <string name="chk_hma_blacklist_name">HMA Active — Kernel Ledger Anomaly</string>
+    <string name="chk_hma_blacklist_name_nd">HMA Detection (st_nlink)</string>
     <string name="chk_hma_blacklist_desc">The kernel reports fewer than 100 package data directories in /data/user/0, indicating HMA blacklist mode is hiding most installed packages from this app.</string>
     <string name="chk_hma_blacklist_desc_nd">The kernel-reported package data directory count in /data/user/0 is 100 or more, consistent with normal operation.</string>
     <string name="chk_hma_blacklist_reason">A raw fstatat(2) syscall on /data/user/0 returned st_nlink − 2 = %1$s, which is below the threshold of 100. On a normal Android device the /data/user/0 directory contains well over 100 package data subdirectories. A count below 100 as seen by this process indicates HMA blacklist mode (or an equivalent mechanism) is manipulating the visible directory count to hide installed packages.</string>
