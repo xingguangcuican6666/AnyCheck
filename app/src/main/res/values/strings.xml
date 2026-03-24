@@ -1918,11 +1918,11 @@
     <!-- XposedDetector: Check 30 — LSPosed Parasite mode detection -->
     <string name="chk_parasite_manager_name">LSPosed Parasite Mode Detected</string>
     <string name="chk_parasite_manager_name_nd">LSPosed Parasite Mode Detection</string>
-    <string name="chk_parasite_manager_desc">LSPosed Parasite mode is active. In this mode lspd runs as the shell user (uid 2000) without Magisk or KernelSU, and is activated by tapping a notification.</string>
-    <string name="chk_parasite_manager_desc_nd">No LSPosed Parasite mode or LSPatch artifacts detected.</string>
-    <string name="chk_parasite_manager_reason">The following LSPosed Parasite mode indicators were found: %1$s. LSPosed Parasite mode parasitizes the ADB shell process (uid 2000) instead of the root process, requiring no Magisk or KernelSU. The lspd daemon runs as the shell user and is activated by tapping a system notification, making it harder to detect via traditional root artifact scans. LSPatch is a related technique that embeds LSPosed hooks directly inside patched APKs.</string>
-    <string name="chk_parasite_manager_reason_nd">No lspd-as-shell process, Parasite daemon files (/data/local/tmp/lspd), or LSPatch packages and artifacts were detected.</string>
-    <string name="chk_parasite_manager_solution">Disable LSPosed Parasite mode via the LSPosed Manager notification, then uninstall the LSPosed framework. If LSPatch is in use, reinstall the original APK from a trusted source.</string>
+    <string name="chk_parasite_manager_desc">LSPosed Parasite mode is active. In this mode lspd injects into the system_server process (the \'android\' system app, uid=1000) without Magisk or KernelSU. The android system process then posts an activation notification; tapping it opens the LSPosed Manager UI.</string>
+    <string name="chk_parasite_manager_desc_nd">No LSPosed Parasite mode indicators detected (no injected libraries in system_server, no parasite config, no staging files).</string>
+    <string name="chk_parasite_manager_reason">The following LSPosed Parasite mode indicators were found: %1$s. LSPosed Parasite mode works by having a shell launcher (uid=2000) write lspd\'s code into system_server\'s memory via /proc/PID/mem. After injection, LSPosed hooks execute inside the android system process, which then posts a notification that the user taps to open the LSPosed Manager. This leaves no Magisk/KernelSU root artifacts and is much harder to detect via traditional root scans.</string>
+    <string name="chk_parasite_manager_reason_nd">No injected lspd/lsposed libraries were found in system_server\'s process maps, no parasite config directory (/data/system/lspd/) exists, no staging files were found at /data/local/tmp/lspd, and no lspd notification channel was detected on the android package.</string>
+    <string name="chk_parasite_manager_solution">Disable LSPosed Parasite mode via the LSPosed Manager notification, then reboot. The lspd staging file at /data/local/tmp/lspd can be removed to prevent re-injection after reboot.</string>
 
     <!-- SystemIntegrityDetector: Check 7 — Snapdragon 8 Gen 2 – 8 Elite security patch -->
     <string name="chk_snapdragon_patch_name">Critical Snapdragon Vulnerability — Patch Missing</string>

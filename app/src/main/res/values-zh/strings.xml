@@ -1854,11 +1854,11 @@
     <!-- XposedDetector: Check 30 — LSPosed 寄生模式检测 -->
     <string name="chk_parasite_manager_name">检测到 LSPosed 寄生模式</string>
     <string name="chk_parasite_manager_name_nd">LSPosed 寄生模式检测</string>
-    <string name="chk_parasite_manager_desc">LSPosed 寄生模式已激活。在此模式下，lspd 以 Shell 用户（uid 2000）身份运行，无需 Magisk 或 KernelSU，通过点击通知即可激活。</string>
-    <string name="chk_parasite_manager_desc_nd">未检测到 LSPosed 寄生模式或 LSPatch 相关文件。</string>
-    <string name="chk_parasite_manager_reason">发现以下 LSPosed 寄生模式指标：%1$s。LSPosed 寄生模式寄生在 ADB Shell 进程（uid 2000）而非 Root 进程，无需 Magisk 或 KernelSU。lspd 守护进程以 Shell 用户身份运行，通过点击系统通知激活，使其更难通过传统 Root 文件扫描发现。LSPatch 是一种相关技术，将 LSPosed Hook 直接嵌入已打补丁的 APK 中。</string>
-    <string name="chk_parasite_manager_reason_nd">未检测到以 Shell 身份运行的 lspd 进程、寄生守护文件（/data/local/tmp/lspd），也未发现 LSPatch 软件包或文件。</string>
-    <string name="chk_parasite_manager_solution">通过 LSPosed 管理器通知关闭寄生模式，然后卸载 LSPosed 框架。如果正在使用 LSPatch 打补丁的 APK，请从可信来源重新安装原始 APK。</string>
+    <string name="chk_parasite_manager_desc">LSPosed 寄生模式已激活。在此模式下，lspd 寄生进入 system_server 进程（即 android 系统应用，uid=1000），无需 Magisk 或 KernelSU。之后由 android 系统进程发送一条激活通知，点击该通知即可进入 LSPosed 管理器界面。</string>
+    <string name="chk_parasite_manager_desc_nd">未检测到 LSPosed 寄生模式（system_server 进程映射中无注入库、无寄生配置文件、无暂存文件）。</string>
+    <string name="chk_parasite_manager_reason">发现以下 LSPosed 寄生模式指标：%1$s。LSPosed 寄生模式的工作原理是：shell 启动进程（uid=2000）通过 /proc/PID/mem 将 lspd 代码写入 system_server 的内存。注入完成后，LSPosed Hook 在 android 系统进程内运行，该进程随即发送一条通知，用户点击即可打开 LSPosed 管理器。此方式无需 Magisk/KernelSU Root 文件，传统 Root 扫描极难发现。</string>
+    <string name="chk_parasite_manager_reason_nd">在 system_server 进程映射中未发现 lspd/lsposed 注入库，/data/system/lspd/ 寄生配置目录不存在，/data/local/tmp/lspd 暂存文件不存在，android 包中也未检测到 lspd 通知渠道。</string>
+    <string name="chk_parasite_manager_solution">通过 LSPosed 管理器通知关闭寄生模式，然后重启设备。可删除 /data/local/tmp/lspd 暂存文件以防止重启后再次注入。</string>
 
     <!-- SystemIntegrityDetector: Check 7 — 骁龙 8 Gen 2 – 8 Elite 安全补丁检测 -->
     <string name="chk_snapdragon_patch_name">严重漏洞：骁龙安全补丁缺失</string>
