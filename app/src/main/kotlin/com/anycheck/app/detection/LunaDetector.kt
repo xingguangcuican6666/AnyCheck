@@ -1228,8 +1228,7 @@ class LunaDetector(private val context: Context) {
             "me.weishu.exp",               // TaiChi / 太极
             "io.virtualsoftware.taichi",
             "com.coderstory.toolkit",       // Scene / 场景
-            "org.lsposed.manager",
-            "com.zhenxi.hunter"
+            "org.lsposed.manager"
         )
         val found = sensitivePackages.filter { packageExists(it) }
 
