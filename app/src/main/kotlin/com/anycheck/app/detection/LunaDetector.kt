@@ -1272,9 +1272,13 @@ class LunaDetector(private val context: Context) {
     // Java NetworkInterface API silently omits such virtual interfaces on
     // Android 11+, which is why the primary path here is the native probe.
     //
+    // Native probe uses AF_PACKET (not AF_UNSPEC) as ifi_family and send()
+    // (not sendto()) to bypass Magisk RTNETLINK hooks that only cover the
+    // AF_UNSPEC/sendto() code path.  With the hook bypassed, Rules A and B
+    // now see Magisk's virtual interfaces that were previously hidden.
+    //
     //  Rule A (all API levels): Zero MAC (00:00:00:00:00:00)
     //  Rule B (Android 11+ / API ≥ 30): dummy* interface with ANY non-zero MAC
-    //  Rule C (all API levels): WiFi MAC vs hardware-property mismatch
     //
     // Primary: NativeDetector.detectMagiskMac() (raw RTNETLINK in C++)
     // Fallback: /sys/class/net sysfs scan (used if native library not loaded)

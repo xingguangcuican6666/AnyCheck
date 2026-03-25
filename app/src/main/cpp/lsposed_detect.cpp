@@ -1009,6 +1009,12 @@ static std::string probeHMABlacklist() {
 // virtual interfaces (e.g. dummy0) created by Magisk's DenyList network
 // namespace isolation on Android 11+.
 //
+// Uses AF_PACKET as ifi_family (not AF_UNSPEC) to bypass Magisk RTNETLINK
+// hooks that filter AF_UNSPEC results. send() without an explicit kernel
+// sockaddr_nl further avoids the sendto() hook pattern Magisk intercepts.
+// With the hook bypassed, the existing rules now see Magisk's virtual
+// interfaces that were previously hidden.
+//
 // Two rules are applied:
 //   Rule A (all API levels): any interface with an all-zero MAC
 //         (00:00:00:00:00:00) is a Magisk vnet artifact.
@@ -1035,17 +1041,10 @@ static std::string probeMagiskMac() {
     int sock = socket(AF_NETLINK, SOCK_RAW | SOCK_CLOEXEC, NETLINK_ROUTE);
     if (sock < 0) return "";
 
-    // Bind to kernel
-    struct sockaddr_nl local{};
-    local.nl_family = AF_NETLINK;
-    local.nl_pid    = static_cast<uint32_t>(getpid());
-    local.nl_groups = 0;
-    if (bind(sock, reinterpret_cast<struct sockaddr *>(&local), sizeof(local)) < 0) {
-        close(sock);
-        return "";
-    }
-
-    // Build RTM_GETLINK dump request
+    // Build RTM_GETLINK dump request.
+    // Use AF_PACKET (not AF_UNSPEC) as ifi_family: Magisk RTNETLINK hooks
+    // typically only intercept AF_UNSPEC dumps.  AF_PACKET reaches the
+    // kernel unfiltered and exposes virtual interfaces Magisk creates.
     struct {
         struct nlmsghdr  nlh;
         struct ifinfomsg ifm;
@@ -1055,13 +1054,12 @@ static std::string probeMagiskMac() {
     req.nlh.nlmsg_flags = NLM_F_REQUEST | NLM_F_DUMP;
     req.nlh.nlmsg_seq   = 1;
     req.nlh.nlmsg_pid   = static_cast<uint32_t>(getpid());
-    req.ifm.ifi_family  = AF_UNSPEC;
+    req.ifm.ifi_family  = AF_PACKET;
 
-    struct sockaddr_nl kernel{};
-    kernel.nl_family = AF_NETLINK;
-
-    if (sendto(sock, &req, req.nlh.nlmsg_len, 0,
-               reinterpret_cast<struct sockaddr *>(&kernel), sizeof(kernel)) < 0) {
+    // Use send() without an explicit kernel sockaddr_nl — the kernel accepts
+    // this on an unbound netlink socket and auto-assigns the port.  This
+    // avoids the sendto()-with-kernel-addr hook pattern Magisk uses.
+    if (send(sock, &req, req.nlh.nlmsg_len, 0) < 0) {
         close(sock);
         return "";
     }
