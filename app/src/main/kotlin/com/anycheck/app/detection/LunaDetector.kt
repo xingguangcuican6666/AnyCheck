@@ -1290,6 +1290,9 @@ class LunaDetector(private val context: Context) {
     private fun checkMacAddressAnomaly(): DetectionResult {
         val suspicious = mutableListOf<String>()
         val apiLevel = android.os.Build.VERSION.SDK_INT
+        // Track interfaces already evaluated via NetworkInterface to avoid duplicates
+        // when we supplement with the sysfs scan below.
+        val seenInterfaces = mutableSetOf<String>()
 
         // --- Rule A & B: enumerate interfaces via NetworkInterface (netlink) ---
         try {
@@ -1298,6 +1301,8 @@ class LunaDetector(private val context: Context) {
                 val ni = niEnum.nextElement()
                 val name = ni.name ?: continue
                 if (name == "lo") continue          // skip loopback
+
+                seenInterfaces.add(name)
 
                 val macBytes = runCatching { ni.hardwareAddress }.getOrNull()
                 val mac = if (macBytes != null && macBytes.size == 6) {
@@ -1339,28 +1344,61 @@ class LunaDetector(private val context: Context) {
                 }
             }
         } catch (_: Exception) {
-            // Fallback: read directly from /sys/class/net
-            try {
-                val netDir = File("/sys/class/net")
-                val ifaces = netDir.listFiles() ?: emptyArray()
-                for (iface in ifaces) {
-                    if (iface.name == "lo") continue
-                    val mac = runCatching {
-                        File(iface, "address").readText().trim()
-                    }.getOrNull() ?: continue
-                    if (mac == "00:00:00:00:00:00") {
-                        suspicious.add("${iface.name}: zero MAC — Magisk vnet artifact [Rule A, sysfs]")
-                    } else if (apiLevel >= android.os.Build.VERSION_CODES.R &&
-                        (iface.name == "dummy0" || iface.name.startsWith("dummy"))
-                    ) {
-                        suspicious.add(
-                            "${iface.name}: dummy interface present on Android 11+ (mac=$mac)" +
-                                " [Rule B, sysfs, API=$apiLevel]"
-                        )
-                    }
-                }
-            } catch (_: Exception) {}
+            // NetworkInterface enumeration failed entirely; the sysfs scan below
+            // will still run and cover all interfaces.
         }
+
+        // --- Supplemental sysfs scan ---
+        // On Android 11+ (API 30+), NetworkInterface.getNetworkInterfaces() succeeds
+        // but silently omits virtual interfaces (e.g. dummy0) that Magisk creates in
+        // the network namespace for DenyList isolation.  We therefore ALWAYS scan
+        // /sys/class/net directly so that any interface not already processed above
+        // is still evaluated.  This mirrors how Luna's "magiskmac" method uses raw
+        // netlink sockets rather than the Java API.
+        try {
+            val netDir = File("/sys/class/net")
+            val ifaces = netDir.listFiles() ?: emptyArray()
+            for (iface in ifaces) {
+                val ifName = iface.name
+                if (ifName == "lo") continue
+                if (ifName in seenInterfaces) continue   // already handled above
+
+                val mac = runCatching {
+                    File(iface, "address").readText().trim()
+                }.getOrDefault("")
+
+                // Rule A (sysfs): zero MAC on any interface
+                if (mac == "00:00:00:00:00:00") {
+                    suspicious.add("$ifName: zero MAC — Magisk vnet artifact [Rule A, sysfs]")
+                    continue
+                }
+
+                // Rule B (sysfs): dummy* interface present on Android 11+ — its mere
+                // existence indicates Magisk DenyList network namespace isolation even
+                // when the MAC cannot be read via the standard Java API.
+                if (apiLevel >= android.os.Build.VERSION_CODES.R &&
+                    ifName.startsWith("dummy")
+                ) {
+                    suspicious.add(
+                        "$ifName: dummy interface present on Android 11+" +
+                            (if (mac.isNotEmpty()) " (mac=$mac)" else "") +
+                            " — Magisk DenyList network namespace [Rule B, sysfs, API=$apiLevel]"
+                    )
+                    continue
+                }
+
+                // Legacy rule (sysfs): dummy/vnet with placeholder MAC on older Android
+                if (apiLevel < android.os.Build.VERSION_CODES.R &&
+                    (ifName.startsWith("dummy") || ifName.startsWith("vnet")) &&
+                    mac == "02:00:00:00:00:00"
+                ) {
+                    suspicious.add(
+                        "$ifName: virtual interface with placeholder MAC ($mac)" +
+                            " — Magisk namespace artifact [legacy, sysfs, API=$apiLevel]"
+                    )
+                }
+            }
+        } catch (_: Exception) {}
 
         // --- Rule C: WiFi MAC vs hardware-MAC system-property mismatch ---
         // Magisk MAC-spoofing modules alter /sys/class/net/wlan0/address but leave
