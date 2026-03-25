@@ -1864,8 +1864,8 @@
     <string name="chk_hma_app_list_name_nd">HMA 应用列表数量检测</string>
     <string name="chk_hma_app_list_desc">本进程可见的已安装应用数量异常偏少，表明 Hide My Applist 可能正在隐藏大部分软件包。</string>
     <string name="chk_hma_app_list_desc_nd">本进程可见的已安装应用数量正常；未通过应用列表检测到 HMA 隐藏行为。</string>
-    <string name="chk_hma_app_list_reason">getInstalledApplications() 仅返回 %1$d 个应用（其中系统应用 %2$d 个）。总应用数不超过 5 个，或低于系统应用数的 3%%，强烈表明 Hide My Applist（或同等 PackageManager 钩子）正在对本应用过滤软件包列表。</string>
-    <string name="chk_hma_app_list_reason_nd">getInstalledApplications() 返回 %1$d 个应用（其中系统应用 %2$d 个）。数量高于可疑阈值（超过 5 个且不低于系统应用数的 3%%），未通过本检测发现 HMA 应用列表隐藏行为。</string>
+    <string name="chk_hma_app_list_reason">getInstalledApplications() 仅返回 %1$d 个用户（非系统）应用，同时可见系统应用 %2$d 个。用户应用数不超过 5 个，或低于系统应用数的 3%%，强烈表明 Hide My Applist（或同等 PackageManager 钩子）正在对本应用过滤软件包列表。</string>
+    <string name="chk_hma_app_list_reason_nd">getInstalledApplications() 返回 %1$d 个用户（非系统）应用，可见系统应用 %2$d 个。用户应用数高于可疑阈值（超过 5 个且不低于系统应用数的 3%%），未通过本检测发现 HMA 应用列表隐藏行为。</string>
 
     <!-- XposedDetector: Check 30 — LSPosed 寄生模式检测 -->
     <string name="chk_parasite_manager_name">检测到 LSPosed 寄生模式</string>

@@ -1891,8 +1891,8 @@
     <string name="chk_hma_app_list_name_nd">HMA App List Size Check</string>
     <string name="chk_hma_app_list_desc">The number of installed apps visible to this process is abnormally low, suggesting Hide My Applist is hiding most packages.</string>
     <string name="chk_hma_app_list_desc_nd">The installed app count visible to this process appears normal; no HMA app-list hiding detected.</string>
-    <string name="chk_hma_app_list_reason">getInstalledApplications() returned only %1$d app(s) total, with %2$d system app(s) visible. A count of 5 or fewer total apps, or fewer than 3%% of the system-app count, strongly indicates that Hide My Applist (or an equivalent PackageManager hook) is actively filtering the package list for this app.</string>
-    <string name="chk_hma_app_list_reason_nd">getInstalledApplications() returned %1$d app(s) total (%2$d system app(s)). The count is above the suspicion threshold (more than 5 apps and ≥ 3%% of system apps), so no HMA app-list hiding was detected via this check.</string>
+    <string name="chk_hma_app_list_reason">getInstalledApplications() returned only %1$d user (non-system) app(s) while %2$d system app(s) are visible. A user-app count of 5 or fewer, or fewer than 3%% of the system-app count, strongly indicates that Hide My Applist (or an equivalent PackageManager hook) is actively filtering the package list for this app.</string>
+    <string name="chk_hma_app_list_reason_nd">getInstalledApplications() returned %1$d user (non-system) app(s) with %2$d system app(s) visible. The user-app count is above the suspicion threshold (more than 5 and ≥ 3%% of system apps), so no HMA app-list hiding was detected via this check.</string>
 
 
     <!-- Check 1: RposedBridge class presence -->

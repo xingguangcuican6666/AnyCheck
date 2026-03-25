@@ -20,7 +20,7 @@ import java.io.InputStreamReader
 class RevenyInspiredDetector(private val context: Context) {
 
     companion object {
-        /** Minimum total-app count below which HMA is suspected (≤ threshold = suspicious). */
+        /** Minimum user (non-system) app count below which HMA is suspected (≤ threshold = suspicious). */
         private const val HMA_MIN_APP_COUNT = 5
         /** Maximum ratio of total apps to system apps; below this HMA is suspected. */
         private const val HMA_SYSTEM_APP_RATIO_THRESHOLD = 0.03
@@ -1117,9 +1117,11 @@ class RevenyInspiredDetector(private val context: Context) {
     // -------------------------------------------------------------------------
     // Check 5h: app-list size probe for HMA (high-targetSdk path)
     // When targetSdkVersion >= 28, replaces the JNI blacklist/whitelist checks.
-    // If the total installed-app count visible to this process is:
-    //   • 5 or fewer, OR
-    //   • less than 3 % of the number of system apps
+    // HMA typically hides *user-installed* (non-system) apps while leaving
+    // system apps visible.  We therefore compare the non-system app count
+    // against the threshold, not the total count.
+    //   • userAppCount ≤ 5, OR
+    //   • userAppCount < 3 % of the number of system apps
     // …then HMA (or an equivalent framework) is very likely hiding most of the
     // installed package list from this app.
     // -------------------------------------------------------------------------
@@ -1131,8 +1133,10 @@ class RevenyInspiredDetector(private val context: Context) {
             val systemCount = allApps.count {
                 it.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM != 0
             }
-            val suspicious = totalCount <= HMA_MIN_APP_COUNT ||
-                (systemCount > 0 && totalCount < systemCount * HMA_SYSTEM_APP_RATIO_THRESHOLD)
+            // Non-system (user-installed) apps are what HMA typically hides.
+            val userAppCount = totalCount - systemCount
+            val suspicious = userAppCount <= HMA_MIN_APP_COUNT ||
+                (systemCount > 0 && userAppCount < systemCount * HMA_SYSTEM_APP_RATIO_THRESHOLD)
             if (suspicious) {
                 DetectionResult(
                     id = "hma_app_list_small",
@@ -1142,10 +1146,10 @@ class RevenyInspiredDetector(private val context: Context) {
                     riskLevel = RiskLevel.HIGH,
                     description = context.getString(R.string.chk_hma_app_list_desc),
                     detailedReason = context.getString(
-                        R.string.chk_hma_app_list_reason, totalCount, systemCount
+                        R.string.chk_hma_app_list_reason, userAppCount, systemCount
                     ),
                     solution = context.getString(R.string.chk_hma_whitelist_solution),
-                    technicalDetail = "totalApps=$totalCount systemApps=$systemCount"
+                    technicalDetail = "userApps=$userAppCount systemApps=$systemCount totalApps=$totalCount"
                 )
             } else {
                 DetectionResult(
@@ -1156,7 +1160,7 @@ class RevenyInspiredDetector(private val context: Context) {
                     riskLevel = RiskLevel.HIGH,
                     description = context.getString(R.string.chk_hma_app_list_desc_nd),
                     detailedReason = context.getString(
-                        R.string.chk_hma_app_list_reason_nd, totalCount, systemCount
+                        R.string.chk_hma_app_list_reason_nd, userAppCount, systemCount
                     ),
                     solution = context.getString(R.string.no_action_required)
                 )
