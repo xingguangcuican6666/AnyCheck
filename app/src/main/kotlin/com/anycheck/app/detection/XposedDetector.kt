@@ -1813,7 +1813,7 @@ class XposedDetector(private val context: Context) {
                             ?.invoke(extras, "android.text")?.toString() ?: ""
                         val combined = "$pkg $tickerText $title $body".lowercase()
                         if (combined.contains("lsposed") || combined.contains("lspd") ||
-                            combined.contains("magisk") || combined.contains("xposed")
+                            combined.contains("xposed")
                         ) {
                             found.add(
                                 "Parasite activation notification visible: pkg=$pkg title=\"$title\""

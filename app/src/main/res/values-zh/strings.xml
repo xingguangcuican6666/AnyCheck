@@ -1409,12 +1409,12 @@
     <string name="chk_luna_sensitive_pkgs_reason_nd">Luna 方法 (wNxM8s/K0ajGz)：未安装已知的 root 隐藏软件包。</string>
     <!-- LunaDetector: Check 22 - MAC Address Anomaly -->
     <string name="chk_luna_mac_anomaly_name">Magisk MAC 地址异常</string>
-    <string name="chk_luna_mac_anomaly_desc">检测到网络接口 MAC 地址异常。Magisk 可能正在通过虚拟接口或 MAC 欺骗操控网络栈。</string>
-    <string name="chk_luna_mac_anomaly_reason">Luna 方法 (magiskmac)：%1$s。Magisk 在隔离命名空间中创建具有零地址或占位 MAC 的虚拟网络接口（dummy*、vnet*），或通过 MAC 欺骗模块修改 /sys/class/net/wlan0/address 而不更新硬件 MAC 属性。</string>
-    <string name="chk_luna_mac_anomaly_solution">调查是否有 Magisk 模块在创建虚拟接口或欺骗 WiFi MAC 地址。移除相关 Magisk 模块并重启应可恢复硬件 MAC。</string>
+    <string name="chk_luna_mac_anomaly_desc">检测到网络接口 MAC 地址异常。Magisk 的 DenyList 网络命名空间隔离在 Android 11+ 上会创建可检测到的 dummy0 接口。</string>
+    <string name="chk_luna_mac_anomaly_reason">Luna 方法 (magiskmac)：%1$s。规则 B：在 Android 11+（API≥30）上，dummy0 接口存在且 MAC 非零，表明 Magisk DenyList 网络命名空间隔离已激活。规则 A：任何接口的 MAC 为全零，表明存在 Magisk vnet 虚拟接口。规则 C：WiFi MAC 与硬件属性不匹配，表明存在 Magisk MAC 欺骗模块。</string>
+    <string name="chk_luna_mac_anomaly_solution">Magisk 模块或 DenyList 处于活跃状态。禁用 DenyList 或移除相关 Magisk 模块后重启，应可恢复正常的网络接口列表。</string>
     <string name="chk_luna_mac_anomaly_name_nd">Magisk MAC 地址检查</string>
-    <string name="chk_luna_mac_anomaly_desc_nd">未检测到 Magisk MAC 地址异常（无零/占位 MAC、无 Magisk 虚拟接口、WiFi MAC 与硬件属性一致）。</string>
-    <string name="chk_luna_mac_anomaly_reason_nd">Luna 方法 (magiskmac)：所有可读网络接口 MAC 地址正常；未检测到 dummy*/vnet* Magisk 虚拟接口；wlan0 MAC 与硬件属性匹配。</string>
+    <string name="chk_luna_mac_anomaly_desc_nd">未检测到 Magisk MAC 地址异常（Android 11+ 上无 dummy0 接口、无零 MAC、WiFi MAC 与硬件属性一致）。</string>
+    <string name="chk_luna_mac_anomaly_reason_nd">Luna 方法 (magiskmac)：Android 11+ 上无 dummy0/vnet* 接口；无零 MAC 接口；wlan0 MAC 与硬件属性匹配。</string>
 
 
     <!-- RevenyInspiredDetector: Check 1 - Custom ROM -->

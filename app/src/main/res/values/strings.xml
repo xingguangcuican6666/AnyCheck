@@ -1418,12 +1418,12 @@
     <string name="chk_luna_sensitive_pkgs_reason_nd">Luna-method (wNxM8s/K0ajGz): No known root-hiding packages installed.</string>
     <!-- LunaDetector: Check 22 - MAC Address Anomaly -->
     <string name="chk_luna_mac_anomaly_name">Magisk MAC Address Anomaly</string>
-    <string name="chk_luna_mac_anomaly_desc">Network interface MAC address anomaly detected. Magisk may be manipulating the network stack via virtual interfaces or MAC spoofing.</string>
-    <string name="chk_luna_mac_anomaly_reason">Luna-method (magiskmac): %1$s. Magisk creates virtual network interfaces (dummy*, vnet*) with zero or placeholder MACs in isolated namespaces, or uses MAC-spoofing modules that change /sys/class/net/wlan0/address without updating the hardware MAC property.</string>
-    <string name="chk_luna_mac_anomaly_solution">Investigate whether a Magisk module is creating virtual interfaces or spoofing the WiFi MAC address. Removing relevant Magisk modules and rebooting should restore the hardware MAC.</string>
+    <string name="chk_luna_mac_anomaly_desc">Network interface MAC address anomaly detected. Magisk\'s DenyList network-namespace isolation creates a dummy0 interface detectable on Android 11+.</string>
+    <string name="chk_luna_mac_anomaly_reason">Luna-method (magiskmac): %1$s. Rule B: on Android 11+ (API≥30) the presence of dummy0 with any non-zero MAC indicates Magisk DenyList network-namespace isolation. Rule A: zero MAC on any interface indicates a Magisk vnet artifact. Rule C: WiFi MAC mismatch with hardware property indicates Magisk MAC-spoofing module.</string>
+    <string name="chk_luna_mac_anomaly_solution">A Magisk module or Magisk DenyList is active. Disabling DenyList or removing the responsible Magisk module and rebooting should restore the normal network interface list.</string>
     <string name="chk_luna_mac_anomaly_name_nd">Magisk MAC Address Check</string>
-    <string name="chk_luna_mac_anomaly_desc_nd">No Magisk MAC address anomalies detected (no zero/dummy MACs, no virtual Magisk interfaces, no WiFi MAC mismatch).</string>
-    <string name="chk_luna_mac_anomaly_reason_nd">Luna-method (magiskmac): All readable network interfaces have normal MAC addresses; no dummy*/vnet* Magisk virtual interfaces detected; wlan0 MAC matches hardware property.</string>
+    <string name="chk_luna_mac_anomaly_desc_nd">No Magisk MAC address anomalies detected (no dummy0 on Android 11+, no zero MACs, no WiFi MAC mismatch).</string>
+    <string name="chk_luna_mac_anomaly_reason_nd">Luna-method (magiskmac): No dummy0/vnet* interfaces on Android 11+; no zero-MAC interfaces; wlan0 MAC matches hardware property.</string>
 
 
     <!-- RevenyInspiredDetector: Check 1 - Custom ROM -->
