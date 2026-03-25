@@ -19,24 +19,44 @@ import java.io.InputStreamReader
  */
 class RevenyInspiredDetector(private val context: Context) {
 
-    fun runAllChecks(): List<DetectionResult> = listOf(
-        checkLineageOSOrCustomROM(),
-        checkCustomKernel(),
-        checkResetprop(),
-        checkDebugFingerprint(),
-        checkHideMyApplist(),
-        checkHmaBinderProbe(),
-        checkHmaFilterBehavior(),
-        checkHmaDataAppScan(),
-        checkHMANativeDetection(),
-        checkHmaWhitelistDetection(),
-        checkHmaBlacklistDetection(),
-        checkMountInconsistency(),
-        checkAddonDOrInstallRecovery(),
-        checkSystemAppsAbsence(),
-        checkVendorSepolicyLineage(),
-        checkFrameworkPatch()
-    )
+    companion object {
+        /** Minimum total-app count below which HMA is suspected (≤ threshold = suspicious). */
+        private const val HMA_MIN_APP_COUNT = 5
+        /** Maximum ratio of total apps to system apps; below this HMA is suspected. */
+        private const val HMA_SYSTEM_APP_RATIO_THRESHOLD = 0.03
+    }
+
+    fun runAllChecks(): List<DetectionResult> {
+        val useHighTargetSdkPath = context.applicationInfo.targetSdkVersion >= 28
+        val results = mutableListOf(
+            checkLineageOSOrCustomROM(),
+            checkCustomKernel(),
+            checkResetprop(),
+            checkDebugFingerprint(),
+            checkHideMyApplist(),
+            checkHmaBinderProbe(),
+            checkHmaFilterBehavior(),
+            checkHmaDataAppScan(),
+            checkHMANativeDetection()
+        )
+        if (useHighTargetSdkPath) {
+            results.add(checkDataAdbAccessForMagisk())
+            results.add(checkAppListForHmaHighTargetSdk())
+        } else {
+            results.add(checkHmaWhitelistDetection())
+            results.add(checkHmaBlacklistDetection())
+        }
+        results.addAll(
+            listOf(
+                checkMountInconsistency(),
+                checkAddonDOrInstallRecovery(),
+                checkSystemAppsAbsence(),
+                checkVendorSepolicyLineage(),
+                checkFrameworkPatch()
+            )
+        )
+        return results
+    }
 
     // -------------------------------------------------------------------------
     // Check 1: LineageOS / Custom ROM
@@ -1032,6 +1052,124 @@ class RevenyInspiredDetector(private val context: Context) {
                 riskLevel = RiskLevel.HIGH,
                 description = context.getString(R.string.chk_hma_blacklist_desc_nd),
                 detailedReason = context.getString(R.string.chk_hma_blacklist_reason_nd),
+                solution = context.getString(R.string.no_action_required)
+            )
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Check 5g: /data/adb access probe (high-targetSdk path, replaces N14/N15)
+    // When targetSdkVersion >= 28 the JNI fstatat probes (N14/N15) are not
+    // used.  Instead we attempt to list /data/adb via the shell.
+    //   • "No such file or directory"  → directory absent, Magisk not present
+    //   • "Permission denied"          → directory exists but is protected,
+    //                                    strongly implies Magisk is installed
+    // -------------------------------------------------------------------------
+    private fun checkDataAdbAccessForMagisk(): DetectionResult {
+        return try {
+            // Use redirectErrorStream so both stdout and stderr are consumed from one
+            // stream, eliminating any risk of a buffer-full deadlock.
+            val process = ProcessBuilder("ls", "/data/adb")
+                .redirectErrorStream(true)
+                .start()
+            val output = process.inputStream.bufferedReader(Charsets.UTF_8).readText()
+            process.waitFor()
+            process.destroy()
+            when {
+                output.contains("Permission denied", ignoreCase = true) ->
+                    DetectionResult(
+                        id = "magisk_data_adb_access",
+                        name = context.getString(R.string.chk_data_adb_magisk_name),
+                        category = DetectionCategory.MAGISK,
+                        status = DetectionStatus.DETECTED,
+                        riskLevel = RiskLevel.CRITICAL,
+                        description = context.getString(R.string.chk_data_adb_magisk_desc),
+                        detailedReason = context.getString(R.string.chk_data_adb_magisk_reason),
+                        solution = context.getString(R.string.chk_magisk_files_solution),
+                        technicalDetail = "ls /data/adb: $output"
+                    )
+                else ->
+                    DetectionResult(
+                        id = "magisk_data_adb_access",
+                        name = context.getString(R.string.chk_data_adb_magisk_name_nd),
+                        category = DetectionCategory.MAGISK,
+                        status = DetectionStatus.NOT_DETECTED,
+                        riskLevel = RiskLevel.CRITICAL,
+                        description = context.getString(R.string.chk_data_adb_magisk_desc_nd),
+                        detailedReason = context.getString(R.string.chk_data_adb_magisk_reason_nd),
+                        solution = context.getString(R.string.no_action_required)
+                    )
+            }
+        } catch (e: Exception) {
+            DetectionResult(
+                id = "magisk_data_adb_access",
+                name = context.getString(R.string.chk_data_adb_magisk_name_nd),
+                category = DetectionCategory.MAGISK,
+                status = DetectionStatus.ERROR,
+                riskLevel = RiskLevel.CRITICAL,
+                description = context.getString(R.string.chk_data_adb_magisk_desc_nd),
+                detailedReason = e.message ?: "Unknown error",
+                solution = context.getString(R.string.no_action_required)
+            )
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Check 5h: app-list size probe for HMA (high-targetSdk path)
+    // When targetSdkVersion >= 28, replaces the JNI blacklist/whitelist checks.
+    // If the total installed-app count visible to this process is:
+    //   • 5 or fewer, OR
+    //   • less than 3 % of the number of system apps
+    // …then HMA (or an equivalent framework) is very likely hiding most of the
+    // installed package list from this app.
+    // -------------------------------------------------------------------------
+    private fun checkAppListForHmaHighTargetSdk(): DetectionResult {
+        return try {
+            val pm = context.packageManager
+            val allApps = pm.getInstalledApplications(0)
+            val totalCount = allApps.size
+            val systemCount = allApps.count {
+                it.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM != 0
+            }
+            val suspicious = totalCount <= HMA_MIN_APP_COUNT ||
+                (systemCount > 0 && totalCount < systemCount * HMA_SYSTEM_APP_RATIO_THRESHOLD)
+            if (suspicious) {
+                DetectionResult(
+                    id = "hma_app_list_small",
+                    name = context.getString(R.string.chk_hma_app_list_name),
+                    category = DetectionCategory.XPOSED,
+                    status = DetectionStatus.DETECTED,
+                    riskLevel = RiskLevel.HIGH,
+                    description = context.getString(R.string.chk_hma_app_list_desc),
+                    detailedReason = context.getString(
+                        R.string.chk_hma_app_list_reason, totalCount, systemCount
+                    ),
+                    solution = context.getString(R.string.chk_hma_whitelist_solution),
+                    technicalDetail = "totalApps=$totalCount systemApps=$systemCount"
+                )
+            } else {
+                DetectionResult(
+                    id = "hma_app_list_small",
+                    name = context.getString(R.string.chk_hma_app_list_name_nd),
+                    category = DetectionCategory.XPOSED,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.HIGH,
+                    description = context.getString(R.string.chk_hma_app_list_desc_nd),
+                    detailedReason = context.getString(
+                        R.string.chk_hma_app_list_reason_nd, totalCount, systemCount
+                    ),
+                    solution = context.getString(R.string.no_action_required)
+                )
+            }
+        } catch (e: Exception) {
+            DetectionResult(
+                id = "hma_app_list_small",
+                name = context.getString(R.string.chk_hma_app_list_name_nd),
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.ERROR,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_hma_app_list_desc_nd),
+                detailedReason = e.message ?: "Unknown error",
                 solution = context.getString(R.string.no_action_required)
             )
         }
