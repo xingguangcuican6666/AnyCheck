@@ -1408,13 +1408,13 @@
     <string name="chk_luna_sensitive_pkgs_desc_nd">未检测到 root 隐藏应用。</string>
     <string name="chk_luna_sensitive_pkgs_reason_nd">Luna 方法 (wNxM8s/K0ajGz)：未安装已知的 root 隐藏软件包。</string>
     <!-- LunaDetector: Check 22 - MAC Address Anomaly -->
-    <string name="chk_luna_mac_anomaly_name">MAC 地址异常（零 MAC）</string>
-    <string name="chk_luna_mac_anomaly_desc">网络接口具有零 MAC 地址，表明可能存在 root 欺骗。</string>
-    <string name="chk_luna_mac_anomaly_reason">Luna 方法 (magiskmac)：%1$s。Magisk 或 root 模块可能抑制 MAC 地址以绕过设备指纹识别。</string>
-    <string name="chk_luna_mac_anomaly_solution">调查是否有 Magisk 模块在抑制 MAC 地址。</string>
-    <string name="chk_luna_mac_anomaly_name_nd">MAC 地址检查</string>
-    <string name="chk_luna_mac_anomaly_desc_nd">未检测到零 MAC 地址异常。</string>
-    <string name="chk_luna_mac_anomaly_reason_nd">Luna 方法 (magiskmac)：所有可读的网络接口均具有非零 MAC 地址。</string>
+    <string name="chk_luna_mac_anomaly_name">Magisk MAC 地址异常</string>
+    <string name="chk_luna_mac_anomaly_desc">检测到网络接口 MAC 地址异常。Magisk 的 DenyList 网络命名空间隔离在 Android 11+ 上会创建可检测到的 dummy0 接口。</string>
+    <string name="chk_luna_mac_anomaly_reason">Luna 方法 (magiskmac)：%1$s。规则 B：在 Android 11+（API≥30）上，dummy0 接口存在且 MAC 非零，表明 Magisk DenyList 网络命名空间隔离已激活。规则 A：任何接口的 MAC 为全零，表明存在 Magisk vnet 虚拟接口。规则 C：WiFi MAC 与硬件属性不匹配，表明存在 Magisk MAC 欺骗模块。</string>
+    <string name="chk_luna_mac_anomaly_solution">Magisk 模块或 DenyList 处于活跃状态。禁用 DenyList 或移除相关 Magisk 模块后重启，应可恢复正常的网络接口列表。</string>
+    <string name="chk_luna_mac_anomaly_name_nd">Magisk MAC 地址检查</string>
+    <string name="chk_luna_mac_anomaly_desc_nd">未检测到 Magisk MAC 地址异常（Android 11+ 上无 dummy0 接口、无零 MAC、WiFi MAC 与硬件属性一致）。</string>
+    <string name="chk_luna_mac_anomaly_reason_nd">Luna 方法 (magiskmac)：Android 11+ 上无 dummy0/vnet* 接口；无零 MAC 接口；wlan0 MAC 与硬件属性匹配。</string>
 
 
     <!-- RevenyInspiredDetector: Check 1 - Custom ROM -->
@@ -1850,5 +1850,26 @@
     <string name="chk_hma_blacklist_reason">对 /data/user/0 的原始 fstatat(2) 系统调用返回 st_nlink − 2 = %1$s，低于阈值 100。在正常的 Android 设备上，/data/user/0 目录通常包含远超 100 个软件包数据子目录。本进程所见的计数低于 100，表明 HMA 黑名单模式（或同等机制）正在操控可见目录数量，以对本应用隐藏已安装软件包。</string>
     <string name="chk_hma_blacklist_reason_nd">对 /data/user/0 的原始 fstatat(2) 返回的目录链接计数为 100 或以上（正常范围）。未检测到 HMA 黑名单计数异常。</string>
     <string name="chk_hma_blacklist_solution">在 Hide My Applist 应用中，将本应用从黑名单作用域中移除，或在 LSPosed 管理器中禁用 HMA 模块并重启。</string>
+
+    <!-- XposedDetector: Check 30 — LSPosed 寄生模式检测 -->
+    <string name="chk_parasite_manager_name">检测到 LSPosed 寄生模式</string>
+    <string name="chk_parasite_manager_name_nd">LSPosed 寄生模式检测</string>
+    <string name="chk_parasite_manager_desc">LSPosed 寄生模式已激活。在此模式下，lspd 寄生进入 system_server 进程（即 android 系统应用，uid=1000），无需 Magisk 或 KernelSU。之后由 android 系统进程发送一条激活通知，点击该通知即可进入 LSPosed 管理器界面。</string>
+    <string name="chk_parasite_manager_desc_nd">未检测到 LSPosed 寄生模式（system_server 进程映射中无注入库、无寄生配置文件、无暂存文件）。</string>
+    <string name="chk_parasite_manager_reason">发现以下 LSPosed 寄生模式指标：%1$s。LSPosed 寄生模式的工作原理是：shell 启动进程（uid=2000）通过 /proc/PID/mem 将 lspd 代码写入 system_server 的内存。注入完成后，LSPosed Hook 在 android 系统进程内运行，该进程随即发送一条通知，用户点击即可打开 LSPosed 管理器。此方式无需 Magisk/KernelSU Root 文件，传统 Root 扫描极难发现。</string>
+    <string name="chk_parasite_manager_reason_nd">在 system_server 进程映射中未发现 lspd/lsposed 注入库，/data/system/lspd/ 寄生配置目录不存在，/data/local/tmp/lspd 暂存文件不存在，android 包中也未检测到 lspd 通知渠道。</string>
+    <string name="chk_parasite_manager_solution">通过 LSPosed 管理器通知关闭寄生模式，然后重启设备。可删除 /data/local/tmp/lspd 暂存文件以防止重启后再次注入。</string>
+
+    <!-- SystemIntegrityDetector: Check 7 — 骁龙 8 Gen 2 – 8 Elite 安全补丁检测 -->
+    <string name="chk_snapdragon_patch_name">严重漏洞：骁龙安全补丁缺失</string>
+    <string name="chk_snapdragon_patch_name_ok">骁龙关键补丁已应用</string>
+    <string name="chk_snapdragon_patch_name_na">骁龙关键补丁检查</string>
+    <string name="chk_snapdragon_patch_desc">本设备的骁龙 SoC 受到一个严重提权漏洞的影响。已安装的安全补丁级别低于所需的 2026-03-01 修复版本。</string>
+    <string name="chk_snapdragon_patch_desc_ok">检测到的骁龙 SoC 安全补丁级别满足最低要求。</string>
+    <string name="chk_snapdragon_patch_desc_na">本设备似乎未使用骁龙 8 Gen 2 – 8 Elite SoC，针对该漏洞的检查不适用。</string>
+    <string name="chk_snapdragon_patch_reason">SoC %1$s 处于受影响范围（骁龙 8 Gen 2 / SM8550 至骁龙 8 Elite / SM8750）。当前安全补丁：%2$s。所需补丁：%3$s。此 SoC 范围内未应用 2026-03-01（或更新）安全补丁的设备存在严重提权漏洞，允许本地攻击者在设备上获取提升的权限。</string>
+    <string name="chk_snapdragon_patch_reason_ok">SoC %1$s 处于受影响范围，但已安装的安全补丁 %2$s 达到或超过了所需的 2026-03-01 级别。提权漏洞已修复。</string>
+    <string name="chk_snapdragon_patch_reason_na">检测到的 SoC 标识符（ro.soc.model、ro.board.platform、ro.chipname、ro.hardware）与骁龙 8 Gen 2 – 8 Elite（SM8550 – SM8750）范围内的任何 SoC 均不匹配。骁龙专项安全补丁检查不适用于本设备。</string>
+    <string name="chk_snapdragon_patch_solution">安装包含 2026-03-01（或更新）Android 安全补丁级别的最新 OEM 安全更新。请访问设备制造商的支持页面查看可用更新。</string>
 
 </resources>

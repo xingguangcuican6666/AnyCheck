@@ -29,7 +29,8 @@ class SystemIntegrityDetector(private val context: Context) {
         checkKeystoreAttestation(),
         checkSuspiciousRootDaemons(),
         checkPropTampering(),
-        checkSuExtended()
+        checkSuExtended(),
+        checkSnapdragonSecurityPatch()
     )
 
     // ----------------------------------------------------------------
@@ -575,6 +576,102 @@ class SystemIntegrityDetector(private val context: Context) {
                 description = context.getString(R.string.chk_su_extended_paths_desc_nd),
                 detailedReason = context.getString(R.string.chk_su_extended_paths_reason_nd, suPaths.size),
                 solution = context.getString(R.string.chk_no_action_needed)
+            )
+        }
+    }
+
+    // ----------------------------------------------------------------
+    // Check 7: Snapdragon 8 Gen 2 – 8 Elite security patch check
+    //
+    // Devices with a Snapdragon SoC in the SM8550 (8 Gen 2) – SM8750 (8 Elite)
+    // range are affected by a critical privilege-escalation vulnerability.
+    // The fix is included in the 2026-03-01 security patch level.
+    // Devices in this range running an older patch level are flagged CRITICAL.
+    // ----------------------------------------------------------------
+    private fun checkSnapdragonSecurityPatch(): DetectionResult {
+        val requiredPatch = "2026-03-01"
+
+        // Read SoC identifiers from multiple properties for broad OEM coverage.
+        val socModel      = getSystemProperty("ro.soc.model")       // e.g. "SM8650"
+        val boardPlatform = getSystemProperty("ro.board.platform")   // e.g. "pineapple"
+        val chipName      = getSystemProperty("ro.chipname")         // e.g. "SM8550"
+        val hardware      = getSystemProperty("ro.hardware")         // e.g. "kalama"
+
+        // Affected SoC model strings (Snapdragon 8 Gen 2 → 8 Elite)
+        val affectedSocModels = listOf(
+            "SM8550",   // Snapdragon 8 Gen 2
+            "SM8635",   // Snapdragon 8s Gen 3
+            "SM8650",   // Snapdragon 8 Gen 3
+            "SM8750"    // Snapdragon 8 Elite
+        )
+
+        // Corresponding platform/hardware codenames used on AOSP/OEM builds
+        val affectedPlatforms = listOf(
+            "kalama",    // SM8550
+            "kailua",    // SM8635
+            "pineapple", // SM8650
+            "sun"        // SM8750
+        )
+
+        val isAffected =
+            affectedSocModels.any { model ->
+                socModel.contains(model, ignoreCase = true) ||
+                    chipName.contains(model, ignoreCase = true)
+            } || affectedPlatforms.any { platform ->
+                boardPlatform.contains(platform, ignoreCase = true) ||
+                    hardware.contains(platform, ignoreCase = true)
+            }
+
+        if (!isAffected) {
+            return DetectionResult(
+                id = "snapdragon_security_patch",
+                name = context.getString(R.string.chk_snapdragon_patch_name_na),
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = context.getString(R.string.chk_snapdragon_patch_desc_na),
+                detailedReason = context.getString(R.string.chk_snapdragon_patch_reason_na),
+                solution = context.getString(R.string.chk_no_action_needed),
+                technicalDetail = "soc=$socModel platform=$boardPlatform chipname=$chipName hardware=$hardware"
+            )
+        }
+
+        // Lexicographic comparison is valid for ISO-8601 "yyyy-MM-dd" strings.
+        val currentPatch = Build.VERSION.SECURITY_PATCH
+        val socDisplay = socModel.takeIf { it.isNotEmpty() }
+            ?: boardPlatform.takeIf { it.isNotEmpty() }
+            ?: chipName.takeIf { it.isNotEmpty() }
+            ?: hardware
+
+        return if (currentPatch < requiredPatch) {
+            DetectionResult(
+                id = "snapdragon_security_patch",
+                name = context.getString(R.string.chk_snapdragon_patch_name),
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = context.getString(R.string.chk_snapdragon_patch_desc),
+                detailedReason = context.getString(
+                    R.string.chk_snapdragon_patch_reason,
+                    socDisplay, currentPatch, requiredPatch
+                ),
+                solution = context.getString(R.string.chk_snapdragon_patch_solution),
+                technicalDetail = "SoC=$socDisplay patch=$currentPatch required=$requiredPatch"
+            )
+        } else {
+            DetectionResult(
+                id = "snapdragon_security_patch",
+                name = context.getString(R.string.chk_snapdragon_patch_name_ok),
+                category = DetectionCategory.SYSTEM_INTEGRITY,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = context.getString(R.string.chk_snapdragon_patch_desc_ok),
+                detailedReason = context.getString(
+                    R.string.chk_snapdragon_patch_reason_ok,
+                    socDisplay, currentPatch
+                ),
+                solution = context.getString(R.string.chk_no_action_needed),
+                technicalDetail = "SoC=$socDisplay patch=$currentPatch required=$requiredPatch"
             )
         }
     }

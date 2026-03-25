@@ -13,10 +13,16 @@
 #include <dirent.h>
 #include <dlfcn.h>
 #include <sys/mman.h>
+#include <sys/socket.h>
 #include <sys/system_properties.h>
+#include <sys/utsname.h>
 #include <android/log.h>
 #include <stdint.h>
 #include <cerrno>
+#include <linux/if.h>
+#include <linux/if_arp.h>
+#include <linux/netlink.h>
+#include <linux/rtnetlink.h>
 
 #include "hunter_elf.h"
 
@@ -994,6 +1000,160 @@ static std::string probeHMABlacklist() {
 }
 
 // ---------------------------------------------------------------------------
+// N16 — Magisk MAC anomaly via raw RTNETLINK socket
+//
+// Reverse-engineered from Luna libluna.so "magiskmac" method.
+// Luna opens a raw AF_NETLINK / NETLINK_ROUTE socket and sends an
+// RTM_GETLINK|NLM_F_DUMP request to obtain all network interfaces from the
+// kernel — bypassing the Java NetworkInterface API which silently omits
+// virtual interfaces (e.g. dummy0) created by Magisk's DenyList network
+// namespace isolation on Android 11+.
+//
+// Uses AF_PACKET as ifi_family (not AF_UNSPEC) to bypass Magisk RTNETLINK
+// hooks that filter AF_UNSPEC results. send() without an explicit kernel
+// sockaddr_nl further avoids the sendto() hook pattern Magisk intercepts.
+// With the hook bypassed, the existing rules now see Magisk's virtual
+// interfaces that were previously hidden.
+//
+// Two rules are applied:
+//   Rule A (all API levels): any interface with an all-zero MAC
+//         (00:00:00:00:00:00) is a Magisk vnet artifact.
+//   Rule B (Android 11+ / API_LEVEL >= 30): any dummy* interface with a
+//         non-zero MAC is suspicious.  Stock devices do not have a dummy0
+//         interface; its presence indicates Magisk DenyList namespace.
+//
+// Returns semicolon-separated findings, or empty string if none.
+// ---------------------------------------------------------------------------
+
+static int getAndroidApiLevel() {
+    char buf[16] = {};
+    if (__system_property_get("ro.build.version.sdk", buf) > 0) {
+        return atoi(buf);
+    }
+    return 0;
+}
+
+static std::string probeMagiskMac() {
+    std::string findings;
+    const int apiLevel = getAndroidApiLevel();
+
+    // Open raw netlink / route socket
+    int sock = socket(AF_NETLINK, SOCK_RAW | SOCK_CLOEXEC, NETLINK_ROUTE);
+    if (sock < 0) return "";
+
+    // Build RTM_GETLINK dump request.
+    // Use AF_PACKET (not AF_UNSPEC) as ifi_family: Magisk RTNETLINK hooks
+    // typically only intercept AF_UNSPEC dumps.  AF_PACKET reaches the
+    // kernel unfiltered and exposes virtual interfaces Magisk creates.
+    struct {
+        struct nlmsghdr  nlh;
+        struct ifinfomsg ifm;
+    } req{};
+    req.nlh.nlmsg_len   = NLMSG_LENGTH(sizeof(struct ifinfomsg));
+    req.nlh.nlmsg_type  = RTM_GETLINK;
+    req.nlh.nlmsg_flags = NLM_F_REQUEST | NLM_F_DUMP;
+    req.nlh.nlmsg_seq   = 1;
+    req.nlh.nlmsg_pid   = static_cast<uint32_t>(getpid());
+    req.ifm.ifi_family  = AF_PACKET;
+
+    // Use send() without an explicit kernel sockaddr_nl — the kernel accepts
+    // this on an unbound netlink socket and auto-assigns the port.  This
+    // avoids the sendto()-with-kernel-addr hook pattern Magisk uses.
+    if (send(sock, &req, req.nlh.nlmsg_len, 0) < 0) {
+        close(sock);
+        return "";
+    }
+
+    // Receive and parse responses
+    char buf[16384];
+    bool done = false;
+    while (!done) {
+        ssize_t len = recv(sock, buf, sizeof(buf), 0);
+        if (len <= 0) break;
+
+        for (struct nlmsghdr *nlh = reinterpret_cast<struct nlmsghdr *>(buf);
+             NLMSG_OK(nlh, static_cast<uint32_t>(len));
+             nlh = NLMSG_NEXT(nlh, len)) {
+
+            if (nlh->nlmsg_type == NLMSG_DONE) { done = true; break; }
+            if (nlh->nlmsg_type == NLMSG_ERROR) { done = true; break; }
+            if (nlh->nlmsg_type != RTM_NEWLINK)  continue;
+
+            struct ifinfomsg *ifi = static_cast<struct ifinfomsg *>(NLMSG_DATA(nlh));
+            int rta_len = static_cast<int>(nlh->nlmsg_len) - NLMSG_LENGTH(sizeof(*ifi));
+
+            char ifName[IFNAMSIZ] = {};
+            uint8_t macBytes[6] = {};
+            bool hasMac = false;
+
+            for (struct rtattr *rta = IFLA_RTA(ifi);
+                 RTA_OK(rta, rta_len);
+                 rta = RTA_NEXT(rta, rta_len)) {
+                if (rta->rta_type == IFLA_IFNAME) {
+                    size_t copyLen = RTA_PAYLOAD(rta);
+                    if (copyLen >= IFNAMSIZ) copyLen = IFNAMSIZ - 1;
+                    memcpy(ifName, RTA_DATA(rta), copyLen);
+                    ifName[copyLen] = '\0';
+                } else if (rta->rta_type == IFLA_ADDRESS) {
+                    if (RTA_PAYLOAD(rta) == 6) {
+                        memcpy(macBytes, RTA_DATA(rta), 6);
+                        hasMac = true;
+                    }
+                }
+            }
+
+            // Skip loopback and unnamed interfaces
+            if (ifName[0] == '\0') continue;
+            if (strcmp(ifName, "lo") == 0) continue;
+
+            // Format MAC string
+            char macStr[18] = "00:00:00:00:00:00";
+            if (hasMac) {
+                snprintf(macStr, sizeof(macStr),
+                         "%02x:%02x:%02x:%02x:%02x:%02x",
+                         macBytes[0], macBytes[1], macBytes[2],
+                         macBytes[3], macBytes[4], macBytes[5]);
+            }
+
+            bool isZeroMac = true;
+            if (hasMac) {
+                for (int b = 0; b < 6; ++b) {
+                    if (macBytes[b] != 0) { isZeroMac = false; break; }
+                }
+            }
+
+            // Rule A: zero MAC on any interface
+            if (isZeroMac) {
+                if (!findings.empty()) findings += ';';
+                findings += std::string(ifName) + ":zero MAC(00:00:00:00:00:00) [Rule A]";
+                continue;
+            }
+
+            // Rule B: on Android 11+, any dummy* interface with non-zero MAC
+            if (apiLevel >= 30 && strncmp(ifName, "dummy", 5) == 0) {
+                if (!findings.empty()) findings += ';';
+                findings += std::string(ifName) + ":dummy interface on Android 11+(mac="
+                    + macStr + ") [Rule B,API=" + std::to_string(apiLevel) + "]";
+                continue;
+            }
+
+            // Legacy: dummy/vnet with placeholder MAC on older Android
+            if (apiLevel < 30 &&
+                (strncmp(ifName, "dummy", 5) == 0 || strncmp(ifName, "vnet", 4) == 0)) {
+                if (strcmp(macStr, "02:00:00:00:00:00") == 0) {
+                    if (!findings.empty()) findings += ';';
+                    findings += std::string(ifName) + ":virt iface placeholder MAC("
+                        + macStr + ") [legacy,API=" + std::to_string(apiLevel) + "]";
+                }
+            }
+        }
+    }
+
+    close(sock);
+    return findings;
+}
+
+// ---------------------------------------------------------------------------
 // JNI entry point — N14: HMA whitelist detection
 // ---------------------------------------------------------------------------
 extern "C" JNIEXPORT jstring JNICALL
@@ -1007,4 +1167,12 @@ Java_com_anycheck_app_detection_NativeDetector_detectHMAWhitelistJni(JNIEnv *env
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_anycheck_app_detection_NativeDetector_detectHMABlacklistJni(JNIEnv *env, jobject /* thiz */) {
     return env->NewStringUTF(probeHMABlacklist().c_str());
+}
+
+// ---------------------------------------------------------------------------
+// JNI entry point — N16: Magisk MAC anomaly detection
+// ---------------------------------------------------------------------------
+extern "C" JNIEXPORT jstring JNICALL
+Java_com_anycheck_app_detection_NativeDetector_detectMagiskMacJni(JNIEnv *env, jobject /* thiz */) {
+    return env->NewStringUTF(probeMagiskMac().c_str());
 }

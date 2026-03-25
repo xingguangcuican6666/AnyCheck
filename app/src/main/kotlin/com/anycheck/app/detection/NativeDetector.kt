@@ -19,6 +19,9 @@ object NativeDetector {
         }
     }
 
+    /** Returns true if the native library was successfully loaded. */
+    fun isLibraryLoaded(): Boolean = libraryLoaded
+
     /**
      * Runs all 6 native probes and returns a semicolon-separated string of
      * findings.  Returns an empty string if nothing is detected or if the
@@ -177,6 +180,26 @@ object NativeDetector {
         }
     }
 
+    /**
+     * Enumerates all network interfaces via a raw RTNETLINK socket (RTM_GETLINK
+     * dump) — the same technique used by Luna's "magiskmac" method.  This
+     * bypasses the Java NetworkInterface API which silently omits virtual
+     * interfaces (e.g. dummy0) created by Magisk's DenyList network namespace
+     * isolation on Android 11+.
+     *
+     * Returns a semicolon-separated findings string with Rule A (zero MAC) and
+     * Rule B (dummy* interface on API ≥ 30) detections, or an empty string when
+     * no anomaly is found.
+     */
+    fun detectMagiskMac(): String {
+        if (!libraryLoaded) return ""
+        return try {
+            detectMagiskMacJni()
+        } catch (_: Throwable) {
+            ""
+        }
+    }
+
     private external fun detectLSPosedJni(): String
     private external fun detectOdexHooksJni(): String
     private external fun detectInlineHooksJni(): String
@@ -187,4 +210,5 @@ object NativeDetector {
     private external fun detectNetlinkNativeJni(): String
     private external fun detectHMAWhitelistJni(): String
     private external fun detectHMABlacklistJni(): String
+    private external fun detectMagiskMacJni(): String
 }

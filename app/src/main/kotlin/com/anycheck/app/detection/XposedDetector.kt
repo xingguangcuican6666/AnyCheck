@@ -41,7 +41,8 @@ class XposedDetector(private val context: Context) {
         checkLSPlantNativeLib(),
         checkNativeLSPosedDetection(),
         checkNativeOdexHooks(),
-        checkNativeInlineHooks()
+        checkNativeInlineHooks(),
+        checkParasiteManagerShell()
     )
 
     /** Check 1: Xposed / LSPosed / EdXposed manager package names */
@@ -1630,7 +1631,273 @@ class XposedDetector(private val context: Context) {
         }
     }
 
+    /** Check 30: LSPosed Parasite mode detection.
+     *
+     * "寄生管理器" (Parasite Manager) is LSPosed's Parasite installation mode.
+     * It requires no Magisk or KernelSU root.  The mechanism is:
+     *  1. A shell launcher process (uid=2000, via ADB) executes /data/local/tmp/lspd.
+     *  2. lspd writes its code into system_server's memory via /proc/<ss_pid>/mem,
+     *     injecting itself into the 'android' system process (uid=1000).
+     *  3. LSPosed hooks run inside system_server's process space.
+     *  4. The 'android' package posts an activation notification; tapping it opens
+     *     the LSPosed Manager UI.
+     *
+     * Detection signals:
+     *  (a) system_server /proc/PID/maps — injected lspd/lsposed libs are visible here.
+     *  (b) /data/system/lspd/ — parasite-mode config dir written by system_server uid=1000
+     *      (distinct from Magisk mode which uses /data/adb/lspd/).
+     *  (c) /data/local/tmp/lspd* — staged daemon files used by the shell launcher.
+     *  (d) lspd shell launcher process (uid=2000) — may still be alive after injection.
+     *  (e) 'android' package notification channel — lspd registers a channel on the
+     *      android system package to post its activation notification; detectable via
+     *      the INotificationManager hidden API.
+     */
+    private fun checkParasiteManagerShell(): DetectionResult {
+        val found = mutableListOf<String>()
+
+        // --- (a) Scan system_server's /proc/PID/maps for injected LSPosed libraries ---
+        // lspd injects itself into system_server; after injection the injected .so/.dex
+        // files are mapped into system_server's address space and visible in its maps.
+        // (Reading another process's maps may be denied by SELinux on hardened devices;
+        //  we attempt it anyway as it succeeds on permissive or older kernels.)
+        val whitespaceRe = "\\s+".toRegex()
+        try {
+            val ssPid = findSystemServerPid()
+            if (ssPid != null) {
+                val mapsFile = File("/proc/$ssPid/maps")
+                if (mapsFile.canRead()) {
+                    val lsposedPatterns = listOf("lspd", "lsposed", "lsplant", "xposed", "edxp")
+                    val injected = mapsFile.readText()
+                        .lineSequence()
+                        .mapNotNull { line ->
+                            line.trim().split(whitespaceRe).lastOrNull()
+                                ?.takeIf { it.startsWith("/") }
+                        }
+                        .filter { path ->
+                            val fn = path.substringAfterLast("/").lowercase()
+                            lsposedPatterns.any { fn.contains(it) }
+                        }
+                        .distinct().take(3).toList()
+                    if (injected.isNotEmpty()) {
+                        found.add(
+                            "LSPosed libs in system_server maps (pid=$ssPid): " +
+                                injected.joinToString(", ")
+                        )
+                    }
+                }
+            }
+        } catch (_: Exception) {}
+
+        // --- (b) /data/system/lspd/ — parasite-mode config directory ---
+        // Parasite mode stores its config under /data/system/lspd/ because system_server
+        // (uid=1000) can write there.  Magisk mode uses /data/adb/lspd/ instead.
+        val parasiteConfigPaths = listOf(
+            "/data/system/lspd",
+            "/data/system/lspd/config.json",
+            "/data/system/lspd/modules.json",
+            "/data/system/lspd/enabled_modules.json"
+        )
+        parasiteConfigPaths.forEach { path ->
+            if (File(path).exists()) found.add("Parasite config: $path")
+        }
+
+        // --- (c) Staged daemon files in /data/local/tmp/ ---
+        val stagingPaths = listOf(
+            "/data/local/tmp/lspd",
+            "/data/local/tmp/lspd.dex",
+            "/data/local/tmp/lspd.apk"
+        )
+        stagingPaths.forEach { path ->
+            if (File(path).exists()) found.add("Parasite staging file: $path")
+        }
+
+        // --- (d) lspd shell launcher process (uid=2000) ---
+        // The shell process that launched lspd may still be running after injection.
+        try {
+            val procDir = File("/proc")
+            procDir.listFiles { _, name -> name.all { it.isDigit() } }?.forEach { pidDir ->
+                try {
+                    val cmdline = File(pidDir, "cmdline").readText()
+                        .replace('\u0000', ' ').trim()
+                    if (cmdline.contains("lspd") || cmdline.startsWith("lsp")) {
+                        val statusText = File(pidDir, "status").readText()
+                        val uid = Regex("Uid:\\s*(\\d+)").find(statusText)
+                            ?.groupValues?.get(1)?.toIntOrNull() ?: -1
+                        if (uid == 2000) {
+                            found.add("lspd shell launcher (uid=2000, pid=${pidDir.name})")
+                        }
+                    }
+                } catch (_: Exception) {}
+            }
+        } catch (_: Exception) {}
+
+        // --- (e) 'android' package notification channel registered by lspd ---
+        // LSPosed Parasite mode registers a notification channel on the 'android'
+        // system package (uid=1000) to post the activation notification.
+        //
+        // Notification content reading via NotificationListenerService REQUIRES the
+        // user to grant BIND_NOTIFICATION_LISTENER_SERVICE in Settings → Notification
+        // access.  Since we cannot rely on the user granting this, we instead use the
+        // INotificationManager hidden API which is accessible to any app without
+        // special permissions:
+        //   • getNotificationChannelsForPackage  — enumerates channels on the android
+        //     package; lspd registers one with an id containing "lspd" or "lsposed".
+        //   • getActiveNotificationsFromListener(null, …) — on many pre-hardened
+        //     devices this returns the current system notification list even without
+        //     a registered listener token, making it a useful secondary signal.
+        try {
+            val nm = context.getSystemService(android.app.NotificationManager::class.java)
+            val iNm = nm?.javaClass
+                ?.getDeclaredMethod("getService")
+                ?.apply { isAccessible = true }
+                ?.invoke(nm)
+            if (iNm != null) {
+                // (e-1) Channel enumeration on the android package — no permission needed.
+                runCatching {
+                    val method = iNm.javaClass.getMethod(
+                        "getNotificationChannelsForPackage",
+                        String::class.java,
+                        Int::class.javaPrimitiveType,
+                        Boolean::class.javaPrimitiveType
+                    )
+                    val result = method.invoke(iNm, "android", 1000, false)
+                    @Suppress("UNCHECKED_CAST")
+                    val list = result?.javaClass
+                        ?.getMethod("getList")
+                        ?.invoke(result) as? List<*>
+                    list?.forEach { channel ->
+                        val id = channel?.javaClass
+                            ?.getMethod("getId")
+                            ?.invoke(channel) as? String
+                        val name = runCatching {
+                            channel?.javaClass?.getMethod("getName")?.invoke(channel)
+                                ?.toString()
+                        }.getOrNull() ?: ""
+                        val combined = "$id $name".lowercase()
+                        if (combined.contains("lsposed") || combined.contains("lspd") ||
+                            combined.contains("xposed")
+                        ) {
+                            found.add(
+                                "LSPosed notification channel on android pkg: id=$id name=$name"
+                            )
+                        }
+                    }
+                }
+
+                // (e-2) Active-notification enumeration — works on many devices even
+                // without a registered listener; fails silently on hardened ones.
+                runCatching {
+                    val getActive = iNm.javaClass.getMethod(
+                        "getActiveNotificationsFromListener",
+                        Class.forName("android.service.notification.INotificationListener"),
+                        Array<String>::class.java,
+                        Int::class.javaPrimitiveType
+                    )
+                    @Suppress("UNCHECKED_CAST")
+                    val slice = getActive.invoke(iNm, null, null, 0)
+                    val notifs = slice?.javaClass?.getMethod("getList")?.invoke(slice) as? List<*>
+                    notifs?.forEach { sbn ->
+                        val pkg = sbn?.javaClass?.getMethod("getPackageName")
+                            ?.invoke(sbn) as? String ?: return@forEach
+                        val nb = sbn.javaClass.getMethod("getNotification").invoke(sbn)
+                        val tickerText = nb?.javaClass
+                            ?.getField("tickerText")
+                            ?.get(nb)?.toString() ?: ""
+                        // `extras` is a public Bundle field on android.app.Notification
+                        val extras = nb?.javaClass?.getField("extras")?.get(nb)
+                        val title = extras?.javaClass
+                            ?.getMethod("getCharSequence", String::class.java)
+                            ?.invoke(extras, "android.title")?.toString() ?: ""
+                        val body = extras?.javaClass
+                            ?.getMethod("getCharSequence", String::class.java)
+                            ?.invoke(extras, "android.text")?.toString() ?: ""
+                        val combined = "$pkg $tickerText $title $body".lowercase()
+                        if (combined.contains("lsposed") || combined.contains("lspd") ||
+                            combined.contains("xposed")
+                        ) {
+                            found.add(
+                                "Parasite activation notification visible: pkg=$pkg title=\"$title\""
+                            )
+                        }
+                    }
+                }
+            }
+        } catch (_: Exception) {}
+
+        // --- (f) /data/system/users/0/notification_channels.xml persistence ---
+        // Android stores notification channels in a per-user XML file.  If lspd has
+        // ever been active in Parasite mode on this device, its channel entry for the
+        // 'android' package may still be present in this file even after lspd is
+        // unloaded.  The file is not directly readable by a normal app, but on
+        // devices where /data/system is world-listable (older/custom ROMs) the file
+        // may be accessible.
+        try {
+            val ncFile = File("/data/system/users/0/notification_channels.xml")
+            if (ncFile.canRead()) {
+                val content = ncFile.readText()
+                if ((content.contains("lspd", ignoreCase = true) ||
+                        content.contains("lsposed", ignoreCase = true)) &&
+                    content.contains("\"android\"")
+                ) {
+                    found.add(
+                        "lspd channel entry found in notification_channels.xml " +
+                            "(persistent residue from prior Parasite mode session)"
+                    )
+                }
+            }
+        } catch (_: Exception) {}
+
+        return if (found.isNotEmpty()) {
+            DetectionResult(
+                id = "parasite_manager_shell",
+                name = context.getString(R.string.chk_parasite_manager_name),
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_parasite_manager_desc),
+                detailedReason = context.getString(
+                    R.string.chk_parasite_manager_reason, found.joinToString("; ")
+                ),
+                solution = context.getString(R.string.chk_parasite_manager_solution),
+                technicalDetail = "Found: ${found.joinToString(" | ")}"
+            )
+        } else {
+            DetectionResult(
+                id = "parasite_manager_shell",
+                name = context.getString(R.string.chk_parasite_manager_name_nd),
+                category = DetectionCategory.XPOSED,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_parasite_manager_desc_nd),
+                detailedReason = context.getString(R.string.chk_parasite_manager_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
+            )
+        }
+    }
+
     // ---- Utilities ----
+
+    /**
+     * Scans /proc for the PID of system_server, which hosts the 'android' package
+     * (uid=1000) and is the injection target for LSPosed Parasite mode.
+     * Returns null if not found or if access is denied.
+     */
+    private fun findSystemServerPid(): Int? {
+        return try {
+            File("/proc").listFiles { _, name -> name.all { it.isDigit() } }
+                ?.firstNotNullOfOrNull { pidDir ->
+                    try {
+                        val cmdline = File(pidDir, "cmdline").readText()
+                            .replace('\u0000', ' ').trim()
+                        if (cmdline == "system_server" ||
+                            cmdline.startsWith("system_server ")
+                        ) {
+                            pidDir.name.toIntOrNull()
+                        } else null
+                    } catch (_: Exception) { null }
+                }
+        } catch (_: Exception) { null }
+    }
 
     /**
      * Scans /data/app for installed package directories whose names match any

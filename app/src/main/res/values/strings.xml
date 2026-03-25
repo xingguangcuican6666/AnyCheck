@@ -1417,13 +1417,13 @@
     <string name="chk_luna_sensitive_pkgs_desc_nd">No root-hiding apps detected.</string>
     <string name="chk_luna_sensitive_pkgs_reason_nd">Luna-method (wNxM8s/K0ajGz): No known root-hiding packages installed.</string>
     <!-- LunaDetector: Check 22 - MAC Address Anomaly -->
-    <string name="chk_luna_mac_anomaly_name">MAC Address Anomaly (Zero MAC)</string>
-    <string name="chk_luna_mac_anomaly_desc">Network interface has a zero MAC address, indicating possible root spoofing.</string>
-    <string name="chk_luna_mac_anomaly_reason">Luna-method (magiskmac): %1$s. Magisk or root modules may suppress the MAC address to bypass device fingerprinting.</string>
-    <string name="chk_luna_mac_anomaly_solution">Investigate whether a Magisk module is suppressing MAC addresses.</string>
-    <string name="chk_luna_mac_anomaly_name_nd">MAC Address Check</string>
-    <string name="chk_luna_mac_anomaly_desc_nd">No zero MAC address anomalies detected.</string>
-    <string name="chk_luna_mac_anomaly_reason_nd">Luna-method (magiskmac): All readable network interfaces have non-zero MAC addresses.</string>
+    <string name="chk_luna_mac_anomaly_name">Magisk MAC Address Anomaly</string>
+    <string name="chk_luna_mac_anomaly_desc">Network interface MAC address anomaly detected. Magisk\'s DenyList network-namespace isolation creates a dummy0 interface detectable on Android 11+.</string>
+    <string name="chk_luna_mac_anomaly_reason">Luna-method (magiskmac): %1$s. Rule B: on Android 11+ (API≥30) the presence of dummy0 with any non-zero MAC indicates Magisk DenyList network-namespace isolation. Rule A: zero MAC on any interface indicates a Magisk vnet artifact. Rule C: WiFi MAC mismatch with hardware property indicates Magisk MAC-spoofing module.</string>
+    <string name="chk_luna_mac_anomaly_solution">A Magisk module or Magisk DenyList is active. Disabling DenyList or removing the responsible Magisk module and rebooting should restore the normal network interface list.</string>
+    <string name="chk_luna_mac_anomaly_name_nd">Magisk MAC Address Check</string>
+    <string name="chk_luna_mac_anomaly_desc_nd">No Magisk MAC address anomalies detected (no dummy0 on Android 11+, no zero MACs, no WiFi MAC mismatch).</string>
+    <string name="chk_luna_mac_anomaly_reason_nd">Luna-method (magiskmac): No dummy0/vnet* interfaces on Android 11+; no zero-MAC interfaces; wlan0 MAC matches hardware property.</string>
 
 
     <!-- RevenyInspiredDetector: Check 1 - Custom ROM -->
@@ -1914,5 +1914,26 @@
     <string name="chk_hunter_elf_symbols_reason">Hunter-inspired ElfImg scan (N10) detected: %1$s. The probe parses .dynsym and .symtab ELF sections directly from disk via mmap(2), making it resistant to GOT-level interception by LSPlant, Frida, Dobby, ShadowHook, or Pine.</string>
     <string name="chk_hunter_elf_symbols_reason_nd">Direct ELF section parsing of all mapped .so files found no symbols belonging to LSPlant, Frida (gum), Dobby, ShadowHook, or Pine hook frameworks.</string>
     <string name="chk_hunter_elf_symbols_solution">Remove the native hook library (liblsplant.so, libfrida-agent.so, libdobby.so, etc.) from the device. Disable the Zygisk/Riru module that injects it and reboot.</string>
+
+    <!-- XposedDetector: Check 30 — LSPosed Parasite mode detection -->
+    <string name="chk_parasite_manager_name">LSPosed Parasite Mode Detected</string>
+    <string name="chk_parasite_manager_name_nd">LSPosed Parasite Mode Detection</string>
+    <string name="chk_parasite_manager_desc">LSPosed Parasite mode is active. In this mode lspd injects into the system_server process (the \'android\' system app, uid=1000) without Magisk or KernelSU. The android system process then posts an activation notification; tapping it opens the LSPosed Manager UI.</string>
+    <string name="chk_parasite_manager_desc_nd">No LSPosed Parasite mode indicators detected (no injected libraries in system_server, no parasite config, no staging files).</string>
+    <string name="chk_parasite_manager_reason">The following LSPosed Parasite mode indicators were found: %1$s. LSPosed Parasite mode works by having a shell launcher (uid=2000) write lspd\'s code into system_server\'s memory via /proc/PID/mem. After injection, LSPosed hooks execute inside the android system process, which then posts a notification that the user taps to open the LSPosed Manager. This leaves no Magisk/KernelSU root artifacts and is much harder to detect via traditional root scans.</string>
+    <string name="chk_parasite_manager_reason_nd">No injected lspd/lsposed libraries were found in system_server\'s process maps, no parasite config directory (/data/system/lspd/) exists, no staging files were found at /data/local/tmp/lspd, and no lspd notification channel was detected on the android package.</string>
+    <string name="chk_parasite_manager_solution">Disable LSPosed Parasite mode via the LSPosed Manager notification, then reboot. The lspd staging file at /data/local/tmp/lspd can be removed to prevent re-injection after reboot.</string>
+
+    <!-- SystemIntegrityDetector: Check 7 — Snapdragon 8 Gen 2 – 8 Elite security patch -->
+    <string name="chk_snapdragon_patch_name">Critical Snapdragon Vulnerability — Patch Missing</string>
+    <string name="chk_snapdragon_patch_name_ok">Snapdragon Critical Patch Applied</string>
+    <string name="chk_snapdragon_patch_name_na">Snapdragon Critical Patch Check</string>
+    <string name="chk_snapdragon_patch_desc">This device\'s Snapdragon SoC is affected by a critical privilege-escalation vulnerability. The installed security patch level is older than the required 2026-03-01 fix.</string>
+    <string name="chk_snapdragon_patch_desc_ok">The security patch level meets the minimum requirement for the detected Snapdragon SoC.</string>
+    <string name="chk_snapdragon_patch_desc_na">This device does not appear to use a Snapdragon 8 Gen 2 – 8 Elite SoC; the targeted vulnerability check does not apply.</string>
+    <string name="chk_snapdragon_patch_reason">SoC %1$s is in the affected range (Snapdragon 8 Gen 2 / SM8550 through 8 Elite / SM8750). Current security patch: %2$s. Required patch: %3$s. Devices in this SoC range that have not applied the 2026-03-01 (or later) security patch are vulnerable to a critical privilege-escalation flaw that allows local attackers to gain elevated privileges on the device.</string>
+    <string name="chk_snapdragon_patch_reason_ok">SoC %1$s is in the affected range but the installed security patch %2$s meets or exceeds the required 2026-03-01 level. The privilege-escalation vulnerability has been patched.</string>
+    <string name="chk_snapdragon_patch_reason_na">The detected SoC identifiers (ro.soc.model, ro.board.platform, ro.chipname, ro.hardware) do not match any SoC in the Snapdragon 8 Gen 2 – 8 Elite (SM8550 – SM8750) range. The Snapdragon-specific security patch check is not applicable to this device.</string>
+    <string name="chk_snapdragon_patch_solution">Install the latest OEM security update that includes the 2026-03-01 (or later) Android security patch level. Check your device manufacturer\'s support page for available updates.</string>
 
 </resources>
