@@ -1571,7 +1571,7 @@
     <string name="chk_ruru_hma_old_solution">Uninstall Hide My Applist and clean up residual data.</string>
     <string name="chk_ruru_hma_old_name_nd">HMA (Old Version) Data Directory</string>
     <string name="chk_ruru_hma_old_desc_nd">HMA old-version data directory not found.</string>
-    <string name="chk_ruru_hma_old_reason_nd">No old-version HMA directory found at /data/misc/hide_my_applist.</string>
+    <string name="chk_ruru_hma_old_reason_nd">No old-version HMA directory found at /data/misc/hide_my_applist. Note: non-Chinese-market devices may produce false positives.</string>
     <!-- RuruInspiredDetector: Check 7 - PM Cross-Method -->
     <string name="chk_ruru_pm_cross_name_error">PM Cross-Method Anomaly</string>
     <string name="chk_ruru_pm_cross_desc_error">Could not run `pm list packages` shell command.</string>
@@ -1817,7 +1817,7 @@
     <string name="chk_ruru_hma_dir_desc">A Hide My Applist (v3+) data directory was found under /data/misc/.</string>
     <string name="chk_ruru_hma_dir_desc_nd">No Hide My Applist data directories found under /data/misc/.</string>
     <string name="chk_ruru_hma_dir_reason">HMA v3+ stores its configuration, logs, and filter count in a randomly-named directory at /data/misc/hide_my_applist_{16-char-random}. The following matching entries were found: %1$s. This confirms HMA has been or is currently installed and configured on this device.</string>
-    <string name="chk_ruru_hma_dir_reason_nd">No directories matching the pattern /data/misc/hide_my_applist_* were found, indicating HMA v3+ has not been installed.</string>
+    <string name="chk_ruru_hma_dir_reason_nd">No directories matching the pattern /data/misc/hide_my_applist_* were found. Note: non-Chinese-market devices may produce false positives.</string>
     <string name="chk_ruru_hma_dir_solution">Uninstall Hide My Applist and reboot. If HMA must remain installed, remove this application from its filter list to prevent app-list hiding.</string>
 
     <!-- XposedDetector: Check 27 — JNI native LSPosed detection -->
@@ -1863,8 +1863,8 @@
     <string name="chk_hma_whitelist_desc">Hide My Applist whitelist mode is actively hiding installed packages from this app via filesystem-level interception.</string>
     <string name="chk_hma_whitelist_desc_nd">No HMA whitelist activity detected via raw fstatat syscall probes.</string>
     <string name="chk_hma_whitelist_desc_root">A root manager data directory was found via raw fstatat(2) syscall probe of /data/user/0.</string>
-    <string name="chk_hma_whitelist_reason">Raw fstatat(2) syscall probes of /data/user/0 showed that both root-manager package directories and mandatory system-app directories (com.android.shell, android, com.android.settings) all returned ENOENT. Because system-app data directories must always physically exist on a real Android device, their invisibility confirms that HMA whitelist mode (or an equivalent hook) is masking filesystem entries from this app.</string>
-    <string name="chk_hma_whitelist_reason_nd">Raw fstatat(2) syscall probes of /data/user/0 confirmed that at least one mandatory system-app directory (com.android.shell, android, or com.android.settings) returned EACCES as expected. No HMA whitelist masking was detected.</string>
+    <string name="chk_hma_whitelist_reason">Raw fstatat(2) syscall probes of /data/user/0 showed that both root-manager package directories and mandatory system-app directories (com.android.shell, android, com.android.settings) all returned ENOENT. Because system-app data directories must always physically exist on a real Android device, their invisibility confirms that HMA whitelist mode (or an equivalent hook) is masking filesystem entries from this app. Note: non-Chinese-market devices may produce false positives.</string>
+    <string name="chk_hma_whitelist_reason_nd">Raw fstatat(2) syscall probes of /data/user/0 confirmed that at least one mandatory system-app directory (com.android.shell, android, or com.android.settings) returned EACCES as expected. No HMA whitelist masking was detected. Note: non-Chinese-market devices may produce false positives.</string>
     <string name="chk_hma_whitelist_reason_root">Raw fstatat(2) syscall probes of /data/user/0 returned EACCES for the following root-manager package data directory/directories, confirming they are physically installed: %1$s.</string>
     <string name="chk_hma_whitelist_solution">In the Hide My Applist app, remove this application from the scope/whitelist, or disable the HMA module in LSPosed Manager and reboot.</string>
     <string name="chk_hma_whitelist_solution_root">If root access is not intended, uninstall the detected root manager(s). If root is required, ensure HMA is not configured to hide root-manager packages from this app.</string>
@@ -1874,8 +1874,8 @@
     <string name="chk_hma_blacklist_name_nd">HMA Detection (st_nlink)</string>
     <string name="chk_hma_blacklist_desc">The kernel reports fewer than 100 package data directories in /data/user/0, indicating HMA blacklist mode is hiding most installed packages from this app.</string>
     <string name="chk_hma_blacklist_desc_nd">The kernel-reported package data directory count in /data/user/0 is 100 or more, consistent with normal operation.</string>
-    <string name="chk_hma_blacklist_reason">A raw fstatat(2) syscall on /data/user/0 returned st_nlink − 2 = %1$s, which is below the threshold of 100. On a normal Android device the /data/user/0 directory contains well over 100 package data subdirectories. A count below 100 as seen by this process indicates HMA blacklist mode (or an equivalent mechanism) is manipulating the visible directory count to hide installed packages.</string>
-    <string name="chk_hma_blacklist_reason_nd">Raw fstatat(2) on /data/user/0 returned a directory link count of 100 or above (normal range). No HMA blacklist count anomaly detected.</string>
+    <string name="chk_hma_blacklist_reason">A raw fstatat(2) syscall on /data/user/0 returned st_nlink − 2 = %1$s, which is below the threshold of 100. On a normal Android device the /data/user/0 directory contains well over 100 package data subdirectories. A count below 100 as seen by this process indicates HMA blacklist mode (or an equivalent mechanism) is manipulating the visible directory count to hide installed packages. Note: non-Chinese-market devices may produce false positives.</string>
+    <string name="chk_hma_blacklist_reason_nd">Raw fstatat(2) on /data/user/0 returned a directory link count of 100 or above (normal range). No HMA blacklist count anomaly detected. Note: non-Chinese-market devices may produce false positives.</string>
     <string name="chk_hma_blacklist_solution">In the Hide My Applist app, remove this application from the blacklist scope, or disable the HMA module in LSPosed Manager and reboot.</string>
 
     <!-- Hunter/RposedBridge detection (HunterDetector) -->

@@ -1562,7 +1562,7 @@
     <string name="chk_ruru_hma_old_solution">卸载 Hide My Applist 并清理残留数据。</string>
     <string name="chk_ruru_hma_old_name_nd">HMA（旧版）数据目录</string>
     <string name="chk_ruru_hma_old_desc_nd">未发现 HMA 旧版数据目录。</string>
-    <string name="chk_ruru_hma_old_reason_nd">在 /data/misc/hide_my_applist 未发现旧版 HMA 目录。</string>
+    <string name="chk_ruru_hma_old_reason_nd">在 /data/misc/hide_my_applist 未发现旧版 HMA 目录。注意：非国行设备可能出现误报。</string>
     <!-- RuruInspiredDetector: Check 7 - PM Cross-Method -->
     <string name="chk_ruru_pm_cross_name_error">PM 交叉方法异常</string>
     <string name="chk_ruru_pm_cross_desc_error">无法运行 `pm list packages` shell 命令。</string>
@@ -1817,7 +1817,7 @@
     <string name="chk_ruru_hma_dir_desc">在 /data/misc/ 下发现了 Hide My Applist（v3+）数据目录。</string>
     <string name="chk_ruru_hma_dir_desc_nd">在 /data/misc/ 下未发现 Hide My Applist 数据目录。</string>
     <string name="chk_ruru_hma_dir_reason">HMA v3+ 将其配置、日志和过滤计数存储在 /data/misc/hide_my_applist_{16位随机字符} 的随机命名目录中。以下匹配条目被发现：%1$s。这证实 HMA 曾经或目前已安装并配置在此设备上。</string>
-    <string name="chk_ruru_hma_dir_reason_nd">未发现符合 /data/misc/hide_my_applist_* 模式的目录，表明 HMA v3+ 尚未安装。</string>
+    <string name="chk_ruru_hma_dir_reason_nd">未发现符合 /data/misc/hide_my_applist_* 模式的目录。注意：非国行设备可能出现误报。</string>
     <string name="chk_ruru_hma_dir_solution">卸载 Hide My Applist 并重启。如果 HMA 必须保留，请将此应用从其过滤列表中移除，以防止应用列表被隐藏。</string>
 
     <!-- XposedDetector：检测 27 — JNI 原生 LSPosed 检测 -->
@@ -1836,8 +1836,8 @@
     <string name="chk_hma_whitelist_desc">Hide My Applist 白名单模式正在通过文件系统层拦截，向本应用隐藏已安装的软件包。</string>
     <string name="chk_hma_whitelist_desc_nd">通过原始 fstatat 系统调用探测，未发现 HMA 白名单活动。</string>
     <string name="chk_hma_whitelist_desc_root">通过对 /data/user/0 的原始 fstatat(2) 系统调用探测，发现了 Root 管理器数据目录。</string>
-    <string name="chk_hma_whitelist_reason">对 /data/user/0 的原始 fstatat(2) 系统调用探测显示：Root 管理器软件包目录和必须存在的系统应用目录（com.android.shell、android、com.android.settings）均返回 ENOENT。由于系统应用数据目录在真实 Android 设备上必然物理存在，其不可见性证实 HMA 白名单模式（或同等钩子）正在对本应用屏蔽文件系统条目。</string>
-    <string name="chk_hma_whitelist_reason_nd">对 /data/user/0 的原始 fstatat(2) 系统调用探测确认，至少一个必须存在的系统应用目录（com.android.shell、android 或 com.android.settings）如预期返回了 EACCES。未检测到 HMA 白名单屏蔽。</string>
+    <string name="chk_hma_whitelist_reason">对 /data/user/0 的原始 fstatat(2) 系统调用探测显示：Root 管理器软件包目录和必须存在的系统应用目录（com.android.shell、android、com.android.settings）均返回 ENOENT。由于系统应用数据目录在真实 Android 设备上必然物理存在，其不可见性证实 HMA 白名单模式（或同等钩子）正在对本应用屏蔽文件系统条目。注意：非国行设备可能出现误报。</string>
+    <string name="chk_hma_whitelist_reason_nd">对 /data/user/0 的原始 fstatat(2) 系统调用探测确认，至少一个必须存在的系统应用目录（com.android.shell、android 或 com.android.settings）如预期返回了 EACCES。未检测到 HMA 白名单屏蔽。注意：非国行设备可能出现误报。</string>
     <string name="chk_hma_whitelist_reason_root">对 /data/user/0 的原始 fstatat(2) 系统调用探测，对以下 Root 管理器软件包数据目录返回了 EACCES，确认其已物理安装：%1$s。</string>
     <string name="chk_hma_whitelist_solution">在 Hide My Applist 应用中，将本应用从作用域/白名单中移除，或在 LSPosed 管理器中禁用 HMA 模块并重启。</string>
     <string name="chk_hma_whitelist_solution_root">若不需要 Root 权限，请卸载检测到的 Root 管理器。若必须保留 Root，请确保 HMA 未配置为对本应用隐藏 Root 管理器软件包。</string>
@@ -1847,8 +1847,8 @@
     <string name="chk_hma_blacklist_name_nd">HMA 检测（st_nlink）</string>
     <string name="chk_hma_blacklist_desc">内核报告 /data/user/0 中的软件包数据目录少于 100 个，表明 HMA 黑名单模式正在对本应用隐藏大多数已安装软件包。</string>
     <string name="chk_hma_blacklist_desc_nd">内核报告的 /data/user/0 中软件包数据目录数量达到 100 或以上，符合正常情况。</string>
-    <string name="chk_hma_blacklist_reason">对 /data/user/0 的原始 fstatat(2) 系统调用返回 st_nlink − 2 = %1$s，低于阈值 100。在正常的 Android 设备上，/data/user/0 目录通常包含远超 100 个软件包数据子目录。本进程所见的计数低于 100，表明 HMA 黑名单模式（或同等机制）正在操控可见目录数量，以对本应用隐藏已安装软件包。</string>
-    <string name="chk_hma_blacklist_reason_nd">对 /data/user/0 的原始 fstatat(2) 返回的目录链接计数为 100 或以上（正常范围）。未检测到 HMA 黑名单计数异常。</string>
+    <string name="chk_hma_blacklist_reason">对 /data/user/0 的原始 fstatat(2) 系统调用返回 st_nlink − 2 = %1$s，低于阈值 100。在正常的 Android 设备上，/data/user/0 目录通常包含远超 100 个软件包数据子目录。本进程所见的计数低于 100，表明 HMA 黑名单模式（或同等机制）正在操控可见目录数量，以对本应用隐藏已安装软件包。注意：非国行设备可能出现误报。</string>
+    <string name="chk_hma_blacklist_reason_nd">对 /data/user/0 的原始 fstatat(2) 返回的目录链接计数为 100 或以上（正常范围）。未检测到 HMA 黑名单计数异常。注意：非国行设备可能出现误报。</string>
     <string name="chk_hma_blacklist_solution">在 Hide My Applist 应用中，将本应用从黑名单作用域中移除，或在 LSPosed 管理器中禁用 HMA 模块并重启。</string>
 
     <!-- XposedDetector: Check 30 — LSPosed 寄生模式检测 -->
