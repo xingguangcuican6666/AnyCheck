@@ -13,10 +13,16 @@
 #include <dirent.h>
 #include <dlfcn.h>
 #include <sys/mman.h>
+#include <sys/socket.h>
 #include <sys/system_properties.h>
+#include <sys/utsname.h>
 #include <android/log.h>
 #include <stdint.h>
 #include <cerrno>
+#include <linux/if.h>
+#include <linux/if_arp.h>
+#include <linux/netlink.h>
+#include <linux/rtnetlink.h>
 
 #include "hunter_elf.h"
 
@@ -1012,12 +1018,6 @@ static std::string probeHMABlacklist() {
 //
 // Returns semicolon-separated findings, or empty string if none.
 // ---------------------------------------------------------------------------
-#include <linux/netlink.h>
-#include <linux/rtnetlink.h>
-#include <linux/if.h>
-#include <linux/if_arp.h>
-#include <sys/socket.h>
-#include <sys/utsname.h>
 
 static int getAndroidApiLevel() {
     char buf[16] = {};
