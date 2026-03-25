@@ -45,7 +45,7 @@ import com.anycheck.app.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(
-    appVersion: String = "1.0.2",
+    appVersion: String = "1.0.9",
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
