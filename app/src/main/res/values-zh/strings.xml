@@ -1456,7 +1456,7 @@
     <string name="chk_reveny_hma_solution">通过 LSPosed Manager 禁用或卸载 Hide My Applist 模块。</string>
     <string name="chk_reveny_hma_name_nd">Hide My Applist</string>
     <string name="chk_reveny_hma_desc_nd">未检测到 Hide My Applist。</string>
-    <string name="chk_reveny_hma_reason_nd">未发现 Hide My Applist 软件包或套接字。</string>
+    <string name="chk_reveny_hma_reason_nd">未发现 Hide My Applist 软件包或套接字。注意：HMA 主要用于中国大陆市场的 Android 设备，非国行设备不太可能安装 HMA，部分检测项在非国行设备上可能出现误报。</string>
     <!-- RevenyInspiredDetector: Check 6 - Mount Inconsistency -->
     <string name="chk_reveny_mount_inc_name">检测到挂载不一致</string>
     <string name="chk_reveny_mount_inc_desc">检测到挂载表不一致 — 可能存在基于 umount 的隐藏。</string>
@@ -1789,8 +1789,8 @@
     <string name="chk_reveny_hma_filter_name_nd">Hide My Applist 过滤行为检查</string>
     <string name="chk_reveny_hma_filter_desc">检测到 PackageManager 查询异常，表明 Hide My Applist 正在主动向此应用隐藏包信息。</string>
     <string name="chk_reveny_hma_filter_desc_nd">未检测到 PackageManager 过滤异常；HMA 似乎未针对此应用进行过滤。</string>
-    <string name="chk_reveny_hma_filter_reason">HMA 通过钩住 PackageManagerService 的 shouldFilterApplication()/filterAppAccessLPr() 方法，从查询结果中静默移除指定包。检测到以下异常：%1$s。这些模式与 HMA 被配置为向此应用隐藏包一致。</string>
-    <string name="chk_reveny_hma_filter_reason_nd">所有 PackageManager 合理性检查均已通过：始终可见的系统包（android、permissioncontroller、settings）均存在；通过 getApplicationInfo 和 getPackageInfo 对自身可见性的检查结果一致；已安装包数量与已安装应用数量在允许误差范围内匹配。</string>
+    <string name="chk_reveny_hma_filter_reason">HMA 通过钩住 PackageManagerService 的 shouldFilterApplication()/filterAppAccessLPr() 方法，从查询结果中静默移除指定包。检测到以下异常：%1$s。这些模式与 HMA 被配置为向此应用隐藏包一致。注意：此检测在中国大陆市场设备上最为可靠，非国行设备偶尔可能出现误报。</string>
+    <string name="chk_reveny_hma_filter_reason_nd">所有 PackageManager 合理性检查均已通过：始终可见的系统包（android、permissioncontroller [com.android.permissioncontroller 或 com.google.android.permissioncontroller 之一]、settings）均存在；通过 getApplicationInfo 和 getPackageInfo 对自身可见性的检查结果一致；已安装包数量与已安装应用数量在允许误差范围内匹配。注意：此检测主要适用于中国大陆市场设备。</string>
     <string name="chk_reveny_hma_filter_solution">在 Hide My Applist 应用中，从作用域列表中移除此应用，或完全禁用 HMA Xposed 模块并重启。</string>
 
     <!-- RevenyInspiredDetector：检查 5d – HMA /data/app 目录扫描 -->

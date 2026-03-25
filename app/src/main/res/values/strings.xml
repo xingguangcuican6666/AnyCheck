@@ -1465,7 +1465,7 @@
     <string name="chk_reveny_hma_solution">Disable or uninstall the Hide My Applist module via LSPosed Manager.</string>
     <string name="chk_reveny_hma_name_nd">Hide My Applist</string>
     <string name="chk_reveny_hma_desc_nd">Hide My Applist not detected.</string>
-    <string name="chk_reveny_hma_reason_nd">No Hide My Applist packages or sockets were found.</string>
+    <string name="chk_reveny_hma_reason_nd">No Hide My Applist packages or sockets were found. Note: HMA is primarily used on Chinese-market Android devices; non-Chinese-market devices are unlikely to have HMA installed and may see false positives from some of these checks.</string>
     <!-- RevenyInspiredDetector: Check 6 - Mount Inconsistency -->
     <string name="chk_reveny_mount_inc_name">Mount Inconsistency Detected</string>
     <string name="chk_reveny_mount_inc_desc">Mount table inconsistency detected — possible umount-based hiding.</string>
@@ -1798,8 +1798,8 @@
     <string name="chk_reveny_hma_filter_name_nd">Hide My Applist Filter Behaviour Check</string>
     <string name="chk_reveny_hma_filter_desc">PackageManager query anomalies detected that indicate Hide My Applist is actively hiding packages from this app.</string>
     <string name="chk_reveny_hma_filter_desc_nd">No PackageManager filter anomalies detected; HMA does not appear to be targeting this app.</string>
-    <string name="chk_reveny_hma_filter_reason">HMA hooks PackageManagerService\'s shouldFilterApplication() / filterAppAccessLPr() to silently remove packages from query results. The following anomalies were detected: %1$s. These patterns are consistent with HMA being configured to hide packages from this app.</string>
-    <string name="chk_reveny_hma_filter_reason_nd">All PackageManager sanity checks passed: always-visible system packages (android, permissioncontroller, settings) are present; self-visibility via getApplicationInfo and getPackageInfo is consistent; installed package count matches installed application count within tolerance.</string>
+    <string name="chk_reveny_hma_filter_reason">HMA hooks PackageManagerService\'s shouldFilterApplication() / filterAppAccessLPr() to silently remove packages from query results. The following anomalies were detected: %1$s. These patterns are consistent with HMA being configured to hide packages from this app. Note: this detection is most reliable on Chinese-market devices where HMA is commonly used; non-Chinese-market devices may occasionally produce false positives.</string>
+    <string name="chk_reveny_hma_filter_reason_nd">All PackageManager sanity checks passed: always-visible system packages (android, permissioncontroller [either com.android.permissioncontroller or com.google.android.permissioncontroller], settings) are present; self-visibility via getApplicationInfo and getPackageInfo is consistent; installed package count matches installed application count within tolerance. Note: this check is primarily relevant to Chinese-market devices where HMA is commonly used.</string>
     <string name="chk_reveny_hma_filter_solution">In the Hide My Applist app, remove this application from the scope list, or disable the HMA Xposed module entirely and reboot.</string>
 
     <!-- RevenyInspiredDetector: Check 5d – HMA /data/app directory scan -->

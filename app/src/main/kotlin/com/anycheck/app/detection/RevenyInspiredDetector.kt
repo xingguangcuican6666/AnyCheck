@@ -793,8 +793,15 @@ class RevenyInspiredDetector(private val context: Context) {
         // appear in getInstalledPackages() on any real Android device.
         val alwaysVisiblePackages = listOf(
             "android",
-            "com.android.permissioncontroller",
             "com.android.providers.settings"
+        )
+        // The permission-controller package name varies by device type:
+        //   com.android.permissioncontroller  — AOSP / Chinese OEM builds
+        //   com.google.android.permissioncontroller — GMS / Pixel builds
+        // Treat both as equivalent; at least one must be present.
+        val permissionControllerVariants = listOf(
+            "com.android.permissioncontroller",
+            "com.google.android.permissioncontroller"
         )
 
         val pm = context.packageManager
@@ -803,7 +810,12 @@ class RevenyInspiredDetector(private val context: Context) {
         }.getOrElse { emptySet() }
 
         // Count how many always-visible packages actually appeared
-        val missingAlwaysVisible = alwaysVisiblePackages.filter { it !in installedNames }
+        val missingAlwaysVisible = alwaysVisiblePackages.filter { it !in installedNames }.toMutableList()
+        if (permissionControllerVariants.none { it in installedNames }) {
+            missingAlwaysVisible.add(
+                "permissioncontroller (neither com.android.permissioncontroller nor com.google.android.permissioncontroller found)"
+            )
+        }
 
         // Also attempt to read the own app info via two separate methods; any
         // discrepancy between them is a sign of active interception.
