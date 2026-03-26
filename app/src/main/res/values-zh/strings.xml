@@ -1808,7 +1808,7 @@
     <string name="chk_hma_cold_hot_desc">检测到 PackageManager 冷/热查询时序异常：一个或多个 root 管理器或 HMA 包的冷热比低于不存在的假包，表明 HMA 正在拦截并向本应用隐藏这些包。</string>
     <string name="chk_hma_cold_hot_desc_nd">未检测到冷热时序异常；目标包的 PackageManager 响应比率与其实际安装状态一致。</string>
     <string name="chk_hma_cold_hot_desc_na">冷热时序分析需要 Android API > 28，在本设备上已跳过。</string>
-    <string name="chk_hma_cold_hot_reason">对每个包调用 getPackageInfo() 50 次。第一次调用（冷启动）走无缓存的完整路径；后续调用（热启动）受益于 PMS 的内部缓存。对于真实且未被隐藏的包，冷启动调用明显更慢，产生较高的冷热比。对于不存在的包，冷热均很快（立即返回 NameNotFoundException），比率约为 1。当 HMA 隐藏某个包时，它在缓存生效前就拦截了 Binder 调用，使冷启动 ≈ 热启动，比率甚至低于真正不存在的包的比率。以下包的冷热比低于假包基准，表明它们正被 HMA 隐藏：%1$s。</string>
+    <string name="chk_hma_cold_hot_reason">对每个包调用 getPackageInfo() 50 次。第一次调用（冷启动）走无缓存的完整路径；后续调用（热启动）受益于 PMS 的内部缓存。对于真实且未被隐藏的包，冷启动调用明显更慢，产生较高的冷热比。对于不存在的包，冷热均很快（立即返回 NameNotFoundException），比率约为 1。当 HMA 隐藏某个包时，它在缓存生效前就拦截了 Binder 调用，使冷启动 \u2248 热启动，比率甚至低于真正不存在的包的比率。以下包的冷热比低于假包基准，表明它们正被 HMA 隐藏：%1$s。</string>
     <string name="chk_hma_cold_hot_reason_nd">所有被测包（Magisk、KernelSU、APatch、Hide My Applist 各变体）的冷热查询比率均与正常存在或真正不存在的情况一致，没有包显示出 HMA 拦截特有的异常低比率。</string>
     <string name="chk_hma_cold_hot_reason_na">此检测需要 Android API 级别 > 28。本设备运行 API 28 或更低，因此未执行基于时序的 HMA 检测。</string>
     <string name="chk_hma_cold_hot_solution">在 Hide My Applist 应用中，将本应用从其作用域列表中移除，或完全禁用 HMA Xposed 模块后重启。</string>
