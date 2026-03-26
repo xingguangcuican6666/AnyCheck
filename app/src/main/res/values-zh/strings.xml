@@ -1812,6 +1812,8 @@
     <string name="chk_hma_cold_hot_reason_nd">所有被测包（Magisk、KernelSU、APatch、Hide My Applist 各变体）的与正常存在或真正不存在的情况一致，没有包显示出 HMA 拦截特有比率。</string>
     <string name="chk_hma_cold_hot_reason_na">此检测需要 Android API 级别 > 28。本设备运行 API 28 或更低，因此未执行基于时序的 HMA 检测。</string>
     <string name="chk_hma_cold_hot_solution">在 Hide My Applist 应用中，将本应用从其作用域列表中移除，或完全禁用 HMA Xposed 模块后重启。</string>
+    <string name="chk_hma_cold_hot_suffix_blacklist">（黑名单）</string>
+    <string name="chk_hma_cold_hot_suffix_whitelist">（白名单）</string>
 
     <!-- XposedDetector：检查 26 — 进程内存映射中的 LSPlant 原生库 -->
     <string name="chk_lsplant_native_name">检测到 LSPlant/LSPosed 原生库已映射</string>

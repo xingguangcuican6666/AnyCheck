@@ -1154,6 +1154,51 @@ class RevenyInspiredDetector(private val context: Context) {
     }
 
     // -------------------------------------------------------------------------
+    // Check 5d-combined: run checkHmaColdHotTiming() three times and apply
+    // combination rules based on the displayed result of each run.
+    //
+    // The three runs expose HMA behaviour at increasing cache warmth:
+    //   Run 1 (cold)  – first ever query for these packages in this process
+    //   Run 2 (warm)  – packages already in the PMS cache after run 1
+    //   Run 3 (hot)   – fully cached
+    //
+    // Combination rules (expressed as what is *displayed* to the user per run,
+    // where the underlying method's inverted logic is already applied):
+    //   r1=ND, r2=ND, r3=D  → NOT_DETECTED  (only last run clean → noise)
+    //   r1=ND, r2=D,  r3=D  → DETECTED + title suffix "（黑名单）"
+    //   r1=D,  r2=D,  r3=D  → DETECTED + title suffix "（白名单）"
+    //   other               → r3 result unchanged (fallback to latest run)
+    // -------------------------------------------------------------------------
+    internal fun checkHmaColdHotTimingCombined(): DetectionResult {
+        val r1 = checkHmaColdHotTiming()
+        val r2 = checkHmaColdHotTiming()
+        val r3 = checkHmaColdHotTiming()
+
+        val r1Detected = r1.status == DetectionStatus.DETECTED
+        val r2Detected = r2.status == DetectionStatus.DETECTED
+        val r3Detected = r3.status == DetectionStatus.DETECTED
+
+        return when {
+            !r1Detected && !r2Detected && r3Detected ->
+                r3.copy(
+                    status = DetectionStatus.NOT_DETECTED,
+                    name = context.getString(R.string.chk_hma_cold_hot_name_nd)
+                )
+            !r1Detected && r2Detected && r3Detected ->
+                r3.copy(
+                    name = context.getString(R.string.chk_hma_cold_hot_name) +
+                           context.getString(R.string.chk_hma_cold_hot_suffix_blacklist)
+                )
+            r1Detected && r2Detected && r3Detected ->
+                r3.copy(
+                    name = context.getString(R.string.chk_hma_cold_hot_name) +
+                           context.getString(R.string.chk_hma_cold_hot_suffix_whitelist)
+                )
+            else -> r3
+        }
+    }
+
+    // -------------------------------------------------------------------------
     // Check 5e: HMA whitelist detection via raw fstatat syscall (N14)
     // Probes /data/user/0/{root_manager} dirs.  EACCES means the dir exists.
     // If all root managers return ENOENT, probes system-app dirs.  If those
