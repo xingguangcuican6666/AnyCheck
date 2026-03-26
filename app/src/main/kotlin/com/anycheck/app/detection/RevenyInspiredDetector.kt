@@ -1115,18 +1115,6 @@ class RevenyInspiredDetector(private val context: Context) {
             if (hiddenLabels.isNotEmpty()) {
                 DetectionResult(
                     id = "hma_cold_hot_timing",
-                    name = context.getString(R.string.chk_hma_cold_hot_name_nd),
-                    category = DetectionCategory.XPOSED,
-                    status = DetectionStatus.NOT_DETECTED,
-                    riskLevel = RiskLevel.HIGH,
-                    description = context.getString(R.string.chk_hma_cold_hot_desc_nd),
-                    detailedReason = context.getString(R.string.chk_hma_cold_hot_reason_nd),
-                    solution = context.getString(R.string.no_action_required),
-                    technicalDetail = details.toString().trimEnd()
-                )
-            } else {
-                DetectionResult(
-                    id = "hma_cold_hot_timing",
                     name = context.getString(R.string.chk_hma_cold_hot_name),
                     category = DetectionCategory.XPOSED,
                     status = DetectionStatus.DETECTED,
@@ -1136,6 +1124,18 @@ class RevenyInspiredDetector(private val context: Context) {
                         R.string.chk_hma_cold_hot_reason, hiddenLabels.joinToString(", ")
                     ),
                     solution = context.getString(R.string.chk_hma_cold_hot_solution),
+                    technicalDetail = details.toString().trimEnd()
+                )
+            } else {
+                DetectionResult(
+                    id = "hma_cold_hot_timing",
+                    name = context.getString(R.string.chk_hma_cold_hot_name_nd),
+                    category = DetectionCategory.XPOSED,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.HIGH,
+                    description = context.getString(R.string.chk_hma_cold_hot_desc_nd),
+                    detailedReason = context.getString(R.string.chk_hma_cold_hot_reason_nd),
+                    solution = context.getString(R.string.no_action_required),
                     technicalDetail = details.toString().trimEnd()
                 )
             }
@@ -1166,20 +1166,25 @@ class RevenyInspiredDetector(private val context: Context) {
     // Combination rule:
     //   detectedCount >= 2  → DETECTED  (majority vote)
     //   detectedCount <  2  → NOT_DETECTED (treat as noise)
+    //
+    // The returned result is always taken from a run that already carries the
+    // matching status, so content and status can never disagree.
     // -------------------------------------------------------------------------
     internal fun checkHmaColdHotTimingCombined(): DetectionResult {
         val r1 = checkHmaColdHotTiming()
         val r2 = checkHmaColdHotTiming()
         val r3 = checkHmaColdHotTiming()
 
-        val detectedCount = listOf(r1, r2, r3).count { it.status == DetectionStatus.DETECTED }
+        val results = listOf(r1, r2, r3)
+        val detectedCount = results.count { it.status == DetectionStatus.DETECTED }
 
-        // Use r3's metadata (most warmed-up measurement) as the base result,
-        // but override its status to match the majority-vote decision.
-        return if (detectedCount >= 2)
-            r3.copy(status = DetectionStatus.DETECTED)
-        else
-            r3.copy(status = DetectionStatus.NOT_DETECTED)
+        return if (detectedCount >= 2) {
+            // Majority says DETECTED — return the last run that agrees, so content matches status.
+            results.last { it.status == DetectionStatus.DETECTED }
+        } else {
+            // Majority says NOT_DETECTED — return the last run that agrees.
+            results.lastOrNull { it.status == DetectionStatus.NOT_DETECTED } ?: r3
+        }
     }
 
     // -------------------------------------------------------------------------
