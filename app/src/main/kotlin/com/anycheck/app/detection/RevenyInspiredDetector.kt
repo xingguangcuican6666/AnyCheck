@@ -1155,35 +1155,57 @@ class RevenyInspiredDetector(private val context: Context) {
 
     // -------------------------------------------------------------------------
     // Check 5d-combined: run checkHmaColdHotTiming() three times and decide
-    // the final result by counting how many runs returned DETECTED.
+    // the final result by position-based pattern matching.
     //
-    // Count rules (DETECTED = displayed status per run):
-    //   3 × DETECTED → DETECTED + "（白名单）"  (all runs clean → whitelist)
-    //   2 × DETECTED → DETECTED + "（黑名单）"  (majority clean → blacklist signal)
-    //   1 × DETECTED → NOT_DETECTED             (single clean run → false positive, suppress)
-    //   0 × DETECTED → r3 unchanged             (all runs anomalous)
+    // In each run, DETECTED means "no hiding found" (whitelist signal) and
+    // NOT_DETECTED means "timing anomaly / hiding found" (blacklist signal).
+    //
+    // Pattern rules:
+    //   r1=D,  r2=D,  r3=D  → DETECTED + "（白名单）"   (三次: all clean)
+    //   r1=ND, r2=D,  r3=D  → DETECTED + "（黑名单）"   (两次: cold JIT hook on r1,
+    //                                                     warm runs r2+r3 unaffected)
+    //   r1=ND, r2=ND, r3=ND → DETECTED + "（黑名单）"   (0次: persistent hiding)
+    //   1 × DETECTED        → NOT_DETECTED              (一次: single clean run = false
+    //                                                     positive, suppress)
+    //   other               → r3 unchanged              (ambiguous, pass through)
     // -------------------------------------------------------------------------
     internal fun checkHmaColdHotTimingCombined(): DetectionResult {
         val r1 = checkHmaColdHotTiming()
         val r2 = checkHmaColdHotTiming()
         val r3 = checkHmaColdHotTiming()
 
-        val detectedCount = listOf(r1, r2, r3).count { it.status == DetectionStatus.DETECTED }
+        val r1Detected = r1.status == DetectionStatus.DETECTED
+        val r2Detected = r2.status == DetectionStatus.DETECTED
+        val r3Detected = r3.status == DetectionStatus.DETECTED
+        val detectedCount = listOf(r1Detected, r2Detected, r3Detected).count { it }
 
-        return when (detectedCount) {
-            3 -> r3.copy(
-                name = context.getString(R.string.chk_hma_cold_hot_name) +
-                       context.getString(R.string.chk_hma_cold_hot_suffix_whitelist)
-            )
-            2 -> r3.copy(
-                status = DetectionStatus.DETECTED,
-                name = context.getString(R.string.chk_hma_cold_hot_name) +
-                       context.getString(R.string.chk_hma_cold_hot_suffix_blacklist)
-            )
-            1 -> r3.copy(
-                status = DetectionStatus.NOT_DETECTED,
-                name = context.getString(R.string.chk_hma_cold_hot_name_nd)
-            )
+        return when {
+            // 三次: all runs clean → whitelist
+            r1Detected && r2Detected && r3Detected ->
+                r3.copy(
+                    name = context.getString(R.string.chk_hma_cold_hot_name) +
+                           context.getString(R.string.chk_hma_cold_hot_suffix_whitelist)
+                )
+            // 两次: cold run (r1) detected JIT hook, warm runs (r2, r3) clean → blacklist
+            !r1Detected && r2Detected && r3Detected ->
+                r3.copy(
+                    name = context.getString(R.string.chk_hma_cold_hot_name) +
+                           context.getString(R.string.chk_hma_cold_hot_suffix_blacklist)
+                )
+            // 0次: all runs show hiding → persistent blacklist signal
+            !r1Detected && !r2Detected && !r3Detected ->
+                r3.copy(
+                    status = DetectionStatus.DETECTED,
+                    name = context.getString(R.string.chk_hma_cold_hot_name) +
+                           context.getString(R.string.chk_hma_cold_hot_suffix_blacklist)
+                )
+            // 一次: exactly one clean run → false positive, suppress
+            detectedCount == 1 ->
+                r3.copy(
+                    status = DetectionStatus.NOT_DETECTED,
+                    name = context.getString(R.string.chk_hma_cold_hot_name_nd)
+                )
+            // ambiguous (e.g. r1=D, !r2, r3=D) → pass through
             else -> r3
         }
     }
