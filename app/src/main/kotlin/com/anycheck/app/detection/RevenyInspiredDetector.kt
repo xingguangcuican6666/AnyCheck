@@ -1155,31 +1155,31 @@ class RevenyInspiredDetector(private val context: Context) {
 
     // -------------------------------------------------------------------------
     // Check 5d-combined: run checkHmaColdHotTiming() three times and apply
-    // combination rules based on the displayed result of each run.
+    // majority-vote combination: count how many runs report DETECTED and
+    // treat ≥ 2 of 3 as a confirmed detection (order does not matter).
     //
     // The three runs expose HMA behaviour at increasing cache warmth:
     //   Run 1 (cold)  – first ever query for these packages in this process
     //   Run 2 (warm)  – packages already in the PMS cache after run 1
     //   Run 3 (hot)   – fully cached
     //
-    // Combination rules:
-    //   r1=ND, r2=ND, r3=D  → NOT_DETECTED  (only last run clean → noise)
-    //   other               → r3 result unchanged (fallback to latest run)
+    // Combination rule:
+    //   detectedCount >= 2  → DETECTED  (majority vote)
+    //   detectedCount <  2  → NOT_DETECTED (treat as noise)
     // -------------------------------------------------------------------------
     internal fun checkHmaColdHotTimingCombined(): DetectionResult {
         val r1 = checkHmaColdHotTiming()
         val r2 = checkHmaColdHotTiming()
         val r3 = checkHmaColdHotTiming()
 
-        val r1Detected = r1.status == DetectionStatus.DETECTED
-        val r2Detected = r2.status == DetectionStatus.DETECTED
-        val r3Detected = r3.status == DetectionStatus.DETECTED
+        val detectedCount = listOf(r1, r2, r3).count { it.status == DetectionStatus.DETECTED }
 
-        return when {
-            !r1Detected && !r2Detected && r3Detected ->
-                r3.copy(status = DetectionStatus.NOT_DETECTED)
-            else -> r3
-        }
+        // Use r3's metadata (most warmed-up measurement) as the base result,
+        // but override its status to match the majority-vote decision.
+        return if (detectedCount >= 2)
+            r3.copy(status = DetectionStatus.DETECTED)
+        else
+            r3.copy(status = DetectionStatus.NOT_DETECTED)
     }
 
     // -------------------------------------------------------------------------
