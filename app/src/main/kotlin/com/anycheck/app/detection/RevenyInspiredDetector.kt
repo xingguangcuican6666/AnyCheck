@@ -1075,16 +1075,8 @@ class RevenyInspiredDetector(private val context: Context) {
                 Target("me.weishu.kernelsu.debug",      "KernelSU Debug",    DetectionCategory.KERNELSU),
                 Target("me.bmax.apatch",                "APatch",            DetectionCategory.APATCH),
                 Target("me.bmax.apatch.debug",          "APatch Debug",      DetectionCategory.APATCH),
-                Target("com.tsng.hidemyapplist",        "Hide My Applist",   DetectionCategory.XPOSED),
-                Target("com.tsng.hidemyapplist.debug",  "HMA Debug",         DetectionCategory.XPOSED),
-                Target("cn.hidemyapplist",              "Hide My Applist CN",DetectionCategory.XPOSED),
                 Target("com.sukisu.ultra",              "SukiSU Ultra",      DetectionCategory.KERNELSU),
-                Target("moe.fuqiuluo.portaldev",        "Portal",            DetectionCategory.KERNELSU),
-                Target("io.github.qauxv",               "QAuxiliary",        DetectionCategory.XPOSED),
-                Target("com.sevtinge.hyperceiler",      "HyperCeiler",       DetectionCategory.XPOSED),
-                Target("io.github.hyperisland",         "HyperIsland",       DetectionCategory.XPOSED),
-                Target("top.hookvip.pro",               "HookVIP Pro",       DetectionCategory.XPOSED),
-                Target("com.rosan.installer.x",         "Privileged Installer",DetectionCategory.ROOT_MANAGEMENT)
+                Target("moe.fuqiuluo.portaldev",        "Portal",            DetectionCategory.KERNELSU)
             )
 
             // Step 2: measure fakeRatio ONCE – all packages are cold at this
