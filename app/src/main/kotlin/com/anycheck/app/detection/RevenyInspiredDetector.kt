@@ -1179,16 +1179,26 @@ class RevenyInspiredDetector(private val context: Context) {
         val r3Detected = r3.status == DetectionStatus.DETECTED
 
         return when {
+            // Suppress: first two anomalous (ND), last one clean (D) → noise, force ND
             !r1Detected && !r2Detected && r3Detected ->
                 r3.copy(
                     status = DetectionStatus.NOT_DETECTED,
                     name = context.getString(R.string.chk_hma_cold_hot_name_nd)
                 )
+            // Blacklist pattern A: cold call intercepted (ND), warm cache bypasses HMA (D, D)
             !r1Detected && r2Detected && r3Detected ->
                 r3.copy(
                     name = context.getString(R.string.chk_hma_cold_hot_name) +
                            context.getString(R.string.chk_hma_cold_hot_suffix_blacklist)
                 )
+            // Blacklist pattern B: all three consistently intercepted → strong HMA blacklist signal
+            !r1Detected && !r2Detected && !r3Detected ->
+                r3.copy(
+                    status = DetectionStatus.DETECTED,
+                    name = context.getString(R.string.chk_hma_cold_hot_name) +
+                           context.getString(R.string.chk_hma_cold_hot_suffix_blacklist)
+                )
+            // Whitelist: all three clean → app not in HMA blacklist scope
             r1Detected && r2Detected && r3Detected ->
                 r3.copy(
                     name = context.getString(R.string.chk_hma_cold_hot_name) +
