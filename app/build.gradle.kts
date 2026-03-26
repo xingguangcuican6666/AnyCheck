@@ -11,7 +11,7 @@ android {
     defaultConfig {
         applicationId = "com.anycheck.app"
         minSdk = 26
-        targetSdk = 28
+        targetSdk = 36
         versionCode = 10090
         versionName = "1.0.9"
 
