@@ -1811,14 +1811,14 @@
     <string name="chk_reveny_hma_data_app_reason_nd">No directories matching Hide My Applist package names (com.tsng.hidemyapplist, cn.hidemyapplist) were found under /data/app.</string>
     <string name="chk_reveny_hma_data_app_solution">Uninstall Hide My Applist via its own UI or via adb (pm uninstall com.tsng.hidemyapplist) and reboot.</string>
 
-    <!-- RevenyInspiredDetector: Check 5i – HMA cold/hot startup timing -->
-    <string name="chk_hma_cold_hot_name">Hide My Applist Detected via Timing Analysis</string>
-    <string name="chk_hma_cold_hot_name_nd">Hide My Applist Cold/Hot Timing Analysis</string>
-    <string name="chk_hma_cold_hot_desc">PackageManager cold/hot query timing anomaly detected: one or more root manager or HMA packages show a cold/hot ratio lower than a non-existent fake package, indicating HMA is intercepting and hiding those packages from this app.</string>
-    <string name="chk_hma_cold_hot_desc_nd">No cold/hot timing anomaly detected; PackageManager response ratios for target packages are consistent with their actual installation status.</string>
-    <string name="chk_hma_cold_hot_desc_na">Cold/hot timing analysis requires Android API > 28 and was skipped on this device.</string>
-    <string name="chk_hma_cold_hot_reason">This check runs before any other detector to ensure all target packages have a cold PMS cache entry. com.android.settings is first queried 50 times to warm up the Binder connection. Then a single fake-package (fakeRatio) baseline is measured, followed by each target. The first call (cold) exercises the uncached PMS code path; the remaining 49 calls (hot) benefit from PMS\'s internal cache. Empirically a non-existent package yields a ratio of about 28–38x. A real, non-hidden package produces a much higher ratio; a package hidden by HMA has its cold start truncated early by the HMA hook, driving its ratio to less than 75%% of the fake-package baseline. The following packages had a cold/hot ratio below that threshold, indicating they are being hidden by HMA: %1$s.</string>
-    <string name="chk_hma_cold_hot_reason_nd">All tested packages (Magisk, KernelSU, APatch, Hide My Applist variants) had a cold/hot query ratio consistent with either normal presence or genuine absence. No package showed the anomalously low ratio that indicates HMA interception.</string>
+    <!-- RevenyInspiredDetector: Check 5i – HMA timing analysis -->
+    <string name="chk_hma_cold_hot_name">HMA Activated - Timing Anomaly</string>
+    <string name="chk_hma_cold_hot_name_nd">HMA Timing Analysis</string>
+    <string name="chk_hma_cold_hot_desc">Timing anomaly detected: one or more root manager or HMA packages show a presence timing anomaly, indicating HMA is intercepting and hiding those packages from this app.</string>
+    <string name="chk_hma_cold_hot_desc_nd">No timing anomaly detected; results are consistent with actual installation status.</string>
+    <string name="chk_hma_cold_hot_desc_na">Timing analysis requires Android API > 28 and was skipped on this device.</string>
+    <string name="chk_hma_cold_hot_reason">This check runs before all other detectors. The following packages showed timing anomalies indicating they are being hidden by HMA: %1$s.</string>
+    <string name="chk_hma_cold_hot_reason_nd">All tested packages (Magisk, KernelSU, APatch, Hide My Applist variants) showed timing consistent with either normal presence or genuine absence. No package showed the anomalous ratio characteristic of HMA interception.</string>
     <string name="chk_hma_cold_hot_reason_na">This check requires Android API level > 28. The device is running API 28 or below, so the timing-based HMA detection was not performed.</string>
     <string name="chk_hma_cold_hot_solution">In the Hide My Applist app, remove this application from its scope list, or disable the HMA Xposed module entirely and reboot.</string>
 
