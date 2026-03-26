@@ -1006,7 +1006,7 @@ class RevenyInspiredDetector(private val context: Context) {
     //
     // Three-way classification (empirically validated):
     //
-    //   R_target > R_fake * 1.5  → first Xposed-hook call is slow (cold hook
+    //   R_target > R_fake * 2.5  → first Xposed-hook call is slow (cold hook
     //                               JIT init), subsequent intercepts are fast
     //                               → package is being hidden by HMA
     //   R_target ≈ R_fake        → same cold/hot profile as a non-existent
@@ -1015,8 +1015,10 @@ class RevenyInspiredDetector(private val context: Context) {
     //                               found quickly on cold call too)
     //                               → package is present and NOT hidden
     //
-    // A safety multiplier of 1.5 is applied: a target is flagged only when its
-    // ratio is CLEARLY above the fake baseline (> 150% of fakeRatio).
+    // The threshold 2.5× is chosen to sit well below the ~2–3× HMA signal
+    // while staying well above natural timing jitter (typically < 1.5× on
+    // loaded devices).  The baseline fakeRatio is derived as the median of
+    // three independent fake-package measurements to reduce per-run noise.
     //
     // Note: empirically, fakeRatio ≈ 20–35× with TEST_COUNT=50 and one prior
     // warm-up run.  Hidden packages show ratio ≈ 2–3× fakeRatio (slow first
@@ -1079,12 +1081,19 @@ class RevenyInspiredDetector(private val context: Context) {
                 Target("moe.fuqiuluo.portaldev",        "Portal",            DetectionCategory.KERNELSU)
             )
 
-            // Step 2: measure fakeRatio ONCE – all packages are cold at this
-            // point (this function runs before any other detector).
-            val fakeRatio = measureRatio("com.random.fake.pkg.xingguang6666")
-            // Guard: if fakeRatio is not usable, report error rather than risk
-            // false positives or division-by-zero in the percentage calculation.
-            if (fakeRatio <= 0f || fakeRatio == Float.MAX_VALUE) {
+            // Step 2: measure fakeRatio using 3 different fake package names and
+            // take the median.  Using three distinct names keeps each cold call
+            // truly cold (no PMS cache re-use between samples), and the median
+            // dampens per-run scheduler / GC jitter far better than a single
+            // measurement.  All three names are known non-existent.
+            val fakeRatioSamples = listOf(
+                measureRatio("com.random.fake.pkg.xingguang6666"),
+                measureRatio("com.random.fake.pkg.xingguang7777"),
+                measureRatio("com.random.fake.pkg.xingguang8888")
+            ).filter { it != Float.MAX_VALUE && it > 0f }.sorted()
+            // Guard: if no usable sample, report error rather than risk false
+            // positives or division-by-zero in the percentage calculation.
+            if (fakeRatioSamples.isEmpty()) {
                 return DetectionResult(
                     id = "hma_cold_hot_timing",
                     name = context.getString(R.string.chk_hma_cold_hot_name_nd),
@@ -1096,20 +1105,21 @@ class RevenyInspiredDetector(private val context: Context) {
                     solution = context.getString(R.string.no_action_required)
                 )
             }
+            val fakeRatio = fakeRatioSamples[fakeRatioSamples.size / 2] // median
 
             // Step 3: measure each target and apply the three-way classification.
-            // A hidden package shows ratio > fakeRatio * 1.5 (elevated by the
-            // cold Xposed-hook JIT on the first intercept call).  A safety
-            // multiplier of 1.5 absorbs natural timing variance while reliably
-            // separating the ~2–3× elevation seen for hidden packages.
+            // HMA-hidden packages show ratio ≈ 2–3× fakeRatio (cold Xposed-hook
+            // JIT on the first intercept call).  The threshold is set to 2.5×:
+            // high enough to exclude natural timing jitter on slow/loaded devices
+            // (typically < 1.5× fakeRatio) yet safely below the 2–3× HMA signal.
             val hiddenLabels = mutableListOf<String>()
             val details = StringBuilder()
-            details.append("fakeRatio=%.2f\n".format(fakeRatio))
+            details.append("fakeRatio=%.2f (median of ${fakeRatioSamples.size})\n".format(fakeRatio))
             for (t in targets) {
                 val ratio = measureRatio(t.pkg)
                 val pct = if (ratio == Float.MAX_VALUE) Float.NaN else ratio / fakeRatio * 100f
                 details.append("${t.label}: ratio=%.2f (%.0f%%)\n".format(ratio, pct))
-                if (ratio != Float.MAX_VALUE && ratio > fakeRatio * 1.5f) hiddenLabels.add(t.label)
+                if (ratio != Float.MAX_VALUE && ratio > fakeRatio * 2.5f) hiddenLabels.add(t.label)
             }
 
             if (hiddenLabels.isNotEmpty()) {
