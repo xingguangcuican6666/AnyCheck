@@ -1006,7 +1006,7 @@ class RevenyInspiredDetector(private val context: Context) {
     //
     // Three-way classification (empirically validated):
     //
-    //   R_target > R_fake * 2.5  → first Xposed-hook call is slow (cold hook
+    //   R_target > R_fake * 2.0  → first Xposed-hook call is slow (cold hook
     //                               JIT init), subsequent intercepts are fast
     //                               → package is being hidden by HMA
     //   R_target ≈ R_fake        → same cold/hot profile as a non-existent
@@ -1015,10 +1015,11 @@ class RevenyInspiredDetector(private val context: Context) {
     //                               found quickly on cold call too)
     //                               → package is present and NOT hidden
     //
-    // The threshold 2.5× is chosen to sit well below the ~2–3× HMA signal
-    // while staying well above natural timing jitter (typically < 1.5× on
-    // loaded devices).  The baseline fakeRatio is derived as the median of
-    // three independent fake-package measurements to reduce per-run noise.
+    // The threshold 2.0× sits at the floor of the ~2–3× HMA signal range,
+    // ensuring the full range is caught, while remaining well above the
+    // natural timing jitter ceiling (typically < 1.5× on loaded devices).
+    // The baseline fakeRatio is derived as the median of three independent
+    // fake-package measurements to reduce per-run noise.
     //
     // Note: empirically, fakeRatio ≈ 20–35× with TEST_COUNT=50 and one prior
     // warm-up run.  Hidden packages show ratio ≈ 2–3× fakeRatio (slow first
@@ -1109,9 +1110,10 @@ class RevenyInspiredDetector(private val context: Context) {
 
             // Step 3: measure each target and apply the three-way classification.
             // HMA-hidden packages show ratio ≈ 2–3× fakeRatio (cold Xposed-hook
-            // JIT on the first intercept call).  The threshold is set to 2.5×:
-            // high enough to exclude natural timing jitter on slow/loaded devices
-            // (typically < 1.5× fakeRatio) yet safely below the 2–3× HMA signal.
+            // JIT on the first intercept call).  The threshold is set to 2.0×:
+            // at the floor of the HMA signal range, so the full 2–3× window is
+            // reliably detected, while still well above natural timing jitter
+            // (typically < 1.5× fakeRatio on loaded devices).
             val hiddenLabels = mutableListOf<String>()
             val details = StringBuilder()
             details.append("fakeRatio=%.2f (median of ${fakeRatioSamples.size})\n".format(fakeRatio))
@@ -1119,7 +1121,7 @@ class RevenyInspiredDetector(private val context: Context) {
                 val ratio = measureRatio(t.pkg)
                 val pct = if (ratio == Float.MAX_VALUE) Float.NaN else ratio / fakeRatio * 100f
                 details.append("${t.label}: ratio=%.2f (%.0f%%)\n".format(ratio, pct))
-                if (ratio != Float.MAX_VALUE && ratio > fakeRatio * 2.5f) hiddenLabels.add(t.label)
+                if (ratio != Float.MAX_VALUE && ratio > fakeRatio * 2.0f) hiddenLabels.add(t.label)
             }
 
             if (hiddenLabels.isNotEmpty()) {
