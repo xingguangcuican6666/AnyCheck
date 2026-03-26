@@ -35,7 +35,6 @@ class MainActivity : ComponentActivity() {
                     MainScreen(
                         uiState = uiState,
                         onStartDetection = viewModel::startDetection,
-                        onReset = viewModel::reset,
                         onShowAbout = { showAbout = true }
                     )
                 }
