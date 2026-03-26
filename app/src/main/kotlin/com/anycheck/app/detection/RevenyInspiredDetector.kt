@@ -1084,19 +1084,7 @@ class RevenyInspiredDetector(private val context: Context) {
                 Target("com.sevtinge.hyperceiler",      "HyperCeiler",       DetectionCategory.XPOSED),
                 Target("io.github.hyperisland",         "HyperIsland",       DetectionCategory.XPOSED),
                 Target("top.hookvip.pro",               "HookVIP Pro",       DetectionCategory.XPOSED),
-                Target("com.byyoung.setting",           "ByyoungSetting",    DetectionCategory.XPOSED),
-                Target("moe.shizuku.privileged.api",    "Shizuku",           DetectionCategory.ROOT_MANAGEMENT),
-                Target("bin.mt.plus",                   "MT Manager",        DetectionCategory.ROOT_MANAGEMENT),
-                Target("bin.mt.termex",                 "MT Manager Terminal",DetectionCategory.ROOT_MANAGEMENT),
-                Target("bin.mt.plus.canary",            "MT Manager Canary", DetectionCategory.ROOT_MANAGEMENT),
-                Target("rikka.appops",                  "AppOps",            DetectionCategory.ROOT_MANAGEMENT),
-                Target("com.rosan.installer.x",         "Privileged Installer",DetectionCategory.ROOT_MANAGEMENT),
-                Target("cn.wq.myandroidtools",          "My Android Tools",  DetectionCategory.ROOT_MANAGEMENT),
-                Target("com.arcai.netcut",              "NetCut",            DetectionCategory.ROOT_MANAGEMENT),
-                Target("com.app.zhuaagytypo33",         "Suspicious APK",    DetectionCategory.ROOT_MANAGEMENT),
-                Target("com.tev.weixing",               "WeXing",            DetectionCategory.ROOT_MANAGEMENT),
-                Target("org.telegram.messenger",        "Telegram",          DetectionCategory.NETWORK),
-                Target("com.discord",                   "Discord",           DetectionCategory.NETWORK)
+                Target("com.rosan.installer.x",         "Privileged Installer",DetectionCategory.ROOT_MANAGEMENT)
             )
 
             // Step 2: measure fakeRatio ONCE – all packages are cold at this
