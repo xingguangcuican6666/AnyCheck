@@ -1116,6 +1116,18 @@ class RevenyInspiredDetector(private val context: Context) {
             if (hiddenLabels.isNotEmpty()) {
                 DetectionResult(
                     id = "hma_cold_hot_timing",
+                    name = context.getString(R.string.chk_hma_cold_hot_name_nd),
+                    category = DetectionCategory.XPOSED,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.HIGH,
+                    description = context.getString(R.string.chk_hma_cold_hot_desc_nd),
+                    detailedReason = context.getString(R.string.chk_hma_cold_hot_reason_nd),
+                    solution = context.getString(R.string.no_action_required),
+                    technicalDetail = details.toString().trimEnd()
+                )
+            } else {
+                DetectionResult(
+                    id = "hma_cold_hot_timing",
                     name = context.getString(R.string.chk_hma_cold_hot_name),
                     category = DetectionCategory.XPOSED,
                     status = DetectionStatus.DETECTED,
@@ -1125,18 +1137,6 @@ class RevenyInspiredDetector(private val context: Context) {
                         R.string.chk_hma_cold_hot_reason, hiddenLabels.joinToString(", ")
                     ),
                     solution = context.getString(R.string.chk_hma_cold_hot_solution),
-                    technicalDetail = details.toString().trimEnd()
-                )
-            } else {
-                DetectionResult(
-                    id = "hma_cold_hot_timing",
-                    name = context.getString(R.string.chk_hma_cold_hot_name_nd),
-                    category = DetectionCategory.XPOSED,
-                    status = DetectionStatus.NOT_DETECTED,
-                    riskLevel = RiskLevel.HIGH,
-                    description = context.getString(R.string.chk_hma_cold_hot_desc_nd),
-                    detailedReason = context.getString(R.string.chk_hma_cold_hot_reason_nd),
-                    solution = context.getString(R.string.no_action_required),
                     technicalDetail = details.toString().trimEnd()
                 )
             }
