@@ -978,23 +978,37 @@ class RevenyInspiredDetector(private val context: Context) {
     // -------------------------------------------------------------------------
     // Check 5i: HMA cold/hot startup timing analysis (SDK > 28)
     //
-    // Hide My Applist hooks PackageManagerService.shouldFilterApplication() at
-    // the system_server level.  When PMS serves a cached (hot) response for a
-    // real package the round-trip is very fast; the very first (cold) call
-    // pays a higher latency because the cache is empty.  This produces a
-    // high cold/hot ratio for packages that genuinely exist.
+    // Algorithm mirrors the reference implementation in a.md:
     //
-    // For a non-existent package, PMS returns NameNotFoundException immediately
-    // both on cold and hot calls, so the ratio ≈ 1 (both fast).
+    //   Step 1 – Warm-up: issue TEST_COUNT queries for a known-present,
+    //            known-not-hidden system package (com.android.settings) so that
+    //            the Binder connection to PackageManagerService is fully
+    //            established and the JVM/JNI paths are compiled.  Without this,
+    //            the very first Binder call carries connection-setup overhead
+    //            that artificially inflates fakeRatio and makes every subsequent
+    //            target appear "hidden".
     //
-    // When HMA hides a package it intercepts the Binder call before it reaches
-    // PMS's caching path.  The interception overhead is consistent across both
-    // cold and hot calls, so the ratio of a hidden package is anomalously low —
-    // in practice LOWER than the fake-package ratio:
+    //   Step 2 – Per-target measurement: for EACH candidate package, measure the
+    //            fake-package ratio and the target ratio back-to-back so both
+    //            samples share the same Binder-warmth level.
     //
-    //   R_target >> R_fake  → package is normally present (not hidden)
-    //   R_target ≈ R_fake   → package does not exist on this device
-    //   R_target  < R_fake  → package is being hidden by HMA
+    //     Cold  = duration of the very first getPackageInfo() call (i == 0).
+    //     Hot   = average duration of the remaining TEST_COUNT-1 calls.
+    //     Ratio = Cold / HotAvg
+    //
+    // The three-way classification (from a.md):
+    //
+    //   R_target >> R_fake  → target benefits from PMS fast-path caching
+    //                          → package is present and NOT hidden
+    //   R_target ≈ R_fake   → same cold/hot profile as a non-existent package
+    //                          → package truly does not exist on this device
+    //   R_target  < R_fake  → cold start is abnormally short (HMA intercepts
+    //                          before the full PMS lookup runs)
+    //                          → package is being hidden by HMA
+    //
+    // Note: empirically, a non-existent package has ratio ≈ 30x (NOT ≈ 1).
+    // PMS still does a full scan before returning NameNotFoundException on the
+    // first call, then caches the "not found" answer for subsequent calls.
     //
     // We test Magisk, KernelSU, APatch, and HMA itself as targets.
     // Only runs on SDK > 28 (PackageManager query behaviour is stable there).
@@ -1029,7 +1043,11 @@ class RevenyInspiredDetector(private val context: Context) {
                 return coldTime.toFloat() / (if (hotAvg > 0) hotAvg else 1)
             }
 
-            val fakeRatio = measureRatio("com.random.fake.pkg.xingguang6666")
+            // Step 1: warm up the Binder connection with a known-present,
+            // known-not-hidden system package (mirrors a.md's first measurement).
+            repeat(testCount) {
+                try { pm.getPackageInfo("com.android.settings", 0) } catch (_: Exception) {}
+            }
 
             data class Target(val pkg: String, val label: String, val cat: DetectionCategory)
             val targets = listOf(
@@ -1044,12 +1062,15 @@ class RevenyInspiredDetector(private val context: Context) {
                 Target("cn.hidemyapplist",              "Hide My Applist CN",DetectionCategory.XPOSED)
             )
 
+            // Step 2: for each target, measure fake then target back-to-back so
+            // both samples share the same Binder-warmth level (mirrors a.md's
+            // [settings → fake → target] three-step sequence per target).
             val hiddenLabels = mutableListOf<String>()
             val details = StringBuilder()
-            details.append("fakeRatio=%.2f\n".format(fakeRatio))
             for (t in targets) {
+                val fakeRatio = measureRatio("com.random.fake.pkg.xingguang6666")
                 val ratio = measureRatio(t.pkg)
-                details.append("${t.label}: ratio=%.2f\n".format(ratio))
+                details.append("${t.label}: fakeRatio=%.2f ratio=%.2f\n".format(fakeRatio, ratio))
                 if (ratio < fakeRatio) hiddenLabels.add(t.label)
             }
 
