@@ -330,8 +330,6 @@ class RuruInspiredDetector(private val context: Context) {
         "top.hookvip.pro",                  // HookVIP Pro
         "bin.mt.plus",                      // MT Manager
         "com.byyoung.setting",              // Suspicious settings module
-        "org.telegram.messenger",           // Telegram
-        "com.discord"                       // Discord
     )
 
     private fun getPackagesViaShell(): Set<String>? {
