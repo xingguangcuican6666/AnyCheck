@@ -1821,6 +1821,8 @@
     <string name="chk_hma_cold_hot_reason_nd">All tested packages (Magisk, KernelSU, APatch, Hide My Applist variants) showed timing consistent with either normal presence or genuine absence. No package showed the anomalous ratio characteristic of HMA interception.</string>
     <string name="chk_hma_cold_hot_reason_na">This check requires Android API level > 28. The device is running API 28 or below, so the timing-based HMA detection was not performed.</string>
     <string name="chk_hma_cold_hot_solution">In the Hide My Applist app, remove this application from its scope list, or disable the HMA Xposed module entirely and reboot.</string>
+    <string name="chk_hma_cold_hot_suffix_blacklist"> (Blacklist Mode)</string>
+    <string name="chk_hma_cold_hot_suffix_whitelist"> (Whitelist Mode)</string>
 
     <!-- RuruInspiredDetector: Check 6b – HMA current data directory -->
     <string name="chk_ruru_hma_dir_name">Hide My Applist Data Directory Detected</string>

@@ -322,7 +322,16 @@ class RuruInspiredDetector(private val context: Context) {
         "com.tsng.hidemyapplist",
         "cn.geektang.privacyspace",
         "io.github.lsposed.manager",
-        "com.lsposed.manager"
+        "com.lsposed.manager",
+        "moe.shizuku.privileged.api",       // Shizuku
+        "com.sukisu.ultra",                 // SukiSU Ultra (KernelSU fork)
+        "io.github.qauxv",                  // QAuxiliary (Xposed module)
+        "com.sevtinge.hyperceiler",         // HyperCeiler (LSPosed module)
+        "top.hookvip.pro",                  // HookVIP Pro
+        "bin.mt.plus",                      // MT Manager
+        "com.byyoung.setting",              // Suspicious settings module
+        "org.telegram.messenger",           // Telegram
+        "com.discord"                       // Discord
     )
 
     private fun getPackagesViaShell(): Set<String>? {

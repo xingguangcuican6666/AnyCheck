@@ -136,7 +136,14 @@ class GenericRootDetector(private val context: Context) {
             "com.chelpus.lackypatch",
             "com.ramdroid.appquarantine",
             "com.devadvance.rootcloak",         // RootCloak (root hiding)
-            "com.devadvance.rootcloakplus"      // RootCloak Plus (root hiding)
+            "com.devadvance.rootcloakplus",     // RootCloak Plus (root hiding)
+            "moe.shizuku.privileged.api",       // Shizuku (privileged API)
+            "bin.mt.plus",                      // MT Manager
+            "bin.mt.termex",                    // MT Manager Terminal
+            "bin.mt.plus.canary",               // MT Manager Canary
+            "rikka.appops",                     // AppOps by Rikka
+            "com.rosan.installer.x",            // Privileged Installer
+            "cn.wq.myandroidtools"              // My Android Tools
         )
         val found = rootApps.filter { packageExists(it) }
         return if (found.isNotEmpty()) {

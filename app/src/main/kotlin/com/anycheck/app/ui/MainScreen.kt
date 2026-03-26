@@ -23,7 +23,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Shield
@@ -39,7 +38,6 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -87,7 +85,6 @@ enum class ResultFilter {
 fun MainScreen(
     uiState: DetectionUiState,
     onStartDetection: () -> Unit,
-    onReset: () -> Unit,
     onShowAbout: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -126,9 +123,6 @@ fun MainScreen(
                         }) {
                             Icon(Icons.Default.ContentCopy, contentDescription = stringResource(R.string.copy_results))
                         }
-                        IconButton(onClick = onReset) {
-                            Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.reset))
-                        }
                     }
                     IconButton(onClick = onShowAbout) {
                         Icon(Icons.Default.Info, contentDescription = stringResource(R.string.about))
@@ -152,11 +146,7 @@ fun MainScreen(
                 is DetectionUiState.Idle -> IdleScreen(onStartDetection = onStartDetection)
                 is DetectionUiState.Running -> RunningScreen(progress = state.progress)
                 is DetectionUiState.Complete -> ResultsScreen(
-                    summary = state.summary,
-                    onRedetect = {
-                        onReset()
-                        onStartDetection()
-                    }
+                    summary = state.summary
                 )
                 is DetectionUiState.Error -> ErrorScreen(
                     message = state.message,
@@ -327,7 +317,6 @@ private fun ErrorScreen(
 @Composable
 private fun ResultsScreen(
     summary: DetectionSummary,
-    onRedetect: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var activeFilter by remember { mutableStateOf(ResultFilter.ALL) }
@@ -414,22 +403,6 @@ private fun ResultsScreen(
                 onExpandedChange = { expanded -> expandedMap[result.id] = expanded },
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-        }
-
-        // Re-detect button
-        item {
-            OutlinedButton(
-                onClick = onRedetect,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .height(48.dp),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Icon(Icons.Default.Refresh, contentDescription = null)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(stringResource(R.string.re_detect))
-            }
         }
     }
 }

@@ -34,7 +34,7 @@ class DetectionManager(private val context: Context) {
         // are already in the PMS cache their "cold" start collapses to a cache
         // hit and the ratio drops to ≈ 1, producing universal false positives.
         // Collect the result here; RevenyInspiredDetector.runAllChecks() skips it.
-        val coldHotResult = revenyDetector.checkHmaColdHotTiming()
+        val coldHotResult = revenyDetector.checkHmaColdHotTimingCombined()
         allResults.add(coldHotResult)
 
         val magiskChecks = magiskDetector.runAllChecks()

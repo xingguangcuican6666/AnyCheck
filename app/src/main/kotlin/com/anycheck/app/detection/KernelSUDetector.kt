@@ -73,7 +73,9 @@ class KernelSUDetector(private val context: Context) {
             "me.weishu.kernelsu.debug",
             "com.rifsxd.ksunext",           // KsuNext
             "io.github.tiann.ksunext",
-            "com.rsuntk.ksunext"
+            "com.rsuntk.ksunext",
+            "com.sukisu.ultra",             // SukiSU Ultra (KernelSU fork)
+            "moe.fuqiuluo.portaldev"        // Portal (KernelSU companion)
         )
         val found = ksuPackages.filter { packageExists(it) }
         return if (found.isNotEmpty()) {

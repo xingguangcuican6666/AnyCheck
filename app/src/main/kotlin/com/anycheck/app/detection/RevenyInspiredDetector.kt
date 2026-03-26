@@ -1075,9 +1075,8 @@ class RevenyInspiredDetector(private val context: Context) {
                 Target("me.weishu.kernelsu.debug",      "KernelSU Debug",    DetectionCategory.KERNELSU),
                 Target("me.bmax.apatch",                "APatch",            DetectionCategory.APATCH),
                 Target("me.bmax.apatch.debug",          "APatch Debug",      DetectionCategory.APATCH),
-                Target("com.tsng.hidemyapplist",        "Hide My Applist",   DetectionCategory.XPOSED),
-                Target("com.tsng.hidemyapplist.debug",  "HMA Debug",         DetectionCategory.XPOSED),
-                Target("cn.hidemyapplist",              "Hide My Applist CN",DetectionCategory.XPOSED)
+                Target("com.sukisu.ultra",              "SukiSU Ultra",      DetectionCategory.KERNELSU),
+                Target("moe.fuqiuluo.portaldev",        "Portal",            DetectionCategory.KERNELSU)
             )
 
             // Step 2: measure fakeRatio ONCE – all packages are cold at this
@@ -1151,6 +1150,35 @@ class RevenyInspiredDetector(private val context: Context) {
                 detailedReason = e.message ?: "Unknown error",
                 solution = context.getString(R.string.no_action_required)
             )
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Check 5d-combined: run checkHmaColdHotTiming() three times and apply
+    // combination rules based on the displayed result of each run.
+    //
+    // The three runs expose HMA behaviour at increasing cache warmth:
+    //   Run 1 (cold)  – first ever query for these packages in this process
+    //   Run 2 (warm)  – packages already in the PMS cache after run 1
+    //   Run 3 (hot)   – fully cached
+    //
+    // Combination rules:
+    //   r1=ND, r2=ND, r3=D  → NOT_DETECTED  (only last run clean → noise)
+    //   other               → r3 result unchanged (fallback to latest run)
+    // -------------------------------------------------------------------------
+    internal fun checkHmaColdHotTimingCombined(): DetectionResult {
+        val r1 = checkHmaColdHotTiming()
+        val r2 = checkHmaColdHotTiming()
+        val r3 = checkHmaColdHotTiming()
+
+        val r1Detected = r1.status == DetectionStatus.DETECTED
+        val r2Detected = r2.status == DetectionStatus.DETECTED
+        val r3Detected = r3.status == DetectionStatus.DETECTED
+
+        return when {
+            !r1Detected && !r2Detected && r3Detected ->
+                r3.copy(status = DetectionStatus.NOT_DETECTED)
+            else -> r3
         }
     }
 

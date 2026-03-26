@@ -997,7 +997,17 @@ class LunaDetector(private val context: Context) {
             "com.amphoras.hidemyroot",
             "com.amphoras.hidemyrootadfree",
             "com.devadvance.rootcloak",
-            "com.devadvance.rootcloakplus"
+            "com.devadvance.rootcloakplus",
+            "com.rosan.installer.x",            // Privileged Installer
+            "moe.shizuku.privileged.api",       // Shizuku
+            "bin.mt.plus",                      // MT Manager
+            "bin.mt.termex",                    // MT Manager Terminal
+            "bin.mt.plus.canary",               // MT Manager Canary
+            "rikka.appops",                     // AppOps by Rikka
+            "com.sukisu.ultra",                 // SukiSU Ultra (KernelSU fork)
+            "moe.fuqiuluo.portaldev",           // Portal (KernelSU companion)
+            "io.github.qauxv",                  // QAuxiliary (Xposed module)
+            "com.sevtinge.hyperceiler"          // HyperCeiler (LSPosed module)
         )
         val found = rootPackages.filter { packageExists(it) }
 
@@ -1228,7 +1238,16 @@ class LunaDetector(private val context: Context) {
             "me.weishu.exp",               // TaiChi / 太极
             "io.virtualsoftware.taichi",
             "com.coderstory.toolkit",       // Scene / 场景
-            "org.lsposed.manager"
+            "org.lsposed.manager",
+            "top.hookvip.pro",             // HookVIP Pro
+            "io.github.hyperisland",        // HyperIsland
+            "com.byyoung.setting",          // Suspicious settings module
+            "com.app.zhuaagytypo33",        // Suspicious APK (obfuscated package name)
+            "com.arcai.netcut",             // NetCut (network attack tool requiring root)
+            "com.tev.weixing",              // WeXing (suspicious repackaged app)
+            "org.telegram.messenger",       // Telegram
+            "com.discord",                  // Discord
+            "cn.wq.myandroidtools"          // My Android Tools
         )
         val found = sensitivePackages.filter { packageExists(it) }
 
