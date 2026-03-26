@@ -1889,14 +1889,6 @@
     <string name="chk_hma_blacklist_reason_nd">Raw fstatat(2) on /data/user/0 returned a directory link count of 100 or above (normal range). No HMA blacklist count anomaly detected.</string>
     <string name="chk_hma_blacklist_solution">In the Hide My Applist app, remove this application from the blacklist scope, or disable the HMA module in LSPosed Manager and reboot.</string>
 
-    <!-- /data/adb access probe — Magisk (high-targetSdk path, Check 5g) -->
-    <string name="chk_data_adb_magisk_name">Magisk Detected via /data/adb Access Check</string>
-    <string name="chk_data_adb_magisk_name_nd">/data/adb Access Check</string>
-    <string name="chk_data_adb_magisk_desc">Accessing /data/adb returned "Permission denied", indicating the directory exists and is protected — a strong sign that Magisk is installed.</string>
-    <string name="chk_data_adb_magisk_desc_nd">/data/adb was not found or returned no permission-denied error; no Magisk indication from this check.</string>
-    <string name="chk_data_adb_magisk_reason">Running `ls /data/adb` returned "Permission denied". On a clean Android device /data/adb does not exist. When Magisk is installed it creates /data/adb as its working root; a non-root app cannot list it and receives EACCES. This confirms that /data/adb is present and protected, which is a reliable indicator of Magisk.</string>
-    <string name="chk_data_adb_magisk_reason_nd">`ls /data/adb` did not return a permission-denied error. Either the directory does not exist ("No such file or directory") or it was accessible without restrictions, both of which suggest Magisk is not present on this device.</string>
-
     <!-- App-list size probe — HMA (high-targetSdk path, Check 5h) -->
     <string name="chk_hma_app_list_name">HMA Active — App List Suspiciously Small</string>
     <string name="chk_hma_app_list_name_nd">HMA App List Size Check</string>

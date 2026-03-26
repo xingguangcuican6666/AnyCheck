@@ -1862,14 +1862,6 @@
     <string name="chk_hma_blacklist_reason_nd">对 /data/user/0 的原始 fstatat(2) 返回的目录链接计数为 100 或以上（正常范围）。未检测到 HMA 黑名单计数异常。</string>
     <string name="chk_hma_blacklist_solution">在 Hide My Applist 应用中，将本应用从黑名单作用域中移除，或在 LSPosed 管理器中禁用 HMA 模块并重启。</string>
 
-    <!-- /data/adb 访问探测 — Magisk（高 targetSdk 路径，检查 5g） -->
-    <string name="chk_data_adb_magisk_name">通过 /data/adb 访问检测到 Magisk</string>
-    <string name="chk_data_adb_magisk_name_nd">/data/adb 访问检测</string>
-    <string name="chk_data_adb_magisk_desc">访问 /data/adb 返回"Permission denied"，说明该目录存在且受到保护，这是 Magisk 已安装的强烈信号。</string>
-    <string name="chk_data_adb_magisk_desc_nd">/data/adb 不存在或未返回权限拒绝错误；本检测未发现 Magisk 迹象。</string>
-    <string name="chk_data_adb_magisk_reason">执行 `ls /data/adb` 返回"Permission denied"。在干净的 Android 设备上，/data/adb 目录不应存在。当 Magisk 安装后，它会将 /data/adb 作为其工作根目录，非 Root 应用无法列出该目录，将收到 EACCES。这证实 /data/adb 存在且受到保护，是 Magisk 存在的可靠指标。</string>
-    <string name="chk_data_adb_magisk_reason_nd">`ls /data/adb` 未返回权限拒绝错误。目录不存在（"No such file or directory"）或可正常访问，均表明本设备未安装 Magisk。</string>
-
     <!-- 应用列表数量探测 — HMA（高 targetSdk 路径，检查 5h） -->
     <string name="chk_hma_app_list_name">HMA 激活 — 应用列表异常极少</string>
     <string name="chk_hma_app_list_name_nd">HMA 应用列表数量检测</string>

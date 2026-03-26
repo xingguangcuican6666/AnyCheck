@@ -44,7 +44,6 @@ class RevenyInspiredDetector(private val context: Context) {
             // DetectionManager for where it is invoked and its result collected.
         )
         if (useHighTargetSdkPath) {
-            results.add(checkDataAdbAccessForMagisk())
             results.add(checkAppListForHmaHighTargetSdk())
         } else {
             results.add(checkHmaWhitelistDetection())
@@ -1230,63 +1229,6 @@ class RevenyInspiredDetector(private val context: Context) {
                 riskLevel = RiskLevel.HIGH,
                 description = context.getString(R.string.chk_hma_blacklist_desc_nd),
                 detailedReason = context.getString(R.string.chk_hma_blacklist_reason_nd),
-                solution = context.getString(R.string.no_action_required)
-            )
-        }
-    }
-
-    // -------------------------------------------------------------------------
-    // Check 5g: /data/adb access probe (high-targetSdk path, replaces N14/N15)
-    // When targetSdkVersion >= 28 the JNI fstatat probes (N14/N15) are not
-    // used.  Instead we attempt to list /data/adb via the shell.
-    //   • "No such file or directory"  → directory absent, Magisk not present
-    //   • "Permission denied"          → directory exists but is protected,
-    //                                    strongly implies Magisk is installed
-    // -------------------------------------------------------------------------
-    private fun checkDataAdbAccessForMagisk(): DetectionResult {
-        return try {
-            // Use redirectErrorStream so both stdout and stderr are consumed from one
-            // stream, eliminating any risk of a buffer-full deadlock.
-            val process = ProcessBuilder("ls", "/data/adb")
-                .redirectErrorStream(true)
-                .start()
-            val output = process.inputStream.bufferedReader(Charsets.UTF_8).readText()
-            process.waitFor()
-            process.destroy()
-            when {
-                output.contains("Permission denied", ignoreCase = true) ->
-                    DetectionResult(
-                        id = "magisk_data_adb_access",
-                        name = context.getString(R.string.chk_data_adb_magisk_name),
-                        category = DetectionCategory.MAGISK,
-                        status = DetectionStatus.DETECTED,
-                        riskLevel = RiskLevel.CRITICAL,
-                        description = context.getString(R.string.chk_data_adb_magisk_desc),
-                        detailedReason = context.getString(R.string.chk_data_adb_magisk_reason),
-                        solution = context.getString(R.string.chk_magisk_files_solution),
-                        technicalDetail = "ls /data/adb: $output"
-                    )
-                else ->
-                    DetectionResult(
-                        id = "magisk_data_adb_access",
-                        name = context.getString(R.string.chk_data_adb_magisk_name_nd),
-                        category = DetectionCategory.MAGISK,
-                        status = DetectionStatus.NOT_DETECTED,
-                        riskLevel = RiskLevel.CRITICAL,
-                        description = context.getString(R.string.chk_data_adb_magisk_desc_nd),
-                        detailedReason = context.getString(R.string.chk_data_adb_magisk_reason_nd),
-                        solution = context.getString(R.string.no_action_required)
-                    )
-            }
-        } catch (e: Exception) {
-            DetectionResult(
-                id = "magisk_data_adb_access",
-                name = context.getString(R.string.chk_data_adb_magisk_name_nd),
-                category = DetectionCategory.MAGISK,
-                status = DetectionStatus.ERROR,
-                riskLevel = RiskLevel.CRITICAL,
-                description = context.getString(R.string.chk_data_adb_magisk_desc_nd),
-                detailedReason = e.message ?: "Unknown error",
                 solution = context.getString(R.string.no_action_required)
             )
         }
