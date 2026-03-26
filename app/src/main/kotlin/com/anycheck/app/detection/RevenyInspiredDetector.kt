@@ -820,13 +820,20 @@ class RevenyInspiredDetector(private val context: Context) {
             "com.android.providers.settings"
         )
 
+        // There is some alternatives for some packages, check for them too
+        val awpAlternatives = mapOf(
+            "com.android.permissioncontroller" to "com.google.android.permissioncontroller"
+        )
+
         val pm = context.packageManager
         val installedNames = runCatching {
             pm.getInstalledPackages(0).map { it.packageName }.toSet()
         }.getOrElse { emptySet() }
 
         // Count how many always-visible packages actually appeared
-        val missingAlwaysVisible = alwaysVisiblePackages.filter { it !in installedNames }
+        val missingAlwaysVisible = alwaysVisiblePackages.filter {
+            !(it in installedNames || awpAlternatives[it] in installedNames)
+        }
 
         // Also attempt to read the own app info via two separate methods; any
         // discrepancy between them is a sign of active interception.
