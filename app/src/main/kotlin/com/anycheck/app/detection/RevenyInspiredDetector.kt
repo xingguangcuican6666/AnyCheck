@@ -993,47 +993,46 @@ class RevenyInspiredDetector(private val context: Context) {
     //   HMA).  DetectionManager therefore calls this function as its very
     //   first action, before all other detectors.
     //
-    // Algorithm (mirrors a.c exactly):
+    // Algorithm:
     //
     //   Step 1 – Warm-up: issue TEST_COUNT queries for com.android.settings
     //            (known-present, known-not-hidden) to establish the Binder
-    //            connection (equivalent to a.c measuring settings first).
+    //            connection.
     //
-    //   Step 2 – Measure fakeRatio once with a genuinely non-existent package.
-    //            Because this function runs first, the fake package has never
-    //            been queried this session, so its PMS cache entry is cold.
-    //
-    //   Step 3 – Measure each target in sequence.  Each target also has a cold
-    //            PMS cache entry (first-ever query this session).
+    //   Step 2 – Measure ALL entries (in-band control packages + real targets)
+    //            in a single sequential pass.  Control packages are known-
+    //            non-existent package names that will never appear on any
+    //            device and are not in any HMA hide list; they provide an
+    //            in-band timing baseline measured in the same temporal window
+    //            as the real targets, eliminating the temporal bias that
+    //            occurred when baseline and targets were measured separately.
     //
     //     Cold    = duration of the very first getPackageInfo() call (i == 0).
-    //     Hot     = simple average of the remaining TEST_COUNT-1 calls
-    //               (matches a.c: hot_total / (TEST_COUNT - 1)).
+    //     Hot     = simple average of the remaining TEST_COUNT-1 calls.
     //     Ratio   = Cold / HotAvg
     //
-    // Three-way classification (empirically validated):
+    // Three-way classification:
     //
-    //   R_target > R_fake * 2.0  → first Xposed-hook call is slow (cold hook
+    //   R_target > R_ctrl * 2.0  → first Xposed-hook call is slow (cold hook
     //                               JIT init), subsequent intercepts are fast
     //                               → package is being hidden by HMA
-    //   R_target ≈ R_fake        → same cold/hot profile as a non-existent
+    //   R_target ≈ R_ctrl        → same cold/hot profile as a non-existent
     //                               package → package truly does not exist
-    //   R_target < R_fake        → PMS fast-path cache hit (installed app
+    //   R_target < R_ctrl        → PMS fast-path cache hit (installed app
     //                               found quickly on cold call too)
     //                               → package is present and NOT hidden
     //
-    // The threshold 2.0× sits at the floor of the ~2–3× HMA signal range,
-    // ensuring the full range is caught, while remaining well above the
-    // natural timing jitter ceiling (typically < 1.5× on loaded devices).
-    // The baseline fakeRatio is derived as the median of three independent
-    // fake-package measurements to reduce per-run noise.
+    // The controlMedian (median of in-band control ratios) replaces the old
+    // separate fakeRatio measurement.  Because controls are measured in the
+    // same sequential pass as targets, any system-level effect (JIT, GC, CPU
+    // scaling) affects both equally, removing a key source of false positives.
     //
-    // Note: empirically, fakeRatio ≈ 20–35× with TEST_COUNT=50 and one prior
-    // warm-up run.  Hidden packages show ratio ≈ 2–3× fakeRatio (slow first
-    // Xposed intercept), while installed-not-hidden packages show ratio ≤
-    // fakeRatio (fast PMS cache lookup).
+    // An additional discrimination guard: if controlMedian < 3.0 the PMS
+    // latency on this device is nearly constant (cold ≈ hot), meaning the
+    // cold/hot technique cannot reliably distinguish anything.  The check is
+    // skipped in that case to avoid false positives from timing noise.
     //
-    // We test Magisk, KernelSU, APatch, and HMA itself as targets.
+    // We test Magisk, KernelSU, APatch, and SukiSU as targets.
     // Only runs on SDK > 28 (PackageManager query behaviour is stable there).
     // -------------------------------------------------------------------------
     internal fun checkHmaColdHotTiming(): DetectionResult {
@@ -1063,7 +1062,7 @@ class RevenyInspiredDetector(private val context: Context) {
                     val duration = System.nanoTime() - start
                     if (i == 0) coldTime = duration else hotTotal += duration
                 }
-                // Simple average, matching a.c: hot_avg = hot_total / (TEST_COUNT - 1)
+                // Simple average: hot_avg = hot_total / (TEST_COUNT - 1)
                 val hotAvg = hotTotal.toDouble() / (testCount - 1)
                 // Return MAX_VALUE when hotAvg is zero (degenerate measurement)
                 // so this package is never wrongly flagged as hidden.
@@ -1071,14 +1070,20 @@ class RevenyInspiredDetector(private val context: Context) {
             }
 
             // Step 1: warm up the Binder connection with a known-present,
-            // known-not-hidden system package (mirrors a.c measuring settings
-            // first, which implicitly warms the Binder before the fake package).
+            // known-not-hidden system package.
             repeat(testCount) {
                 try { pm.getPackageInfo("com.android.settings", 0) } catch (_: Exception) {}
             }
 
-            data class Target(val pkg: String, val label: String, val cat: DetectionCategory)
+            data class Target(val pkg: String, val label: String, val cat: DetectionCategory, val isControl: Boolean = false)
             val targets = listOf(
+                // In-band control packages: known non-existent, never in any HMA
+                // hide list.  Measured in the same sequential pass as real targets
+                // to eliminate temporal bias between baseline and target windows.
+                Target("com.anycheck.ctrl.alpha",      "Control A",         DetectionCategory.XPOSED, true),
+                Target("com.anycheck.ctrl.beta",       "Control B",         DetectionCategory.XPOSED, true),
+                Target("com.anycheck.ctrl.gamma",      "Control C",         DetectionCategory.XPOSED, true),
+                // Real targets
                 Target("com.topjohnwu.magisk",         "Magisk",            DetectionCategory.MAGISK),
                 Target("com.topjohnwu.magisk.stub",    "Magisk Stub",       DetectionCategory.MAGISK),
                 Target("me.weishu.kernelsu",            "KernelSU",          DetectionCategory.KERNELSU),
@@ -1089,19 +1094,16 @@ class RevenyInspiredDetector(private val context: Context) {
                 Target("moe.fuqiuluo.portaldev",        "Portal",            DetectionCategory.KERNELSU)
             )
 
-            // Step 2: measure fakeRatio using 3 different fake package names and
-            // take the median.  Using three distinct names keeps each cold call
-            // truly cold (no PMS cache re-use between samples), and the median
-            // dampens per-run scheduler / GC jitter far better than a single
-            // measurement.  All three names are known non-existent.
-            val fakeRatioSamples = listOf(
-                measureRatio("com.random.fake.pkg.xingguang6666"),
-                measureRatio("com.random.fake.pkg.xingguang7777"),
-                measureRatio("com.random.fake.pkg.xingguang8888")
-            ).filter { it != Float.MAX_VALUE && it > 0f }.sorted()
-            // Guard: if no usable sample, report error rather than risk false
-            // positives or division-by-zero in the percentage calculation.
-            if (fakeRatioSamples.isEmpty()) {
+            // Step 2: measure all entries (controls + real targets) in one pass.
+            val measurements = targets.map { t -> t to measureRatio(t.pkg) }
+
+            // Derive controlMedian from in-band control measurements.
+            val controlRatios = measurements
+                .filter { (t, r) -> t.isControl && r != Float.MAX_VALUE && r > 0f }
+                .map { it.second }
+                .sorted()
+            // Guard: if no usable control sample, report error.
+            if (controlRatios.isEmpty()) {
                 return DetectionResult(
                     id = "hma_cold_hot_timing",
                     name = context.getString(R.string.chk_hma_cold_hot_name_nd),
@@ -1109,26 +1111,37 @@ class RevenyInspiredDetector(private val context: Context) {
                     status = DetectionStatus.ERROR,
                     riskLevel = RiskLevel.HIGH,
                     description = context.getString(R.string.chk_hma_cold_hot_desc_nd),
-                    detailedReason = "Baseline fake-package measurement produced a degenerate ratio; skipping to avoid false positives.",
+                    detailedReason = "In-band control measurement produced a degenerate ratio; skipping to avoid false positives.",
                     solution = context.getString(R.string.no_action_required)
                 )
             }
-            val fakeRatio = fakeRatioSamples[fakeRatioSamples.size / 2] // median
+            val controlMedian = controlRatios[controlRatios.size / 2]
 
-            // Step 3: measure each target and apply the three-way classification.
-            // HMA-hidden packages show ratio ≈ 2–3× fakeRatio (cold Xposed-hook
-            // JIT on the first intercept call).  The threshold is set to 2.0×:
-            // at the floor of the HMA signal range, so the full 2–3× window is
-            // reliably detected, while still well above natural timing jitter
-            // (typically < 1.5× fakeRatio on loaded devices).
+            // Guard: if controlMedian is very low the PMS latency is nearly
+            // constant on this device (cold ≈ hot), so the cold/hot technique
+            // cannot reliably distinguish hidden from non-hidden packages.
+            // Skip to avoid false positives caused by normal timing variance.
+            if (controlMedian < 3.0f) {
+                return DetectionResult(
+                    id = "hma_cold_hot_timing",
+                    name = context.getString(R.string.chk_hma_cold_hot_name_nd),
+                    category = DetectionCategory.XPOSED,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.HIGH,
+                    description = context.getString(R.string.chk_hma_cold_hot_desc_nd),
+                    detailedReason = "Timing discrimination too low (controlMedian=%.2f < 3.0); skipping to avoid false positives.".format(controlMedian),
+                    solution = context.getString(R.string.no_action_required)
+                )
+            }
+
+            // Classify real targets against the in-band control baseline.
             val hiddenLabels = mutableListOf<String>()
             val details = StringBuilder()
-            details.append("fakeRatio=%.2f (median of ${fakeRatioSamples.size})\n".format(fakeRatio))
-            for (t in targets) {
-                val ratio = measureRatio(t.pkg)
-                val pct = if (ratio == Float.MAX_VALUE) Float.NaN else ratio / fakeRatio * 100f
+            details.append("controlMedian=%.2f (in-band, ${controlRatios.size} controls)\n".format(controlMedian))
+            for ((t, ratio) in measurements.filter { !it.first.isControl }) {
+                val pct = if (ratio == Float.MAX_VALUE) Float.NaN else ratio / controlMedian * 100f
                 details.append("${t.label}: ratio=%.2f (%.0f%%)\n".format(ratio, pct))
-                if (ratio != Float.MAX_VALUE && ratio > fakeRatio * 2.0f) hiddenLabels.add(t.label)
+                if (ratio != Float.MAX_VALUE && ratio > controlMedian * 2.0f) hiddenLabels.add(t.label)
             }
 
             if (hiddenLabels.isNotEmpty()) {
