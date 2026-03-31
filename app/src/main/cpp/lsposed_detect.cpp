@@ -1245,7 +1245,9 @@ static double run_ksu_sidechannel_test(const char *p1, const char *p2, int sampl
 }
 
 static std::string probeKsuTiming() {
-    static const int SAMPLE = 200000;
+    // a.c reference uses 200000 samples; production uses 2000 to avoid
+    // post-check CPU spikes while preserving the same scoring thresholds.
+    static const int SAMPLE = 2000;
     static const int PATH_MAX_LEN = 4000;
 
     double shortRatio = run_ksu_sidechannel_test("/system/bin/su", "/system/bin/no", SAMPLE);
