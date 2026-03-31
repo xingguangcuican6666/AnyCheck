@@ -29,25 +29,22 @@ class DetectionManager(private val context: Context) {
         val rikkaXDetector = RikkaXInspiredDetector(context)
         val hunterDetector = HunterDetector(context)
 
-        // The HMA cold/hot timing check MUST run before any other detector
-        // queries getPackageInfo() for the target packages.  If those packages
-        // are already in the PMS cache their "cold" start collapses to a cache
-        // hit and the ratio drops to ≈ 1, producing universal false positives.
-        // Collect the result here; RevenyInspiredDetector.runAllChecks() skips it.
+        val ksuChecks = kernelSUDetector.runAllChecks()
+        onProgress(ksuChecks.size, 0, context.getString(R.string.progress_kernelsu))
+        allResults.addAll(ksuChecks)
+
+        // Keep HMA cold/hot timing as an early standalone probe.
+        // (RevenyInspiredDetector.runAllChecks() skips it.)
         val coldHotResult = revenyDetector.checkHmaColdHotTimingCombined()
         allResults.add(coldHotResult)
 
         val magiskChecks = magiskDetector.runAllChecks()
-        onProgress(magiskChecks.size, 0, context.getString(R.string.progress_magisk))
+        onProgress(ksuChecks.size + magiskChecks.size, ksuChecks.size, context.getString(R.string.progress_magisk))
         allResults.addAll(magiskChecks)
 
-        val ksuChecks = kernelSUDetector.runAllChecks()
-        onProgress(magiskChecks.size + ksuChecks.size, magiskChecks.size, context.getString(R.string.progress_kernelsu))
-        allResults.addAll(ksuChecks)
-
         val genericChecks = genericDetector.runAllChecks()
-        val genericEnd = magiskChecks.size + ksuChecks.size + genericChecks.size
-        onProgress(genericEnd, magiskChecks.size + ksuChecks.size, context.getString(R.string.progress_generic))
+        val genericEnd = ksuChecks.size + magiskChecks.size + genericChecks.size
+        onProgress(genericEnd, ksuChecks.size + magiskChecks.size, context.getString(R.string.progress_generic))
         allResults.addAll(genericChecks)
 
         val xposedChecks = xposedDetector.runAllChecks()

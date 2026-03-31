@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.anycheck.app.detection.DetectionManager
 import com.anycheck.app.detection.DetectionSummary
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,6 +19,9 @@ sealed class DetectionUiState {
 }
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
+    companion object {
+        private const val STABILIZATION_DELAY_MS = 5000L
+    }
 
     private val detectionManager = DetectionManager(application)
 
@@ -30,6 +34,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             _uiState.value = DetectionUiState.Running(app.getString(R.string.progress_init))
             try {
+                delay(STABILIZATION_DELAY_MS)
                 val summary = detectionManager.runFullDetection { total, completed, message ->
                     _uiState.value = DetectionUiState.Running(
                         app.getString(R.string.progress_format, message, completed, total)
