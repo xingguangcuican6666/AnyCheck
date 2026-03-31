@@ -231,7 +231,7 @@ object NativeDetector {
      * LSPosed or another Java-layer hook is active:
      *   - /sys/module/kernelsu, /sys/module/ksu  (sysfs module directories)
      *   - /dev/ksu  (character device registered by KSU misc driver)
-     *   - overlayfs mounts with upperdir=/data/adb/* (LKM system overlays)
+     *   - overlayfs mounts with upperdir under /data/adb/ (LKM system overlays)
      *
      * Returns a semicolon-separated findings string, or "" when clean.
      */
