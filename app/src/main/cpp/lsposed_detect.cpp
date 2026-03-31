@@ -1241,16 +1241,22 @@ static inline long raw_faccessat(const char *path) {
 static uint64_t measure_median(const char *path, int sample_count, int trim_pct) {
     std::vector<uint64_t> samples;
     samples.reserve(sample_count);
+    int skipped = 0;
     for (int i = 0; i < sample_count; ++i) {
         uint64_t t0 = read_tick();
         raw_faccessat(path);
         uint64_t t1 = read_tick();
         // Skip wraparound samples (t1 < t0) rather than recording 0, which
         // would artificially lower the median and risk false positives.
-        if (t1 < t0) continue;
+        if (t1 < t0) {
+            ++skipped;
+            continue;
+        }
         samples.push_back(t1 - t0);
     }
-    if (samples.empty()) return 0;
+    // If more than 10% of samples were skipped the tick source is unreliable
+    // on this device; signal this by returning 0 so the caller can bail out.
+    if (samples.empty() || skipped * 10 > sample_count) return 0;
     std::sort(samples.begin(), samples.end());
     int n = (int)samples.size();
     int trim = (n * trim_pct) / 100;
@@ -1324,4 +1330,100 @@ static std::string probeKsuTiming() {
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_anycheck_app_detection_NativeDetector_detectKsuTimingJni(JNIEnv *env, jobject /* thiz */) {
     return env->NewStringUTF(probeKsuTiming().c_str());
+}
+
+// ---------------------------------------------------------------------------
+// N18 — KernelSU LKM mode detection
+//
+// Checks for artifacts that are unique to KernelSU running as a Loadable
+// Kernel Module (LKM / GKI mode) rather than being compiled into the kernel:
+//
+//   1. /sys/module/kernelsu  — sysfs module directory; present for every
+//      loaded Linux kernel module; much harder to hide than /proc/modules.
+//   2. /sys/module/ksu       — alternate module name used by some forks.
+//   3. /dev/ksu              — character device registered by KSU misc driver
+//      for userspace ↔ kernel IPC; unique to LKM mode.
+//   4. /proc/mounts overlayfs scan — KSU LKM applies system overlays via
+//      overlayfs (upperdir=/data/adb/...) rather than loop devices; the Java
+//      File API can be hooked by LSPosed; this uses raw open/read syscalls.
+//
+// Uses raw stat(2) (via fstatat syscall) and open/read to avoid any Java
+// or libc hooks.
+//
+// Returns a semicolon-separated findings string, or "" when clean.
+// ---------------------------------------------------------------------------
+
+static std::string probeKsuLkm() {
+    std::string findings;
+
+    struct stat st{};
+
+    static const char *SYSFS_PATHS[] = {
+        "/sys/module/kernelsu",
+        "/sys/module/ksu",
+        "/dev/ksu",
+        nullptr
+    };
+
+    for (int i = 0; SYSFS_PATHS[i] != nullptr; ++i) {
+        errno = 0;
+        long res = syscall(__NR_fstatat, AT_FDCWD, SYSFS_PATHS[i], &st, 0);
+        if (res == 0 || errno == EACCES) {
+            if (!findings.empty()) findings += ';';
+            findings += std::string("sysfs:") + SYSFS_PATHS[i];
+        }
+    }
+
+    // Scan /proc/mounts for overlayfs entries with KSU-related upperdir/workdir.
+    // Use raw open/read to bypass any libc hook on fopen.
+    static const char *KSU_OVERLAY_NEEDLES[] = {
+        "upperdir=/data/adb",
+        "workdir=/data/adb",
+        "lowerdir=/data/adb",
+        "/data/adb/ksu",
+        "/data/adb/modules",
+        nullptr
+    };
+
+    int fd = open("/proc/mounts", O_RDONLY | O_CLOEXEC);
+    if (fd >= 0) {
+        char buf[8192];
+        ssize_t n;
+        std::string line;
+        while ((n = read(fd, buf, sizeof(buf) - 1)) > 0) {
+            buf[n] = '\0';
+            for (ssize_t charIdx = 0; charIdx < n; ++charIdx) {
+                char c = buf[charIdx];
+                if (c == '\n') {
+                    // Check if this line is an overlay mount with KSU paths
+                    bool isOverlay = (line.find("overlay ") != std::string::npos ||
+                                      line.find(" overlay ") != std::string::npos);
+                    if (isOverlay) {
+                        for (int k = 0; KSU_OVERLAY_NEEDLES[k] != nullptr; ++k) {
+                            if (line.find(KSU_OVERLAY_NEEDLES[k]) != std::string::npos) {
+                                if (!findings.empty()) findings += ';';
+                                // Truncate long lines to avoid oversized JNI strings
+                                findings += "overlayfs:" + line.substr(0, 80);
+                                break;
+                            }
+                        }
+                    }
+                    line.clear();
+                } else {
+                    line += c;
+                }
+            }
+        }
+        close(fd);
+    }
+
+    return findings;
+}
+
+// ---------------------------------------------------------------------------
+// JNI entry point — N18: KernelSU LKM mode detection
+// ---------------------------------------------------------------------------
+extern "C" JNIEXPORT jstring JNICALL
+Java_com_anycheck_app_detection_NativeDetector_detectKsuLkmJni(JNIEnv *env, jobject /* thiz */) {
+    return env->NewStringUTF(probeKsuLkm().c_str());
 }

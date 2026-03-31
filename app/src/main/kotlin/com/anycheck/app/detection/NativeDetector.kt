@@ -223,7 +223,29 @@ object NativeDetector {
         }
     }
 
+    /**
+     * Native-level KernelSU LKM mode detection.
+     *
+     * Uses raw fstatat(2) syscalls and direct open/read of /proc/mounts to
+     * check for LKM-specific artifacts that Java's File.exists() may miss if
+     * LSPosed or another Java-layer hook is active:
+     *   - /sys/module/kernelsu, /sys/module/ksu  (sysfs module directories)
+     *   - /dev/ksu  (character device registered by KSU misc driver)
+     *   - overlayfs mounts with upperdir=/data/adb/* (LKM system overlays)
+     *
+     * Returns a semicolon-separated findings string, or "" when clean.
+     */
+    fun detectKsuLkm(): String {
+        if (!libraryLoaded) return ""
+        return try {
+            detectKsuLkmJni()
+        } catch (_: Throwable) {
+            ""
+        }
+    }
+
     private external fun detectKsuTimingJni(): String
+    private external fun detectKsuLkmJni(): String
     private external fun detectLSPosedJni(): String
     private external fun detectOdexHooksJni(): String
     private external fun detectInlineHooksJni(): String
