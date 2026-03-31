@@ -821,7 +821,7 @@ class RevenyInspiredDetector(private val context: Context) {
         )
 
         // There is some alternatives for some packages, check for them too
-        val awpAlternatives = mapOf(
+        val packageAlternatives = mapOf(
             "com.android.permissioncontroller" to "com.google.android.permissioncontroller"
         )
 
@@ -832,7 +832,7 @@ class RevenyInspiredDetector(private val context: Context) {
 
         // Count how many always-visible packages actually appeared
         val missingAlwaysVisible = alwaysVisiblePackages.filter {
-            !(it in installedNames || awpAlternatives[it] in installedNames)
+            !(it in installedNames || packageAlternatives[it] in installedNames)
         }
 
         // Also attempt to read the own app info via two separate methods; any

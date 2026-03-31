@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <algorithm>
 #include <cstring>
 #include <cstdlib>
 #include <cstdio>
@@ -39,6 +40,19 @@
 #    define __NR_fstatat 262
 #  elif defined(__i386__)
 #    define __NR_fstatat 300
+#  endif
+#endif
+
+// __NR_faccessat is not always defined in Android NDK headers; define per-arch.
+#ifndef __NR_faccessat
+#  if defined(__aarch64__)
+#    define __NR_faccessat 48
+#  elif defined(__arm__)
+#    define __NR_faccessat 334
+#  elif defined(__x86_64__)
+#    define __NR_faccessat 269
+#  elif defined(__i386__)
+#    define __NR_faccessat 307
 #  endif
 #endif
 
@@ -1175,4 +1189,139 @@ Java_com_anycheck_app_detection_NativeDetector_detectHMABlacklistJni(JNIEnv *env
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_anycheck_app_detection_NativeDetector_detectMagiskMacJni(JNIEnv *env, jobject /* thiz */) {
     return env->NewStringUTF(probeMagiskMac().c_str());
+}
+
+// ---------------------------------------------------------------------------
+// N17 — KernelSU high-precision timing detection
+//
+// Algorithm:
+//   Read the ARM64 virtual counter (CNTVCT_EL0) for cycle-level precision
+//   (falls back to clock_gettime CLOCK_MONOTONIC_RAW on non-ARM64).
+//
+//   For each probe path, issue SAMPLE_COUNT raw faccessat(2) syscalls via
+//   inline assembly / syscall() to avoid any libc GOT hooking.
+//
+//   Warm-up: 100 faccessat calls on the baseline path before sampling to
+//   bring CPU caches and branch predictors to steady state.
+//
+//   Sampling: collect SAMPLE_COUNT (1000) tick deltas for both the baseline
+//   path and the target path.
+//
+//   Outlier trimming: discard the bottom and top TRIM_PCT (5%) of samples
+//   from each distribution before computing medians.
+//
+//   Decision: if median(target) / median(baseline) > RATIO_THRESHOLD (1.5)
+//   the kernel path is being intercepted (KSU hook detected).
+//
+//   Complex variant paths are measured alongside the direct path to stress
+//   KSU's namei logic; any one exceeding the threshold triggers detection.
+//
+//   Returns "ksu_timing_detected:ratio=X.XX;path=<path>" when detected,
+//   or "" when clean.  On platforms where the discrimination technique is
+//   unreliable (very low baseline < 3 ticks) returns "".
+// ---------------------------------------------------------------------------
+
+static inline uint64_t read_tick() {
+#if defined(__aarch64__)
+    uint64_t val;
+    __asm__ __volatile__("mrs %0, cntvct_el0" : "=r"(val) :: "memory");
+    return val;
+#else
+    struct timespec ts{};
+    clock_gettime(CLOCK_MONOTONIC_RAW, &ts);
+    return (uint64_t)ts.tv_sec * 1000000000ULL + (uint64_t)ts.tv_nsec;
+#endif
+}
+
+// Issue a raw faccessat(2) syscall that bypasses any libc hook.
+static inline long raw_faccessat(const char *path) {
+    return syscall(__NR_faccessat, AT_FDCWD, path, F_OK, 0);
+}
+
+static uint64_t measure_median(const char *path, int sample_count, int trim_pct) {
+    std::vector<uint64_t> samples;
+    samples.reserve(sample_count);
+    for (int i = 0; i < sample_count; ++i) {
+        uint64_t t0 = read_tick();
+        raw_faccessat(path);
+        uint64_t t1 = read_tick();
+        // Skip wraparound samples (t1 < t0) rather than recording 0, which
+        // would artificially lower the median and risk false positives.
+        if (t1 < t0) continue;
+        samples.push_back(t1 - t0);
+    }
+    if (samples.empty()) return 0;
+    std::sort(samples.begin(), samples.end());
+    int n = (int)samples.size();
+    int trim = (n * trim_pct) / 100;
+    int lo = trim;
+    int hi = n - 1 - trim;
+    if (lo > hi) {
+        lo = 0;
+        hi = n - 1;
+    }
+    // Median of trimmed range
+    int mid = (lo + hi) / 2;
+    return samples[mid];
+}
+
+static std::string probeKsuTiming() {
+    static const int WARMUP_COUNT  = 100;
+    static const int SAMPLE_COUNT  = 1000;
+    static const int TRIM_PCT      = 5;
+    // Ratio threshold: KSU interception adds measurable overhead.
+    // 1.5× gives strong separation while remaining above scheduler noise.
+    static const double RATIO_THRESHOLD = 1.5;
+
+    // Baseline path: a random unique path that will never exist on any device
+    // and that KSU's hook logic will not match (no known prefix).
+    static const char *BASELINE_PATH = "/data/local/tmp/anycheck_ksu_probe_baseline_xyz987";
+
+    // Target paths: direct su path + complex variant paths that stress KSU's
+    // namei resolution logic (follow_link, path_lookupat).
+    struct ProbeEntry {
+        const char *path;
+        const char *label;
+    };
+    static const ProbeEntry PROBES[] = {
+        { "/system/bin/su",          "su_direct"   },
+        { "/system/bin/su/../su",    "su_dotdot1"  },
+        { "/system/etc/../bin/su",   "su_dotdot2"  },
+        { "/system/xbin/su",         "su_xbin"     },
+        { nullptr, nullptr }
+    };
+
+    // Warm up the baseline path.
+    for (int i = 0; i < WARMUP_COUNT; ++i) {
+        raw_faccessat(BASELINE_PATH);
+    }
+
+    uint64_t baselineMedian = measure_median(BASELINE_PATH, SAMPLE_COUNT, TRIM_PCT);
+
+    // Guard: if baseline is 0 or unreasonably small, the tick source is
+    // unreliable on this device — skip to avoid false positives.
+    if (baselineMedian < 3) return "";
+
+    char ratioStr[64];
+    for (int i = 0; PROBES[i].path != nullptr; ++i) {
+        uint64_t targetMedian = measure_median(PROBES[i].path, SAMPLE_COUNT, TRIM_PCT);
+        double ratio = (baselineMedian > 0)
+            ? (double)targetMedian / (double)baselineMedian
+            : 0.0;
+
+        if (ratio > RATIO_THRESHOLD) {
+            snprintf(ratioStr, sizeof(ratioStr), "%.2f", ratio);
+            return std::string("ksu_timing_detected:ratio=") + ratioStr
+                + ";path=" + PROBES[i].label;
+        }
+    }
+    return "";
+}
+
+// ---------------------------------------------------------------------------
+// JNI entry point — N17: KernelSU timing detection
+// ---------------------------------------------------------------------------
+extern "C" JNIEXPORT jstring JNICALL
+Java_com_anycheck_app_detection_NativeDetector_detectKsuTimingJni(JNIEnv *env, jobject /* thiz */) {
+    return env->NewStringUTF(probeKsuTiming().c_str());
 }

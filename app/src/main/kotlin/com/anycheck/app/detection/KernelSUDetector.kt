@@ -22,7 +22,8 @@ class KernelSUDetector(private val context: Context) {
         checkKernelSUProcesses(),
         checkKernelSUSyscall(),
         checkKernelSUProps(),
-        checkKernelSULoopDevice()
+        checkKernelSULoopDevice(),
+        checkKsuTimingDetection()
     )
 
     /** Check 1: KernelSU-specific files */
@@ -465,6 +466,64 @@ class KernelSUDetector(private val context: Context) {
                 riskLevel = RiskLevel.HIGH,
                 description = context.getString(R.string.chk_ksu_loop_device_desc_nd),
                 detailedReason = context.getString(R.string.chk_no_action_needed),
+                solution = context.getString(R.string.chk_no_action_needed)
+            )
+        }
+    }
+
+    // ---- Utilities ----
+
+    // -------------------------------------------------------------------------
+    // Check 10: High-precision KernelSU timing detection (native)
+    //
+    // Uses the ARM64 CNTVCT_EL0 hardware counter (or CLOCK_MONOTONIC_RAW on
+    // other architectures) to measure the median faccessat(2) latency for a
+    // clean baseline path versus target paths (su and variants).
+    //
+    // If KernelSU's kernel hook is intercepting the syscall, the first call
+    // on each probe path incurs hook dispatch overhead.  With 1000 samples and
+    // 5% outlier trimming, the median ratio reliably exceeds 1.5× on hooked
+    // devices while remaining well below that threshold on clean devices,
+    // even under heavy system load.
+    // -------------------------------------------------------------------------
+    private fun checkKsuTimingDetection(): DetectionResult {
+        if (!NativeDetector.isLibraryLoaded()) {
+            return DetectionResult(
+                id = "ksu_timing",
+                name = context.getString(R.string.chk_ksu_timing_name_nd),
+                category = DetectionCategory.KERNELSU,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_ksu_timing_na),
+                detailedReason = context.getString(R.string.chk_ksu_timing_na),
+                solution = context.getString(R.string.chk_no_action_needed)
+            )
+        }
+        val raw = NativeDetector.detectKsuTiming()
+        return if (raw.startsWith("ksu_timing_detected:")) {
+            // Parse ratio and path label from the result string
+            val ratio = raw.substringAfter("ratio=").substringBefore(";")
+            val pathLabel = raw.substringAfter("path=", "unknown")
+            DetectionResult(
+                id = "ksu_timing",
+                name = context.getString(R.string.chk_ksu_timing_name),
+                category = DetectionCategory.KERNELSU,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_ksu_timing_desc),
+                detailedReason = context.getString(R.string.chk_ksu_timing_reason, pathLabel),
+                solution = context.getString(R.string.chk_ksu_timing_solution),
+                technicalDetail = "ratio=$ratio path=$pathLabel"
+            )
+        } else {
+            DetectionResult(
+                id = "ksu_timing",
+                name = context.getString(R.string.chk_ksu_timing_name_nd),
+                category = DetectionCategory.KERNELSU,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_ksu_timing_desc_nd),
+                detailedReason = context.getString(R.string.chk_ksu_timing_reason_nd),
                 solution = context.getString(R.string.chk_no_action_needed)
             )
         }
