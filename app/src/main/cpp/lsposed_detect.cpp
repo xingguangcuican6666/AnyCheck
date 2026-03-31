@@ -1221,7 +1221,6 @@ static inline uint64_t test_path_latency(const char *path) {
     uint64_t start = read_tick();
     (void)stat(path, &st);
     uint64_t end = read_tick();
-    if (end < start) return 0;
     return end - start;
 }
 
@@ -1229,24 +1228,19 @@ static std::string probeKsuTiming() {
     static const char *NORMAL_PATH = "/system/bin/sh";
     static const char *KSU_PATH = "/system/bin/su";
     static const int ITERATIONS = 1000;
-    // Require at least 10% successful samples to avoid noisy decisions.
-    static const int MIN_VALID_SAMPLES = 100;
     static const double RATIO_THRESHOLD = 1.3;
 
     uint64_t normalTotal = 0;
     uint64_t ksuTotal = 0;
-    int validSamples = 0;
 
     for (int i = 0; i < ITERATIONS; ++i) {
         uint64_t normalLatency = test_path_latency(NORMAL_PATH);
         uint64_t ksuLatency = test_path_latency(KSU_PATH);
-        if (normalLatency == 0 || ksuLatency == 0) continue;
         normalTotal += normalLatency;
         ksuTotal += ksuLatency;
-        ++validSamples;
     }
 
-    if (validSamples < MIN_VALID_SAMPLES || normalTotal == 0) return "";
+    if (normalTotal == 0) return "";
 
     double ratio = (double)ksuTotal / (double)normalTotal;
     if (ratio > RATIO_THRESHOLD) {
