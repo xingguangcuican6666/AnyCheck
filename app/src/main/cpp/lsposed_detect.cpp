@@ -1229,6 +1229,8 @@ static std::string probeKsuTiming() {
     static const char *NORMAL_PATH = "/system/bin/sh";
     static const char *KSU_PATH = "/system/bin/su";
     static const int ITERATIONS = 1000;
+    // Require at least 10% successful samples to avoid noisy decisions.
+    static const int MIN_VALID_SAMPLES = 100;
     static const double RATIO_THRESHOLD = 1.3;
 
     uint64_t normalTotal = 0;
@@ -1244,7 +1246,7 @@ static std::string probeKsuTiming() {
         ++validSamples;
     }
 
-    if (validSamples < 100 || normalTotal == 0) return "";
+    if (validSamples < MIN_VALID_SAMPLES || normalTotal == 0) return "";
 
     double ratio = (double)ksuTotal / (double)normalTotal;
     if (ratio > RATIO_THRESHOLD) {
