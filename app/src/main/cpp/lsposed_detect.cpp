@@ -1192,14 +1192,16 @@ Java_com_anycheck_app_detection_NativeDetector_detectMagiskMacJni(JNIEnv *env, j
 }
 
 // ---------------------------------------------------------------------------
-// N17 — KernelSU timing detection (adapted from repository root a.c)
+// N17 — KernelSU timing detection (ported from repository root a.c)
 //
-// Compares timing for:
-//   normal path   -> /system/bin/sh
-//   sensitive path-> /system/bin/su
+// Uses two side-channel probes with raw fstatat(2) timing:
+//   1) short-path duel: /system/bin/su vs /system/bin/no
+//   2) long-path duel : long "...su" vs long "...aa"
 //
-// If sensitive-path total latency is significantly higher than normal-path
-// total latency, this indicates potential kernel path interception.
+// Final risk score (same logic as a.c):
+//   short_ratio > 0.98 => +40
+//   long_ratio  < 1.05 => +50
+//   score >= 80 => detected
 // ---------------------------------------------------------------------------
 
 static inline uint64_t read_tick() {
@@ -1214,39 +1216,60 @@ static inline uint64_t read_tick() {
 #endif
 }
 
-static inline uint64_t test_path_latency(const char *path) {
+static inline uint64_t raw_fstatat_latency(const char *path) {
     struct stat st{};
-    // Warm-up call reduces one-time I/O disturbance for each sample.
-    (void)stat(path, &st);
     uint64_t start = read_tick();
-    (void)stat(path, &st);
+#if defined(__NR_fstatat)
+    (void)syscall(__NR_fstatat, AT_FDCWD, path, &st, 0);
+#else
+    (void)fstatat(AT_FDCWD, path, &st, 0);
+#endif
     uint64_t end = read_tick();
     return end - start;
 }
 
-static std::string probeKsuTiming() {
-    static const char *NORMAL_PATH = "/system/bin/sh";
-    static const char *KSU_PATH = "/system/bin/su";
-    static const int ITERATIONS = 1000;
-    static const double RATIO_THRESHOLD = 1.3;
-
-    uint64_t normalTotal = 0;
-    uint64_t ksuTotal = 0;
-
-    for (int i = 0; i < ITERATIONS; ++i) {
-        uint64_t normalLatency = test_path_latency(NORMAL_PATH);
-        uint64_t ksuLatency = test_path_latency(KSU_PATH);
-        normalTotal += normalLatency;
-        ksuTotal += ksuLatency;
+static double run_ksu_sidechannel_test(const char *p1, const char *p2, int samples) {
+    uint64_t t1 = 0;
+    uint64_t t2 = 0;
+    for (int i = 0; i < samples; ++i) {
+        if ((i & 1) == 0) {
+            t1 += raw_fstatat_latency(p1);
+            t2 += raw_fstatat_latency(p2);
+        } else {
+            t2 += raw_fstatat_latency(p2);
+            t1 += raw_fstatat_latency(p1);
+        }
     }
+    if (t2 == 0) return 0.0;
+    return (double)t1 / (double)t2;
+}
 
-    if (normalTotal == 0) return "";
+static std::string probeKsuTiming() {
+    static const int SAMPLE = 200000;
+    static const int PATH_MAX_LEN = 4000;
 
-    double ratio = (double)ksuTotal / (double)normalTotal;
-    if (ratio > RATIO_THRESHOLD) {
-        char ratioStr[64];
-        snprintf(ratioStr, sizeof(ratioStr), "%.2f", ratio);
-        return std::string("ksu_timing_detected:ratio=") + ratioStr + ";path=system_bin_su";
+    double shortRatio = run_ksu_sidechannel_test("/system/bin/su", "/system/bin/no", SAMPLE);
+    if (shortRatio <= 0.0) return "";
+
+    std::string pClean(PATH_MAX_LEN, 'a');
+    std::string pHeavy(PATH_MAX_LEN, 'a');
+    pHeavy[PATH_MAX_LEN - 2] = 's';
+    pHeavy[PATH_MAX_LEN - 1] = 'u';
+
+    double longRatio = run_ksu_sidechannel_test(pHeavy.c_str(), pClean.c_str(), SAMPLE);
+    if (longRatio <= 0.0) return "";
+
+    int riskScore = 0;
+    if (shortRatio > 0.98) riskScore += 40;
+    if (longRatio < 1.05) riskScore += 50;
+
+    if (riskScore >= 80) {
+        char shortStr[32], longStr[32], scoreStr[16];
+        snprintf(shortStr, sizeof(shortStr), "%.4f", shortRatio);
+        snprintf(longStr, sizeof(longStr), "%.4f", longRatio);
+        snprintf(scoreStr, sizeof(scoreStr), "%d", riskScore);
+        return std::string("ksu_timing_detected:short_ratio=") + shortStr +
+               ";long_ratio=" + longStr + ";score=" + scoreStr;
     }
     return "";
 }

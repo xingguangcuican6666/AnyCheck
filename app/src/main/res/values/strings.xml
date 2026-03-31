@@ -259,10 +259,10 @@
     <!-- KSU timing detection (Check ksu_timing) -->
     <string name="chk_ksu_timing_name">KernelSU Syscall Hook Detected (Timing)</string>
     <string name="chk_ksu_timing_name_nd">KernelSU Syscall Timing Check</string>
-    <string name="chk_ksu_timing_desc">KernelSU kernel hook detected via high-precision syscall timing analysis.</string>
-    <string name="chk_ksu_timing_desc_nd">No KernelSU syscall hook overhead detected.</string>
-    <string name="chk_ksu_timing_reason">The total stat() latency for %1$s exceeded the normal-path baseline by more than 1.3×, indicating possible KernelSU path interception overhead detected via CNTVCT_EL0/monotonic timing sampling.</string>
-    <string name="chk_ksu_timing_reason_nd">The total stat() latency ratio between /system/bin/su and /system/bin/sh remained within 1.3×. No obvious KernelSU timing anomaly was detected.</string>
+    <string name="chk_ksu_timing_desc">KernelSU anomaly detected via the new a.c side-channel timing mechanism.</string>
+    <string name="chk_ksu_timing_desc_nd">No KernelSU anomaly detected by the a.c side-channel timing mechanism.</string>
+    <string name="chk_ksu_timing_reason">Short-path and long-path side-channel ratios matched the KernelSU risk profile from the new a.c mechanism.</string>
+    <string name="chk_ksu_timing_reason_nd">Short-path and long-path side-channel ratios stayed in the clean range under the new a.c mechanism.</string>
     <string name="chk_ksu_timing_solution">Use SUSFS (SU Filesystem) to hide KernelSU\'s syscall interception, or remove KernelSU entirely.</string>
     <string name="chk_ksu_timing_na">KernelSU timing check not available: native library could not be loaded.</string>
 

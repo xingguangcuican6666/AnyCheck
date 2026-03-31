@@ -201,18 +201,14 @@ object NativeDetector {
     }
 
     /**
-     * High-precision KernelSU timing detection using the ARM64 virtual counter
-     * (CNTVCT_EL0) or CLOCK_MONOTONIC_RAW fallback.
+     * KernelSU side-channel timing detection (ported from repository root a.c).
      *
-     * Issues SAMPLE_COUNT (1000) raw faccessat(2) syscalls each for a baseline
-     * path (a random non-existing path KSU ignores) and for several target
-     * paths (su, path variants).  After trimming the top/bottom 5% of samples,
-     * computes medians and returns the ratio.  If median(target) > median(baseline)
-     * × 1.5, KSU's syscall hook is adding measurable latency.
+     * Native probe runs two fstatat(2) timing duels:
+     *  - short path: /system/bin/su vs /system/bin/no
+     *  - long path : long "...su" vs long "...aa"
      *
-     * Returns "ksu_timing_detected:ratio=X.XX;path=<label>" when detected,
-     * or an empty string when clean or when the device's timer resolution is
-     * too coarse to discriminate.
+     * Returns "ksu_timing_detected:short_ratio=...;long_ratio=...;score=..."
+     * when the combined risk score reaches the a.c threshold, otherwise "".
      */
     fun detectKsuTiming(): String {
         if (!libraryLoaded) return ""

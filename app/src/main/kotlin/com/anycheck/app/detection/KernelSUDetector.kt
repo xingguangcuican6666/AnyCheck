@@ -578,17 +578,15 @@ class KernelSUDetector(private val context: Context) {
     }
 
     // -------------------------------------------------------------------------
-    // Check 10: High-precision KernelSU timing detection (native)
+    // Check 10: KernelSU side-channel timing detection (native, a.c-aligned)
     //
-    // Uses the ARM64 CNTVCT_EL0 hardware counter (or CLOCK_MONOTONIC_RAW on
-    // other architectures) to measure the median faccessat(2) latency for a
-    // clean baseline path versus target paths (su and variants).
-    //
-    // If KernelSU's kernel hook is intercepting the syscall, the first call
-    // on each probe path incurs hook dispatch overhead.  With 1000 samples and
-    // 5% outlier trimming, the median ratio reliably exceeds 1.5× on hooked
-    // devices while remaining well below that threshold on clean devices,
-    // even under heavy system load.
+    // Native layer runs the new a.c mechanism:
+    // 1) Short-path duel: /system/bin/su vs /system/bin/no
+    // 2) Long-path duel : long "...su" vs long "...aa"
+    // Risk score:
+    //   short_ratio > 0.98 => +40
+    //   long_ratio  < 1.05 => +50
+    // score >= 80 => detected
     // -------------------------------------------------------------------------
     private fun checkKsuTimingDetection(): DetectionResult {
         if (!NativeDetector.isLibraryLoaded()) {
@@ -605,9 +603,9 @@ class KernelSUDetector(private val context: Context) {
         }
         val raw = NativeDetector.detectKsuTiming()
         return if (raw.startsWith("ksu_timing_detected:")) {
-            // Parse ratio and path label from the result string
-            val ratio = raw.substringAfter("ratio=").substringBefore(";")
-            val pathLabel = raw.substringAfter("path=", "unknown")
+            val shortRatio = raw.substringAfter("short_ratio=", "").substringBefore(";")
+            val longRatio = raw.substringAfter("long_ratio=", "").substringBefore(";")
+            val score = raw.substringAfter("score=", "")
             DetectionResult(
                 id = "ksu_timing",
                 name = context.getString(R.string.chk_ksu_timing_name),
@@ -615,9 +613,9 @@ class KernelSUDetector(private val context: Context) {
                 status = DetectionStatus.DETECTED,
                 riskLevel = RiskLevel.HIGH,
                 description = context.getString(R.string.chk_ksu_timing_desc),
-                detailedReason = context.getString(R.string.chk_ksu_timing_reason, pathLabel),
+                detailedReason = context.getString(R.string.chk_ksu_timing_reason),
                 solution = context.getString(R.string.chk_ksu_timing_solution),
-                technicalDetail = "ratio=$ratio path=$pathLabel"
+                technicalDetail = "short_ratio=$shortRatio long_ratio=$longRatio score=$score"
             )
         } else {
             DetectionResult(
