@@ -1192,33 +1192,14 @@ Java_com_anycheck_app_detection_NativeDetector_detectMagiskMacJni(JNIEnv *env, j
 }
 
 // ---------------------------------------------------------------------------
-// N17 — KernelSU high-precision timing detection
+// N17 — KernelSU timing detection (adapted from repository root a.c)
 //
-// Algorithm:
-//   Read the ARM64 virtual counter (CNTVCT_EL0) for cycle-level precision
-//   (falls back to clock_gettime CLOCK_MONOTONIC_RAW on non-ARM64).
+// Compares timing for:
+//   normal path   -> /system/bin/sh
+//   sensitive path-> /system/bin/su
 //
-//   For each probe path, issue SAMPLE_COUNT raw faccessat(2) syscalls via
-//   inline assembly / syscall() to avoid any libc GOT hooking.
-//
-//   Warm-up: 100 faccessat calls on the baseline path before sampling to
-//   bring CPU caches and branch predictors to steady state.
-//
-//   Sampling: collect SAMPLE_COUNT (1000) tick deltas for both the baseline
-//   path and the target path.
-//
-//   Outlier trimming: discard the bottom and top TRIM_PCT (5%) of samples
-//   from each distribution before computing medians.
-//
-//   Decision: if median(target) / median(baseline) > RATIO_THRESHOLD (1.5)
-//   the kernel path is being intercepted (KSU hook detected).
-//
-//   Complex variant paths are measured alongside the direct path to stress
-//   KSU's namei logic; any one exceeding the threshold triggers detection.
-//
-//   Returns "ksu_timing_detected:ratio=X.XX;path=<path>" when detected,
-//   or "" when clean.  On platforms where the discrimination technique is
-//   unreliable (very low baseline < 3 ticks) returns "".
+// If sensitive-path total latency is significantly higher than normal-path
+// total latency, this indicates potential kernel path interception.
 // ---------------------------------------------------------------------------
 
 static inline uint64_t read_tick() {
@@ -1233,93 +1214,43 @@ static inline uint64_t read_tick() {
 #endif
 }
 
-// Issue a raw faccessat(2) syscall that bypasses any libc hook.
-static inline long raw_faccessat(const char *path) {
-    return syscall(__NR_faccessat, AT_FDCWD, path, F_OK, 0);
-}
-
-static uint64_t measure_median(const char *path, int sample_count, int trim_pct) {
-    std::vector<uint64_t> samples;
-    samples.reserve(sample_count);
-    int skipped = 0;
-    for (int i = 0; i < sample_count; ++i) {
-        uint64_t t0 = read_tick();
-        raw_faccessat(path);
-        uint64_t t1 = read_tick();
-        // Skip wraparound samples (t1 < t0) rather than recording 0, which
-        // would artificially lower the median and risk false positives.
-        if (t1 < t0) {
-            ++skipped;
-            continue;
-        }
-        samples.push_back(t1 - t0);
-    }
-    // If more than 10% of samples were skipped the tick source is unreliable
-    // on this device; signal this by returning 0 so the caller can bail out.
-    if (samples.empty() || skipped * 10 > sample_count) return 0;
-    std::sort(samples.begin(), samples.end());
-    int n = (int)samples.size();
-    int trim = (n * trim_pct) / 100;
-    int lo = trim;
-    int hi = n - 1 - trim;
-    if (lo > hi) {
-        lo = 0;
-        hi = n - 1;
-    }
-    // Median of trimmed range
-    int mid = (lo + hi) / 2;
-    return samples[mid];
+static inline uint64_t test_path_latency(const char *path) {
+    struct stat st{};
+    // Warm-up call reduces one-time I/O disturbance for each sample.
+    (void)stat(path, &st);
+    uint64_t start = read_tick();
+    (void)stat(path, &st);
+    uint64_t end = read_tick();
+    if (end < start) return 0;
+    return end - start;
 }
 
 static std::string probeKsuTiming() {
-    static const int WARMUP_COUNT  = 100;
-    static const int SAMPLE_COUNT  = 1000;
-    static const int TRIM_PCT      = 5;
-    // Ratio threshold: KSU interception adds measurable overhead.
-    // 1.5× gives strong separation while remaining above scheduler noise.
-    static const double RATIO_THRESHOLD = 1.5;
+    static const char *NORMAL_PATH = "/system/bin/sh";
+    static const char *KSU_PATH = "/system/bin/su";
+    static const int ITERATIONS = 1000;
+    static const double RATIO_THRESHOLD = 1.3;
 
-    // Baseline path: a random unique path that will never exist on any device
-    // and that KSU's hook logic will not match (no known prefix).
-    static const char *BASELINE_PATH = "/data/local/tmp/anycheck_ksu_probe_baseline_xyz987";
+    uint64_t normalTotal = 0;
+    uint64_t ksuTotal = 0;
+    int validSamples = 0;
 
-    // Target paths: direct su path + complex variant paths that stress KSU's
-    // namei resolution logic (follow_link, path_lookupat).
-    struct ProbeEntry {
-        const char *path;
-        const char *label;
-    };
-    static const ProbeEntry PROBES[] = {
-        { "/system/bin/su",          "su_direct"   },
-        { "/system/bin/su/../su",    "su_dotdot1"  },
-        { "/system/etc/../bin/su",   "su_dotdot2"  },
-        { "/system/xbin/su",         "su_xbin"     },
-        { nullptr, nullptr }
-    };
-
-    // Warm up the baseline path.
-    for (int i = 0; i < WARMUP_COUNT; ++i) {
-        raw_faccessat(BASELINE_PATH);
+    for (int i = 0; i < ITERATIONS; ++i) {
+        uint64_t normalLatency = test_path_latency(NORMAL_PATH);
+        uint64_t ksuLatency = test_path_latency(KSU_PATH);
+        if (normalLatency == 0 || ksuLatency == 0) continue;
+        normalTotal += normalLatency;
+        ksuTotal += ksuLatency;
+        ++validSamples;
     }
 
-    uint64_t baselineMedian = measure_median(BASELINE_PATH, SAMPLE_COUNT, TRIM_PCT);
+    if (validSamples < 100 || normalTotal == 0) return "";
 
-    // Guard: if baseline is 0 or unreasonably small, the tick source is
-    // unreliable on this device — skip to avoid false positives.
-    if (baselineMedian < 3) return "";
-
-    char ratioStr[64];
-    for (int i = 0; PROBES[i].path != nullptr; ++i) {
-        uint64_t targetMedian = measure_median(PROBES[i].path, SAMPLE_COUNT, TRIM_PCT);
-        double ratio = (baselineMedian > 0)
-            ? (double)targetMedian / (double)baselineMedian
-            : 0.0;
-
-        if (ratio > RATIO_THRESHOLD) {
-            snprintf(ratioStr, sizeof(ratioStr), "%.2f", ratio);
-            return std::string("ksu_timing_detected:ratio=") + ratioStr
-                + ";path=" + PROBES[i].label;
-        }
+    double ratio = (double)ksuTotal / (double)normalTotal;
+    if (ratio > RATIO_THRESHOLD) {
+        char ratioStr[64];
+        snprintf(ratioStr, sizeof(ratioStr), "%.2f", ratio);
+        return std::string("ksu_timing_detected:ratio=") + ratioStr + ";path=system_bin_su";
     }
     return "";
 }
