@@ -22,6 +22,12 @@ import java.time.temporal.ChronoUnit
  */
 class ExtraRootDetector(private val context: Context) {
 
+    companion object {
+        // Android 10+ (APEX) always has many overlayfs mounts; fewer than this
+        // threshold is a signal that SUSFS or a similar tool is hiding them.
+        private const val MIN_EXPECTED_OVERLAY_COUNT = 5
+    }
+
     fun runAllChecks(): List<DetectionResult> = listOf(
         checkLDPreloadEnvironment(),
         checkProcessCapabilities(),
@@ -180,26 +186,19 @@ class ExtraRootDetector(private val context: Context) {
     private fun checkMountInfoOverlay(): DetectionResult {
         return try {
             val mountinfo = File("/proc/self/mountinfo").readText()
-            // Only match paths that are clearly from root-framework working directories.
-            // /data/adb/magisk and /data/adb/ksu are the canonical install paths used
-            // by Magisk and KernelSU respectively. Vendor overlayfs mounts do not
-            // reference these paths and are therefore excluded.
-            val rootFrameworkSourcePrefixes = listOf(
-                "/data/adb/magisk", "/data/adb/ksu", "/data/adb/modules",
-                "/@magisk", "/@ksu"
-            )
-            val found = mutableListOf<String>()
-            mountinfo.lines().forEach { line ->
+            // Count all overlayfs-type mount entries visible to this process.
+            // Android 10+ (APEX) and a KSU device without mount-hiding normally
+            // show many overlay mounts. Fewer than MIN_EXPECTED_OVERLAY_COUNT means
+            // SUSFS (or another mount-hiding mechanism) is suppressing entries —
+            // which is itself a strong indicator that a root framework is active
+            // and hiding.
+            val overlayCount = mountinfo.lines().count { line ->
                 val sepIdx = line.indexOf(" - ")
-                if (sepIdx < 0) return@forEach
-                val source = line.substring(sepIdx + 3).trim().split(" ").getOrNull(1) ?: return@forEach
-                if (rootFrameworkSourcePrefixes.any { source.startsWith(it) } &&
-                    !found.contains(line.take(80))
-                ) {
-                    found.add(line.take(80))
-                }
+                if (sepIdx < 0) return@count false
+                val fsType = line.substring(sepIdx + 3).trim().split(" ").getOrNull(0) ?: ""
+                fsType == "overlay" || fsType == "overlayfs"
             }
-            if (found.isNotEmpty()) {
+            if (overlayCount < MIN_EXPECTED_OVERLAY_COUNT) {
                 DetectionResult(
                     id = "mountinfo_overlay",
                     name = context.getString(R.string.chk_ext_overlay_name),
@@ -207,9 +206,9 @@ class ExtraRootDetector(private val context: Context) {
                     status = DetectionStatus.DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
                     description = context.getString(R.string.chk_ext_overlay_desc),
-                    detailedReason = context.getString(R.string.chk_ext_overlay_reason, found.size),
+                    detailedReason = context.getString(R.string.chk_ext_overlay_reason, overlayCount),
                     solution = context.getString(R.string.chk_ext_overlay_solution),
-                    technicalDetail = found.take(5).joinToString("\n")
+                    technicalDetail = "overlay mount count: $overlayCount (expected ≥5)"
                 )
             } else {
                 DetectionResult(
@@ -219,7 +218,7 @@ class ExtraRootDetector(private val context: Context) {
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.CRITICAL,
                     description = context.getString(R.string.chk_ext_overlay_desc_nd),
-                    detailedReason = context.getString(R.string.chk_ext_overlay_reason_nd),
+                    detailedReason = context.getString(R.string.chk_ext_overlay_reason_nd, overlayCount),
                     solution = context.getString(R.string.no_action_required)
                 )
             }

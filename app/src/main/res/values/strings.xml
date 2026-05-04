@@ -1059,13 +1059,13 @@
     <string name="chk_ext_caps_desc_error">Could not read process status.</string>
     <string name="chk_ext_caps_solution_error">Ensure /proc/self/status is accessible.</string>
     <!-- ExtraRootDetector: Check 3 - Mountinfo Overlay -->
-    <string name="chk_ext_overlay_name">Magisk/KSU Overlay Mounts Detected</string>
-    <string name="chk_ext_overlay_desc">Root framework overlay mount entries found in /proc/self/mountinfo.</string>
-    <string name="chk_ext_overlay_reason">/proc/self/mountinfo shows %1$d mount entry/entries sourced from Magisk/KSU directories (/data/adb/magisk or /data/adb/ksu). These are bind-mounts created by the root framework\'s module system to overlay modified files over the original system partition.</string>
-    <string name="chk_ext_overlay_solution">Remove root framework modules or uninstall the root framework entirely.</string>
+    <string name="chk_ext_overlay_name">Root Overlay Mounts Abnormal (Too Few)</string>
+    <string name="chk_ext_overlay_desc">Suspiciously few overlay mounts found — mount entries may be hidden by SUSFS.</string>
+    <string name="chk_ext_overlay_reason">Only %1$d overlay mount entries visible in /proc/self/mountinfo (expected ≥5). Android 10+ with APEX and a KSU device normally have many overlayfs entries. An abnormally low count indicates that a mount-hiding mechanism (such as SUSFS) is suppressing entries, which is a strong sign that a root framework is active.</string>
+    <string name="chk_ext_overlay_solution">A root framework with mount-hiding (SUSFS) is likely active. Inspect /proc/self/mountinfo directly or disable SUSFS to confirm.</string>
     <string name="chk_ext_overlay_name_nd">Root Overlay Mounts</string>
-    <string name="chk_ext_overlay_desc_nd">No Magisk/KSU overlay mounts found.</string>
-    <string name="chk_ext_overlay_reason_nd">No root framework markers were found in /proc/self/mountinfo.</string>
+    <string name="chk_ext_overlay_desc_nd">Overlay mount count is normal (≥5 entries).</string>
+    <string name="chk_ext_overlay_reason_nd">%1$d overlay entries found in /proc/self/mountinfo, which is within the expected range for a healthy Android system.</string>
     <string name="chk_ext_overlay_desc_error">Could not read /proc/self/mountinfo.</string>
     <string name="chk_ext_overlay_solution_error">Ensure /proc/self/mountinfo is accessible.</string>
     <!-- ExtraRootDetector: Check 4 - tmpfs at /sbin -->
