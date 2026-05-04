@@ -22,7 +22,9 @@ class KernelSUDetector(private val context: Context) {
         checkKernelSUProcesses(),
         checkKernelSUSyscall(),
         checkKernelSUProps(),
-        checkKernelSULoopDevice()
+        checkKernelSULoopDevice(),
+        checkKsuLkmMode(),
+        checkKsuTimingDetection()
     )
 
     /** Check 1: KernelSU-specific files */
@@ -37,7 +39,12 @@ class KernelSUDetector(private val context: Context) {
             "/data/adb/ksu.db",
             "/system/bin/ksud",
             "/system/xbin/ksud",
-            "/dev/.ksu_bind_mnt"
+            "/dev/.ksu_bind_mnt",
+            // LKM mode specific: the module binary installed on the device
+            "/system/lib/modules/kernelsu.ko",
+            "/vendor/lib/modules/kernelsu.ko",
+            "/lib/modules/kernelsu.ko",
+            "/data/adb/ksu/kernelsu.ko"
         )
         val found = ksuFiles.filter { File(it).exists() }
         return if (found.isNotEmpty()) {
@@ -465,6 +472,160 @@ class KernelSUDetector(private val context: Context) {
                 riskLevel = RiskLevel.HIGH,
                 description = context.getString(R.string.chk_ksu_loop_device_desc_nd),
                 detailedReason = context.getString(R.string.chk_no_action_needed),
+                solution = context.getString(R.string.chk_no_action_needed)
+            )
+        }
+    }
+
+    // ---- Utilities ----
+
+    // -------------------------------------------------------------------------
+    // Check 11: KernelSU LKM mode detection
+    // -------------------------------------------------------------------------
+
+    /**
+     * Check 11 (LKM mode): KernelSU Loadable Kernel Module detection.
+     *
+     * KernelSU can run in two modes:
+     *   - Built-in mode: KSU is compiled directly into the kernel; creates
+     *     /sys/kernel/ksu (already covered by checkKernelSUSyscall).
+     *   - LKM mode (GKI kernels): KSU runs as a loadable kernel module
+     *     (kernelsu.ko) inserted at boot via insmod/modprobe.
+     *
+     * LKM mode produces unique artifacts that the built-in checks miss:
+     *   1. /sys/module/kernelsu or /sys/module/ksu  — standard Linux sysfs
+     *      module directory, present for any loaded module; harder to hide
+     *      than /proc/modules (which SUSFS can shadow).
+     *   2. /dev/ksu  — character device registered by the KSU misc driver
+     *      for userspace↔kernel IPC; unique to LKM mode.
+     *   3. Overlayfs mounts in /proc/mounts — LKM mode applies system
+     *      overlays via overlayfs (upperdir=/data/adb/…) rather than loop
+     *      devices; the existing loop-device check misses these.
+     *   4. LKM binary paths — kernelsu.ko may be visible on disk before
+     *      being loaded.
+     */
+    private fun checkKsuLkmMode(): DetectionResult {
+        val findings = mutableListOf<String>()
+
+        // 1. sysfs module directories — present when the module is loaded
+        val sysfsPaths = listOf(
+            "/sys/module/kernelsu",
+            "/sys/module/ksu"
+        )
+        sysfsPaths.forEach { path ->
+            if (File(path).exists()) findings.add("sysfs:$path")
+        }
+
+        // 2. /dev/ksu character device created by KSU misc driver
+        if (File("/dev/ksu").exists()) findings.add("dev:/dev/ksu")
+
+        // 3. Overlayfs mounts with KSU-related upperdirs in /proc/mounts
+        //    KSU LKM uses overlayfs with upperdir=/data/adb/... to apply
+        //    module overlays to /system, /vendor, etc.
+        try {
+            File("/proc/mounts").forEachLine { line ->
+                if (line.startsWith("overlay ") || line.contains(" overlay ")) {
+                    val ksuIndicators = listOf(
+                        "upperdir=/data/adb",
+                        "workdir=/data/adb",
+                        "lowerdir=/data/adb",
+                        "/data/adb/ksu",
+                        "/data/adb/modules"
+                    )
+                    if (ksuIndicators.any { line.contains(it, ignoreCase = true) }) {
+                        findings.add("overlayfs:${line.trim().take(100)}")
+                    }
+                }
+            }
+        } catch (_: Exception) {}
+
+        // 4. Native probe — uses raw fstatat(2) and direct /proc/mounts read
+        //    to bypass any Java- or libc-layer hook that might mask the above.
+        val nativeFindings = NativeDetector.detectKsuLkm()
+        if (nativeFindings.isNotEmpty()) {
+            nativeFindings.split(";").forEach { signal ->
+                val trimmed = signal.trim()
+                if (trimmed.isNotEmpty() && !findings.contains(trimmed)) {
+                    findings.add("native:$trimmed")
+                }
+            }
+        }
+
+        return if (findings.isNotEmpty()) {
+            DetectionResult(
+                id = "ksu_lkm",
+                name = context.getString(R.string.chk_ksu_lkm_name),
+                category = DetectionCategory.KERNELSU,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = context.getString(R.string.chk_ksu_lkm_desc),
+                detailedReason = context.getString(R.string.chk_ksu_lkm_reason, findings.joinToString("; ")),
+                solution = context.getString(R.string.chk_ksu_lkm_solution),
+                technicalDetail = "LKM signals: ${findings.joinToString("; ")}"
+            )
+        } else {
+            DetectionResult(
+                id = "ksu_lkm",
+                name = context.getString(R.string.chk_ksu_lkm_name_nd),
+                category = DetectionCategory.KERNELSU,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.CRITICAL,
+                description = context.getString(R.string.chk_ksu_lkm_desc_nd),
+                detailedReason = context.getString(R.string.chk_ksu_lkm_reason_nd),
+                solution = context.getString(R.string.chk_no_action_needed)
+            )
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Check 10: KernelSU side-channel timing detection (native, a.c-aligned)
+    //
+    // Native layer runs the new a.c mechanism:
+    // 1) Short-path duel: /system/bin/su vs /system/bin/no
+    // 2) Long-path duel : long "...su" vs long "...aa"
+    // Risk score:
+    //   short_ratio > 0.98 => +40
+    //   long_ratio  < 1.05 => +50
+    // score >= 80 => detected
+    // -------------------------------------------------------------------------
+    private fun checkKsuTimingDetection(): DetectionResult {
+        if (!NativeDetector.isLibraryLoaded()) {
+            return DetectionResult(
+                id = "ksu_timing",
+                name = context.getString(R.string.chk_ksu_timing_name_nd),
+                category = DetectionCategory.KERNELSU,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_ksu_timing_na),
+                detailedReason = context.getString(R.string.chk_ksu_timing_na),
+                solution = context.getString(R.string.chk_no_action_needed)
+            )
+        }
+        val raw = NativeDetector.detectKsuTiming()
+        return if (raw.startsWith("ksu_timing_detected:")) {
+            val shortRatio = raw.substringAfter("short_ratio=", "").substringBefore(";")
+            val longRatio = raw.substringAfter("long_ratio=", "").substringBefore(";")
+            val score = raw.substringAfter("score=", "")
+            DetectionResult(
+                id = "ksu_timing",
+                name = context.getString(R.string.chk_ksu_timing_name),
+                category = DetectionCategory.KERNELSU,
+                status = DetectionStatus.DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_ksu_timing_desc),
+                detailedReason = context.getString(R.string.chk_ksu_timing_reason),
+                solution = context.getString(R.string.chk_ksu_timing_solution),
+                technicalDetail = "short_ratio=$shortRatio long_ratio=$longRatio score=$score"
+            )
+        } else {
+            DetectionResult(
+                id = "ksu_timing",
+                name = context.getString(R.string.chk_ksu_timing_name_nd),
+                category = DetectionCategory.KERNELSU,
+                status = DetectionStatus.NOT_DETECTED,
+                riskLevel = RiskLevel.HIGH,
+                description = context.getString(R.string.chk_ksu_timing_desc_nd),
+                detailedReason = context.getString(R.string.chk_ksu_timing_reason_nd),
                 solution = context.getString(R.string.chk_no_action_needed)
             )
         }

@@ -200,6 +200,48 @@ object NativeDetector {
         }
     }
 
+    /**
+     * KernelSU side-channel timing detection (ported from repository root a.c).
+     *
+     * Native probe runs two fstatat(2) timing duels:
+     *  - short path: /system/bin/su vs /system/bin/no
+     *  - long path : long "...su" vs long "...aa"
+     *
+     * Returns "ksu_timing_detected:short_ratio=...;long_ratio=...;score=..."
+     * when the combined risk score reaches the a.c threshold, otherwise "".
+     */
+    fun detectKsuTiming(): String {
+        if (!libraryLoaded) return ""
+        return try {
+            detectKsuTimingJni()
+        } catch (_: Throwable) {
+            ""
+        }
+    }
+
+    /**
+     * Native-level KernelSU LKM mode detection.
+     *
+     * Uses raw fstatat(2) syscalls and direct open/read of /proc/mounts to
+     * check for LKM-specific artifacts that Java's File.exists() may miss if
+     * LSPosed or another Java-layer hook is active:
+     *   - /sys/module/kernelsu, /sys/module/ksu  (sysfs module directories)
+     *   - /dev/ksu  (character device registered by KSU misc driver)
+     *   - overlayfs mounts with upperdir under /data/adb/ (LKM system overlays)
+     *
+     * Returns a semicolon-separated findings string, or "" when clean.
+     */
+    fun detectKsuLkm(): String {
+        if (!libraryLoaded) return ""
+        return try {
+            detectKsuLkmJni()
+        } catch (_: Throwable) {
+            ""
+        }
+    }
+
+    private external fun detectKsuTimingJni(): String
+    private external fun detectKsuLkmJni(): String
     private external fun detectLSPosedJni(): String
     private external fun detectOdexHooksJni(): String
     private external fun detectInlineHooksJni(): String

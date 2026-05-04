@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <algorithm>
 #include <cstring>
 #include <cstdlib>
 #include <cstdio>
@@ -39,6 +40,19 @@
 #    define __NR_fstatat 262
 #  elif defined(__i386__)
 #    define __NR_fstatat 300
+#  endif
+#endif
+
+// __NR_faccessat is not always defined in Android NDK headers; define per-arch.
+#ifndef __NR_faccessat
+#  if defined(__aarch64__)
+#    define __NR_faccessat 48
+#  elif defined(__arm__)
+#    define __NR_faccessat 334
+#  elif defined(__x86_64__)
+#    define __NR_faccessat 269
+#  elif defined(__i386__)
+#    define __NR_faccessat 307
 #  endif
 #endif
 
@@ -1175,4 +1189,193 @@ Java_com_anycheck_app_detection_NativeDetector_detectHMABlacklistJni(JNIEnv *env
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_anycheck_app_detection_NativeDetector_detectMagiskMacJni(JNIEnv *env, jobject /* thiz */) {
     return env->NewStringUTF(probeMagiskMac().c_str());
+}
+
+// ---------------------------------------------------------------------------
+// N17 — KernelSU timing detection (ported from repository root a.c)
+//
+// Uses two side-channel probes with raw fstatat(2) timing:
+//   1) short-path duel: /system/bin/su vs /system/bin/no
+//   2) long-path duel : long "...su" vs long "...aa"
+//
+// Final risk score (same logic as a.c):
+//   short_ratio > 0.98 => +40
+//   long_ratio  < 1.05 => +50
+//   score >= 80 => detected
+// ---------------------------------------------------------------------------
+
+static inline uint64_t read_tick() {
+#if defined(__aarch64__)
+    uint64_t val;
+    __asm__ __volatile__("mrs %0, cntvct_el0" : "=r"(val) :: "memory");
+    return val;
+#else
+    struct timespec ts{};
+    clock_gettime(CLOCK_MONOTONIC_RAW, &ts);
+    return (uint64_t)ts.tv_sec * 1000000000ULL + (uint64_t)ts.tv_nsec;
+#endif
+}
+
+static inline uint64_t raw_fstatat_latency(const char *path) {
+    struct stat st{};
+    uint64_t start = read_tick();
+#if defined(__NR_fstatat)
+    (void)syscall(__NR_fstatat, AT_FDCWD, path, &st, 0);
+#else
+    (void)fstatat(AT_FDCWD, path, &st, 0);
+#endif
+    uint64_t end = read_tick();
+    return end - start;
+}
+
+static double run_ksu_sidechannel_test(const char *p1, const char *p2, int samples) {
+    uint64_t t1 = 0;
+    uint64_t t2 = 0;
+    for (int i = 0; i < samples; ++i) {
+        if ((i & 1) == 0) {
+            t1 += raw_fstatat_latency(p1);
+            t2 += raw_fstatat_latency(p2);
+        } else {
+            t2 += raw_fstatat_latency(p2);
+            t1 += raw_fstatat_latency(p1);
+        }
+    }
+    if (t2 == 0) return 0.0;
+    return (double)t1 / (double)t2;
+}
+
+static std::string probeKsuTiming() {
+    // a.c reference uses 200000 samples; production uses 2000 to avoid
+    // post-check CPU spikes while preserving the same scoring thresholds.
+    static const int SAMPLE = 2000;
+    static const int PATH_MAX_LEN = 4000;
+
+    double shortRatio = run_ksu_sidechannel_test("/system/bin/su", "/system/bin/no", SAMPLE);
+    if (shortRatio <= 0.0) return "";
+
+    std::string pClean(PATH_MAX_LEN, 'a');
+    std::string pHeavy(PATH_MAX_LEN, 'a');
+    pHeavy[PATH_MAX_LEN - 2] = 's';
+    pHeavy[PATH_MAX_LEN - 1] = 'u';
+
+    double longRatio = run_ksu_sidechannel_test(pHeavy.c_str(), pClean.c_str(), SAMPLE);
+    if (longRatio <= 0.0) return "";
+
+    int riskScore = 0;
+    if (shortRatio > 0.98) riskScore += 40;
+    if (longRatio < 1.05) riskScore += 50;
+
+    if (riskScore >= 80) {
+        char shortStr[32], longStr[32], scoreStr[16];
+        snprintf(shortStr, sizeof(shortStr), "%.4f", shortRatio);
+        snprintf(longStr, sizeof(longStr), "%.4f", longRatio);
+        snprintf(scoreStr, sizeof(scoreStr), "%d", riskScore);
+        return std::string("ksu_timing_detected:short_ratio=") + shortStr +
+               ";long_ratio=" + longStr + ";score=" + scoreStr;
+    }
+    return "";
+}
+
+// ---------------------------------------------------------------------------
+// JNI entry point — N17: KernelSU timing detection
+// ---------------------------------------------------------------------------
+extern "C" JNIEXPORT jstring JNICALL
+Java_com_anycheck_app_detection_NativeDetector_detectKsuTimingJni(JNIEnv *env, jobject /* thiz */) {
+    return env->NewStringUTF(probeKsuTiming().c_str());
+}
+
+// ---------------------------------------------------------------------------
+// N18 — KernelSU LKM mode detection
+//
+// Checks for artifacts that are unique to KernelSU running as a Loadable
+// Kernel Module (LKM / GKI mode) rather than being compiled into the kernel:
+//
+//   1. /sys/module/kernelsu  — sysfs module directory; present for every
+//      loaded Linux kernel module; much harder to hide than /proc/modules.
+//   2. /sys/module/ksu       — alternate module name used by some forks.
+//   3. /dev/ksu              — character device registered by KSU misc driver
+//      for userspace ↔ kernel IPC; unique to LKM mode.
+//   4. /proc/mounts overlayfs scan — KSU LKM applies system overlays via
+//      overlayfs (upperdir=/data/adb/...) rather than loop devices; the Java
+//      File API can be hooked by LSPosed; this uses raw open/read syscalls.
+//
+// Uses raw stat(2) (via fstatat syscall) and open/read to avoid any Java
+// or libc hooks.
+//
+// Returns a semicolon-separated findings string, or "" when clean.
+// ---------------------------------------------------------------------------
+
+static std::string probeKsuLkm() {
+    std::string findings;
+
+    struct stat st{};
+
+    static const char *SYSFS_PATHS[] = {
+        "/sys/module/kernelsu",
+        "/sys/module/ksu",
+        "/dev/ksu",
+        nullptr
+    };
+
+    for (int i = 0; SYSFS_PATHS[i] != nullptr; ++i) {
+        errno = 0;
+        long res = syscall(__NR_fstatat, AT_FDCWD, SYSFS_PATHS[i], &st, 0);
+        if (res == 0 || errno == EACCES) {
+            if (!findings.empty()) findings += ';';
+            findings += std::string("sysfs:") + SYSFS_PATHS[i];
+        }
+    }
+
+    // Scan /proc/mounts for overlayfs entries with KSU-related upperdir/workdir.
+    // Use raw open/read to bypass any libc hook on fopen.
+    static const char *KSU_OVERLAY_NEEDLES[] = {
+        "upperdir=/data/adb",
+        "workdir=/data/adb",
+        "lowerdir=/data/adb",
+        "/data/adb/ksu",
+        "/data/adb/modules",
+        nullptr
+    };
+
+    int fd = open("/proc/mounts", O_RDONLY | O_CLOEXEC);
+    if (fd >= 0) {
+        char buf[8192];
+        ssize_t n;
+        std::string line;
+        while ((n = read(fd, buf, sizeof(buf) - 1)) > 0) {
+            buf[n] = '\0';
+            for (ssize_t charIdx = 0; charIdx < n; ++charIdx) {
+                char c = buf[charIdx];
+                if (c == '\n') {
+                    // Check if this line is an overlay mount with KSU paths
+                    bool isOverlay = (line.find("overlay ") != std::string::npos ||
+                                      line.find(" overlay ") != std::string::npos);
+                    if (isOverlay) {
+                        for (int k = 0; KSU_OVERLAY_NEEDLES[k] != nullptr; ++k) {
+                            if (line.find(KSU_OVERLAY_NEEDLES[k]) != std::string::npos) {
+                                if (!findings.empty()) findings += ';';
+                                // Truncate long lines to avoid oversized JNI strings
+                                findings += "overlayfs:" + line.substr(0, 80);
+                                break;
+                            }
+                        }
+                    }
+                    line.clear();
+                } else {
+                    line += c;
+                }
+            }
+        }
+        close(fd);
+    }
+
+    return findings;
+}
+
+// ---------------------------------------------------------------------------
+// JNI entry point — N18: KernelSU LKM mode detection
+// ---------------------------------------------------------------------------
+extern "C" JNIEXPORT jstring JNICALL
+Java_com_anycheck_app_detection_NativeDetector_detectKsuLkmJni(JNIEnv *env, jobject /* thiz */) {
+    return env->NewStringUTF(probeKsuLkm().c_str());
 }

@@ -820,13 +820,20 @@ class RevenyInspiredDetector(private val context: Context) {
             "com.android.providers.settings"
         )
 
+        // There is some alternatives for some packages, check for them too
+        val packageAlternatives = mapOf(
+            "com.android.permissioncontroller" to "com.google.android.permissioncontroller"
+        )
+
         val pm = context.packageManager
         val installedNames = runCatching {
             pm.getInstalledPackages(0).map { it.packageName }.toSet()
         }.getOrElse { emptySet() }
 
         // Count how many always-visible packages actually appeared
-        val missingAlwaysVisible = alwaysVisiblePackages.filter { it !in installedNames }
+        val missingAlwaysVisible = alwaysVisiblePackages.filter {
+            !(it in installedNames || packageAlternatives[it] in installedNames)
+        }
 
         // Also attempt to read the own app info via two separate methods; any
         // discrepancy between them is a sign of active interception.
@@ -986,44 +993,46 @@ class RevenyInspiredDetector(private val context: Context) {
     //   HMA).  DetectionManager therefore calls this function as its very
     //   first action, before all other detectors.
     //
-    // Algorithm (mirrors a.c exactly):
+    // Algorithm:
     //
     //   Step 1 – Warm-up: issue TEST_COUNT queries for com.android.settings
     //            (known-present, known-not-hidden) to establish the Binder
-    //            connection (equivalent to a.c measuring settings first).
+    //            connection.
     //
-    //   Step 2 – Measure fakeRatio once with a genuinely non-existent package.
-    //            Because this function runs first, the fake package has never
-    //            been queried this session, so its PMS cache entry is cold.
-    //
-    //   Step 3 – Measure each target in sequence.  Each target also has a cold
-    //            PMS cache entry (first-ever query this session).
+    //   Step 2 – Measure ALL entries (in-band control packages + real targets)
+    //            in a single sequential pass.  Control packages are known-
+    //            non-existent package names that will never appear on any
+    //            device and are not in any HMA hide list; they provide an
+    //            in-band timing baseline measured in the same temporal window
+    //            as the real targets, eliminating the temporal bias that
+    //            occurred when baseline and targets were measured separately.
     //
     //     Cold    = duration of the very first getPackageInfo() call (i == 0).
-    //     Hot     = simple average of the remaining TEST_COUNT-1 calls
-    //               (matches a.c: hot_total / (TEST_COUNT - 1)).
+    //     Hot     = simple average of the remaining TEST_COUNT-1 calls.
     //     Ratio   = Cold / HotAvg
     //
-    // Three-way classification (empirically validated):
+    // Three-way classification:
     //
-    //   R_target > R_fake * 1.5  → first Xposed-hook call is slow (cold hook
+    //   R_target > R_ctrl * 2.0  → first Xposed-hook call is slow (cold hook
     //                               JIT init), subsequent intercepts are fast
     //                               → package is being hidden by HMA
-    //   R_target ≈ R_fake        → same cold/hot profile as a non-existent
+    //   R_target ≈ R_ctrl        → same cold/hot profile as a non-existent
     //                               package → package truly does not exist
-    //   R_target < R_fake        → PMS fast-path cache hit (installed app
+    //   R_target < R_ctrl        → PMS fast-path cache hit (installed app
     //                               found quickly on cold call too)
     //                               → package is present and NOT hidden
     //
-    // A safety multiplier of 1.5 is applied: a target is flagged only when its
-    // ratio is CLEARLY above the fake baseline (> 150% of fakeRatio).
+    // The controlMedian (median of in-band control ratios) replaces the old
+    // separate fakeRatio measurement.  Because controls are measured in the
+    // same sequential pass as targets, any system-level effect (JIT, GC, CPU
+    // scaling) affects both equally, removing a key source of false positives.
     //
-    // Note: empirically, fakeRatio ≈ 20–35× with TEST_COUNT=50 and one prior
-    // warm-up run.  Hidden packages show ratio ≈ 2–3× fakeRatio (slow first
-    // Xposed intercept), while installed-not-hidden packages show ratio ≤
-    // fakeRatio (fast PMS cache lookup).
+    // An additional discrimination guard: if controlMedian < 3.0 the PMS
+    // latency on this device is nearly constant (cold ≈ hot), meaning the
+    // cold/hot technique cannot reliably distinguish anything.  The check is
+    // skipped in that case to avoid false positives from timing noise.
     //
-    // We test Magisk, KernelSU, APatch, and HMA itself as targets.
+    // We test Magisk, KernelSU, APatch, and SukiSU as targets.
     // Only runs on SDK > 28 (PackageManager query behaviour is stable there).
     // -------------------------------------------------------------------------
     internal fun checkHmaColdHotTiming(): DetectionResult {
@@ -1053,7 +1062,7 @@ class RevenyInspiredDetector(private val context: Context) {
                     val duration = System.nanoTime() - start
                     if (i == 0) coldTime = duration else hotTotal += duration
                 }
-                // Simple average, matching a.c: hot_avg = hot_total / (TEST_COUNT - 1)
+                // Simple average: hot_avg = hot_total / (TEST_COUNT - 1)
                 val hotAvg = hotTotal.toDouble() / (testCount - 1)
                 // Return MAX_VALUE when hotAvg is zero (degenerate measurement)
                 // so this package is never wrongly flagged as hidden.
@@ -1061,14 +1070,20 @@ class RevenyInspiredDetector(private val context: Context) {
             }
 
             // Step 1: warm up the Binder connection with a known-present,
-            // known-not-hidden system package (mirrors a.c measuring settings
-            // first, which implicitly warms the Binder before the fake package).
+            // known-not-hidden system package.
             repeat(testCount) {
                 try { pm.getPackageInfo("com.android.settings", 0) } catch (_: Exception) {}
             }
 
-            data class Target(val pkg: String, val label: String, val cat: DetectionCategory)
+            data class Target(val pkg: String, val label: String, val cat: DetectionCategory, val isControl: Boolean = false)
             val targets = listOf(
+                // In-band control packages: known non-existent, never in any HMA
+                // hide list.  Measured in the same sequential pass as real targets
+                // to eliminate temporal bias between baseline and target windows.
+                Target("com.anycheck.ctrl.alpha",      "Control A",         DetectionCategory.XPOSED, true),
+                Target("com.anycheck.ctrl.beta",       "Control B",         DetectionCategory.XPOSED, true),
+                Target("com.anycheck.ctrl.gamma",      "Control C",         DetectionCategory.XPOSED, true),
+                // Real targets
                 Target("com.topjohnwu.magisk",         "Magisk",            DetectionCategory.MAGISK),
                 Target("com.topjohnwu.magisk.stub",    "Magisk Stub",       DetectionCategory.MAGISK),
                 Target("me.weishu.kernelsu",            "KernelSU",          DetectionCategory.KERNELSU),
@@ -1079,12 +1094,16 @@ class RevenyInspiredDetector(private val context: Context) {
                 Target("moe.fuqiuluo.portaldev",        "Portal",            DetectionCategory.KERNELSU)
             )
 
-            // Step 2: measure fakeRatio ONCE – all packages are cold at this
-            // point (this function runs before any other detector).
-            val fakeRatio = measureRatio("com.random.fake.pkg.xingguang6666")
-            // Guard: if fakeRatio is not usable, report error rather than risk
-            // false positives or division-by-zero in the percentage calculation.
-            if (fakeRatio <= 0f || fakeRatio == Float.MAX_VALUE) {
+            // Step 2: measure all entries (controls + real targets) in one pass.
+            val measurements = targets.map { t -> t to measureRatio(t.pkg) }
+
+            // Derive controlMedian from in-band control measurements.
+            val controlRatios = measurements
+                .filter { (t, r) -> t.isControl && r != Float.MAX_VALUE && r > 0f }
+                .map { it.second }
+                .sorted()
+            // Guard: if no usable control sample, report error.
+            if (controlRatios.isEmpty()) {
                 return DetectionResult(
                     id = "hma_cold_hot_timing",
                     name = context.getString(R.string.chk_hma_cold_hot_name_nd),
@@ -1092,39 +1111,40 @@ class RevenyInspiredDetector(private val context: Context) {
                     status = DetectionStatus.ERROR,
                     riskLevel = RiskLevel.HIGH,
                     description = context.getString(R.string.chk_hma_cold_hot_desc_nd),
-                    detailedReason = "Baseline fake-package measurement produced a degenerate ratio; skipping to avoid false positives.",
+                    detailedReason = "In-band control measurement produced a degenerate ratio; skipping to avoid false positives.",
                     solution = context.getString(R.string.no_action_required)
                 )
             }
+            val controlMedian = controlRatios[controlRatios.size / 2]
 
-            // Step 3: measure each target and apply the three-way classification.
-            // A hidden package shows ratio > fakeRatio * 1.5 (elevated by the
-            // cold Xposed-hook JIT on the first intercept call).  A safety
-            // multiplier of 1.5 absorbs natural timing variance while reliably
-            // separating the ~2–3× elevation seen for hidden packages.
-            val hiddenLabels = mutableListOf<String>()
-            val details = StringBuilder()
-            details.append("fakeRatio=%.2f\n".format(fakeRatio))
-            for (t in targets) {
-                val ratio = measureRatio(t.pkg)
-                val pct = if (ratio == Float.MAX_VALUE) Float.NaN else ratio / fakeRatio * 100f
-                details.append("${t.label}: ratio=%.2f (%.0f%%)\n".format(ratio, pct))
-                if (ratio != Float.MAX_VALUE && ratio > fakeRatio * 1.5f) hiddenLabels.add(t.label)
-            }
-
-            if (hiddenLabels.isNotEmpty()) {
-                DetectionResult(
+            // Guard: if controlMedian is very low the PMS latency is nearly
+            // constant on this device (cold ≈ hot), so the cold/hot technique
+            // cannot reliably distinguish hidden from non-hidden packages.
+            // Skip to avoid false positives caused by normal timing variance.
+            if (controlMedian < 3.0f) {
+                return DetectionResult(
                     id = "hma_cold_hot_timing",
                     name = context.getString(R.string.chk_hma_cold_hot_name_nd),
                     category = DetectionCategory.XPOSED,
                     status = DetectionStatus.NOT_DETECTED,
                     riskLevel = RiskLevel.HIGH,
                     description = context.getString(R.string.chk_hma_cold_hot_desc_nd),
-                    detailedReason = context.getString(R.string.chk_hma_cold_hot_reason_nd),
-                    solution = context.getString(R.string.no_action_required),
-                    technicalDetail = details.toString().trimEnd()
+                    detailedReason = "Timing discrimination too low (controlMedian=%.2f < 3.0); skipping to avoid false positives.".format(controlMedian),
+                    solution = context.getString(R.string.no_action_required)
                 )
-            } else {
+            }
+
+            // Classify real targets against the in-band control baseline.
+            val hiddenLabels = mutableListOf<String>()
+            val details = StringBuilder()
+            details.append("controlMedian=%.2f (in-band, ${controlRatios.size} controls)\n".format(controlMedian))
+            for ((t, ratio) in measurements.filter { !it.first.isControl }) {
+                val pct = if (ratio == Float.MAX_VALUE) Float.NaN else ratio / controlMedian * 100f
+                details.append("${t.label}: ratio=%.2f (%.0f%%)\n".format(ratio, pct))
+                if (ratio != Float.MAX_VALUE && ratio > controlMedian * 2.0f) hiddenLabels.add(t.label)
+            }
+
+            if (hiddenLabels.isNotEmpty()) {
                 DetectionResult(
                     id = "hma_cold_hot_timing",
                     name = context.getString(R.string.chk_hma_cold_hot_name),
@@ -1136,6 +1156,18 @@ class RevenyInspiredDetector(private val context: Context) {
                         R.string.chk_hma_cold_hot_reason, hiddenLabels.joinToString(", ")
                     ),
                     solution = context.getString(R.string.chk_hma_cold_hot_solution),
+                    technicalDetail = details.toString().trimEnd()
+                )
+            } else {
+                DetectionResult(
+                    id = "hma_cold_hot_timing",
+                    name = context.getString(R.string.chk_hma_cold_hot_name_nd),
+                    category = DetectionCategory.XPOSED,
+                    status = DetectionStatus.NOT_DETECTED,
+                    riskLevel = RiskLevel.HIGH,
+                    description = context.getString(R.string.chk_hma_cold_hot_desc_nd),
+                    detailedReason = context.getString(R.string.chk_hma_cold_hot_reason_nd),
+                    solution = context.getString(R.string.no_action_required),
                     technicalDetail = details.toString().trimEnd()
                 )
             }
@@ -1155,30 +1187,35 @@ class RevenyInspiredDetector(private val context: Context) {
 
     // -------------------------------------------------------------------------
     // Check 5d-combined: run checkHmaColdHotTiming() three times and apply
-    // combination rules based on the displayed result of each run.
+    // majority-vote combination: count how many runs report DETECTED and
+    // treat ≥ 2 of 3 as a confirmed detection (order does not matter).
     //
     // The three runs expose HMA behaviour at increasing cache warmth:
     //   Run 1 (cold)  – first ever query for these packages in this process
     //   Run 2 (warm)  – packages already in the PMS cache after run 1
     //   Run 3 (hot)   – fully cached
     //
-    // Combination rules:
-    //   r1=ND, r2=ND, r3=D  → NOT_DETECTED  (only last run clean → noise)
-    //   other               → r3 result unchanged (fallback to latest run)
+    // Combination rule:
+    //   detectedCount >= 2  → DETECTED  (majority vote)
+    //   detectedCount <  2  → NOT_DETECTED (treat as noise)
+    //
+    // The returned result is always taken from a run that already carries the
+    // matching status, so content and status can never disagree.
     // -------------------------------------------------------------------------
     internal fun checkHmaColdHotTimingCombined(): DetectionResult {
         val r1 = checkHmaColdHotTiming()
         val r2 = checkHmaColdHotTiming()
         val r3 = checkHmaColdHotTiming()
 
-        val r1Detected = r1.status == DetectionStatus.DETECTED
-        val r2Detected = r2.status == DetectionStatus.DETECTED
-        val r3Detected = r3.status == DetectionStatus.DETECTED
+        val results = listOf(r1, r2, r3)
+        val detectedCount = results.count { it.status == DetectionStatus.DETECTED }
 
-        return when {
-            !r1Detected && !r2Detected && r3Detected ->
-                r3.copy(status = DetectionStatus.NOT_DETECTED)
-            else -> r3
+        return if (detectedCount >= 2) {
+            // Majority says DETECTED — return the last run that agrees, so content matches status.
+            results.last { it.status == DetectionStatus.DETECTED }
+        } else {
+            // Majority says NOT_DETECTED — return the last run that agrees.
+            results.lastOrNull { it.status == DetectionStatus.NOT_DETECTED } ?: r3
         }
     }
 

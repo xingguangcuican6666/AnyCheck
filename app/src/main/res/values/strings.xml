@@ -247,6 +247,25 @@
     <string name="chk_ksu_loop_device_reason_nd">No /dev/loop* devices were found mounted at KernelSU-specific paths (/data/adb/ksu, /data/adb/modules). KSU loop device is not active.</string>
     <string name="chk_ksu_loop_device_solution">Update KernelSU manager and re-patch the boot image. Use SUSFS or ZygiskNext to hide the loop device mount.</string>
 
+    <!-- KSU LKM mode detection (Check ksu_lkm) -->
+    <string name="chk_ksu_lkm_name">KernelSU LKM Mode Detected</string>
+    <string name="chk_ksu_lkm_name_nd">KernelSU LKM Mode Check</string>
+    <string name="chk_ksu_lkm_desc">KernelSU is running in Loadable Kernel Module (LKM/GKI) mode.</string>
+    <string name="chk_ksu_lkm_desc_nd">No KernelSU LKM mode artifacts found.</string>
+    <string name="chk_ksu_lkm_reason">The following LKM-mode artifacts were found: %1$s. In LKM mode, KernelSU runs as a dynamically-loaded kernel module (kernelsu.ko) and creates a sysfs module directory (/sys/module/kernelsu), a /dev/ksu character device for IPC, and overlayfs mounts with upperdir pointing to /data/adb/ paths for system overlays. These signals are distinct from built-in-kernel mode and were not previously detected.</string>
+    <string name="chk_ksu_lkm_reason_nd">No KernelSU LKM artifacts were found: /sys/module/kernelsu and /sys/module/ksu do not exist, /dev/ksu is absent, and no KSU-related overlayfs mounts were found in /proc/mounts.</string>
+    <string name="chk_ksu_lkm_solution">To hide LKM mode, use SUSFS to mask /sys/module/kernelsu and /dev/ksu. Alternatively, remove the KernelSU LKM and reflash a stock boot image.</string>
+
+    <!-- KSU timing detection (Check ksu_timing) -->
+    <string name="chk_ksu_timing_name">KernelSU Syscall Hook Detected (Timing)</string>
+    <string name="chk_ksu_timing_name_nd">KernelSU Syscall Timing Check</string>
+    <string name="chk_ksu_timing_desc">KernelSU anomaly detected via the new a.c side-channel timing mechanism.</string>
+    <string name="chk_ksu_timing_desc_nd">No KernelSU anomaly detected by the a.c side-channel timing mechanism.</string>
+    <string name="chk_ksu_timing_reason">Short-path and long-path side-channel ratios matched the KernelSU risk profile from the new a.c mechanism.</string>
+    <string name="chk_ksu_timing_reason_nd">Short-path and long-path side-channel ratios stayed in the clean range under the new a.c mechanism.</string>
+    <string name="chk_ksu_timing_solution">Use SUSFS (SU Filesystem) to hide KernelSU\'s syscall interception, or remove KernelSU entirely.</string>
+    <string name="chk_ksu_timing_na">KernelSU timing check not available: native library could not be loaded.</string>
+
     <!-- apatch -->
     <string name="chk_apatch_name">APatch Detected</string>
     <string name="chk_apatch_name_nd">APatch</string>
@@ -1040,13 +1059,13 @@
     <string name="chk_ext_caps_desc_error">Could not read process status.</string>
     <string name="chk_ext_caps_solution_error">Ensure /proc/self/status is accessible.</string>
     <!-- ExtraRootDetector: Check 3 - Mountinfo Overlay -->
-    <string name="chk_ext_overlay_name">Magisk/KSU Overlay Mounts Detected</string>
-    <string name="chk_ext_overlay_desc">Root framework overlay mount entries found in /proc/self/mountinfo.</string>
-    <string name="chk_ext_overlay_reason">/proc/self/mountinfo shows %1$d mount entry/entries sourced from Magisk/KSU directories (/data/adb/magisk or /data/adb/ksu). These are bind-mounts created by the root framework\'s module system to overlay modified files over the original system partition.</string>
-    <string name="chk_ext_overlay_solution">Remove root framework modules or uninstall the root framework entirely.</string>
+    <string name="chk_ext_overlay_name">Root Overlay Mounts Abnormal (Too Few)</string>
+    <string name="chk_ext_overlay_desc">Suspiciously few overlay mounts found — mount entries may be hidden by SUSFS.</string>
+    <string name="chk_ext_overlay_reason">Only %1$d overlay mount entries visible in /proc/self/mountinfo (expected ≥5). Android 10+ with APEX and a KSU device normally have many overlayfs entries. An abnormally low count indicates that a mount-hiding mechanism (such as SUSFS) is suppressing entries, which is a strong sign that a root framework is active.</string>
+    <string name="chk_ext_overlay_solution">A root framework with mount-hiding (SUSFS) is likely active. Inspect /proc/self/mountinfo directly or disable SUSFS to confirm.</string>
     <string name="chk_ext_overlay_name_nd">Root Overlay Mounts</string>
-    <string name="chk_ext_overlay_desc_nd">No Magisk/KSU overlay mounts found.</string>
-    <string name="chk_ext_overlay_reason_nd">No root framework markers were found in /proc/self/mountinfo.</string>
+    <string name="chk_ext_overlay_desc_nd">Overlay mount count is normal (≥5 entries).</string>
+    <string name="chk_ext_overlay_reason_nd">%1$d overlay entries found in /proc/self/mountinfo, which is within the expected range for a healthy Android system.</string>
     <string name="chk_ext_overlay_desc_error">Could not read /proc/self/mountinfo.</string>
     <string name="chk_ext_overlay_solution_error">Ensure /proc/self/mountinfo is accessible.</string>
     <!-- ExtraRootDetector: Check 4 - tmpfs at /sbin -->
